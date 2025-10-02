@@ -18,9 +18,6 @@
 		"main": [
 			"net.countered.settlementroads.SettlementRoads"
 		],
-		"client": [
-			"net.countered.settlementroads.client.SettlementRoadsClient"
-		],
 		"fabric-datagen": [
 			"net.countered.settlementroads.SettlementRoadsDataGenerator"
 		]

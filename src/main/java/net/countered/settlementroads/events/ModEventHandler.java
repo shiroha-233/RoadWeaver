@@ -72,14 +72,6 @@ public class ModEventHandler {
     }
 
     private static void tryGenerateNewRoads(ServerWorld serverWorld, Boolean async, int steps) {
-        // 清理已完成的任务
-        runningTasks.entrySet().removeIf(entry -> entry.getValue().isDone());
-        
-        // 检查是否达到并发上限
-        if (runningTasks.size() >= ModConfig.maxConcurrentRoadGeneration) {
-            return;
-        }
-        
         if (!StructureConnector.cachedStructureConnections.isEmpty()) {
             Records.StructureConnection structureConnection = StructureConnector.cachedStructureConnections.poll();
             ConfiguredFeature<?, ?> feature = serverWorld.getRegistryManager()
@@ -88,18 +80,14 @@ public class ModEventHandler {
 
             if (feature != null && feature.config() instanceof RoadFeatureConfig roadConfig) {
                 if (async) {
-                    // 使用唯一的任务ID而不是世界ID，允许多个任务并发
-                    String taskId = serverWorld.getRegistryKey().getValue().toString() + "_" + System.nanoTime();
                     Future<?> future = executor.submit(() -> {
                         try {
                             new Road(serverWorld, structureConnection, roadConfig).generateRoad(steps);
                         } catch (Exception e) {
                             LOGGER.error("Error generating road", e);
-                        } finally {
-                            runningTasks.remove(taskId);
                         }
                     });
-                    runningTasks.put(taskId, future);
+                    runningTasks.put(serverWorld.getRegistryKey().getValue().toString(), future);
                 }
                 else {
                     new Road(serverWorld, structureConnection, roadConfig).generateRoad(steps);

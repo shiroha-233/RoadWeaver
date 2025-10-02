@@ -45,28 +45,12 @@ public class Records {
                 .listOf()
                 .xmap(StructureLocationData::new, StructureLocationData::structureLocations);
     }
-    public record StructureConnection(BlockPos from, BlockPos to, ConnectionStatus status) {
+    public record StructureConnection(BlockPos from, BlockPos to) {
         public static final Codec<StructureConnection> CODEC = RecordCodecBuilder.create(instance ->
                 instance.group(
                         BlockPos.CODEC.fieldOf("from").forGetter(StructureConnection::from),
-                        BlockPos.CODEC.fieldOf("to").forGetter(StructureConnection::to),
-                        Codec.STRING.optionalFieldOf("status", "PLANNED").xmap(
-                                ConnectionStatus::valueOf,
-                                ConnectionStatus::name
-                        ).forGetter(StructureConnection::status)
+                        BlockPos.CODEC.fieldOf("to").forGetter(StructureConnection::to)
                 ).apply(instance, StructureConnection::new)
         );
-        
-        // 兼容旧版本的构造函数
-        public StructureConnection(BlockPos from, BlockPos to) {
-            this(from, to, ConnectionStatus.PLANNED);
-        }
-    }
-    
-    public enum ConnectionStatus {
-        PLANNED,      // 计划中（黄色）
-        GENERATING,   // 生成中（橙色）
-        COMPLETED,    // 已完成（绿色，不显示连接线）
-        FAILED        // 生成失败（红色）
     }
 }

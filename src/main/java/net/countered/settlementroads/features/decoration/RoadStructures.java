@@ -37,4 +37,9 @@ public class RoadStructures {
             }
         }
     }
+
+    public static void placeBuoy(StructureWorldAccess worldAccess, BlockPos surfacePos) {
+        worldAccess.setBlockState(surfacePos.down(), Blocks.SPRUCE_PLANKS.getDefaultState(), 3);
+        worldAccess.setBlockState(surfacePos, Blocks.SPRUCE_FENCE.getDefaultState(), 3);
+    }
 }

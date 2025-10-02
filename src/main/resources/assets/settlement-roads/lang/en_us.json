@@ -11,6 +11,8 @@
   "settlement-roads.midnightconfig.structureToLocate": "Structure to locate",
   "settlement-roads.midnightconfig.structureToLocate.tooltip": "Select or type the structure you want to locate. E.g., #minecraft:village, minecraft:village_plains or modid:custom_structure. Allows structure tags and keys.",
 
+  "settlement-roads.midnightconfig.distanceBetweenBuoys": "Distance between buoys",
+  "settlement-roads.midnightconfig.distanceBetweenBuoys.tooltip": "Approximate distance between buoys in blocks",
   "settlement-roads.midnightconfig.averagingRadius": "Averaging radius",
   "settlement-roads.midnightconfig.averagingRadius.tooltip": "Amount of terrain averaging done for artificial roads",
   "settlement-roads.midnightconfig.allowArtificial": "Allow artificial roads",
@@ -20,32 +22,5 @@
   "settlement-roads.midnightconfig.placeWaypoints": "Place Waypoints instead of Roads",
   "settlement-roads.midnightconfig.placeWaypoints.tooltip": "Disables road generation in favor of waypoint generation",
 
-  "settlement-roads.midnightconfig.maxHeightDifference": "Maximum Height Difference",
-  "settlement-roads.midnightconfig.maxHeightDifference.tooltip": "Maximum height difference allowed for roads. Higher values allow steeper roads. Default: 5",
-
-  "settlement-roads.midnightconfig.maxTerrainStability": "Terrain Stability Check",
-  "settlement-roads.midnightconfig.maxTerrainStability.tooltip": "Terrain stability threshold. Higher values allow rougher terrain. Default: 4",
-
-  "settlement-roads.midnightconfig.maxConcurrentRoadGeneration": "Max Concurrent Road Generation",
-  "settlement-roads.midnightconfig.maxConcurrentRoadGeneration.tooltip": "Maximum number of roads that can be generated simultaneously. Lower values reduce performance impact but slow down road generation. Default: 3",
-
-  "settlement-roads.midnightconfig.title":"Countered's Settlement Roads",
-
-  "key.settlementroads.debug_map": "Open Debug Map",
-  "category.settlementroads": "Settlement Roads",
-
-  "gui.settlementroads.debug_map.title": "Settlement Roads - Debug Map",
-  "gui.settlementroads.debug_map.structures": "Structures: %s",
-  "gui.settlementroads.debug_map.planned": "Planned: %s",
-  "gui.settlementroads.debug_map.generating": "Generating: %s",
-  "gui.settlementroads.debug_map.completed": "Completed: %s",
-  "gui.settlementroads.debug_map.roads": "Roads: %s",
-  "gui.settlementroads.debug_map.zoom": "Zoom: %sx",
-  "gui.settlementroads.debug_map.blocks": "%s blocks",
-  "gui.settlementroads.debug_map.failed": "Failed: %s",
-  "gui.settlementroads.debug_map.legend.structures": "Structures",
-  "gui.settlementroads.debug_map.legend.planned": "Planned",
-  "gui.settlementroads.debug_map.legend.generating": "Generating",
-  "gui.settlementroads.debug_map.legend.failed": "Failed",
-  "gui.settlementroads.debug_map.legend.roads": "Roads"
+  "settlement-roads.midnightconfig.title":"Countered's Settlement Roads"
 }
