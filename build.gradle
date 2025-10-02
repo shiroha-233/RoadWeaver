@@ -51,7 +51,7 @@ modrinth {
 	gameVersions = ["1.21.1"] // Must be an array, even with only one version
 	loaders = ["fabric"] // Must also be an array - no need to specify this if you're using Loom or ForgeGradle
 	changelog = file("changelog.md").text
-	versionName = "Countered's Settlement Roads ${mod_version}" // This is the name of the version that will be displayed on Modrinth
+	versionName = "RoadWeaver ${mod_version}" // This is the name of the version that will be displayed on Modrinth
 	dependencies {
 		embedded.project "midnightlib" // Declare midnightlib as an embedded dependency
 	}
@@ -65,7 +65,7 @@ tasks.register("curseforge", TaskPublishCurseForge) {
 	def mainFile = upload(projectId, remapJar)
 	mainFile.changelog = file("changelog.md")
 	mainFile.changelogType = "markdown"
-	mainFile.displayName = "Countered's Settlement Roads ${mod_version}"
+	mainFile.displayName = "RoadWeaver ${mod_version}"
 	mainFile.releaseType = "release"
 
 	mainFile.addEmbedded("midnightlib")

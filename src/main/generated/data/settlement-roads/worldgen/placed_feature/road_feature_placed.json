@@ -1,5 +1,5 @@
 {
-  "feature": "settlement-roads:road_feature",
+  "feature": "roadweaver:road_feature",
   "placement": [
     {
       "type": "minecraft:heightmap",

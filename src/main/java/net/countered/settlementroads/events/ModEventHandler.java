@@ -67,7 +67,7 @@ public class ModEventHandler {
             runningTasks.values().forEach(future -> future.cancel(true));
             runningTasks.clear();
             executor.shutdownNow();
-            LOGGER.debug("SettlementRoads: ExecutorService shut down.");
+            LOGGER.debug("RoadWeaver: ExecutorService shut down.");
         });
     }
 
@@ -111,7 +111,7 @@ public class ModEventHandler {
     private static void restartExecutorIfNeeded() {
         if (executor.isShutdown() || executor.isTerminated()) {
             executor = Executors.newFixedThreadPool(THREAD_COUNT);
-            LOGGER.debug("SettlementRoads: ExecutorService restarted.");
+            LOGGER.debug("RoadWeaver: ExecutorService restarted.");
         }
     }
 }

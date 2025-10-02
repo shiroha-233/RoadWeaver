@@ -10,7 +10,7 @@ import org.slf4j.LoggerFactory;
 
 public class SettlementRoads implements ModInitializer {
 
-	public static final String MOD_ID = "settlement-roads";
+	public static final String MOD_ID = "roadweaver";
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(SettlementRoads.MOD_ID);
 
@@ -26,7 +26,7 @@ public class SettlementRoads implements ModInitializer {
 
 	@Override
 	public void onInitialize() {
-		LOGGER.info("Initializing Settlement Roads...");
+		LOGGER.info("Initializing RoadWeaver...");
 		WorldDataAttachment.registerWorldDataAttachment();
 		ModConfig.init(MOD_ID, ModConfig.class);
 		RoadFeatureRegistry.registerFeatures();

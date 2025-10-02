@@ -46,7 +46,7 @@ public class RoadDebugScreen extends Screen {
     public RoadDebugScreen(List<BlockPos> structures, 
                           List<Records.StructureConnection> connections,
                           List<Records.RoadData> roads) {
-        super(Text.translatable("gui.settlementroads.debug_map.title"));
+        super(Text.translatable("gui.roadweaver.debug_map.title"));
         // 创建不可变副本，避免并发修改异常
         this.structures = structures != null ? new ArrayList<>(structures) : new ArrayList<>();
         this.connections = connections != null ? new ArrayList<>(connections) : new ArrayList<>();
@@ -212,7 +212,7 @@ public class RoadDebugScreen extends Screen {
     // 绘制标题栏
     private void drawTitle(DrawContext ctx) {
         TextRenderer font = MinecraftClient.getInstance().textRenderer;
-        Text title = Text.translatable("gui.settlementroads.debug_map.title");
+        Text title = Text.translatable("gui.roadweaver.debug_map.title");
         int tw = font.getWidth(title);
         int x = (width - tw) / 2;
         int y = PADDING + 8;
@@ -406,10 +406,20 @@ public class RoadDebugScreen extends Screen {
         baseScale = Math.min(scaleX, scaleZ) * 0.9; // 留一些边距
 
         if (firstLayout) {
-            double graphW = (maxX - minX) * baseScale * zoom;
-            double graphH = (maxZ - minZ) * baseScale * zoom;
-            offsetX = (w - graphW) / 2.0;
-            offsetY = (h - graphH) / 2.0;
+            double scale = baseScale * zoom;
+            // 以玩家为中心
+            MinecraftClient mc = MinecraftClient.getInstance();
+            double px = (mc != null && mc.player != null) ? mc.player.getX() : minX;
+            double pz = (mc != null && mc.player != null) ? mc.player.getZ() : minZ;
+
+            // 目标屏幕中心（面板内）
+            double centerX = w / 2.0;
+            double centerY = h / 2.0;
+
+            // 设定偏移使玩家位于中心：PADDING + ((px - minX) * scale + offsetX) = PADDING + centerX
+            offsetX = centerX - (px - minX) * scale;
+            offsetY = centerY - (pz - minZ) * scale;
+
             firstLayout = false;
         }
 

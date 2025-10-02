@@ -1,5 +1,5 @@
 {
-  "type": "settlement-roads:road_feature",
+  "type": "roadweaver:road_feature",
   "config": {
     "artificialMaterials": [
       [

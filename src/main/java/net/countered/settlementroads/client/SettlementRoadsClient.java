@@ -24,10 +24,10 @@ public class SettlementRoadsClient implements ClientModInitializer {
     public void onInitializeClient() {
         // 注册按键绑定 (默认 H 键)
         debugMapKey = KeyBindingHelper.registerKeyBinding(new KeyBinding(
-                "key.settlementroads.debug_map",
+                "key.roadweaver.debug_map",
                 InputUtil.Type.KEYSYM,
                 GLFW.GLFW_KEY_H,
-                "category.settlementroads"
+                "category.roadweaver"
         ));
 
         // 注册客户端 tick 事件

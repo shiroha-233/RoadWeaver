@@ -1,18 +1,18 @@
 {
 	"schemaVersion": 1,
-	"id": "settlement-roads",
+	"id": "roadweaver",
 	"version": "${version}",
-	"name": "Countered's Settlement Roads",
+	"name": "RoadWeaver",
 	"description": "A mod to generate roads between structures!",
 	"authors": [
-		"Countered"
+		"shiroha"
 	],
 	"contact": {
-		"homepage": "https://fabricmc.net/",
-		"sources": "https://github.com/FabricMC/fabric-example-mod"
+		"homepage": "https://github.com/shiroha-233/RoadWeaver",
+		"sources": "https://github.com/shiroha-233/RoadWeaver"
 	},
 	"license": "CC0-1.0",
-	"icon": "assets/settlement-roads/icon.png",
+	"icon": "assets/roadweaver/icon.png",
 	"environment": "*",
 	"entrypoints": {
 		"main": [
@@ -26,7 +26,7 @@
 		]
 	},
 	"mixins": [
-		"settlement-roads.mixins.json"
+		"roadweaver.mixins.json"
 	],
 	"depends": {
 		"fabricloader": ">=0.16.9",
