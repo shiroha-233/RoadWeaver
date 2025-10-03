@@ -25,6 +25,15 @@ public class ModConfig extends MidnightConfig {
     @Entry(category = "roads")
     public static boolean placeWaypoints = false;
 
+    @Entry(category = "roads")
+    public static boolean placeRoadFences = true;
+
+    @Entry(category = "roads")
+    public static boolean placeSwings = true;
+
+    @Entry(category = "roads", min = 3, max = 8)
+    public static int structureDistanceFromRoad = 4;
+
     @Entry(category = "roads", min = 3, max = 10)
     public static int maxHeightDifference = 5;
 

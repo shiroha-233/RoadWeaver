@@ -26,6 +26,15 @@
   "roadweaver.midnightconfig.placeWaypoints": "放置路标而非道路",
   "roadweaver.midnightconfig.placeWaypoints.tooltip": "禁用道路生成，改为生成路标（用于测试和调试）",
 
+  "roadweaver.midnightconfig.placeRoadFences": "生成路边栏杆",
+  "roadweaver.midnightconfig.placeRoadFences.tooltip": "在道路两侧生成间断式栏杆装饰，增加道路美观性",
+
+  "roadweaver.midnightconfig.placeSwings": "生成秋千",
+  "roadweaver.midnightconfig.placeSwings.tooltip": "在适当位置生成秋千装饰，为道路增添趣味性",
+
+  "roadweaver.midnightconfig.structureDistanceFromRoad": "结构与道路距离",
+  "roadweaver.midnightconfig.structureDistanceFromRoad.tooltip": "大型装饰结构与道路中心的距离（格数）。数值越大结构越远离道路，默认：4",
+
   "roadweaver.midnightconfig.maxHeightDifference": "最大高度差",
   "roadweaver.midnightconfig.maxHeightDifference.tooltip": "道路允许的最大高度差。数值越大越容易翻山越岭，但道路可能很陡。默认：5",
 

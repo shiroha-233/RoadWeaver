@@ -20,7 +20,16 @@
   "roadweaver.midnightconfig.placeWaypoints": "Place Waypoints instead of Roads",
   "roadweaver.midnightconfig.placeWaypoints.tooltip": "Disables road generation in favor of waypoint generation",
 
-  "roadweaver.midnightconfig.maxHeightDifference": "Maximum Height Difference",
+  "roadweaver.midnightconfig.placeRoadFences": "Generate Road Fences",
+  "roadweaver.midnightconfig.placeRoadFences.tooltip": "Generate intermittent fence decorations along roads for enhanced visual appeal",
+
+  "roadweaver.midnightconfig.placeSwings": "Generate Swings",
+  "roadweaver.midnightconfig.placeSwings.tooltip": "Generate swing decorations at suitable locations to add playfulness to roads",
+
+  "roadweaver.midnightconfig.structureDistanceFromRoad": "Structure Distance From Road",
+  "roadweaver.midnightconfig.structureDistanceFromRoad.tooltip": "Distance in blocks between large decorative structures and road center. Higher values place structures farther from roads. Default: 4",
+
+  "roadweaver.midnightconfig.maxHeightDifference": "Maximum Height difference",
   "roadweaver.midnightconfig.maxHeightDifference.tooltip": "Maximum height difference allowed for roads. Higher values allow steeper roads. Default: 5",
 
   "roadweaver.midnightconfig.maxTerrainStability": "Terrain Stability Check",

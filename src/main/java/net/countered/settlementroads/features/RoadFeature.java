@@ -180,6 +180,36 @@ public class RoadFeature extends Feature<RoadFeatureConfig> {
                 roadDecorationPlacementPositions.add(new FenceWaypointDecoration(shiftedPos, structureWorldAccess));
             }
         }
+        // 添加间断栏杆装饰
+        else if (ModConfig.placeRoadFences && segmentIndex % 15 == 0) {
+            // 随机选择道路一侧
+            boolean leftRoadSide = random.nextBoolean();
+            shiftedPos = leftRoadSide ? placePos.add(orthogonalVector.multiply(2)) : placePos.subtract(orthogonalVector.multiply(2));
+            shiftedPos = shiftedPos.withY(structureWorldAccess.getTopY(Heightmap.Type.WORLD_SURFACE_WG, shiftedPos.getX(), shiftedPos.getZ()));
+            
+            // 检查高度差
+            if (Math.abs(shiftedPos.getY() - placePos.getY()) > 1) {
+                return;
+            }
+            
+            // 随机栏杆长度（1-3个方块）
+            int fenceLength = random.nextBetween(1, 3);
+            roadDecorationPlacementPositions.add(new RoadFenceDecoration(shiftedPos, orthogonalVector, structureWorldAccess, leftRoadSide, fenceLength));
+        }
+        // 添加秋千装饰
+        else if (ModConfig.placeSwings && segmentIndex % 80 == 0) {
+            // 秋千需要更多空间，选择道路一侧并远离道路中心
+            boolean leftRoadSide = random.nextBoolean();
+            shiftedPos = leftRoadSide ? placePos.add(orthogonalVector.multiply(ModConfig.structureDistanceFromRoad)) : placePos.subtract(orthogonalVector.multiply(ModConfig.structureDistanceFromRoad));
+            shiftedPos = shiftedPos.withY(structureWorldAccess.getTopY(Heightmap.Type.WORLD_SURFACE_WG, shiftedPos.getX(), shiftedPos.getZ()));
+            
+            // 秋千对地形要求更严格
+            if (Math.abs(shiftedPos.getY() - placePos.getY()) > 1) {
+                return;
+            }
+            
+            roadDecorationPlacementPositions.add(new SwingDecoration(shiftedPos, orthogonalVector, structureWorldAccess));
+        }
     }
 
     private void placeOnSurface(StructureWorldAccess structureWorldAccess, BlockPos placePos, List<BlockState> material, int natural, Random random) {

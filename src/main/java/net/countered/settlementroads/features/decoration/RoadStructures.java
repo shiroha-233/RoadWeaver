@@ -33,6 +33,16 @@ public class RoadStructures {
                     fenceWaypointDecoration.setWoodType(WoodSelector.forBiome(fenceWaypointDecoration.getWorld(), fenceWaypointDecoration.getPos()));
                     fenceWaypointDecoration.place();
                 }
+                // place road fence
+                if (roadDecoration instanceof RoadFenceDecoration roadFenceDecoration) {
+                    roadFenceDecoration.setWoodType(WoodSelector.forBiome(roadFenceDecoration.getWorld(), roadFenceDecoration.getPos()));
+                    roadFenceDecoration.place();
+                }
+                // place swing
+                if (roadDecoration instanceof SwingDecoration swingDecoration) {
+                    swingDecoration.setWoodType(WoodSelector.forBiome(swingDecoration.getWorld(), swingDecoration.getPos()));
+                    swingDecoration.place();
+                }
                 iterator.remove();
             }
         }
