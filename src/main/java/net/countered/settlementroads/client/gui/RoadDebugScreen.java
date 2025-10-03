@@ -38,7 +38,7 @@ public class RoadDebugScreen extends Screen {
     private boolean dragging = false;
     private boolean firstLayout = true;
     private boolean layoutDirty = true;  // 🆕 布局缓存标记
-    private double zoom = 1.0;
+    private double zoom = 3.0;
     private double offsetX = 0;
     private double offsetY = 0;
     private double baseScale = 1.0;
