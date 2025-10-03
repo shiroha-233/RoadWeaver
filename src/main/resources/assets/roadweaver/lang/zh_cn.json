@@ -32,6 +32,12 @@
   "roadweaver.midnightconfig.placeSwings": "生成秋千",
   "roadweaver.midnightconfig.placeSwings.tooltip": "在适当位置生成秋千装饰，为道路增添趣味性",
 
+  "roadweaver.midnightconfig.placeBenches": "生成长椅",
+  "roadweaver.midnightconfig.placeBenches.tooltip": "在道路旁生成长椅装饰，提供休息场所",
+
+  "roadweaver.midnightconfig.placeGloriettes": "生成凉亭",
+  "roadweaver.midnightconfig.placeGloriettes.tooltip": "在道路旁生成凉亭装饰，增加道路景观",
+
   "roadweaver.midnightconfig.structureDistanceFromRoad": "结构与道路距离",
   "roadweaver.midnightconfig.structureDistanceFromRoad.tooltip": "大型装饰结构与道路中心的距离（格数）。数值越大结构越远离道路，默认：4",
 

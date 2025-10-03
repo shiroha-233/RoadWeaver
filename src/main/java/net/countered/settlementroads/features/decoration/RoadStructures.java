@@ -43,6 +43,11 @@ public class RoadStructures {
                     swingDecoration.setWoodType(WoodSelector.forBiome(swingDecoration.getWorld(), swingDecoration.getPos()));
                     swingDecoration.place();
                 }
+                // place nbt structure (bench, gloriette, etc.)
+                if (roadDecoration instanceof NbtStructureDecoration nbtStructureDecoration) {
+                    nbtStructureDecoration.setWoodType(WoodSelector.forBiome(nbtStructureDecoration.getWorld(), nbtStructureDecoration.getPos()));
+                    nbtStructureDecoration.place();
+                }
                 iterator.remove();
             }
         }

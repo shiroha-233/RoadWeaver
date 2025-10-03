@@ -26,6 +26,12 @@
   "roadweaver.midnightconfig.placeSwings": "Generate Swings",
   "roadweaver.midnightconfig.placeSwings.tooltip": "Generate swing decorations at suitable locations to add playfulness to roads",
 
+  "roadweaver.midnightconfig.placeBenches": "Generate Benches",
+  "roadweaver.midnightconfig.placeBenches.tooltip": "Generate bench decorations along roads to provide resting spots",
+
+  "roadweaver.midnightconfig.placeGloriettes": "Generate Gloriettes",
+  "roadweaver.midnightconfig.placeGloriettes.tooltip": "Generate gloriette decorations along roads to enhance road scenery",
+
   "roadweaver.midnightconfig.structureDistanceFromRoad": "Structure Distance From Road",
   "roadweaver.midnightconfig.structureDistanceFromRoad.tooltip": "Distance in blocks between large decorative structures and road center. Higher values place structures farther from roads. Default: 4",
 

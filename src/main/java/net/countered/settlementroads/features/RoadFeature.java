@@ -196,19 +196,44 @@ public class RoadFeature extends Feature<RoadFeatureConfig> {
             int fenceLength = random.nextBetween(1, 3);
             roadDecorationPlacementPositions.add(new RoadFenceDecoration(shiftedPos, orthogonalVector, structureWorldAccess, leftRoadSide, fenceLength));
         }
-        // 添加秋千装饰
-        else if (ModConfig.placeSwings && segmentIndex % 80 == 0) {
-            // 秋千需要更多空间，选择道路一侧并远离道路中心
+        // 添加大型装饰结构（秋千、长椅、凉亭等）
+        else if (segmentIndex % 80 == 0) {
+            // 随机选择装饰类型
+            java.util.List<String> availableStructures = new java.util.ArrayList<>();
+            
+            if (ModConfig.placeSwings) availableStructures.add("swing");
+            if (ModConfig.placeBenches) availableStructures.add("bench");
+            if (ModConfig.placeGloriettes) availableStructures.add("gloriette");
+            
+            if (availableStructures.isEmpty()) {
+                return;
+            }
+            
+            // 随机选择一个结构
+            String selectedStructure = availableStructures.get(random.nextInt(availableStructures.size()));
+            
+            // 大型结构需要更多空间，选择道路一侧并远离道路中心
             boolean leftRoadSide = random.nextBoolean();
             shiftedPos = leftRoadSide ? placePos.add(orthogonalVector.multiply(ModConfig.structureDistanceFromRoad)) : placePos.subtract(orthogonalVector.multiply(ModConfig.structureDistanceFromRoad));
             shiftedPos = shiftedPos.withY(structureWorldAccess.getTopY(Heightmap.Type.WORLD_SURFACE_WG, shiftedPos.getX(), shiftedPos.getZ()));
             
-            // 秋千对地形要求更严格
+            // 对地形要求更严格
             if (Math.abs(shiftedPos.getY() - placePos.getY()) > 1) {
                 return;
             }
             
-            roadDecorationPlacementPositions.add(new SwingDecoration(shiftedPos, orthogonalVector, structureWorldAccess));
+            // 根据选择的结构类型创建装饰
+            switch (selectedStructure) {
+                case "swing":
+                    roadDecorationPlacementPositions.add(new SwingDecoration(shiftedPos, orthogonalVector, structureWorldAccess));
+                    break;
+                case "bench":
+                    roadDecorationPlacementPositions.add(new NbtStructureDecoration(shiftedPos, orthogonalVector, structureWorldAccess, "bench", new Vec3i(3, 3, 3)));
+                    break;
+                case "gloriette":
+                    roadDecorationPlacementPositions.add(new NbtStructureDecoration(shiftedPos, orthogonalVector, structureWorldAccess, "gloriette", new Vec3i(5, 5, 5)));
+                    break;
+            }
         }
     }
 

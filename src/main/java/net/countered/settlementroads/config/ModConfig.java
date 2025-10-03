@@ -31,6 +31,12 @@ public class ModConfig extends MidnightConfig {
     @Entry(category = "roads")
     public static boolean placeSwings = true;
 
+    @Entry(category = "roads")
+    public static boolean placeBenches = true;
+
+    @Entry(category = "roads")
+    public static boolean placeGloriettes = true;
+
     @Entry(category = "roads", min = 3, max = 8)
     public static int structureDistanceFromRoad = 4;
 
