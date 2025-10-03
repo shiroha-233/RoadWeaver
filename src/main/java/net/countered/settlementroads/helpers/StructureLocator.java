@@ -51,7 +51,7 @@ public class StructureLocator {
     }
 
     private static void executeLocateStructure(BlockPos locatePos, ServerWorld serverWorld, RegistryPredicateArgumentType.RegistryPredicate<Structure> predicate) throws CommandSyntaxException {
-        Registry<Structure> registry = serverWorld.getRegistryManager().get(RegistryKeys.STRUCTURE);
+        Registry<Structure> registry = serverWorld.getRegistryManager().getOrThrow(RegistryKeys.STRUCTURE);
         RegistryEntryList<Structure> registryEntryList = (RegistryEntryList<Structure>)getStructureListForPredicate(predicate, registry)
                 .orElseThrow(() -> STRUCTURE_INVALID_EXCEPTION.create(predicate.asString()));
         Pair<BlockPos, RegistryEntry<Structure>> pair = serverWorld.getChunkManager()
@@ -69,6 +69,6 @@ public class StructureLocator {
     private static Optional<? extends RegistryEntryList.ListBacked<Structure>> getStructureListForPredicate(
             RegistryPredicateArgumentType.RegistryPredicate<Structure> predicate, Registry<Structure> structureRegistry
     ) {
-        return predicate.getKey().map(key -> structureRegistry.getEntry(key).map(entry -> RegistryEntryList.of(entry)), structureRegistry::getEntryList);
+        return predicate.getKey().map(key -> structureRegistry.getOptional(key).map(entry -> RegistryEntryList.of(entry)), structureRegistry::getOptional);
     }
 }

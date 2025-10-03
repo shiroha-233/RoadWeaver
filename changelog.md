@@ -1,3 +1,14 @@
+*2.0.5*
+
+Update:
+
+- **Minecraft version upgrade**: Updated to Minecraft 1.21.4
+- Updated Fabric API to 0.113.0+1.21.4
+- Updated Yarn mappings to 1.21.4+build.4
+- Updated MidnightLib to 1.6.9+1.21.4-fabric
+
+***
+
 *2.0.4*
 
 Performance:

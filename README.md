@@ -2,7 +2,7 @@
 
 **自动在结构之间编织道路的 Minecraft 模组**
 
-[![Minecraft](https://img.shields.io/badge/Minecraft-1.21.1-green.svg)](https://www.minecraft.net/)
+[![Minecraft](https://img.shields.io/badge/Minecraft-1.21.4-green.svg)](https://www.minecraft.net/)
 [![Fabric](https://img.shields.io/badge/Fabric-API-orange.svg)](https://fabricmc.net/)
 [![License](https://img.shields.io/badge/License-CC0--1.0-blue.svg)](LICENSE)
 
@@ -10,7 +10,7 @@
 
 ## 📖 简介
 
-RoadWeaver 是一个为 Minecraft 1.21.1 设计的 Fabric 模组，它能够在世界中的结构（如村庄）之间自动生成美观的道路网络。不再需要手动建造道路，让 RoadWeaver 为你的世界编织出四通八达的交通网络！
+RoadWeaver 是一个为 Minecraft 1.21.4 设计的 Fabric 模组，它能够在世界中的结构（如村庄）之间自动生成美观的道路网络。不再需要手动建造道路，让 RoadWeaver 为你的世界编织出四通八达的交通网络！
 
 ## ✨ 核心特性
 
@@ -94,7 +94,7 @@ RoadWeaver 是一个为 Minecraft 1.21.1 设计的 Fabric 模组，它能够在�
 ## 🔧 技术细节
 
 ### 技术栈
-- **Minecraft 版本**：1.21.1
+- **Minecraft 版本**：1.21.4
 - **模组加载器**：Fabric
 - **Java 版本**：21+
 - **构建工具**：Gradle

@@ -91,7 +91,7 @@ public abstract class StructureDecoration extends OrientedDecoration implements 
             InputStream inputStream = getClass().getResourceAsStream("/data/roadweaver/structures/" + structureName + ".nbt");
             if (inputStream != null) {
                 NbtCompound nbt = NbtIo.readCompressed(inputStream, net.minecraft.nbt.NbtSizeTracker.ofUnlimitedBytes());
-                template.readNbt(getWorld().getRegistryManager().getWrapperOrThrow(net.minecraft.registry.RegistryKeys.BLOCK), nbt);
+                template.readNbt(getWorld().getRegistryManager().getOrThrow(net.minecraft.registry.RegistryKeys.BLOCK), nbt);
                 return template;
             }
         } catch (Exception e) {

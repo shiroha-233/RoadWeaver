@@ -87,7 +87,7 @@ public class ModEventHandler {
         if (!StructureConnector.cachedStructureConnections.isEmpty()) {
             Records.StructureConnection structureConnection = StructureConnector.cachedStructureConnections.poll();
             ConfiguredFeature<?, ?> feature = serverWorld.getRegistryManager()
-                    .get(RegistryKeys.CONFIGURED_FEATURE)
+                    .getOrThrow(RegistryKeys.CONFIGURED_FEATURE)
                     .get(RoadFeature.ROAD_FEATURE_KEY);
 
             if (feature != null && feature.config() instanceof RoadFeatureConfig roadConfig) {

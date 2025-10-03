@@ -17,7 +17,7 @@ import java.util.*;
  */
 public class RoadDebugScreen extends Screen {
 
-    private static final int RADIUS = 5;
+    private static final int RADIUS = 6;  // 增加节点半径使其更清晰
     private static final int PADDING = 20;
     private static final int TARGET_GRID_PX = 80;
 
@@ -300,8 +300,13 @@ public class RoadDebugScreen extends Screen {
     }
 
     @Override
-    protected void applyBlur(float delta) {
-        // 禁用模糊效果
+    public boolean shouldPause() {
+        return false;  // 不暂停游戏
+    }
+
+    @Override
+    public void renderBackground(DrawContext context, int mouseX, int mouseY, float delta) {
+        // 不渲染任何背景，保持透明
     }
 
     @Override
@@ -674,7 +679,7 @@ public class RoadDebugScreen extends Screen {
     }
 
     private static void drawLine(DrawContext ctx, int x0, int y0, int x1, int y1, int argb) {
-        // Bresenham 算法
+        // 使用加粗的 Bresenham 算法绘制 2 像素宽的线条
         int dx = Math.abs(x1 - x0);
         int sx = x0 < x1 ? 1 : -1;
         int dy = -Math.abs(y1 - y0);
@@ -684,7 +689,8 @@ public class RoadDebugScreen extends Screen {
         int y = y0;
         
         while (true) {
-            ctx.fill(x, y, x + 1, y + 1, argb);
+            // 绘制 2x2 像素块使线条更粗更清晰
+            ctx.fill(x, y, x + 2, y + 2, argb);
             if (x == x1 && y == y1) break;
             int e2 = 2 * err;
             if (e2 >= dy) {
