@@ -37,11 +37,28 @@ public class RoadDebugScreen extends Screen {
 
     private boolean dragging = false;
     private boolean firstLayout = true;
+    private boolean layoutDirty = true;  // 🆕 布局缓存标记
     private double zoom = 1.0;
     private double offsetX = 0;
     private double offsetY = 0;
     private double baseScale = 1.0;
     private int minX, maxX, minZ, maxZ;
+    
+    // 🆕 性能优化缓存
+    private int lastWidth = 0;
+    private int lastHeight = 0;
+    private double lastZoom = 1.0;
+    private double lastOffsetX = 0;
+    private double lastOffsetY = 0;
+    
+    // 🆕 LOD 系统配置
+    private static final double LOD_DISTANCE_1 = 0.3;  // 高细节阈值
+    private static final double LOD_DISTANCE_2 = 1.0;  // 中等细节阈值
+    private static final double LOD_DISTANCE_3 = 3.0;  // 低细节阈值
+    
+    // UI边界缓存
+    private int uiLeft, uiRight, uiTop, uiBottom;
+    private boolean uiBoundsDirty = true;
 
     public RoadDebugScreen(List<BlockPos> structures, 
                           List<Records.StructureConnection> connections,
@@ -62,67 +79,92 @@ public class RoadDebugScreen extends Screen {
 
     @Override
     public void render(DrawContext ctx, int mouseX, int mouseY, float delta) {
-        computeLayout();
+        // 🆕 只有在必要时才重新计算布局和UI边界
+        if (layoutDirty || lastWidth != width || lastHeight != height || 
+            lastZoom != zoom || lastOffsetX != offsetX || lastOffsetY != offsetY) {
+            computeLayout();
+            updateUIBounds();
+            lastWidth = width;
+            lastHeight = height;
+            lastZoom = zoom;
+            lastOffsetX = offsetX;
+            lastOffsetY = offsetY;
+            layoutDirty = false;
+            uiBoundsDirty = false;
+        }
 
         // 绘制主背景面板 - 深色半透明
         drawPanel(ctx, PADDING, PADDING, width - PADDING, height - PADDING, 0xE0101010, 0xFF2C2C2C);
 
-        // 绘制网格
-        drawGrid(ctx);
-
-        // 绘制道路路径
-        drawRoadPaths(ctx);
-
-        // 绘制连接线（已完成的不显示，因为有实际道路）
-        for (Records.StructureConnection conn : connections) {
-            // 跳过已完成的连接
-            if (conn.status() == Records.ConnectionStatus.COMPLETED) {
-                continue;
-            }
-            
-            ScreenPos a = screenPositions.get(conn.from());
-            ScreenPos b = screenPositions.get(conn.to());
-            if (a == null || b == null) continue;
-            
-            // 根据状态选择颜色 - 使用更鲜艳的颜色
-            int color = switch (conn.status()) {
-                case PLANNED -> 0xFFFFD700; // 金黄色
-                case GENERATING -> 0xFFFF8C00; // 深橙色
-                case COMPLETED -> statusColors.get("completed");
-                case FAILED -> 0xFFFF4444; // 亮红色
-            };
-            
-            drawLine(ctx, a.x, a.y, b.x, b.y, color);
+        // 🆕 根据LOD级别决定是否绘制网格
+        LODLevel lodLevel = getLODLevel();
+        if (lodLevel != LODLevel.MINIMAL) {
+            drawGrid(ctx);
         }
 
-        // 绘制结构节点 - 更大更明显
+        // 🆕 使用LOD系统绘制道路路径
+        drawRoadPathsLOD(ctx, lodLevel);
+
+        // 🆕 使用LOD系统绘制连接线
+        if (lodLevel != LODLevel.MINIMAL) {
+            for (Records.StructureConnection conn : connections) {
+                // 跳过已完成的连接
+                if (conn.status() == Records.ConnectionStatus.COMPLETED) {
+                    continue;
+                }
+                
+                ScreenPos a = screenPositions.get(conn.from());
+                ScreenPos b = screenPositions.get(conn.to());
+                if (a == null || b == null) continue;
+                
+                // 🆕 连接线也需要边界检查
+                if (!isLineInUIBounds(a.x, a.y, b.x, b.y)) {
+                    continue;
+                }
+                
+                // 根据状态选择颜色 - 使用更鲜艳的颜色
+                int color = switch (conn.status()) {
+                    case PLANNED -> 0xFFFFD700; // 金黄色
+                    case GENERATING -> 0xFFFF8C00; // 深橙色
+                    case COMPLETED -> statusColors.get("completed");
+                    case FAILED -> 0xFFFF4444; // 亮红色
+                };
+                
+                drawLine(ctx, a.x, a.y, b.x, b.y, color);
+            }
+        }
+
+        // 🆕 使用LOD系统的结构节点绘制
         BlockPos hovered = null;
         for (BlockPos pos : structures) {
             ScreenPos p = screenPositions.get(pos);
             if (p == null) continue;
             
-            // 外圈发光效果
-            fillCircle(ctx, p.x, p.y, RADIUS + 2, 0x40FFFFFF);
-            // 主体
-            fillCircle(ctx, p.x, p.y, RADIUS, 0xFF2ECC71);
-            // 高光
-            fillCircle(ctx, p.x - 1, p.y - 1, 2, 0x8CFFFFFF);
-            // 边框
-            drawCircleOutline(ctx, p.x, p.y, RADIUS, 0xFF1E8449);
+            // 🆕 严格的UI边界剔除 - 使用自适应半径
+            int nodeRadius = getAdaptiveNodeRadius(lodLevel);
+            if (!isInUIBounds(p.x, p.y, nodeRadius + 2)) {
+                continue;
+            }
+            
+            // 🆕 根据LOD级别绘制不同精度的节点
+            drawStructureNodeLOD(ctx, p.x, p.y, lodLevel);
 
-            if (dist2(p.x, p.y, mouseX, mouseY) <= (RADIUS + 2) * (RADIUS + 2)) {
+            // 🆕 鼠标悬停检测也要使用自适应半径
+            if (dist2(p.x, p.y, mouseX, mouseY) <= (nodeRadius + 2) * (nodeRadius + 2)) {
                 hovered = pos;
             }
         }
 
         // 绘制玩家位置
-        drawPlayerMarker(ctx);
+        drawPlayerMarkerLOD(ctx, lodLevel);
 
-        // 绘制UI元素
+        // 🆕 UI元素根据LOD级别决定是否显示
         drawTitle(ctx);
         drawStatsPanel(ctx);
-        drawLegendPanel(ctx);
-        drawScalePanel(ctx);
+        if (lodLevel == LODLevel.HIGH || lodLevel == LODLevel.MEDIUM) {
+            drawLegendPanel(ctx);
+            drawScalePanel(ctx);
+        }
 
         // 显示悬停提示 - 放在最后确保在最上层
         if (hovered != null) {
@@ -132,26 +174,58 @@ public class RoadDebugScreen extends Screen {
         super.render(ctx, mouseX, mouseY, delta);
     }
 
-    private void drawRoadPaths(DrawContext ctx) {
+    // 🆕 LOD级别枚举
+    private enum LODLevel {
+        HIGH,    // zoom > 3.0 - 完整细节
+        MEDIUM,  // 1.0 < zoom <= 3.0 - 中等细节  
+        LOW,     // 0.3 < zoom <= 1.0 - 低细节
+        MINIMAL  // zoom <= 0.3 - 最少细节
+    }
+    
+    private LODLevel getLODLevel() {
+        if (zoom > LOD_DISTANCE_3) return LODLevel.HIGH;
+        if (zoom > LOD_DISTANCE_2) return LODLevel.MEDIUM;
+        if (zoom > LOD_DISTANCE_1) return LODLevel.LOW;
+        return LODLevel.MINIMAL;
+    }
+    
+    // 🆕 更新UI边界
+    private void updateUIBounds() {
+        uiLeft = PADDING;
+        uiRight = width - PADDING;
+        uiTop = PADDING;
+        uiBottom = height - PADDING;
+    }
+    
+    // 🆕 检查点是否在UI边界内
+    private boolean isInUIBounds(int x, int y, int margin) {
+        return x >= uiLeft - margin && x <= uiRight + margin && 
+               y >= uiTop - margin && y <= uiBottom + margin;
+    }
+    
+    // 🆕 检查线段是否与UI边界相交
+    private boolean isLineInUIBounds(int x1, int y1, int x2, int y2) {
+        // 简化版边界检查 - 如果两个端点都在边界外的同一侧，则跳过
+        if ((x1 < uiLeft && x2 < uiLeft) || (x1 > uiRight && x2 > uiRight) ||
+            (y1 < uiTop && y2 < uiTop) || (y1 > uiBottom && y2 > uiBottom)) {
+            return false;
+        }
+        return true;
+    }
+    
+    // 🆕 LOD系统的道路绘制
+    private void drawRoadPathsLOD(DrawContext ctx, LODLevel lod) {
         if (roads == null || roads.isEmpty()) return;
+        if (lod == LODLevel.MINIMAL) return; // 最小LOD不绘制道路
 
-        int roadColor = statusColors.get("road");
+        int roadColor = (statusColors.get("road") & 0x00FFFFFF) | 0x80000000;
         
         for (Records.RoadData roadData : roads) {
             List<Records.RoadSegmentPlacement> segments = roadData.roadSegmentList();
             if (segments == null || segments.size() < 2) continue;
 
-            // 绘制道路路径（连接中心点）
-            for (int i = 0; i < segments.size() - 1; i++) {
-                BlockPos pos1 = segments.get(i).middlePos();
-                BlockPos pos2 = segments.get(i + 1).middlePos();
-                
-                ScreenPos p1 = worldToScreen(pos1.getX(), pos1.getZ());
-                ScreenPos p2 = worldToScreen(pos2.getX(), pos2.getZ());
-                
-                // 使用半透明的蓝色绘制道路
-                drawLine(ctx, p1.x, p1.y, p2.x, p2.y, (roadColor & 0x00FFFFFF) | 0x80000000);
-            }
+            // 🆕 根据LOD级别调整采样率
+            drawRoadPathWithLOD(ctx, segments, roadColor, lod);
         }
     }
 
@@ -184,6 +258,7 @@ public class RoadDebugScreen extends Screen {
         if (dragging && button == 0) {
             offsetX += deltaX;
             offsetY += deltaY;
+            layoutDirty = true; // 🆕 标记需要重新计算布局
             return true;
         }
         return super.mouseDragged(mouseX, mouseY, button, deltaX, deltaY);
@@ -206,6 +281,9 @@ public class RoadDebugScreen extends Screen {
         
         offsetX = (offsetX - mouseX + PADDING) * (zoom / old) + mouseX - PADDING;
         offsetY = (offsetY - mouseY + PADDING) * (zoom / old) + mouseY - PADDING;
+        
+        layoutDirty = true; // 🆕 标记需要重新计算布局
+        uiBoundsDirty = true; // 🆕 标记需要更新UI边界
         return true;
     }
 
@@ -289,34 +367,8 @@ public class RoadDebugScreen extends Screen {
         }
     }
 
-    private void drawGrid(DrawContext ctx) {
-        int w = width - PADDING * 2;
-        int h = height - PADDING * 2;
-
-        double worldX0 = minX + (-offsetX) / (baseScale * zoom);
-        double worldZ0 = minZ + (-offsetY) / (baseScale * zoom);
-        double worldX1 = minX + (w - offsetX) / (baseScale * zoom);
-        double worldZ1 = minZ + (h - offsetY) / (baseScale * zoom);
-
-        int spacing = computeGridSpacing();
-
-        int startWX = (int) Math.floor(worldX0 / spacing) * spacing;
-        int startWZ = (int) Math.floor(worldZ0 / spacing) * spacing;
-
-        // 绘制垂直线
-        for (int x = startWX; x <= worldX1; x += spacing) {
-            int sx = PADDING + (int) ((x - worldX0) * baseScale * zoom);
-            fillV(ctx, sx, PADDING, PADDING + h, 0x40444444);
-            drawSmallLabel(ctx, String.valueOf(x), sx + 2, PADDING + 2);
-        }
-
-        // 绘制水平线
-        for (int z = startWZ; z <= worldZ1; z += spacing) {
-            int sz = PADDING + (int) ((z - worldZ0) * baseScale * zoom);
-            fillH(ctx, PADDING, PADDING + w, sz, 0x40444444);
-            drawSmallLabel(ctx, String.valueOf(z), PADDING + 2, sz + 2);
-        }
-    }
+    // 🆕 网格标签缓存避免重复创建字符串
+    private final Map<Integer, String> gridLabelCache = new HashMap<>();
 
     // 绘制比例尺面板 - 右下角
     private void drawScalePanel(DrawContext ctx) {
@@ -423,11 +475,14 @@ public class RoadDebugScreen extends Screen {
             firstLayout = false;
         }
 
-        screenPositions.clear();
-        for (BlockPos pos : structures) {
-            double sx = (pos.getX() - minX) * baseScale * zoom + offsetX;
-            double sy = (pos.getZ() - minZ) * baseScale * zoom + offsetY;
-            screenPositions.put(pos, new ScreenPos(PADDING + (int) sx, PADDING + (int) sy));
+        // 🆕 只有在需要时才清理和重新计算屏幕位置
+        if (screenPositions.isEmpty() || layoutDirty) {
+            screenPositions.clear();
+            for (BlockPos pos : structures) {
+                double sx = (pos.getX() - minX) * baseScale * zoom + offsetX;
+                double sy = (pos.getZ() - minZ) * baseScale * zoom + offsetY;
+                screenPositions.put(pos, new ScreenPos(PADDING + (int) sx, PADDING + (int) sy));
+            }
         }
     }
 
@@ -474,30 +529,7 @@ public class RoadDebugScreen extends Screen {
         return new ScreenPos(sx, sy);
     }
 
-    private void drawPlayerMarker(DrawContext ctx) {
-        MinecraftClient mc = MinecraftClient.getInstance();
-        if (mc == null || mc.player == null || structures.isEmpty()) return;
-
-        double px = mc.player.getX();
-        double pz = mc.player.getZ();
-
-        ScreenPos p = worldToScreen(px, pz);
-
-        // 红色玩家标记
-        final int r = RADIUS + 2;
-        final int fill = 0xFFE74C3C;
-        final int outline = 0xFF000000;
-
-        fillCircle(ctx, p.x, p.y, r, fill);
-        drawCircleOutline(ctx, p.x, p.y, r, outline);
-
-        // 方向箭头
-        float yaw = mc.player.getYaw();
-        double angle = Math.toRadians(yaw) + Math.PI / 2.0;
-        int tx = p.x + (int) Math.round(Math.cos(angle) * (r + 4));
-        int ty = p.y + (int) Math.round(Math.sin(angle) * (r + 4));
-        drawLine(ctx, p.x, p.y, tx, ty, 0xFFFFFFFF);
-    }
+    // 已替换为 drawPlayerMarkerLOD 方法
 
     private static double dist2(double x1, double y1, double x2, double y2) {
         double dx = x1 - x2;
@@ -601,10 +633,31 @@ public class RoadDebugScreen extends Screen {
         }
     }
 
+    // 🆕 优化的圆形绘制 - 预计算避免重复 sqrt
+    private static final int[][] CIRCLE_CACHE = new int[20][];
+    static {
+        for (int r = 0; r < 20; r++) {
+            CIRCLE_CACHE[r] = new int[r * 2 + 1];
+            for (int dy = -r; dy <= r; dy++) {
+                CIRCLE_CACHE[r][dy + r] = (int) Math.round(Math.sqrt(r * r - dy * dy));
+            }
+        }
+    }
+    
     private static void fillCircle(DrawContext ctx, int cx, int cy, int r, int argb) {
-        for (int dy = -r; dy <= r; dy++) {
-            int span = (int) Math.round(Math.sqrt(r * r - dy * dy));
-            ctx.fill(cx - span, cy + dy, cx + span + 1, cy + dy + 1, argb);
+        if (r < CIRCLE_CACHE.length) {
+            // 🆕 使用预计算的值
+            int[] spans = CIRCLE_CACHE[r];
+            for (int dy = -r; dy <= r; dy++) {
+                int span = spans[dy + r];
+                ctx.fill(cx - span, cy + dy, cx + span + 1, cy + dy + 1, argb);
+            }
+        } else {
+            // 回退到原始方法
+            for (int dy = -r; dy <= r; dy++) {
+                int span = (int) Math.round(Math.sqrt(r * r - dy * dy));
+                ctx.fill(cx - span, cy + dy, cx + span + 1, cy + dy + 1, argb);
+            }
         }
     }
 
@@ -635,6 +688,223 @@ public class RoadDebugScreen extends Screen {
         ctx.fill(cx - y, cy - x, cx - y + 1, cy - x + 1, argb);
         ctx.fill(cx + y, cy - x, cx + y + 1, cy - x + 1, argb);
         ctx.fill(cx + x, cy - y, cx + x + 1, cy - y + 1, argb);
+    }
+
+    // 🆕 根据LOD级别和缩放级别自适应绘制结构节点 - 精美版
+    private void drawStructureNodeLOD(DrawContext ctx, int x, int y, LODLevel lod) {
+        int adaptiveRadius = getAdaptiveNodeRadius(lod);
+        
+        // 防止节点过小不可见
+        if (adaptiveRadius < 2) {
+            // 最小的像素点
+            ctx.fill(x - 1, y - 1, x + 2, y + 2, 0xFF2ECC71);
+            return;
+        }
+        
+        switch (lod) {
+            case HIGH -> {
+                // 🆕 高细节：精美的多层绘制
+                // 柔和的外发光（更细的颜色）
+                fillCircle(ctx, x, y, adaptiveRadius + 1, 0x30A3E635); // 柔和的绿色发光
+                // 主体圆形
+                fillCircle(ctx, x, y, adaptiveRadius, 0xFF2ECC71);
+                // 深色边框
+                drawCircleOutline(ctx, x, y, adaptiveRadius, 0xFF1E8449);
+                // 小巧的高光
+                int highlightSize = Math.max(1, adaptiveRadius / 4);
+                ctx.fill(x - highlightSize, y - highlightSize, 
+                        x + highlightSize + 1, y + highlightSize + 1, 0xAAFFFFFF);
+            }
+            case MEDIUM -> {
+                // 🆕 中等细节：简洁优雅
+                fillCircle(ctx, x, y, adaptiveRadius, 0xFF2ECC71);
+                drawCircleOutline(ctx, x, y, adaptiveRadius, 0xFF1E8449);
+                // 小的高光点
+                ctx.fill(x - 1, y - 1, x + 1, y + 1, 0x88FFFFFF);
+            }
+            case LOW -> {
+                // 🆕 低细节：纯粹的圆形
+                fillCircle(ctx, x, y, adaptiveRadius, 0xFF2ECC71);
+                if (adaptiveRadius >= 3) {
+                    drawCircleOutline(ctx, x, y, adaptiveRadius, 0xFF1E8449);
+                }
+            }
+            case MINIMAL -> {
+                // 🆕 最小细节：简单但清晰
+                if (adaptiveRadius <= 2) {
+                    ctx.fill(x - 1, y - 1, x + 2, y + 2, 0xFF2ECC71);
+                } else {
+                    fillCircle(ctx, x, y, adaptiveRadius, 0xFF2ECC71);
+                }
+            }
+        }
+    }
+    
+    // 🆕 计算自适应节点大小 - 优化版
+    private int getAdaptiveNodeRadius(LODLevel lod) {
+        // 🆕 更温和的缩放算法，防止过大
+        double baseRadius = RADIUS;
+        double zoomFactor = Math.max(0.3, Math.min(1.5, Math.sqrt(zoom) * 0.7)); // 使用平方根缓解增长
+        double scaledRadius = baseRadius * zoomFactor;
+        
+        // 根据LOD级别进一步调整
+        double lodMultiplier = switch (lod) {
+            case HIGH -> 1.1;    // 高细节只稍微大一点
+            case MEDIUM -> 1.0;  // 正常大小
+            case LOW -> 0.8;     // 低细节稍小
+            case MINIMAL -> 0.6; // 最小细节很小
+        };
+        
+        return Math.max(2, (int) Math.round(scaledRadius * lodMultiplier));
+    }
+    
+    // 🆕 LOD系统的玩家标记 - 自适应大小 精美版
+    private void drawPlayerMarkerLOD(DrawContext ctx, LODLevel lod) {
+        MinecraftClient mc = MinecraftClient.getInstance();
+        if (mc == null || mc.player == null || structures.isEmpty()) return;
+
+        double px = mc.player.getX();
+        double pz = mc.player.getZ();
+        ScreenPos p = worldToScreen(px, pz);
+        
+        // 🆕 玩家标记比结构节点略大，但不过大
+        int playerRadius = Math.max(3, getAdaptiveNodeRadius(lod) + 1);
+        
+        // 检查是否在UI边界内
+        if (!isInUIBounds(p.x, p.y, playerRadius + 6)) return;
+
+        final int fill = 0xFFE74C3C;
+        final int glow = 0x40E74C3C;
+        final int outline = 0xFF932D1F;
+
+        switch (lod) {
+            case HIGH -> {
+                // 🆕 高细节：精美的玩家标记
+                // 柔和的红色发光
+                fillCircle(ctx, p.x, p.y, playerRadius + 1, glow);
+                // 主体
+                fillCircle(ctx, p.x, p.y, playerRadius, fill);
+                // 边框
+                drawCircleOutline(ctx, p.x, p.y, playerRadius, outline);
+                // 小巧的高光
+                int highlightSize = Math.max(1, playerRadius / 4);
+                ctx.fill(p.x - highlightSize, p.y - highlightSize, 
+                        p.x + highlightSize + 1, p.y + highlightSize + 1, 0xAAFFFFFF);
+                // 方向箭头
+                float yaw = mc.player.getYaw();
+                double angle = Math.toRadians(yaw) + Math.PI / 2.0;
+                int arrowLength = playerRadius + 3;
+                int tx = p.x + (int) Math.round(Math.cos(angle) * arrowLength);
+                int ty = p.y + (int) Math.round(Math.sin(angle) * arrowLength);
+                drawLine(ctx, p.x, p.y, tx, ty, 0xFFFFFFFF);
+            }
+            case MEDIUM -> {
+                // 🆕 中等细节：简洁优雅
+                fillCircle(ctx, p.x, p.y, playerRadius, fill);
+                drawCircleOutline(ctx, p.x, p.y, playerRadius, outline);
+                // 小的高光点
+                ctx.fill(p.x - 1, p.y - 1, p.x + 1, p.y + 1, 0x88FFFFFF);
+            }
+            case LOW -> {
+                // 🆕 低细节：纯粹的圆形
+                fillCircle(ctx, p.x, p.y, playerRadius, fill);
+                if (playerRadius >= 4) {
+                    drawCircleOutline(ctx, p.x, p.y, playerRadius, outline);
+                }
+            }
+            case MINIMAL -> {
+                // 🆕 最小细节：简单但清晰
+                fillCircle(ctx, p.x, p.y, Math.max(2, playerRadius), fill);
+            }
+        }
+    }
+    
+    // 🆕 根据LOD级别绘制道路路径
+    private void drawRoadPathWithLOD(DrawContext ctx, List<Records.RoadSegmentPlacement> segments, int color, LODLevel lod) {
+        // 根据LOD级别决定采样步长
+        int step = switch (lod) {
+            case HIGH -> 1;      // 绘制所有线段
+            case MEDIUM -> 2;    // 每2个绘制1个
+            case LOW -> 4;       // 每4个绘制1个
+            case MINIMAL -> 8;   // 每8个绘制1个
+        };
+        
+        ScreenPos prevPos = null;
+        
+        for (int i = 0; i < segments.size(); i += step) {
+            BlockPos pos = segments.get(i).middlePos();
+            ScreenPos currentPos = worldToScreen(pos.getX(), pos.getZ());
+            
+            // 边界检查
+            if (!isInUIBounds(currentPos.x, currentPos.y, 50)) {
+                prevPos = currentPos;
+                continue;
+            }
+            
+            if (prevPos != null && i > 0) {
+                if (isLineInUIBounds(prevPos.x, prevPos.y, currentPos.x, currentPos.y)) {
+                    drawLine(ctx, prevPos.x, prevPos.y, currentPos.x, currentPos.y, color);
+                }
+            }
+            prevPos = currentPos;
+        }
+    }
+    
+    // 🆕 优化的网格绘制 - 根据LOD调整
+    private void drawGrid(DrawContext ctx) {
+        LODLevel lod = getLODLevel();
+        if (lod == LODLevel.MINIMAL) return; // 最小LOD不绘制网格
+        
+        int w = width - PADDING * 2;
+        int h = height - PADDING * 2;
+
+        double worldX0 = minX + (-offsetX) / (baseScale * zoom);
+        double worldZ0 = minZ + (-offsetY) / (baseScale * zoom);
+        double worldX1 = minX + (w - offsetX) / (baseScale * zoom);
+        double worldZ1 = minZ + (h - offsetY) / (baseScale * zoom);
+
+        int spacing = computeGridSpacing();
+
+        int startWX = (int) Math.floor(worldX0 / spacing) * spacing;
+        int startWZ = (int) Math.floor(worldZ0 / spacing) * spacing;
+
+        // 🆕 根据LOD级别调整网格线数量和标签显示
+        int maxGridLines = switch (lod) {
+            case HIGH -> 100;
+            case MEDIUM -> 50;
+            case LOW -> 25;
+            case MINIMAL -> 0;
+        };
+        
+        boolean showLabels = lod == LODLevel.HIGH || lod == LODLevel.MEDIUM;
+        int gridLineCount = 0;
+
+        // 绘制垂直线
+        for (int x = startWX; x <= worldX1 && gridLineCount < maxGridLines; x += spacing) {
+            int sx = PADDING + (int) ((x - worldX0) * baseScale * zoom);
+            if (sx >= uiLeft && sx <= uiRight) {
+                fillV(ctx, sx, uiTop, uiBottom, 0x40444444);
+                if (showLabels) {
+                    String label = gridLabelCache.computeIfAbsent(x, String::valueOf);
+                    drawSmallLabel(ctx, label, sx + 2, uiTop + 2);
+                }
+                gridLineCount++;
+            }
+        }
+
+        // 绘制水平线
+        gridLineCount = 0;
+        for (int z = startWZ; z <= worldZ1 && gridLineCount < maxGridLines; z += spacing) {
+            int sz = PADDING + (int) ((z - worldZ0) * baseScale * zoom);
+            if (sz >= uiTop && sz <= uiBottom) {
+                fillH(ctx, uiLeft, uiRight, sz, 0x40444444);
+                if (showLabels) {
+                    String label = gridLabelCache.computeIfAbsent(z, String::valueOf);
+                    drawSmallLabel(ctx, label, uiLeft + 2, sz + 2);
+                }
+                gridLineCount++;
+            }
+        }
     }
 
     private record ScreenPos(int x, int y) {}
