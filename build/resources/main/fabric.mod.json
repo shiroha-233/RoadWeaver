@@ -1,7 +1,7 @@
 {
 	"schemaVersion": 1,
 	"id": "roadweaver",
-	"version": "1.0.0",
+	"version": "2.0.4",
 	"name": "RoadWeaver",
 	"description": "A mod to generate roads between structures!",
 	"authors": [

@@ -79,15 +79,14 @@ public class RoadFeature extends Feature<RoadFeatureConfig> {
     }
 
     private void tryFindNewStructureConnection(List<BlockPos> villageLocations, ServerWorld serverWorld) {
-        if (villageLocations == null || villageLocations.size() < ModConfig.maxLocatingCount) {
-            chunksForLocatingCounter++;
-            if (chunksForLocatingCounter > 300) {
-                List<Records.StructureConnection> connectionList= serverWorld.getAttached(WorldDataAttachment.CONNECTED_STRUCTURES);
-                serverWorld.getServer().execute(() -> {
-                    StructureConnector.cacheNewConnection(serverWorld, true);
-                });
-                chunksForLocatingCounter = 1;
-            }
+        // 移除数量限制，改为基于距离的智能搜寻
+        chunksForLocatingCounter++;
+        if (chunksForLocatingCounter > 300) {
+            List<Records.StructureConnection> connectionList= serverWorld.getAttached(WorldDataAttachment.CONNECTED_STRUCTURES);
+            serverWorld.getServer().execute(() -> {
+                StructureConnector.cacheNewConnection(serverWorld, true);
+            });
+            chunksForLocatingCounter = 1;
         }
     }
 

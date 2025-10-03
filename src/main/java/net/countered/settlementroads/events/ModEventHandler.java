@@ -19,6 +19,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -39,6 +40,9 @@ public class ModEventHandler {
             restartExecutorIfNeeded();
             if (!serverWorld.getRegistryKey().equals(net.minecraft.world.World.OVERWORLD)) return;
             Records.StructureLocationData structureLocationData = serverWorld.getAttachedOrCreate(WorldDataAttachment.STRUCTURE_LOCATIONS, () -> new Records.StructureLocationData(new ArrayList<>()));
+
+            // 🆕 恢复未完成的道路生成任务
+            restoreUnfinishedRoads(serverWorld);
 
             if (structureLocationData.structureLocations().size() < ModConfig.initialLocatingCount) {
                 for (int i = 0; i < ModConfig.initialLocatingCount; i++) {
@@ -112,6 +116,50 @@ public class ModEventHandler {
         if (executor.isShutdown() || executor.isTerminated()) {
             executor = Executors.newFixedThreadPool(THREAD_COUNT);
             LOGGER.debug("RoadWeaver: ExecutorService restarted.");
+        }
+    }
+
+    /**
+     * 恢复未完成的道路生成任务
+     * 在世界加载时调用，将所有 PLANNED 和 GENERATING 状态的连接重新加入队列
+     */
+    private static void restoreUnfinishedRoads(ServerWorld serverWorld) {
+        List<Records.StructureConnection> connections = serverWorld.getAttachedOrCreate(
+                WorldDataAttachment.CONNECTED_STRUCTURES, 
+                ArrayList::new
+        );
+        
+        int restoredCount = 0;
+        for (Records.StructureConnection connection : connections) {
+            // 只恢复计划中或生成中的连接
+            if (connection.status() == Records.ConnectionStatus.PLANNED || 
+                connection.status() == Records.ConnectionStatus.GENERATING) {
+                
+                // 如果是生成中状态，重置为计划中（因为之前的生成被中断了）
+                if (connection.status() == Records.ConnectionStatus.GENERATING) {
+                    Records.StructureConnection resetConnection = new Records.StructureConnection(
+                            connection.from(), 
+                            connection.to(), 
+                            Records.ConnectionStatus.PLANNED
+                    );
+                    StructureConnector.cachedStructureConnections.add(resetConnection);
+                    
+                    // 更新世界数据中的状态
+                    List<Records.StructureConnection> updatedConnections = new ArrayList<>(connections);
+                    int index = updatedConnections.indexOf(connection);
+                    if (index >= 0) {
+                        updatedConnections.set(index, resetConnection);
+                        serverWorld.setAttached(WorldDataAttachment.CONNECTED_STRUCTURES, updatedConnections);
+                    }
+                } else {
+                    StructureConnector.cachedStructureConnections.add(connection);
+                }
+                restoredCount++;
+            }
+        }
+        
+        if (restoredCount > 0) {
+            LOGGER.info("RoadWeaver: 恢复了 {} 个未完成的道路生成任务", restoredCount);
         }
     }
 }

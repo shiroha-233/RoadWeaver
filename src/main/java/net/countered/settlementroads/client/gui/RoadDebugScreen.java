@@ -56,6 +56,15 @@ public class RoadDebugScreen extends Screen {
     private static final double LOD_DISTANCE_2 = 1.0;  // 中等细节阈值
     private static final double LOD_DISTANCE_3 = 3.0;  // 低细节阈值
     
+    // 🆕 道路渲染LOD配置 - 基于块/格比例 (极度激进的设置)
+    private static final double ROAD_LOD_FINEST = 300;      // < 300: 全精度渲染
+    private static final double ROAD_LOD_64TH = 300;        // >= 300: 1/64精度
+    private static final double ROAD_LOD_128TH = 500;       // >= 500: 1/128精度
+    private static final double ROAD_LOD_256TH = 1000;      // >= 1000: 1/256精度
+    private static final double ROAD_LOD_512TH = 2000;      // >= 2000: 1/512精度
+    private static final double ROAD_LOD_1024TH = 5000;     // >= 5000: 1/1024精度
+    private static final double ROAD_LOD_NONE = 10000;      // >= 10000: 不渲染
+    
     // UI边界缓存
     private int uiLeft, uiRight, uiTop, uiBottom;
     private boolean uiBoundsDirty = true;
@@ -182,11 +191,44 @@ public class RoadDebugScreen extends Screen {
         MINIMAL  // zoom <= 0.3 - 最少细节
     }
     
+    // 🆕 道路渲染LOD级别枚举 (极度激进设置)
+    private enum RoadLODLevel {
+        FINEST,       // < 300块/格 - 全精度渲染 (步长1)
+        SIXTY_FOURTH, // 300-500块/格 - 1/64精度 (步长64)
+        ONE_TWENTY_EIGHTH, // 500-1000块/格 - 1/128精度 (步长128)
+        TWO_FIFTY_SIXTH, // 1000-2000块/格 - 1/256精度 (步长256)
+        FIVE_TWELVE, // 2000-5000块/格 - 1/512精度 (步长512)
+        ONE_THOUSAND_TWENTY_FOURTH, // 5000-10000块/格 - 1/1024精度 (步长1024)
+        NONE          // > 10000块/格 - 不渲染
+    }
+    
     private LODLevel getLODLevel() {
         if (zoom > LOD_DISTANCE_3) return LODLevel.HIGH;
         if (zoom > LOD_DISTANCE_2) return LODLevel.MEDIUM;
         if (zoom > LOD_DISTANCE_1) return LODLevel.LOW;
         return LODLevel.MINIMAL;
+    }
+    
+    /**
+     * 🆕 计算道路渲染LOD级别
+     * 基于当前缩放比例下的块/格比例
+     * @return 道路LOD级别
+     */
+    private RoadLODLevel getRoadLODLevel() {
+        // 计算当前缩放下，每个屏幕像素代表多少个世界方块
+        double blocksPerPixel = 1.0 / (baseScale * zoom);
+        
+        // 计算每格（假设格子间距为TARGET_GRID_PX像素）代表多少方块
+        double blocksPerGrid = blocksPerPixel * TARGET_GRID_PX;
+        
+        // 根据块/格比例确定LOD级别（从最精细开始判断）
+        if (blocksPerGrid < ROAD_LOD_FINEST) return RoadLODLevel.FINEST;           // < 300
+        if (blocksPerGrid < ROAD_LOD_128TH) return RoadLODLevel.SIXTY_FOURTH;      // 300-500
+        if (blocksPerGrid < ROAD_LOD_256TH) return RoadLODLevel.ONE_TWENTY_EIGHTH; // 500-1000
+        if (blocksPerGrid < ROAD_LOD_512TH) return RoadLODLevel.TWO_FIFTY_SIXTH;   // 1000-2000
+        if (blocksPerGrid < ROAD_LOD_1024TH) return RoadLODLevel.FIVE_TWELVE;      // 2000-5000
+        if (blocksPerGrid < ROAD_LOD_NONE) return RoadLODLevel.ONE_THOUSAND_TWENTY_FOURTH; // 5000-10000
+        return RoadLODLevel.NONE;  // >= 10000
     }
     
     // 🆕 更新UI边界
@@ -213,19 +255,42 @@ public class RoadDebugScreen extends Screen {
         return true;
     }
     
-    // 🆕 LOD系统的道路绘制
+    // 🆕 LOD系统的道路绘制 - 基于缩放比例
     private void drawRoadPathsLOD(DrawContext ctx, LODLevel lod) {
         if (roads == null || roads.isEmpty()) return;
         if (lod == LODLevel.MINIMAL) return; // 最小LOD不绘制道路
 
+        // 🆕 获取道路专用的LOD级别
+        RoadLODLevel roadLOD = getRoadLODLevel();
+        if (roadLOD == RoadLODLevel.NONE) return; // 超过10000块/格，不渲染道路
+
         int roadColor = (statusColors.get("road") & 0x00FFFFFF) | 0x80000000;
+        
+        // 🆕 在高LOD级别下进行粗略的整条道路边界检查
+        boolean needsRoughCheck = (roadLOD == RoadLODLevel.FIVE_TWELVE || 
+                                  roadLOD == RoadLODLevel.ONE_THOUSAND_TWENTY_FOURTH || 
+                                  roadLOD == RoadLODLevel.NONE);
         
         for (Records.RoadData roadData : roads) {
             List<Records.RoadSegmentPlacement> segments = roadData.roadSegmentList();
             if (segments == null || segments.size() < 2) continue;
 
-            // 🆕 根据LOD级别调整采样率
-            drawRoadPathWithLOD(ctx, segments, roadColor, lod);
+            // 🆕 粗略检查：如果道路的起点和终点都在屏幕外，跳过整条道路
+            if (needsRoughCheck && segments.size() > 1) {
+                BlockPos start = segments.get(0).middlePos();
+                BlockPos end = segments.get(segments.size() - 1).middlePos();
+                ScreenPos startScreen = worldToScreen(start.getX(), start.getZ());
+                ScreenPos endScreen = worldToScreen(end.getX(), end.getZ());
+                
+                // 如果起点和终点都在UI边界外且在同一侧，跳过这条道路
+                if (!isInUIBounds(startScreen.x, startScreen.y, 200) && 
+                    !isInUIBounds(endScreen.x, endScreen.y, 200)) {
+                    continue;
+                }
+            }
+
+            // 🆕 使用道路专用LOD级别调整采样率
+            drawRoadPathWithRoadLOD(ctx, segments, roadColor, roadLOD);
         }
     }
 
@@ -744,12 +809,13 @@ public class RoadDebugScreen extends Screen {
     private int getAdaptiveNodeRadius(LODLevel lod) {
         // 🆕 更温和的缩放算法，防止过大
         double baseRadius = RADIUS;
-        double zoomFactor = Math.max(0.3, Math.min(1.5, Math.sqrt(zoom) * 0.7)); // 使用平方根缓解增长
+        // 使用对数函数让放大时增长更缓慢，最大限制在1.2倍
+        double zoomFactor = Math.max(0.3, Math.min(1.2, 1.0 + Math.log10(zoom) * 0.15));
         double scaledRadius = baseRadius * zoomFactor;
         
         // 根据LOD级别进一步调整
         double lodMultiplier = switch (lod) {
-            case HIGH -> 1.1;    // 高细节只稍微大一点
+            case HIGH -> 0.9;    // 高细节（放大时）反而更小
             case MEDIUM -> 1.0;  // 正常大小
             case LOW -> 0.8;     // 低细节稍小
             case MINIMAL -> 0.6; // 最小细节很小
@@ -819,24 +885,39 @@ public class RoadDebugScreen extends Screen {
         }
     }
     
-    // 🆕 根据LOD级别绘制道路路径
-    private void drawRoadPathWithLOD(DrawContext ctx, List<Records.RoadSegmentPlacement> segments, int color, LODLevel lod) {
-        // 根据LOD级别决定采样步长
-        int step = switch (lod) {
-            case HIGH -> 1;      // 绘制所有线段
-            case MEDIUM -> 2;    // 每2个绘制1个
-            case LOW -> 4;       // 每4个绘制1个
-            case MINIMAL -> 8;   // 每8个绘制1个
+    /**
+     * 🆕 根据道路LOD级别绘制道路路径
+     * 基于缩放比例动态调整渲染精度
+     * 
+     * @param ctx 绘制上下文
+     * @param segments 道路路段列表
+     * @param color 道路颜色
+     * @param roadLOD 道路LOD级别
+     */
+    private void drawRoadPathWithRoadLOD(DrawContext ctx, List<Records.RoadSegmentPlacement> segments, int color, RoadLODLevel roadLOD) {
+        // 🆕 根据道路LOD级别决定采样步长
+        int step = switch (roadLOD) {
+            case FINEST -> 1;                           // 全精度渲染
+            case SIXTY_FOURTH -> 64;                    // 1/64精度
+            case ONE_TWENTY_EIGHTH -> 128;              // 1/128精度
+            case TWO_FIFTY_SIXTH -> 256;                // 1/256精度
+            case FIVE_TWELVE -> 512;                    // 1/512精度
+            case ONE_THOUSAND_TWENTY_FOURTH -> 1024;    // 1/1024精度
+            case NONE -> Integer.MAX_VALUE;             // 不渲染（理论上不会到这里）
         };
         
-        ScreenPos prevPos = null;
+        if (step >= segments.size()) return; // 步长太大，跳过
         
-        for (int i = 0; i < segments.size(); i += step) {
+        ScreenPos prevPos = null;
+        int drawnSegments = 0;
+        int maxSegments = 10000; // 防止过度渲染
+        
+        for (int i = 0; i < segments.size() && drawnSegments < maxSegments; i += step) {
             BlockPos pos = segments.get(i).middlePos();
             ScreenPos currentPos = worldToScreen(pos.getX(), pos.getZ());
             
-            // 边界检查
-            if (!isInUIBounds(currentPos.x, currentPos.y, 50)) {
+            // 🆕 边界检查优化 - 扩大边界以避免线段被截断
+            if (!isInUIBounds(currentPos.x, currentPos.y, 100)) {
                 prevPos = currentPos;
                 continue;
             }
@@ -844,6 +925,7 @@ public class RoadDebugScreen extends Screen {
             if (prevPos != null && i > 0) {
                 if (isLineInUIBounds(prevPos.x, prevPos.y, currentPos.x, currentPos.y)) {
                     drawLine(ctx, prevPos.x, prevPos.y, currentPos.x, currentPos.y, color);
+                    drawnSegments++;
                 }
             }
             prevPos = currentPos;

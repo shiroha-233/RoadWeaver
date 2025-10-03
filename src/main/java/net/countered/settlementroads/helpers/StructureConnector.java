@@ -1,6 +1,7 @@
 package net.countered.settlementroads.helpers;
 
 import net.countered.settlementroads.SettlementRoads;
+import net.countered.settlementroads.config.ModConfig;
 import net.countered.settlementroads.persistence.attachments.WorldDataAttachment;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.math.BlockPos;
@@ -43,6 +44,9 @@ public class StructureConnector {
                 connections.add(structureConnection);
                 serverWorld.setAttached(WorldDataAttachment.CONNECTED_STRUCTURES, connections);
                 cachedStructureConnections.add(structureConnection);
+                LOGGER.debug("Created connection between {} and {} (distance: {} blocks)", 
+                    latestVillagePos, closestVillage, 
+                    Math.sqrt(latestVillagePos.getSquaredDistance(closestVillage)));
             }
         }
     }

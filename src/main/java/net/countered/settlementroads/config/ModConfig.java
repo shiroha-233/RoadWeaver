@@ -5,10 +5,10 @@ import eu.midnightdust.lib.config.MidnightConfig;
 public class ModConfig extends MidnightConfig {
 
     @Entry(category = "structures")
-    public static int maxLocatingCount = 100;
-
-    @Entry(category = "structures")
     public static String structureToLocate = "#minecraft:village";
+
+    @Entry(category = "structures", min = 50, max = 200)
+    public static int structureSearchRadius = 100;
 
     @Entry(category = "pre-generation")
     public static int initialLocatingCount = 7;

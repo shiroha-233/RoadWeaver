@@ -56,7 +56,7 @@ public class StructureLocator {
                 .orElseThrow(() -> STRUCTURE_INVALID_EXCEPTION.create(predicate.asString()));
         Pair<BlockPos, RegistryEntry<Structure>> pair = serverWorld.getChunkManager()
                 .getChunkGenerator()
-                .locateStructure(serverWorld, registryEntryList, locatePos, 100, true);
+                .locateStructure(serverWorld, registryEntryList, locatePos, ModConfig.structureSearchRadius, true);
         if (pair == null) {
             throw STRUCTURE_NOT_FOUND_EXCEPTION.create(predicate.asString());
         } else {

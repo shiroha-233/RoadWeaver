@@ -6,16 +6,16 @@
   "roadweaver.midnightconfig.initialLocatingCount":"Number of structures to locate on world load",
   "roadweaver.midnightconfig.initialLocatingCount.tooltip": "Select the number of structures to locate on world load. Higher number = longer loading time",
 
-  "roadweaver.midnightconfig.maxLocatingCount":"Maximum number of structures to locate",
-  "roadweaver.midnightconfig.maxLocatingCount.tooltip": "Select the maximum number of structures to locate dynamically. Higher number = more memory usage",
   "roadweaver.midnightconfig.structureToLocate": "Structure to locate",
   "roadweaver.midnightconfig.structureToLocate.tooltip": "Select or type the structure you want to locate. E.g., #minecraft:village, minecraft:village_plains or modid:custom_structure. Allows structure tags and keys.",
+
+  "roadweaver.midnightconfig.structureSearchRadius":"Structure search radius",
+  "roadweaver.midnightconfig.structureSearchRadius.tooltip": "Search radius for structures (in chunks). Higher value = wider search area but slower. Default: 100 (1600 blocks)",
 
   "roadweaver.midnightconfig.averagingRadius": "Averaging radius",
   "roadweaver.midnightconfig.averagingRadius.tooltip": "Amount of terrain averaging done for artificial roads",
   "roadweaver.midnightconfig.allowArtificial": "Allow artificial roads",
   "roadweaver.midnightconfig.allowArtificial.tooltip": "Whether artificial roads are allowed to generate",
-  "roadweaver.midnightconfig.allowNatural": "Allow natural roads",
   "roadweaver.midnightconfig.allowNatural.tooltip": "Whether natural roads are allowed to generate",
   "roadweaver.midnightconfig.placeWaypoints": "Place Waypoints instead of Roads",
   "roadweaver.midnightconfig.placeWaypoints.tooltip": "Disables road generation in favor of waypoint generation",

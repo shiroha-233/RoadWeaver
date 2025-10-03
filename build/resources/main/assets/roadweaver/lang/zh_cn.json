@@ -8,11 +8,11 @@
   "roadweaver.midnightconfig.initialLocatingCount":"世界加载时定位的结构数量",
   "roadweaver.midnightconfig.initialLocatingCount.tooltip": "选择世界加载时定位的结构数量。数量越大 = 加载时间越长",
 
-  "roadweaver.midnightconfig.maxLocatingCount":"最大定位结构数量",
-  "roadweaver.midnightconfig.maxLocatingCount.tooltip": "选择动态定位的最大结构数量。数量越大 = 内存使用越多",
-  
   "roadweaver.midnightconfig.structureToLocate": "要定位的结构",
   "roadweaver.midnightconfig.structureToLocate.tooltip": "选择或输入要定位的结构。例如：#minecraft:village（村庄标签）, minecraft:village_plains（平原村庄）或 modid:custom_structure（模组结构）。支持结构标签和键。",
+
+  "roadweaver.midnightconfig.structureSearchRadius":"结构搜寻半径",
+  "roadweaver.midnightconfig.structureSearchRadius.tooltip": "搜寻结构的半径（区块数）。数值越大搜寻范围越广，但耗时越长。默认：100（1600方块）",
   
   "roadweaver.midnightconfig.averagingRadius": "地形平均半径",
   "roadweaver.midnightconfig.averagingRadius.tooltip": "人工道路的地形平滑程度。数值越大越平滑，但可能不自然。默认：1",
