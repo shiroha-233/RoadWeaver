@@ -272,13 +272,13 @@ public class RoadFeature extends Feature<RoadFeatureConfig> {
         }
 
         BlockState material = materials.get(random.nextInt(materials.size()));
-        level.setBlock(surfacePos.below(), material, 3);
+        setBlockState(level, surfacePos.below(), material);
 
         for (int i = 0; i < 3; i++) {
             BlockPos abovePos = surfacePos.above(i);
             BlockState aboveState = level.getBlockState(abovePos);
             if (!aboveState.isAir() && !aboveState.is(BlockTags.LOGS) && !aboveState.is(BlockTags.FENCES)) {
-                level.setBlock(abovePos, Blocks.AIR.defaultBlockState(), 3);
+                setBlockState(level, abovePos, Blocks.AIR.defaultBlockState());
             } else {
                 break;
             }
@@ -287,7 +287,7 @@ public class RoadFeature extends Feature<RoadFeatureConfig> {
         BlockPos belowPos = surfacePos.below(2);
         BlockState belowState = level.getBlockState(belowPos);
         if (belowState.is(Blocks.GRASS_BLOCK)) {
-            level.setBlock(belowPos, Blocks.DIRT.defaultBlockState(), 3);
+            setBlockState(level, belowPos, Blocks.DIRT.defaultBlockState());
         }
     }
 
@@ -298,5 +298,12 @@ public class RoadFeature extends Feature<RoadFeatureConfig> {
                 || blockToCheck.defaultBlockState().is(BlockTags.UNDERWATER_BONEMEALS)
                 || blockToCheck.defaultBlockState().is(BlockTags.WOODEN_FENCES)
                 || blockToCheck.defaultBlockState().is(BlockTags.PLANKS));
+    }
+
+    /**
+     * 辅助方法：设置方块状态，保持与 Fabric 版本的一致性
+     */
+    private void setBlockState(WorldGenLevel level, BlockPos pos, BlockState state) {
+        level.setBlock(pos, state, 3);
     }
 }

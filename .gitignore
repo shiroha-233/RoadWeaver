@@ -2,3 +2,11 @@
 /run/
 /build/
 /.gradle/
+
+# Fabric subproject
+/fabric/run/
+/fabric/build/
+
+# Forge subproject
+/forge/run/
+/forge/build/

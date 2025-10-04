@@ -94,12 +94,14 @@ public class RoadPathCalculator {
                 int biomeCost = checkBiomeCategory(biomeRegistryEntry);
                 int elevation = Math.abs(y - current.pos.getY());
                 if (elevation > ModConfig.maxHeightDifference) {
+                    // LOGGER.debug("Rejected path due to elevation: {} > {}", elevation, ModConfig.maxHeightDifference);
                     continue;
                 }
                 int offsetSum = Math.abs(Math.abs(offset[0])) + Math.abs(offset[1]);
                 double stepCost = (offsetSum == 2 * neighborDistance) ? 1.5 : 1;
                 int terrainStabilityCost = calculateTerrainStability(neighborPos, y, serverWorld);
                 if (terrainStabilityCost > ModConfig.maxTerrainStability) {
+                    // LOGGER.debug("Rejected path due to terrain instability: {} > {}", terrainStabilityCost, ModConfig.maxTerrainStability);
                     continue;
                 }
                 int yLevelCost = y == 62 ? 20 : 0;
@@ -131,20 +133,35 @@ public class RoadPathCalculator {
     }
 
     private static int checkBiomeCategory(Biome biome) {
+        // 使用 Forge 的生物群系标签系统进行精确检查
+        Holder<Biome> biomeHolder = net.minecraftforge.registries.ForgeRegistries.BIOMES.getDelegate(biome).orElse(null);
+        if (biomeHolder == null) return 0;
+
+        // 检查是否为河流生物群系 - 使用 Forge 标签系统
+        if (biomeHolder.is(net.minecraft.tags.BiomeTags.IS_RIVER)) {
+            return 50; // 高成本，强烈避免
+        }
+        
+        // 检查是否为海洋生物群系 - 使用 Forge 标签系统
+        if (biomeHolder.is(net.minecraft.tags.BiomeTags.IS_OCEAN)) {
+            return 50; // 高成本，强烈避免
+        }
+        
+        // 检查是否为深海生物群系 - 使用 Forge 标签系统
+        if (biomeHolder.is(net.minecraft.tags.BiomeTags.IS_DEEP_OCEAN)) {
+            return 50; // 高成本，强烈避免
+        }
+        
+        // 检查其他水域相关生物群系
         ResourceLocation biomeId = net.minecraftforge.registries.ForgeRegistries.BIOMES.getKey(biome);
-        if (biomeId == null) return 0;
-
-        String biomePath = biomeId.getPath();
-
-        if (biomePath.contains("river")) {
-            return 50;
-        } else if (biomePath.contains("ocean")) {
-            if (biomePath.contains("deep")) {
-                return 50;
-            } else {
-                return 50;
+        if (biomeId != null) {
+            String biomePath = biomeId.getPath();
+            // 检查沼泽、湿地等水域相关生物群系
+            if (biomePath.contains("swamp") || biomePath.contains("marsh") || biomePath.contains("wetland")) {
+                return 25; // 中等成本，倾向避免但可通过
             }
         }
+        
         return 0;
     }
 
@@ -219,10 +236,14 @@ public class RoadPathCalculator {
         return result;
     }
 
-    // Height sampler method
+    // Height sampler method  
     private static int heightSampler(int x, int z, ServerLevel serverWorld) {
         long key = hashXZ(x, z);
-        return heightCache.computeIfAbsent(key, k -> serverWorld.getHeight(Heightmap.Types.WORLD_SURFACE_WG, x, z));
+        return heightCache.computeIfAbsent(key, k -> 
+            serverWorld.getChunkSource()
+                .getGenerator()
+                .getBaseHeight(x, z, Heightmap.Types.WORLD_SURFACE_WG, serverWorld, serverWorld.getChunkSource().randomState())
+        );
     }
 
     // Biome sampler method
@@ -252,7 +273,7 @@ public class RoadPathCalculator {
 
         int centerX = center.getX();
         int centerZ = center.getZ();
-        int y = center.getY();
+        int y = 0;
 
         if (direction == RoadDirection.X_AXIS) {
             for (int dz = -radius; dz <= radius; dz++) {
