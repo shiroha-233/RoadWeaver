@@ -1,0 +1,234 @@
+---- Minecraft Crash Report ----
+// Surprise! Haha. Well, this is awkward.
+
+Time: 2025-10-04 15:36:15
+Description: mouseClicked event handler
+
+java.lang.IllegalStateException: Failed to load registries due to above errors
+	at knot//net.minecraft.registry.RegistryLoader.load(RegistryLoader.java:181)
+	at knot//net.minecraft.registry.RegistryLoader.mixinextras$bridge$load$32(RegistryLoader.java)
+	at knot//net.minecraft.registry.RegistryLoader.wrapOperation$zep000$fabric-resource-conditions-api-v1$captureRegistries(RegistryLoader.java:557)
+	at knot//net.minecraft.registry.RegistryLoader.mixinextras$bridge$wrapOperation$zep000$fabric-resource-conditions-api-v1$captureRegistries$33(RegistryLoader.java)
+	at knot//net.minecraft.registry.RegistryLoader.wrapOperation$zkf000$fabric-registry-sync-v0$wrapIsServerCall(RegistryLoader.java:1056)
+	at knot//net.minecraft.registry.RegistryLoader.loadFromResource(RegistryLoader.java:151)
+	at knot//net.minecraft.server.SaveLoading.loadDynamicRegistryManager(SaveLoading.java:62)
+	at knot//net.minecraft.server.SaveLoading.withRegistriesLoaded(SaveLoading.java:66)
+	at knot//net.minecraft.server.SaveLoading.load(SaveLoading.java:32)
+	at knot//net.minecraft.client.gui.screen.world.CreateWorldScreen.create(CreateWorldScreen.java:310)
+	at knot//net.minecraft.client.gui.screen.world.SelectWorldScreen.method_19944(SelectWorldScreen.java:54)
+	at knot//net.minecraft.client.gui.widget.ButtonWidget.onPress(ButtonWidget.java:96)
+	at knot//net.minecraft.client.gui.widget.PressableWidget.onClick(PressableWidget.java:48)
+	at knot//net.minecraft.client.gui.widget.ClickableWidget.mouseClicked(ClickableWidget.java:141)
+	at knot//net.minecraft.client.gui.ParentElement.mouseClicked(ParentElement.java:38)
+	at knot//net.minecraft.client.Mouse.method_1611(Mouse.java:107)
+	at knot//net.minecraft.client.gui.screen.Screen.wrapScreenError(Screen.java:431)
+	at knot//net.minecraft.client.Mouse.onMouseButton(Mouse.java:107)
+	at knot//net.minecraft.client.Mouse.method_22686(Mouse.java:196)
+	at knot//net.minecraft.util.thread.ThreadExecutor.execute(ThreadExecutor.java:108)
+	at knot//net.minecraft.client.Mouse.method_22684(Mouse.java:196)
+	at knot//org.lwjgl.glfw.GLFWMouseButtonCallbackI.callback(GLFWMouseButtonCallbackI.java:43)
+	at knot//org.lwjgl.system.JNI.invokeV(Native Method)
+	at knot//org.lwjgl.glfw.GLFW.glfwWaitEventsTimeout(GLFW.java:3509)
+	at knot//com.mojang.blaze3d.systems.RenderSystem.limitDisplayFPS(RenderSystem.java:184)
+	at knot//net.minecraft.client.MinecraftClient.render(MinecraftClient.java:1310)
+	at knot//net.minecraft.client.MinecraftClient.run(MinecraftClient.java:882)
+	at knot//net.minecraft.client.main.Main.main(Main.java:256)
+	at net.fabricmc.loader.impl.game.minecraft.MinecraftGameProvider.launch(MinecraftGameProvider.java:480)
+	at net.fabricmc.loader.impl.launch.knot.Knot.launch(Knot.java:74)
+	at net.fabricmc.loader.impl.launch.knot.KnotClient.main(KnotClient.java:23)
+	at net.fabricmc.devlaunchinjector.Main.main(Main.java:86)
+	at dev.architectury.transformer.TransformerRuntime.main(TransformerRuntime.java:220)
+
+
+A detailed walkthrough of the error, its code path and all known details is as follows:
+---------------------------------------------------------------------------------------
+
+-- Head --
+Thread: Render thread
+Stacktrace:
+	at knot//net.minecraft.registry.RegistryLoader.load(RegistryLoader.java:181)
+	at knot//net.minecraft.registry.RegistryLoader.mixinextras$bridge$load$32(RegistryLoader.java)
+	at knot//net.minecraft.registry.RegistryLoader.wrapOperation$zep000$fabric-resource-conditions-api-v1$captureRegistries(RegistryLoader.java:557)
+	at knot//net.minecraft.registry.RegistryLoader.mixinextras$bridge$wrapOperation$zep000$fabric-resource-conditions-api-v1$captureRegistries$33(RegistryLoader.java)
+	at knot//net.minecraft.registry.RegistryLoader.wrapOperation$zkf000$fabric-registry-sync-v0$wrapIsServerCall(RegistryLoader.java:1056)
+	at knot//net.minecraft.registry.RegistryLoader.loadFromResource(RegistryLoader.java:151)
+	at knot//net.minecraft.server.SaveLoading.loadDynamicRegistryManager(SaveLoading.java:62)
+	at knot//net.minecraft.server.SaveLoading.withRegistriesLoaded(SaveLoading.java:66)
+	at knot//net.minecraft.server.SaveLoading.load(SaveLoading.java:32)
+	at knot//net.minecraft.client.gui.screen.world.CreateWorldScreen.create(CreateWorldScreen.java:310)
+	at knot//net.minecraft.client.gui.screen.world.SelectWorldScreen.method_19944(SelectWorldScreen.java:54)
+	at knot//net.minecraft.client.gui.widget.ButtonWidget.onPress(ButtonWidget.java:96)
+	at knot//net.minecraft.client.gui.widget.PressableWidget.onClick(PressableWidget.java:48)
+	at knot//net.minecraft.client.gui.widget.ClickableWidget.mouseClicked(ClickableWidget.java:141)
+	at knot//net.minecraft.client.gui.ParentElement.mouseClicked(ParentElement.java:38)
+	at knot//net.minecraft.client.Mouse.method_1611(Mouse.java:107)
+	at knot//net.minecraft.client.gui.screen.Screen.wrapScreenError(Screen.java:431)
+	at knot//net.minecraft.client.Mouse.onMouseButton(Mouse.java:107)
+	at knot//net.minecraft.client.Mouse.method_22686(Mouse.java:196)
+	at knot//net.minecraft.util.thread.ThreadExecutor.execute(ThreadExecutor.java:108)
+	at knot//net.minecraft.client.Mouse.method_22684(Mouse.java:196)
+	at knot//org.lwjgl.glfw.GLFWMouseButtonCallbackI.callback(GLFWMouseButtonCallbackI.java:43)
+	at knot//org.lwjgl.system.JNI.invokeV(Native Method)
+	at knot//org.lwjgl.glfw.GLFW.glfwWaitEventsTimeout(GLFW.java:3509)
+
+-- Affected screen --
+Details:
+	Screen name: net.minecraft.client.gui.screen.world.SelectWorldScreen
+Stacktrace:
+	at knot//net.minecraft.client.gui.screen.Screen.wrapScreenError(Screen.java:431)
+	at knot//net.minecraft.client.Mouse.onMouseButton(Mouse.java:107)
+	at knot//net.minecraft.client.Mouse.method_22686(Mouse.java:196)
+	at knot//net.minecraft.util.thread.ThreadExecutor.execute(ThreadExecutor.java:108)
+	at knot//net.minecraft.client.Mouse.method_22684(Mouse.java:196)
+	at knot//org.lwjgl.glfw.GLFWMouseButtonCallbackI.callback(GLFWMouseButtonCallbackI.java:43)
+	at knot//org.lwjgl.system.JNI.invokeV(Native Method)
+	at knot//org.lwjgl.glfw.GLFW.glfwWaitEventsTimeout(GLFW.java:3509)
+	at knot//com.mojang.blaze3d.systems.RenderSystem.limitDisplayFPS(RenderSystem.java:184)
+	at knot//net.minecraft.client.MinecraftClient.render(MinecraftClient.java:1310)
+	at knot//net.minecraft.client.MinecraftClient.run(MinecraftClient.java:882)
+	at knot//net.minecraft.client.main.Main.main(Main.java:256)
+	at net.fabricmc.loader.impl.game.minecraft.MinecraftGameProvider.launch(MinecraftGameProvider.java:480)
+	at net.fabricmc.loader.impl.launch.knot.Knot.launch(Knot.java:74)
+	at net.fabricmc.loader.impl.launch.knot.KnotClient.main(KnotClient.java:23)
+	at net.fabricmc.devlaunchinjector.Main.main(Main.java:86)
+	at dev.architectury.transformer.TransformerRuntime.main(TransformerRuntime.java:220)
+
+-- Uptime --
+Details:
+	JVM uptime: 17.497s
+	Wall uptime: 10.319s
+	High-res time: 9.568s
+	Client ticks: 163 ticks / 8.150s
+Stacktrace:
+	at knot//net.minecraft.client.MinecraftClient.addDetailsToCrashReport(MinecraftClient.java:2501)
+	at knot//net.minecraft.client.MinecraftClient.printCrashReport(MinecraftClient.java:949)
+	at knot//net.minecraft.client.MinecraftClient.run(MinecraftClient.java:902)
+	at knot//net.minecraft.client.main.Main.main(Main.java:256)
+	at net.fabricmc.loader.impl.game.minecraft.MinecraftGameProvider.launch(MinecraftGameProvider.java:480)
+	at net.fabricmc.loader.impl.launch.knot.Knot.launch(Knot.java:74)
+	at net.fabricmc.loader.impl.launch.knot.KnotClient.main(KnotClient.java:23)
+	at net.fabricmc.devlaunchinjector.Main.main(Main.java:86)
+	at dev.architectury.transformer.TransformerRuntime.main(TransformerRuntime.java:220)
+
+-- Last reload --
+Details:
+	Reload number: 1
+	Reload reason: initial
+	Finished: Yes
+	Packs: vanilla, fabric, fabric-api, fabric-api-base, fabric-api-lookup-api-v1, fabric-biome-api-v1, fabric-block-api-v1, fabric-block-view-api-v2, fabric-blockrenderlayer-v1, fabric-client-tags-api-v1, fabric-command-api-v1, fabric-command-api-v2, fabric-commands-v0, fabric-content-registries-v0, fabric-convention-tags-v1, fabric-convention-tags-v2, fabric-crash-report-info-v1, fabric-data-attachment-api-v1, fabric-data-generation-api-v1, fabric-dimensions-v1, fabric-entity-events-v1, fabric-events-interaction-v0, fabric-game-rule-api-v1, fabric-gametest-api-v1, fabric-item-api-v1, fabric-item-group-api-v1, fabric-key-binding-api-v1, fabric-keybindings-v0, fabric-lifecycle-events-v1, fabric-loot-api-v2, fabric-loot-api-v3, fabric-message-api-v1, fabric-model-loading-api-v1, fabric-networking-api-v1, fabric-object-builder-api-v1, fabric-particles-v1, fabric-recipe-api-v1, fabric-registry-sync-v0, fabric-renderer-api-v1, fabric-renderer-indigo, fabric-renderer-registries-v1, fabric-rendering-data-attachment-v1, fabric-rendering-fluids-v1, fabric-rendering-v0, fabric-rendering-v1, fabric-resource-conditions-api-v1, fabric-resource-loader-v0, fabric-screen-api-v1, fabric-screen-handler-api-v1, fabric-sound-api-v1, fabric-transfer-api-v1, fabric-transitive-access-wideners-v1, fabricloader, generated_c68de42, midnightlib, roadweaver
+
+-- System Details --
+Details:
+	Minecraft Version: 1.21.1
+	Minecraft Version ID: 1.21.1
+	Operating System: Windows 11 (amd64) version 10.0
+	Java Version: 21.0.7, Azul Systems, Inc.
+	Java VM Version: OpenJDK 64-Bit Server VM (mixed mode, sharing), Azul Systems, Inc.
+	Memory: 1085060832 bytes (1034 MiB) / 2055208960 bytes (1960 MiB) up to 8489271296 bytes (8096 MiB)
+	CPUs: 12
+	Processor Vendor: AuthenticAMD
+	Processor Name: AMD Ryzen 5 7500F 6-Core Processor             
+	Identifier: AuthenticAMD Family 25 Model 97 Stepping 2
+	Microarchitecture: Zen 3
+	Frequency (GHz): 5.19
+	Number of physical packages: 1
+	Number of physical CPUs: 6
+	Number of logical CPUs: 12
+	Graphics card #0 name: AMD Radeon RX 6700 XT
+	Graphics card #0 vendor: Advanced Micro Devices, Inc.
+	Graphics card #0 VRAM (MiB): 12272.00
+	Graphics card #0 deviceId: VideoController1
+	Graphics card #0 versionInfo: 32.0.21025.10016
+	Memory slot #0 capacity (MiB): 16384.00
+	Memory slot #0 clockSpeed (GHz): 4.80
+	Memory slot #0 type: Unknown
+	Memory slot #1 capacity (MiB): 16384.00
+	Memory slot #1 clockSpeed (GHz): 4.80
+	Memory slot #1 type: Unknown
+	Virtual memory max (MiB): 49782.91
+	Virtual memory used (MiB): 40091.87
+	Swap memory total (MiB): 17408.00
+	Swap memory used (MiB): 1763.48
+	Space in storage for jna.tmpdir (MiB): <path not set>
+	Space in storage for org.lwjgl.system.SharedLibraryExtractPath (MiB): <path not set>
+	Space in storage for io.netty.native.workdir (MiB): <path not set>
+	Space in storage for java.io.tmpdir (MiB): available: 32839.02, total: 487476.00
+	Space in storage for workdir (MiB): available: 209405.66, total: 888332.00
+	JVM Flags: 0 total; 
+	Fabric Mods: 
+		architectury: Architectury 13.0.8
+		fabric-api: Fabric API 0.115.1+1.21.1
+		fabric-api-base: Fabric API Base 0.4.42+6573ed8c19
+		fabric-api-lookup-api-v1: Fabric API Lookup API (v1) 1.6.70+b559734419
+		fabric-biome-api-v1: Fabric Biome API (v1) 13.0.31+d527f9fd19
+		fabric-block-api-v1: Fabric Block API (v1) 1.0.22+0af3f5a719
+		fabric-block-view-api-v2: Fabric BlockView API (v2) 1.0.10+6573ed8c19
+		fabric-blockrenderlayer-v1: Fabric BlockRenderLayer Registration (v1) 1.1.52+0af3f5a719
+		fabric-client-tags-api-v1: Fabric Client Tags 1.1.15+6573ed8c19
+		fabric-command-api-v1: Fabric Command API (v1) 1.2.49+f71b366f19
+		fabric-command-api-v2: Fabric Command API (v2) 2.2.28+6ced4dd919
+		fabric-commands-v0: Fabric Commands (v0) 0.2.66+df3654b319
+		fabric-content-registries-v0: Fabric Content Registries (v0) 8.0.18+b559734419
+		fabric-convention-tags-v1: Fabric Convention Tags 2.1.3+7f945d5b19
+		fabric-convention-tags-v2: Fabric Convention Tags (v2) 2.10.0+9465b64419
+		fabric-crash-report-info-v1: Fabric Crash Report Info (v1) 0.2.29+0af3f5a719
+		fabric-data-attachment-api-v1: Fabric Data Attachment API (v1) 1.4.1+9ed317f519
+		fabric-data-generation-api-v1: Fabric Data Generation API (v1) 20.2.26+16c4ae2519
+		fabric-dimensions-v1: Fabric Dimensions API (v1) 4.0.0+6fc22b9919
+		fabric-entity-events-v1: Fabric Entity Events (v1) 1.7.0+2122d82819
+		fabric-events-interaction-v0: Fabric Events Interaction (v0) 0.7.13+ba9dae0619
+		fabric-game-rule-api-v1: Fabric Game Rule API (v1) 1.0.53+6ced4dd919
+		fabric-gametest-api-v1: Fabric Game Test API (v1) 2.0.5+6fc22b9919
+		fabric-item-api-v1: Fabric Item API (v1) 11.1.1+d5debaed19
+		fabric-item-group-api-v1: Fabric Item Group API (v1) 4.1.6+6823f7cd19
+		fabric-key-binding-api-v1: Fabric Key Binding API (v1) 1.0.47+0af3f5a719
+		fabric-keybindings-v0: Fabric Key Bindings (v0) 0.2.45+df3654b319
+		fabric-lifecycle-events-v1: Fabric Lifecycle Events (v1) 2.5.0+01d9a51c19
+		fabric-loot-api-v2: Fabric Loot API (v2) 3.0.15+3f89f5a519
+		fabric-loot-api-v3: Fabric Loot API (v3) 1.0.3+3f89f5a519
+		fabric-message-api-v1: Fabric Message API (v1) 6.0.13+6573ed8c19
+		fabric-model-loading-api-v1: Fabric Model Loading API (v1) 2.0.0+fe474d6b19
+		fabric-networking-api-v1: Fabric Networking API (v1) 4.3.0+c7469b2119
+		fabric-object-builder-api-v1: Fabric Object Builder API (v1) 15.2.1+40875a9319
+		fabric-particles-v1: Fabric Particles (v1) 4.0.2+6573ed8c19
+		fabric-recipe-api-v1: Fabric Recipe API (v1) 5.0.14+248df81c19
+		fabric-registry-sync-v0: Fabric Registry Sync (v0) 5.2.0+34f5d91419
+		fabric-renderer-api-v1: Fabric Renderer API (v1) 3.4.0+c705a49c19
+		fabric-renderer-indigo: Fabric Renderer - Indigo 1.7.0+c705a49c19
+		fabric-renderer-registries-v1: Fabric Renderer Registries (v1) 3.2.68+df3654b319
+		fabric-rendering-data-attachment-v1: Fabric Rendering Data Attachment (v1) 0.3.48+73761d2e19
+		fabric-rendering-fluids-v1: Fabric Rendering Fluids (v1) 3.1.6+1daea21519
+		fabric-rendering-v0: Fabric Rendering (v0) 1.1.71+df3654b319
+		fabric-rendering-v1: Fabric Rendering (v1) 5.0.5+df16efd019
+		fabric-resource-conditions-api-v1: Fabric Resource Conditions API (v1) 4.3.0+8dc279b119
+		fabric-resource-loader-v0: Fabric Resource Loader (v0) 1.3.1+5b5275af19
+		fabric-screen-api-v1: Fabric Screen API (v1) 2.0.25+8b68f1c719
+		fabric-screen-handler-api-v1: Fabric Screen Handler API (v1) 1.3.88+b559734419
+		fabric-sound-api-v1: Fabric Sound API (v1) 1.0.23+6573ed8c19
+		fabric-transfer-api-v1: Fabric Transfer API (v1) 5.4.2+c24bd99419
+		fabric-transitive-access-wideners-v1: Fabric Transitive Access Wideners (v1) 6.2.0+45b9699719
+		fabricloader: Fabric Loader 0.16.10
+		generated_c68de42: Generated Mod (Please Ignore) 1.0.0
+		java: OpenJDK 64-Bit Server VM 21
+		midnightlib: MidnightLib 1.6.9
+		minecraft: Minecraft 1.21.1
+		mixinextras: MixinExtras 0.4.1
+		roadweaver: RoadWeaver unspecified
+	Launched Version: Fabric
+	Backend library: LWJGL version 3.3.3-snapshot
+	Backend API: AMD Radeon RX 6700 XT GL version 3.2.0 Core Profile Context 25.9.1.250822, ATI Technologies Inc.
+	Window size: 854x480
+	GFLW Platform: win32
+	GL Caps: Using framebuffer using OpenGL 3.2
+	GL debug messages: 
+	Is Modded: Definitely; Client brand changed to 'fabric'
+	Universe: 400921fb54442d18
+	Type: Client (map_client.txt)
+	Graphics mode: fancy
+	Render Distance: 12/12 chunks
+	Resource Packs: vanilla, fabric, fabric-api, fabric-api-base, fabric-api-lookup-api-v1, fabric-biome-api-v1, fabric-block-api-v1, fabric-block-view-api-v2, fabric-blockrenderlayer-v1, fabric-client-tags-api-v1, fabric-command-api-v1, fabric-command-api-v2, fabric-commands-v0, fabric-content-registries-v0, fabric-convention-tags-v1, fabric-convention-tags-v2, fabric-crash-report-info-v1, fabric-data-attachment-api-v1, fabric-data-generation-api-v1, fabric-dimensions-v1, fabric-entity-events-v1, fabric-events-interaction-v0, fabric-game-rule-api-v1, fabric-gametest-api-v1, fabric-item-api-v1, fabric-item-group-api-v1, fabric-key-binding-api-v1, fabric-keybindings-v0, fabric-lifecycle-events-v1, fabric-loot-api-v2, fabric-loot-api-v3, fabric-message-api-v1, fabric-model-loading-api-v1, fabric-networking-api-v1, fabric-object-builder-api-v1, fabric-particles-v1, fabric-recipe-api-v1, fabric-registry-sync-v0, fabric-renderer-api-v1, fabric-renderer-indigo, fabric-renderer-registries-v1, fabric-rendering-data-attachment-v1, fabric-rendering-fluids-v1, fabric-rendering-v0, fabric-rendering-v1, fabric-resource-conditions-api-v1, fabric-resource-loader-v0, fabric-screen-api-v1, fabric-screen-handler-api-v1, fabric-sound-api-v1, fabric-transfer-api-v1, fabric-transitive-access-wideners-v1, fabricloader, generated_c68de42, midnightlib, roadweaver
+	Current Language: zh_cn
+	Locale: zh_CN
+	System encoding: GBK
+	File encoding: UTF-8
+	CPU: 12x AMD Ryzen 5 7500F 6-Core Processor 

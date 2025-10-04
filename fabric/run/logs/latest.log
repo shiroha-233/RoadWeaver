@@ -1,0 +1,317 @@
+[16:11:09] [main/INFO] (FabricLoader/GameProvider) Loading Minecraft 1.21.1 with Fabric Loader 0.16.10
+[16:11:09] [ForkJoinPool-1-worker-1/WARN] (FabricLoader/Metadata) Mod roadweaver uses the version unspecified which isn't compatible with Loader's extended semantic version format (Could not parse version number component 'unspecified'!), SemVer is recommended for reliably evaluating dependencies and prioritizing newer version
+[16:11:09] [main/INFO] (FabricLoader) Loading 58 mods:
+	- architectury 13.0.8
+	- fabric-api 0.115.1+1.21.1
+	- fabric-api-base 0.4.42+6573ed8c19
+	- fabric-api-lookup-api-v1 1.6.70+b559734419
+	- fabric-biome-api-v1 13.0.31+d527f9fd19
+	- fabric-block-api-v1 1.0.22+0af3f5a719
+	- fabric-block-view-api-v2 1.0.10+6573ed8c19
+	- fabric-blockrenderlayer-v1 1.1.52+0af3f5a719
+	- fabric-client-tags-api-v1 1.1.15+6573ed8c19
+	- fabric-command-api-v1 1.2.49+f71b366f19
+	- fabric-command-api-v2 2.2.28+6ced4dd919
+	- fabric-commands-v0 0.2.66+df3654b319
+	- fabric-content-registries-v0 8.0.18+b559734419
+	- fabric-convention-tags-v1 2.1.3+7f945d5b19
+	- fabric-convention-tags-v2 2.10.0+9465b64419
+	- fabric-crash-report-info-v1 0.2.29+0af3f5a719
+	- fabric-data-attachment-api-v1 1.4.1+9ed317f519
+	- fabric-data-generation-api-v1 20.2.26+16c4ae2519
+	- fabric-dimensions-v1 4.0.0+6fc22b9919
+	- fabric-entity-events-v1 1.7.0+2122d82819
+	- fabric-events-interaction-v0 0.7.13+ba9dae0619
+	- fabric-game-rule-api-v1 1.0.53+6ced4dd919
+	- fabric-gametest-api-v1 2.0.5+6fc22b9919
+	- fabric-item-api-v1 11.1.1+d5debaed19
+	- fabric-item-group-api-v1 4.1.6+6823f7cd19
+	- fabric-key-binding-api-v1 1.0.47+0af3f5a719
+	- fabric-keybindings-v0 0.2.45+df3654b319
+	- fabric-lifecycle-events-v1 2.5.0+01d9a51c19
+	- fabric-loot-api-v2 3.0.15+3f89f5a519
+	- fabric-loot-api-v3 1.0.3+3f89f5a519
+	- fabric-message-api-v1 6.0.13+6573ed8c19
+	- fabric-model-loading-api-v1 2.0.0+fe474d6b19
+	- fabric-networking-api-v1 4.3.0+c7469b2119
+	- fabric-object-builder-api-v1 15.2.1+40875a9319
+	- fabric-particles-v1 4.0.2+6573ed8c19
+	- fabric-recipe-api-v1 5.0.14+248df81c19
+	- fabric-registry-sync-v0 5.2.0+34f5d91419
+	- fabric-renderer-api-v1 3.4.0+c705a49c19
+	- fabric-renderer-indigo 1.7.0+c705a49c19
+	- fabric-renderer-registries-v1 3.2.68+df3654b319
+	- fabric-rendering-data-attachment-v1 0.3.48+73761d2e19
+	- fabric-rendering-fluids-v1 3.1.6+1daea21519
+	- fabric-rendering-v0 1.1.71+df3654b319
+	- fabric-rendering-v1 5.0.5+df16efd019
+	- fabric-resource-conditions-api-v1 4.3.0+8dc279b119
+	- fabric-resource-loader-v0 1.3.1+5b5275af19
+	- fabric-screen-api-v1 2.0.25+8b68f1c719
+	- fabric-screen-handler-api-v1 1.3.88+b559734419
+	- fabric-sound-api-v1 1.0.23+6573ed8c19
+	- fabric-transfer-api-v1 5.4.2+c24bd99419
+	- fabric-transitive-access-wideners-v1 6.2.0+45b9699719
+	- fabricloader 0.16.10
+	- generated_4f413d2 1.0.0
+	- java 21
+	- midnightlib 1.6.9
+	- minecraft 1.21.1
+	- mixinextras 0.4.1
+	- roadweaver unspecified
+[16:11:09] [main/INFO] (FabricLoader/Mixin) SpongePowered MIXIN Subsystem Version=0.8.7 Source=file:/C:/Users/shiroha/scoop/apps/gradle/current/.gradle/caches/modules-2/files-2.1/net.fabricmc/sponge-mixin/0.15.4+mixin.0.8.7/6a12aacc794f1078458433116e9ed42c1cc98096/sponge-mixin-0.15.4+mixin.0.8.7.jar Service=Knot/Fabric Env=CLIENT
+[16:11:09] [main/INFO] (FabricLoader/Mixin) Loaded Fabric development mappings for mixin remapper!
+[16:11:09] [main/INFO] (FabricLoader/Mixin) Compatibility level set to JAVA_17
+[16:11:09] [main/INFO] (FabricLoader/Mixin) Compatibility level set to JAVA_21
+[16:11:10] [main/INFO] (FabricLoader/MixinExtras|Service) Initializing MixinExtras via com.llamalad7.mixinextras.service.MixinExtrasServiceImpl(version=0.4.1).
+[16:11:11] [Datafixer Bootstrap/INFO] (Minecraft) 226 Datafixer optimizations took 324 milliseconds
+[16:11:11] [main/WARN] (PerfmonDisabled) Invalid registry value type detected for PerfOS counters. Should be REG_DWORD. Ignoring: HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\PerfOS\Performance\Disable Performance Counters.
+[16:11:15] [Render thread/INFO] (Minecraft) Environment: Environment[sessionHost=https://sessionserver.mojang.com, servicesHost=https://api.minecraftservices.com, name=PROD]
+[16:11:15] [Render thread/INFO] (Minecraft) Setting user: Player354
+[16:11:15] [Render thread/INFO] (roadweaver) Initializing RoadWeaver...
+[16:11:15] [Render thread/INFO] (roadweaver) Registering Fabric WorldData attachments
+[16:11:15] [Render thread/INFO] (roadweaver) Registered attachments: STRUCTURE_LOCATIONS, CONNECTED_STRUCTURES, ROAD_DATA_LIST
+[16:11:15] [Render thread/INFO] (roadweaver) Registering road_feature
+[16:11:15] [Render thread/INFO] (roadweaver) RoadWeaver initialized successfully!
+[16:11:15] [Render thread/INFO] (NetworkManagerImpl) Registering S2C receiver with id architectury:spawn_entity_packet
+[16:11:15] [Render thread/INFO] (roadweaver) Initializing RoadWeaver client...
+[16:11:15] [Render thread/INFO] (roadweaver) RoadWeaver client initialized successfully!
+[16:11:15] [Render thread/INFO] (Indigo) [Indigo] Registering Indigo renderer!
+[16:11:15] [Render thread/INFO] (Minecraft) Backend library: LWJGL version 3.3.3-snapshot
+[16:11:17] [Render thread/INFO] (Minecraft) Reloading ResourceManager: vanilla, fabric, fabric-api, fabric-api-base, fabric-api-lookup-api-v1, fabric-biome-api-v1, fabric-block-api-v1, fabric-block-view-api-v2, fabric-blockrenderlayer-v1, fabric-client-tags-api-v1, fabric-command-api-v1, fabric-command-api-v2, fabric-commands-v0, fabric-content-registries-v0, fabric-convention-tags-v1, fabric-convention-tags-v2, fabric-crash-report-info-v1, fabric-data-attachment-api-v1, fabric-data-generation-api-v1, fabric-dimensions-v1, fabric-entity-events-v1, fabric-events-interaction-v0, fabric-game-rule-api-v1, fabric-gametest-api-v1, fabric-item-api-v1, fabric-item-group-api-v1, fabric-key-binding-api-v1, fabric-keybindings-v0, fabric-lifecycle-events-v1, fabric-loot-api-v2, fabric-loot-api-v3, fabric-message-api-v1, fabric-model-loading-api-v1, fabric-networking-api-v1, fabric-object-builder-api-v1, fabric-particles-v1, fabric-recipe-api-v1, fabric-registry-sync-v0, fabric-renderer-api-v1, fabric-renderer-indigo, fabric-renderer-registries-v1, fabric-rendering-data-attachment-v1, fabric-rendering-fluids-v1, fabric-rendering-v0, fabric-rendering-v1, fabric-resource-conditions-api-v1, fabric-resource-loader-v0, fabric-screen-api-v1, fabric-screen-handler-api-v1, fabric-sound-api-v1, fabric-transfer-api-v1, fabric-transitive-access-wideners-v1, fabricloader, generated_4f413d2, midnightlib, roadweaver
+[16:11:17] [Worker-Main-2/INFO] (Minecraft) Found unifont_all_no_pua-15.1.05.hex, loading
+[16:11:17] [Worker-Main-11/INFO] (Minecraft) Found unifont_jp_patch-15.1.05.hex, loading
+[16:11:18] [Render thread/WARN] (Minecraft) Missing sound for event: minecraft:item.goat_horn.play
+[16:11:18] [Render thread/WARN] (Minecraft) Missing sound for event: minecraft:entity.goat.screaming.horn_break
+[16:11:18] [Render thread/INFO] (Minecraft) OpenAL initialized on device OpenAL Soft on 扬声器 (2- USBAudio1.0)
+[16:11:18] [Render thread/INFO] (Minecraft) Sound engine started
+[16:11:18] [Render thread/INFO] (Minecraft) Created: 1024x512x4 minecraft:textures/atlas/blocks.png-atlas
+[16:11:18] [Render thread/INFO] (Minecraft) Created: 256x256x4 minecraft:textures/atlas/signs.png-atlas
+[16:11:18] [Render thread/INFO] (Minecraft) Created: 512x512x4 minecraft:textures/atlas/shield_patterns.png-atlas
+[16:11:18] [Render thread/INFO] (Minecraft) Created: 512x512x4 minecraft:textures/atlas/banner_patterns.png-atlas
+[16:11:18] [Render thread/INFO] (Minecraft) Created: 1024x1024x4 minecraft:textures/atlas/armor_trims.png-atlas
+[16:11:18] [Render thread/INFO] (Minecraft) Created: 128x64x4 minecraft:textures/atlas/decorated_pot.png-atlas
+[16:11:18] [Render thread/INFO] (Minecraft) Created: 256x256x4 minecraft:textures/atlas/chest.png-atlas
+[16:11:18] [Render thread/INFO] (Minecraft) Created: 512x256x4 minecraft:textures/atlas/shulker_boxes.png-atlas
+[16:11:18] [Render thread/INFO] (Minecraft) Created: 512x256x4 minecraft:textures/atlas/beds.png-atlas
+[16:11:18] [Render thread/INFO] (Minecraft) Created: 512x256x0 minecraft:textures/atlas/particles.png-atlas
+[16:11:18] [Render thread/INFO] (Minecraft) Created: 512x256x0 minecraft:textures/atlas/paintings.png-atlas
+[16:11:18] [Render thread/INFO] (Minecraft) Created: 256x128x0 minecraft:textures/atlas/mob_effects.png-atlas
+[16:11:18] [Render thread/INFO] (Minecraft) Created: 64x64x0 minecraft:textures/atlas/map_decorations.png-atlas
+[16:11:18] [Render thread/INFO] (Minecraft) Created: 1024x512x0 minecraft:textures/atlas/gui.png-atlas
+[16:11:18] [Render thread/WARN] (Minecraft) Shader rendertype_entity_translucent_emissive could not find sampler named Sampler2 in the specified shader program.
+[16:11:24] [Render thread/INFO] (Minecraft) Loaded 1290 recipes
+[16:11:24] [Render thread/INFO] (Minecraft) Loaded 1399 advancements
+[16:11:26] [Render thread/INFO] (BiomeModificationImpl) Applied 256 biome modifications to 64 of 64 new biomes in 8.049 ms
+[16:11:26] [Server thread/INFO] (Minecraft) Starting integrated minecraft server version 1.21.1
+[16:11:26] [Server thread/INFO] (Minecraft) Generating keypair
+[16:11:26] [Server thread/INFO] (roadweaver) RoadWeaver: onWorldLoad called for world: minecraft:overworld
+[16:11:26] [Server thread/INFO] (roadweaver) RoadWeaver: 开始初始结构定位，当前: 0, 目标: 15
+[16:11:34] [Server thread/INFO] (roadweaver) RoadWeaver: 完成初始结构定位
+[16:11:35] [Server thread/INFO] (roadweaver) RoadWeaver: onWorldLoad called for world: minecraft:the_nether
+[16:11:35] [Server thread/INFO] (roadweaver) RoadWeaver: Skipping non-overworld dimension
+[16:11:35] [Server thread/INFO] (roadweaver) RoadWeaver: onWorldLoad called for world: minecraft:the_end
+[16:11:35] [Server thread/INFO] (roadweaver) RoadWeaver: Skipping non-overworld dimension
+[16:11:35] [Server thread/INFO] (Minecraft) Preparing start region for dimension minecraft:overworld
+[16:11:35] [Render thread/INFO] (Minecraft) 准备生成区域中：2%
+[16:11:35] [Render thread/INFO] (Minecraft) 准备生成区域中：2%
+[16:11:36] [Render thread/INFO] (Minecraft) 准备生成区域中：18%
+[16:11:36] [Render thread/INFO] (Minecraft) 准备生成区域中：51%
+[16:11:36] [Render thread/INFO] (Minecraft) Time elapsed: 1674 ms
+[16:11:36] [Server thread/INFO] (Minecraft) Changing view distance to 12, from 10
+[16:11:36] [Server thread/INFO] (Minecraft) Changing simulation distance to 12, from 0
+[16:11:37] [Server thread/INFO] (Minecraft) Player354[local:E:20af3f94] logged in with entity id 1 at (39.5, 88.0, 27.5)
+[16:11:37] [Server thread/INFO] (Minecraft) Player354加入了游戏
+[16:11:37] [Render thread/INFO] (Minecraft) Loaded 2 advancements
+[16:11:39] [Render thread/INFO] (Minecraft) [STDOUT]: [RoadWeaver] 调试地图按键被按下
+[16:11:39] [Render thread/INFO] (Minecraft) [STDOUT]: [RoadWeaver] 打开调试地图 - 结构数: 15, 连接数: 14, 道路数: 0
+[16:11:39] [Server thread/INFO] (Minecraft) Saving and pausing game...
+[16:11:39] [Server thread/INFO] (Minecraft) Saving chunks for level 'ServerLevel[新的世界]'/minecraft:overworld
+[16:11:39] [Server thread/INFO] (Minecraft) Saving chunks for level 'ServerLevel[新的世界]'/minecraft:the_nether
+[16:11:39] [Server thread/INFO] (Minecraft) Saving chunks for level 'ServerLevel[新的世界]'/minecraft:the_end
+[16:11:42] [Render thread/INFO] (Minecraft) [STDOUT]: [RoadWeaver] 调试地图按键被按下
+[16:11:42] [Render thread/INFO] (Minecraft) [STDOUT]: [RoadWeaver] 打开调试地图 - 结构数: 16, 连接数: 15, 道路数: 0
+[16:11:42] [Server thread/INFO] (Minecraft) Saving and pausing game...
+[16:11:42] [Server thread/INFO] (Minecraft) Saving chunks for level 'ServerLevel[新的世界]'/minecraft:overworld
+[16:11:42] [Server thread/INFO] (Minecraft) Saving chunks for level 'ServerLevel[新的世界]'/minecraft:the_nether
+[16:11:42] [Server thread/INFO] (Minecraft) Saving chunks for level 'ServerLevel[新的世界]'/minecraft:the_end
+[16:11:43] [Render thread/INFO] (Minecraft) [STDOUT]: [RoadWeaver] 调试地图按键被按下
+[16:11:43] [Render thread/INFO] (Minecraft) [STDOUT]: [RoadWeaver] 打开调试地图 - 结构数: 16, 连接数: 15, 道路数: 0
+[16:11:43] [Server thread/INFO] (Minecraft) Saving and pausing game...
+[16:11:43] [Server thread/INFO] (Minecraft) Saving chunks for level 'ServerLevel[新的世界]'/minecraft:overworld
+[16:11:43] [Server thread/INFO] (Minecraft) Saving chunks for level 'ServerLevel[新的世界]'/minecraft:the_nether
+[16:11:43] [Server thread/INFO] (Minecraft) Saving chunks for level 'ServerLevel[新的世界]'/minecraft:the_end
+[16:11:45] [Render thread/INFO] (Minecraft) [STDOUT]: [RoadWeaver] 调试地图按键被按下
+[16:11:45] [Render thread/INFO] (Minecraft) [STDOUT]: [RoadWeaver] 打开调试地图 - 结构数: 16, 连接数: 15, 道路数: 0
+[16:11:45] [Server thread/INFO] (Minecraft) Saving and pausing game...
+[16:11:45] [Server thread/INFO] (Minecraft) Saving chunks for level 'ServerLevel[新的世界]'/minecraft:overworld
+[16:11:45] [Server thread/INFO] (Minecraft) Saving chunks for level 'ServerLevel[新的世界]'/minecraft:the_nether
+[16:11:45] [Server thread/INFO] (Minecraft) Saving chunks for level 'ServerLevel[新的世界]'/minecraft:the_end
+[16:11:45] [Render thread/INFO] (Minecraft) [STDOUT]: [RoadWeaver] 调试地图按键被按下
+[16:11:45] [Render thread/INFO] (Minecraft) [STDOUT]: [RoadWeaver] 打开调试地图 - 结构数: 16, 连接数: 15, 道路数: 0
+[16:11:45] [Server thread/INFO] (Minecraft) Saving and pausing game...
+[16:11:45] [Server thread/INFO] (Minecraft) Saving chunks for level 'ServerLevel[新的世界]'/minecraft:overworld
+[16:11:45] [Server thread/INFO] (Minecraft) Saving chunks for level 'ServerLevel[新的世界]'/minecraft:the_nether
+[16:11:45] [Server thread/INFO] (Minecraft) Saving chunks for level 'ServerLevel[新的世界]'/minecraft:the_end
+[16:11:46] [Render thread/INFO] (Minecraft) [STDOUT]: [RoadWeaver] 调试地图按键被按下
+[16:11:46] [Render thread/INFO] (Minecraft) [STDOUT]: [RoadWeaver] 打开调试地图 - 结构数: 16, 连接数: 15, 道路数: 0
+[16:11:46] [Server thread/INFO] (Minecraft) Saving and pausing game...
+[16:11:46] [Server thread/INFO] (Minecraft) Saving chunks for level 'ServerLevel[新的世界]'/minecraft:overworld
+[16:11:46] [Server thread/INFO] (Minecraft) Saving chunks for level 'ServerLevel[新的世界]'/minecraft:the_nether
+[16:11:46] [Server thread/INFO] (Minecraft) Saving chunks for level 'ServerLevel[新的世界]'/minecraft:the_end
+[16:11:46] [Render thread/INFO] (Minecraft) [STDOUT]: [RoadWeaver] 调试地图按键被按下
+[16:11:46] [Render thread/INFO] (Minecraft) [STDOUT]: [RoadWeaver] 打开调试地图 - 结构数: 16, 连接数: 15, 道路数: 0
+[16:11:46] [Server thread/INFO] (Minecraft) Saving and pausing game...
+[16:11:46] [Server thread/INFO] (Minecraft) Saving chunks for level 'ServerLevel[新的世界]'/minecraft:overworld
+[16:11:46] [Server thread/INFO] (Minecraft) Saving chunks for level 'ServerLevel[新的世界]'/minecraft:the_nether
+[16:11:46] [Server thread/INFO] (Minecraft) Saving chunks for level 'ServerLevel[新的世界]'/minecraft:the_end
+[16:11:46] [Render thread/INFO] (Minecraft) [STDOUT]: [RoadWeaver] 调试地图按键被按下
+[16:11:46] [Render thread/INFO] (Minecraft) [STDOUT]: [RoadWeaver] 打开调试地图 - 结构数: 16, 连接数: 15, 道路数: 0
+[16:11:47] [Render thread/INFO] (Minecraft) [STDOUT]: [RoadWeaver] 调试地图按键被按下
+[16:11:47] [Render thread/INFO] (Minecraft) [STDOUT]: [RoadWeaver] 打开调试地图 - 结构数: 16, 连接数: 15, 道路数: 0
+[16:11:47] [Render thread/INFO] (Minecraft) [STDOUT]: [RoadWeaver] 调试地图按键被按下
+[16:11:47] [Render thread/INFO] (Minecraft) [STDOUT]: [RoadWeaver] 打开调试地图 - 结构数: 16, 连接数: 15, 道路数: 0
+[16:11:47] [Render thread/INFO] (Minecraft) [STDOUT]: [RoadWeaver] 调试地图按键被按下
+[16:11:47] [Render thread/INFO] (Minecraft) [STDOUT]: [RoadWeaver] 打开调试地图 - 结构数: 16, 连接数: 15, 道路数: 0
+[16:11:47] [Render thread/INFO] (Minecraft) [STDOUT]: [RoadWeaver] 调试地图按键被按下
+[16:11:47] [Render thread/INFO] (Minecraft) [STDOUT]: [RoadWeaver] 打开调试地图 - 结构数: 16, 连接数: 15, 道路数: 0
+[16:11:48] [Render thread/INFO] (Minecraft) [STDOUT]: [RoadWeaver] 调试地图按键被按下
+[16:11:48] [Render thread/INFO] (Minecraft) [STDOUT]: [RoadWeaver] 打开调试地图 - 结构数: 17, 连接数: 16, 道路数: 0
+[16:11:48] [Server thread/INFO] (Minecraft) Saving and pausing game...
+[16:11:48] [Server thread/INFO] (Minecraft) Saving chunks for level 'ServerLevel[新的世界]'/minecraft:overworld
+[16:11:48] [Server thread/INFO] (Minecraft) Saving chunks for level 'ServerLevel[新的世界]'/minecraft:the_nether
+[16:11:48] [Server thread/INFO] (Minecraft) Saving chunks for level 'ServerLevel[新的世界]'/minecraft:the_end
+[16:11:49] [Render thread/INFO] (Minecraft) [STDOUT]: [RoadWeaver] 调试地图按键被按下
+[16:11:49] [Render thread/INFO] (Minecraft) [STDOUT]: [RoadWeaver] 打开调试地图 - 结构数: 17, 连接数: 16, 道路数: 0
+[16:11:49] [Server thread/INFO] (Minecraft) Saving and pausing game...
+[16:11:49] [Server thread/INFO] (Minecraft) Saving chunks for level 'ServerLevel[新的世界]'/minecraft:overworld
+[16:11:49] [Server thread/INFO] (Minecraft) Saving chunks for level 'ServerLevel[新的世界]'/minecraft:the_nether
+[16:11:49] [Server thread/INFO] (Minecraft) Saving chunks for level 'ServerLevel[新的世界]'/minecraft:the_end
+[16:11:51] [Render thread/INFO] (Minecraft) [STDOUT]: [RoadWeaver] 调试地图按键被按下
+[16:11:51] [Render thread/INFO] (Minecraft) [STDOUT]: [RoadWeaver] 打开调试地图 - 结构数: 17, 连接数: 16, 道路数: 0
+[16:11:51] [Server thread/INFO] (Minecraft) Saving and pausing game...
+[16:11:51] [Server thread/INFO] (Minecraft) Saving chunks for level 'ServerLevel[新的世界]'/minecraft:overworld
+[16:11:51] [Server thread/INFO] (Minecraft) Saving chunks for level 'ServerLevel[新的世界]'/minecraft:the_nether
+[16:11:51] [Server thread/INFO] (Minecraft) Saving chunks for level 'ServerLevel[新的世界]'/minecraft:the_end
+[16:11:51] [Render thread/INFO] (Minecraft) [STDOUT]: [RoadWeaver] 调试地图按键被按下
+[16:11:51] [Render thread/INFO] (Minecraft) [STDOUT]: [RoadWeaver] 打开调试地图 - 结构数: 17, 连接数: 16, 道路数: 0
+[16:11:51] [Server thread/INFO] (Minecraft) Saving and pausing game...
+[16:11:51] [Server thread/INFO] (Minecraft) Saving chunks for level 'ServerLevel[新的世界]'/minecraft:overworld
+[16:11:51] [Server thread/INFO] (Minecraft) Saving chunks for level 'ServerLevel[新的世界]'/minecraft:the_nether
+[16:11:51] [Server thread/INFO] (Minecraft) Saving chunks for level 'ServerLevel[新的世界]'/minecraft:the_end
+[16:11:54] [Render thread/INFO] (Minecraft) [STDOUT]: [RoadWeaver] 调试地图按键被按下
+[16:11:54] [Render thread/INFO] (Minecraft) [STDOUT]: [RoadWeaver] 打开调试地图 - 结构数: 18, 连接数: 17, 道路数: 0
+[16:11:54] [Server thread/INFO] (Minecraft) Saving and pausing game...
+[16:11:54] [Server thread/INFO] (Minecraft) Saving chunks for level 'ServerLevel[新的世界]'/minecraft:overworld
+[16:11:54] [Server thread/INFO] (Minecraft) Saving chunks for level 'ServerLevel[新的世界]'/minecraft:the_nether
+[16:11:54] [Server thread/INFO] (Minecraft) Saving chunks for level 'ServerLevel[新的世界]'/minecraft:the_end
+[16:11:59] [Render thread/INFO] (Minecraft) [STDOUT]: [RoadWeaver] 调试地图按键被按下
+[16:11:59] [Render thread/INFO] (Minecraft) [STDOUT]: [RoadWeaver] 打开调试地图 - 结构数: 18, 连接数: 17, 道路数: 0
+[16:11:59] [Server thread/INFO] (Minecraft) Saving and pausing game...
+[16:11:59] [Server thread/INFO] (Minecraft) Saving chunks for level 'ServerLevel[新的世界]'/minecraft:overworld
+[16:11:59] [Server thread/INFO] (Minecraft) Saving chunks for level 'ServerLevel[新的世界]'/minecraft:the_nether
+[16:11:59] [Server thread/INFO] (Minecraft) Saving chunks for level 'ServerLevel[新的世界]'/minecraft:the_end
+[16:12:01] [Render thread/INFO] (Minecraft) [STDOUT]: [RoadWeaver] 调试地图按键被按下
+[16:12:01] [Render thread/INFO] (Minecraft) [STDOUT]: [RoadWeaver] 打开调试地图 - 结构数: 18, 连接数: 17, 道路数: 0
+[16:12:01] [Server thread/INFO] (Minecraft) Saving and pausing game...
+[16:12:01] [Server thread/INFO] (Minecraft) Saving chunks for level 'ServerLevel[新的世界]'/minecraft:overworld
+[16:12:01] [Server thread/INFO] (Minecraft) Saving chunks for level 'ServerLevel[新的世界]'/minecraft:the_nether
+[16:12:01] [Server thread/INFO] (Minecraft) Saving chunks for level 'ServerLevel[新的世界]'/minecraft:the_end
+[16:12:05] [Render thread/INFO] (Minecraft) [STDOUT]: [RoadWeaver] 调试地图按键被按下
+[16:12:05] [Render thread/INFO] (Minecraft) [STDOUT]: [RoadWeaver] 打开调试地图 - 结构数: 18, 连接数: 17, 道路数: 1
+[16:12:05] [Server thread/INFO] (Minecraft) Saving and pausing game...
+[16:12:05] [Server thread/INFO] (Minecraft) Saving chunks for level 'ServerLevel[新的世界]'/minecraft:overworld
+[16:12:05] [Server thread/INFO] (Minecraft) Saving chunks for level 'ServerLevel[新的世界]'/minecraft:the_nether
+[16:12:05] [Server thread/INFO] (Minecraft) Saving chunks for level 'ServerLevel[新的世界]'/minecraft:the_end
+[16:12:08] [Render thread/INFO] (Minecraft) [STDOUT]: [RoadWeaver] 调试地图按键被按下
+[16:12:08] [Render thread/INFO] (Minecraft) [STDOUT]: [RoadWeaver] 打开调试地图 - 结构数: 18, 连接数: 17, 道路数: 1
+[16:12:08] [Server thread/INFO] (Minecraft) Saving and pausing game...
+[16:12:08] [Server thread/INFO] (Minecraft) Saving chunks for level 'ServerLevel[新的世界]'/minecraft:overworld
+[16:12:08] [Server thread/INFO] (Minecraft) Saving chunks for level 'ServerLevel[新的世界]'/minecraft:the_nether
+[16:12:08] [Server thread/INFO] (Minecraft) Saving chunks for level 'ServerLevel[新的世界]'/minecraft:the_end
+[16:12:08] [Render thread/INFO] (Minecraft) [STDOUT]: [RoadWeaver] 调试地图按键被按下
+[16:12:08] [Render thread/INFO] (Minecraft) [STDOUT]: [RoadWeaver] 打开调试地图 - 结构数: 18, 连接数: 17, 道路数: 1
+[16:12:08] [Server thread/INFO] (Minecraft) Saving and pausing game...
+[16:12:08] [Server thread/INFO] (Minecraft) Saving chunks for level 'ServerLevel[新的世界]'/minecraft:overworld
+[16:12:08] [Server thread/INFO] (Minecraft) Saving chunks for level 'ServerLevel[新的世界]'/minecraft:the_nether
+[16:12:08] [Server thread/INFO] (Minecraft) Saving chunks for level 'ServerLevel[新的世界]'/minecraft:the_end
+[16:12:09] [Render thread/INFO] (Minecraft) [STDOUT]: [RoadWeaver] 调试地图按键被按下
+[16:12:09] [Render thread/INFO] (Minecraft) [STDOUT]: [RoadWeaver] 打开调试地图 - 结构数: 18, 连接数: 17, 道路数: 1
+[16:12:09] [Server thread/INFO] (Minecraft) Saving and pausing game...
+[16:12:09] [Server thread/INFO] (Minecraft) Saving chunks for level 'ServerLevel[新的世界]'/minecraft:overworld
+[16:12:09] [Server thread/INFO] (Minecraft) Saving chunks for level 'ServerLevel[新的世界]'/minecraft:the_nether
+[16:12:09] [Server thread/INFO] (Minecraft) Saving chunks for level 'ServerLevel[新的世界]'/minecraft:the_end
+[16:12:10] [Render thread/INFO] (Minecraft) [STDOUT]: [RoadWeaver] 调试地图按键被按下
+[16:12:10] [Render thread/INFO] (Minecraft) [STDOUT]: [RoadWeaver] 打开调试地图 - 结构数: 18, 连接数: 17, 道路数: 1
+[16:12:10] [Server thread/INFO] (Minecraft) Saving and pausing game...
+[16:12:10] [Server thread/INFO] (Minecraft) Saving chunks for level 'ServerLevel[新的世界]'/minecraft:overworld
+[16:12:10] [Server thread/INFO] (Minecraft) Saving chunks for level 'ServerLevel[新的世界]'/minecraft:the_nether
+[16:12:10] [Server thread/INFO] (Minecraft) Saving chunks for level 'ServerLevel[新的世界]'/minecraft:the_end
+[16:12:10] [Render thread/INFO] (Minecraft) [STDOUT]: [RoadWeaver] 调试地图按键被按下
+[16:12:10] [Render thread/INFO] (Minecraft) [STDOUT]: [RoadWeaver] 打开调试地图 - 结构数: 18, 连接数: 17, 道路数: 1
+[16:12:10] [Server thread/INFO] (Minecraft) Saving and pausing game...
+[16:12:10] [Server thread/INFO] (Minecraft) Saving chunks for level 'ServerLevel[新的世界]'/minecraft:overworld
+[16:12:10] [Server thread/INFO] (Minecraft) Saving chunks for level 'ServerLevel[新的世界]'/minecraft:the_nether
+[16:12:10] [Server thread/INFO] (Minecraft) Saving chunks for level 'ServerLevel[新的世界]'/minecraft:the_end
+[16:12:10] [Render thread/INFO] (Minecraft) [STDOUT]: [RoadWeaver] 调试地图按键被按下
+[16:12:10] [Render thread/INFO] (Minecraft) [STDOUT]: [RoadWeaver] 打开调试地图 - 结构数: 18, 连接数: 17, 道路数: 1
+[16:12:10] [Server thread/INFO] (Minecraft) Saving and pausing game...
+[16:12:10] [Server thread/INFO] (Minecraft) Saving chunks for level 'ServerLevel[新的世界]'/minecraft:overworld
+[16:12:10] [Server thread/INFO] (Minecraft) Saving chunks for level 'ServerLevel[新的世界]'/minecraft:the_nether
+[16:12:10] [Server thread/INFO] (Minecraft) Saving chunks for level 'ServerLevel[新的世界]'/minecraft:the_end
+[16:12:11] [Render thread/INFO] (Minecraft) [STDOUT]: [RoadWeaver] 调试地图按键被按下
+[16:12:11] [Render thread/INFO] (Minecraft) [STDOUT]: [RoadWeaver] 打开调试地图 - 结构数: 18, 连接数: 17, 道路数: 1
+[16:12:11] [Server thread/INFO] (Minecraft) Saving and pausing game...
+[16:12:11] [Server thread/INFO] (Minecraft) Saving chunks for level 'ServerLevel[新的世界]'/minecraft:overworld
+[16:12:11] [Server thread/INFO] (Minecraft) Saving chunks for level 'ServerLevel[新的世界]'/minecraft:the_nether
+[16:12:11] [Server thread/INFO] (Minecraft) Saving chunks for level 'ServerLevel[新的世界]'/minecraft:the_end
+[16:12:12] [Render thread/INFO] (Minecraft) [STDOUT]: [RoadWeaver] 调试地图按键被按下
+[16:12:12] [Render thread/INFO] (Minecraft) [STDOUT]: [RoadWeaver] 打开调试地图 - 结构数: 18, 连接数: 17, 道路数: 1
+[16:12:12] [Server thread/INFO] (Minecraft) Saving and pausing game...
+[16:12:12] [Server thread/INFO] (Minecraft) Saving chunks for level 'ServerLevel[新的世界]'/minecraft:overworld
+[16:12:12] [Server thread/INFO] (Minecraft) Saving chunks for level 'ServerLevel[新的世界]'/minecraft:the_nether
+[16:12:12] [Server thread/INFO] (Minecraft) Saving chunks for level 'ServerLevel[新的世界]'/minecraft:the_end
+[16:12:15] [Server thread/INFO] (Minecraft) [Player354: 已将自己的游戏模式设置为旁观模式]
+[16:12:16] [Render thread/INFO] (Minecraft) [System] [CHAT] 已将自己的游戏模式设置为旁观模式
+[16:12:21] [Render thread/INFO] (Minecraft) [STDOUT]: [RoadWeaver] 调试地图按键被按下
+[16:12:21] [Render thread/INFO] (Minecraft) [STDOUT]: [RoadWeaver] 打开调试地图 - 结构数: 19, 连接数: 18, 道路数: 1
+[16:12:22] [Server thread/INFO] (Minecraft) Saving and pausing game...
+[16:12:22] [Server thread/INFO] (Minecraft) Saving chunks for level 'ServerLevel[新的世界]'/minecraft:overworld
+[16:12:22] [Server thread/INFO] (Minecraft) Saving chunks for level 'ServerLevel[新的世界]'/minecraft:the_nether
+[16:12:22] [Server thread/INFO] (Minecraft) Saving chunks for level 'ServerLevel[新的世界]'/minecraft:the_end
+[16:12:46] [Render thread/INFO] (Minecraft) [STDOUT]: [RoadWeaver] 调试地图按键被按下
+[16:12:46] [Render thread/INFO] (Minecraft) [STDOUT]: [RoadWeaver] 打开调试地图 - 结构数: 23, 连接数: 22, 道路数: 2
+[16:12:46] [Server thread/INFO] (Minecraft) Saving and pausing game...
+[16:12:46] [Server thread/INFO] (Minecraft) Saving chunks for level 'ServerLevel[新的世界]'/minecraft:overworld
+[16:12:46] [Server thread/INFO] (Minecraft) Saving chunks for level 'ServerLevel[新的世界]'/minecraft:the_nether
+[16:12:46] [Server thread/INFO] (Minecraft) Saving chunks for level 'ServerLevel[新的世界]'/minecraft:the_end
+[16:13:28] [Render thread/INFO] (Minecraft) [STDOUT]: [RoadWeaver] 调试地图按键被按下
+[16:13:28] [Render thread/INFO] (Minecraft) [STDOUT]: [RoadWeaver] 打开调试地图 - 结构数: 31, 连接数: 30, 道路数: 2
+[16:13:28] [Server thread/INFO] (Minecraft) Saving and pausing game...
+[16:13:28] [Server thread/INFO] (Minecraft) Saving chunks for level 'ServerLevel[新的世界]'/minecraft:overworld
+[16:13:28] [Server thread/INFO] (Minecraft) Saving chunks for level 'ServerLevel[新的世界]'/minecraft:the_nether
+[16:13:28] [Server thread/INFO] (Minecraft) Saving chunks for level 'ServerLevel[新的世界]'/minecraft:the_end
+[16:13:32] [Render thread/INFO] (Minecraft) [STDOUT]: [RoadWeaver] 调试地图按键被按下
+[16:13:32] [Render thread/INFO] (Minecraft) [STDOUT]: [RoadWeaver] 打开调试地图 - 结构数: 32, 连接数: 31, 道路数: 2
+[16:13:32] [Server thread/INFO] (Minecraft) Saving and pausing game...
+[16:13:32] [Server thread/INFO] (Minecraft) Saving chunks for level 'ServerLevel[新的世界]'/minecraft:overworld
+[16:13:32] [Server thread/INFO] (Minecraft) Saving chunks for level 'ServerLevel[新的世界]'/minecraft:the_nether
+[16:13:32] [Server thread/INFO] (Minecraft) Saving chunks for level 'ServerLevel[新的世界]'/minecraft:the_end
+[16:13:36] [Server thread/INFO] (Minecraft) Saving and pausing game...
+[16:13:36] [Server thread/INFO] (Minecraft) Saving chunks for level 'ServerLevel[新的世界]'/minecraft:overworld
+[16:13:36] [Server thread/INFO] (Minecraft) Saving chunks for level 'ServerLevel[新的世界]'/minecraft:the_nether
+[16:13:36] [Server thread/INFO] (Minecraft) Saving chunks for level 'ServerLevel[新的世界]'/minecraft:the_end
+[16:13:36] [Server thread/INFO] (Minecraft) Player354 lost connection: 连接中断
+[16:13:36] [Server thread/INFO] (Minecraft) Player354退出了游戏
+[16:13:36] [Server thread/INFO] (Minecraft) Stopping singleplayer server as player logged out
+[16:13:37] [Server thread/INFO] (Minecraft) Stopping server
+[16:13:37] [Server thread/INFO] (Minecraft) Saving players
+[16:13:37] [Server thread/INFO] (Minecraft) Saving worlds
+[16:13:37] [Server thread/INFO] (Minecraft) Saving chunks for level 'ServerLevel[新的世界]'/minecraft:overworld
+[16:13:39] [Server thread/INFO] (Minecraft) Saving chunks for level 'ServerLevel[新的世界]'/minecraft:the_nether
+[16:13:39] [Server thread/INFO] (Minecraft) Saving chunks for level 'ServerLevel[新的世界]'/minecraft:the_end
+[16:13:39] [Server thread/INFO] (Minecraft) ThreadedAnvilChunkStorage (新的世界 (1)): All chunks are saved
+[16:13:39] [Server thread/INFO] (Minecraft) ThreadedAnvilChunkStorage (DIM-1): All chunks are saved
+[16:13:39] [Server thread/INFO] (Minecraft) ThreadedAnvilChunkStorage (DIM1): All chunks are saved
+[16:13:39] [Server thread/INFO] (Minecraft) ThreadedAnvilChunkStorage: All dimensions are saved
+[16:13:41] [Render thread/INFO] (Minecraft) Stopping!

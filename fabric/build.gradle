@@ -1,0 +1,112 @@
+apply plugin: 'com.github.johnrengelman.shadow'
+
+configurations {
+	common
+	shadowCommon
+	compileClasspath.extendsFrom common
+	runtimeClasspath.extendsFrom common
+	developmentFabric.extendsFrom common
+}
+
+dependencies {
+	modImplementation "net.fabricmc:fabric-loader:${rootProject.fabric_loader_version}"
+	modApi "net.fabricmc.fabric-api:fabric-api:${rootProject.fabric_api_version}"
+	
+	// Architectury API
+	modApi "dev.architectury:architectury-fabric:${rootProject.architectury_version}"
+	
+	// MidnightLib for Fabric
+	modImplementation include("maven.modrinth:midnightlib:${rootProject.midnightlib_version}")
+	
+	common(project(path: ":common", configuration: "namedElements")) { transitive false }
+	shadowCommon(project(path: ":common", configuration: "transformProductionFabric")) { transitive false }
+}
+
+architectury {
+	platformSetupLoomIde()
+	fabric()
+}
+
+apply plugin: 'com.modrinth.minotaur'
+apply plugin: 'net.darkhax.curseforgegradle'
+
+processResources {
+	inputs.property "version", project.version
+	inputs.property "mod_id", rootProject.mod_id
+	inputs.property "mod_name", rootProject.mod_name
+	inputs.property "mod_description", rootProject.mod_description
+	inputs.property "mod_author", rootProject.mod_author
+	inputs.property "fabric_loader_version", rootProject.fabric_loader_version
+	inputs.property "minecraft_version", rootProject.minecraft_version
+	inputs.property "architectury_version", rootProject.architectury_version
+
+	filesMatching("fabric.mod.json") {
+		expand(
+			"version": project.version,
+			"mod_id": rootProject.mod_id,
+			"mod_name": rootProject.mod_name,
+			"mod_description": rootProject.mod_description,
+			"mod_author": rootProject.mod_author,
+			"fabric_loader_version": rootProject.fabric_loader_version,
+			"minecraft_version": rootProject.minecraft_version,
+			"architectury_version": rootProject.architectury_version
+		)
+	}
+}
+
+shadowJar {
+	configurations = [project.configurations.shadowCommon]
+	archiveClassifier = "dev-shadow"
+}
+
+remapJar {
+	input.set shadowJar.archiveFile
+	dependsOn shadowJar
+}
+
+sourcesJar {
+	def commonSources = project(":common").sourcesJar
+	dependsOn commonSources
+	from commonSources.archiveFile.map { zipTree(it) }
+	duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+}
+
+components.java {
+	withVariantsFromConfiguration(project.configurations.shadowRuntimeElements) {
+		skip()
+	}
+}
+
+// Modrinth发布配置
+modrinth {
+	token = System.getenv("MODRINTH_TOKEN")
+	projectId = "countereds-settlement-roads"
+	versionNumber = "${rootProject.mod_version}-fabric"
+	versionType = "release"
+	uploadFile = remapJar
+	gameVersions = ["1.21.1"]
+	loaders = ["fabric"]
+	changelog = rootProject.file("changelog.md").text
+	versionName = "RoadWeaver ${rootProject.mod_version} (Fabric)"
+	dependencies {
+		embedded.project "midnightlib"
+	}
+}
+
+// CurseForge发布配置
+import net.darkhax.curseforgegradle.TaskPublishCurseForge
+
+tasks.register("curseforge", TaskPublishCurseForge) {
+	apiToken = System.getenv("CURSEFORGE_TOKEN")
+	def projectId = "1140708"
+
+	def mainFile = upload(projectId, remapJar)
+	mainFile.changelog = rootProject.file("changelog.md")
+	mainFile.changelogType = "markdown"
+	mainFile.displayName = "RoadWeaver ${rootProject.mod_version} (Fabric)"
+	mainFile.releaseType = "release"
+	mainFile.addGameVersion("Fabric")
+	mainFile.addGameVersion("1.21.1")
+
+	mainFile.addEmbedded("midnightlib")
+}

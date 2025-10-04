@@ -1,0 +1,9 @@
+/locate poi #minecraft:village
+/locate structure minecraft:village_desert
+/tp @s -3408 ~ 48
+/kill
+/locate poi #minecraft:village
+/tp @s 101 ~ 648
+/locate poi #minecraft:village
+/locate structure minecraft:village_plains
+/tp @s -944 ~ -1040

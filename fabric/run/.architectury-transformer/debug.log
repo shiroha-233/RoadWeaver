@@ -1,0 +1,337 @@
+[Architectury Transformer] Architectury Runtime 5.2.87
+[Architectury Transformer DEBUG] Closed File Systems for E:\Github\RoadWeaver\common\build\devlibs\roadweaver-common-dev.jar
+[Architectury Transformer DEBUG] Preparing tiny remapper prepared transformer: dev.architectury.transformer.handler.TinyRemapperPreparedTransformerHandler
+[Architectury Transformer DEBUG] Provided 112 classpath jar(s):
+[Architectury Transformer DEBUG]  - C:\Users\shiroha\scoop\apps\gradle\current\.gradle\caches\modules-2\files-2.1\dev.architectury\architectury-injectables\1.0.10\62db2a366d662606d1b23ad02ccc3212ed37ec3\architectury-injectables-1.0.10.jar
+[Architectury Transformer DEBUG]  - C:\Users\shiroha\scoop\apps\gradle\current\.gradle\caches\modules-2\files-2.1\net.fabricmc\fabric-loader\0.17.2\647622ac4163aad5ed5f79ccb532e31225562aa\fabric-loader-0.17.2.jar
+[Architectury Transformer DEBUG]  - C:\Users\shiroha\scoop\apps\gradle\current\.gradle\caches\modules-2\files-2.1\org.jetbrains\annotations\26.0.2\c7ce3cdeda3d18909368dfe5977332dfad326c6d\annotations-26.0.2.jar
+[Architectury Transformer DEBUG]  - C:\Users\shiroha\scoop\apps\gradle\current\.gradle\caches\modules-2\files-2.1\org.ow2.asm\asm\9.7.1\f0ed132a49244b042cd0e15702ab9f2ce3cc8436\asm-9.7.1.jar
+[Architectury Transformer DEBUG]  - C:\Users\shiroha\scoop\apps\gradle\current\.gradle\caches\modules-2\files-2.1\org.ow2.asm\asm-analysis\9.7.1\f97a3b319f0ed6a8cd944dc79060d3912a28985f\asm-analysis-9.7.1.jar
+[Architectury Transformer DEBUG]  - C:\Users\shiroha\scoop\apps\gradle\current\.gradle\caches\modules-2\files-2.1\org.ow2.asm\asm-commons\9.7.1\406c6a2225cfe1819f102a161e54cc16a5c24f75\asm-commons-9.7.1.jar
+[Architectury Transformer DEBUG]  - C:\Users\shiroha\scoop\apps\gradle\current\.gradle\caches\modules-2\files-2.1\org.ow2.asm\asm-tree\9.7.1\3a53139787663b139de76b627fca0084ab60d32c\asm-tree-9.7.1.jar
+[Architectury Transformer DEBUG]  - C:\Users\shiroha\scoop\apps\gradle\current\.gradle\caches\modules-2\files-2.1\org.ow2.asm\asm-util\9.7.1\9e23359b598ec6b74b23e53110dd5c577adf2243\asm-util-9.7.1.jar
+[Architectury Transformer DEBUG]  - C:\Users\shiroha\scoop\apps\gradle\current\.gradle\caches\modules-2\files-2.1\net.fabricmc\sponge-mixin\0.15.4+mixin.0.8.7\6a12aacc794f1078458433116e9ed42c1cc98096\sponge-mixin-0.15.4+mixin.0.8.7.jar
+[Architectury Transformer DEBUG]  - C:\Users\shiroha\scoop\apps\gradle\current\.gradle\caches\modules-2\files-2.1\io.github.llamalad7\mixinextras-fabric\0.4.1\8d1a9e96afb990367fa1f904d17580d164da72e3\mixinextras-fabric-0.4.1.jar
+[Architectury Transformer DEBUG]  - C:\Users\shiroha\scoop\apps\gradle\current\.gradle\caches\modules-2\files-2.1\net.fabricmc\yarn\1.21.1+build.3\2ad14aed781c4a73ed4dbb421966d408a0a06686\yarn-1.21.1+build.3-constants.jar
+[Architectury Transformer DEBUG]  - C:\Users\shiroha\scoop\apps\gradle\current\.gradle\caches\modules-2\files-2.1\com.github.oshi\oshi-core\6.4.10\b1d8ab82d11d92fd639b56d639f8f46f739dd5fa\oshi-core-6.4.10.jar
+[Architectury Transformer DEBUG]  - C:\Users\shiroha\scoop\apps\gradle\current\.gradle\caches\modules-2\files-2.1\com.google.code.gson\gson\2.10.1\b3add478d4382b78ea20b1671390a858002feb6c\gson-2.10.1.jar
+[Architectury Transformer DEBUG]  - C:\Users\shiroha\scoop\apps\gradle\current\.gradle\caches\modules-2\files-2.1\com.google.guava\failureaccess\1.0.1\1dcf1de382a0bf95a3d8b0849546c88bac1292c9\failureaccess-1.0.1.jar
+[Architectury Transformer DEBUG]  - C:\Users\shiroha\scoop\apps\gradle\current\.gradle\caches\modules-2\files-2.1\com.google.guava\guava\32.1.2-jre\5e64ec7e056456bef3a4bc4c6fdaef71e8ab6318\guava-32.1.2-jre.jar
+[Architectury Transformer DEBUG]  - C:\Users\shiroha\scoop\apps\gradle\current\.gradle\caches\modules-2\files-2.1\com.ibm.icu\icu4j\73.2\61ad4ef7f9131fcf6d25c34b817f90d6da06c9e9\icu4j-73.2.jar
+[Architectury Transformer DEBUG]  - C:\Users\shiroha\scoop\apps\gradle\current\.gradle\caches\modules-2\files-2.1\com.mojang\authlib\6.0.54\de8bc95660e1b2fe8793fd427a7a10dcec5b3ea7\authlib-6.0.54.jar
+[Architectury Transformer DEBUG]  - C:\Users\shiroha\scoop\apps\gradle\current\.gradle\caches\modules-2\files-2.1\com.mojang\blocklist\1.0.10\5c685c5ffa94c4cd39496c7184c1d122e515ecef\blocklist-1.0.10.jar
+[Architectury Transformer DEBUG]  - C:\Users\shiroha\scoop\apps\gradle\current\.gradle\caches\modules-2\files-2.1\com.mojang\brigadier\1.3.10\d15b53a14cf20fdcaa98f731af5dda654452c010\brigadier-1.3.10.jar
+[Architectury Transformer DEBUG]  - C:\Users\shiroha\scoop\apps\gradle\current\.gradle\caches\modules-2\files-2.1\com.mojang\datafixerupper\8.0.16\67d4de6d7f95d89bcf5862995fb854ebaec02a34\datafixerupper-8.0.16.jar
+[Architectury Transformer DEBUG]  - C:\Users\shiroha\scoop\apps\gradle\current\.gradle\caches\modules-2\files-2.1\com.mojang\logging\1.2.7\24cb95ffb0e3433fd6e844c04e68009e504ca1c0\logging-1.2.7.jar
+[Architectury Transformer DEBUG]  - C:\Users\shiroha\scoop\apps\gradle\current\.gradle\caches\modules-2\files-2.1\com.mojang\patchy\2.2.10\da05971b07cbb379d002cf7eaec6a2048211fefc\patchy-2.2.10.jar
+[Architectury Transformer DEBUG]  - C:\Users\shiroha\scoop\apps\gradle\current\.gradle\caches\modules-2\files-2.1\com.mojang\text2speech\1.17.9\3cad216e3a7f0c19b4b394388bc9ffc446f13b14\text2speech-1.17.9.jar
+[Architectury Transformer DEBUG]  - C:\Users\shiroha\scoop\apps\gradle\current\.gradle\caches\modules-2\files-2.1\commons-codec\commons-codec\1.16.0\4e3eb3d79888d76b54e28b350915b5dc3919c9de\commons-codec-1.16.0.jar
+[Architectury Transformer DEBUG]  - C:\Users\shiroha\scoop\apps\gradle\current\.gradle\caches\modules-2\files-2.1\commons-io\commons-io\2.15.1\f11560da189ab563a5c8e351941415430e9304ea\commons-io-2.15.1.jar
+[Architectury Transformer DEBUG]  - C:\Users\shiroha\scoop\apps\gradle\current\.gradle\caches\modules-2\files-2.1\commons-logging\commons-logging\1.2\4bfc12adfe4842bf07b657f0369c4cb522955686\commons-logging-1.2.jar
+[Architectury Transformer DEBUG]  - C:\Users\shiroha\scoop\apps\gradle\current\.gradle\caches\modules-2\files-2.1\io.netty\netty-buffer\4.1.97.Final\f8f3d8644afa5e6e1a40a3a6aeb9d9aa970ecb4f\netty-buffer-4.1.97.Final.jar
+[Architectury Transformer DEBUG]  - C:\Users\shiroha\scoop\apps\gradle\current\.gradle\caches\modules-2\files-2.1\io.netty\netty-codec\4.1.97.Final\384ba4d75670befbedb45c4d3b497a93639c206d\netty-codec-4.1.97.Final.jar
+[Architectury Transformer DEBUG]  - C:\Users\shiroha\scoop\apps\gradle\current\.gradle\caches\modules-2\files-2.1\io.netty\netty-common\4.1.97.Final\7cceacaf11df8dc63f23d0fb58e9d4640fc88404\netty-common-4.1.97.Final.jar
+[Architectury Transformer DEBUG]  - C:\Users\shiroha\scoop\apps\gradle\current\.gradle\caches\modules-2\files-2.1\io.netty\netty-handler\4.1.97.Final\abb86c6906bf512bf2b797a41cd7d2e8d3cd7c36\netty-handler-4.1.97.Final.jar
+[Architectury Transformer DEBUG]  - C:\Users\shiroha\scoop\apps\gradle\current\.gradle\caches\modules-2\files-2.1\io.netty\netty-resolver\4.1.97.Final\cec8348108dc76c47cf87c669d514be52c922144\netty-resolver-4.1.97.Final.jar
+[Architectury Transformer DEBUG]  - C:\Users\shiroha\scoop\apps\gradle\current\.gradle\caches\modules-2\files-2.1\io.netty\netty-transport-classes-epoll\4.1.97.Final\795da37ded759e862457a82d9d92c4d39ce8ecee\netty-transport-classes-epoll-4.1.97.Final.jar
+[Architectury Transformer DEBUG]  - C:\Users\shiroha\scoop\apps\gradle\current\.gradle\caches\modules-2\files-2.1\io.netty\netty-transport-native-unix-common\4.1.97.Final\d469d84265ab70095b01b40886cabdd433b6e664\netty-transport-native-unix-common-4.1.97.Final.jar
+[Architectury Transformer DEBUG]  - C:\Users\shiroha\scoop\apps\gradle\current\.gradle\caches\modules-2\files-2.1\io.netty\netty-transport\4.1.97.Final\f37380d23c9bb079bc702910833b2fd532c9abd0\netty-transport-4.1.97.Final.jar
+[Architectury Transformer DEBUG]  - C:\Users\shiroha\scoop\apps\gradle\current\.gradle\caches\modules-2\files-2.1\it.unimi.dsi\fastutil\8.5.12\c24946d46824bd528054bface3231d2ecb7e95e8\fastutil-8.5.12.jar
+[Architectury Transformer DEBUG]  - C:\Users\shiroha\scoop\apps\gradle\current\.gradle\caches\modules-2\files-2.1\net.java.dev.jna\jna-platform\5.14.0\28934d48aed814f11e4c584da55c49fa7032b31b\jna-platform-5.14.0.jar
+[Architectury Transformer DEBUG]  - C:\Users\shiroha\scoop\apps\gradle\current\.gradle\caches\modules-2\files-2.1\net.java.dev.jna\jna\5.14.0\67bf3eaea4f0718cb376a181a629e5f88fa1c9dd\jna-5.14.0.jar
+[Architectury Transformer DEBUG]  - C:\Users\shiroha\scoop\apps\gradle\current\.gradle\caches\modules-2\files-2.1\net.sf.jopt-simple\jopt-simple\5.0.4\4fdac2fbe92dfad86aa6e9301736f6b4342a3f5c\jopt-simple-5.0.4.jar
+[Architectury Transformer DEBUG]  - C:\Users\shiroha\scoop\apps\gradle\current\.gradle\caches\modules-2\files-2.1\org.apache.commons\commons-compress\1.26.0\659feffdd12280201c8aacb8f7be94f9a883c824\commons-compress-1.26.0.jar
+[Architectury Transformer DEBUG]  - C:\Users\shiroha\scoop\apps\gradle\current\.gradle\caches\modules-2\files-2.1\org.apache.commons\commons-lang3\3.14.0\1ed471194b02f2c6cb734a0cd6f6f107c673afae\commons-lang3-3.14.0.jar
+[Architectury Transformer DEBUG]  - C:\Users\shiroha\scoop\apps\gradle\current\.gradle\caches\modules-2\files-2.1\org.apache.httpcomponents\httpclient\4.5.13\e5f6cae5ca7ecaac1ec2827a9e2d65ae2869cada\httpclient-4.5.13.jar
+[Architectury Transformer DEBUG]  - C:\Users\shiroha\scoop\apps\gradle\current\.gradle\caches\modules-2\files-2.1\org.apache.httpcomponents\httpcore\4.4.16\51cf043c87253c9f58b539c9f7e44c8894223850\httpcore-4.4.16.jar
+[Architectury Transformer DEBUG]  - C:\Users\shiroha\scoop\apps\gradle\current\.gradle\caches\modules-2\files-2.1\org.apache.logging.log4j\log4j-api\2.22.1\bea6fede6328fabafd7e68363161a7ea6605abd1\log4j-api-2.22.1.jar
+[Architectury Transformer DEBUG]  - C:\Users\shiroha\scoop\apps\gradle\current\.gradle\caches\modules-2\files-2.1\org.apache.logging.log4j\log4j-core\2.22.1\7183a25510a02ad00cc6a95d3b3d2a7d3c5a8dc4\log4j-core-2.22.1.jar
+[Architectury Transformer DEBUG]  - C:\Users\shiroha\scoop\apps\gradle\current\.gradle\caches\modules-2\files-2.1\org.apache.logging.log4j\log4j-slf4j2-impl\2.22.1\d7e6693c2606cb7e7335047d7bb96dec52db5665\log4j-slf4j2-impl-2.22.1.jar
+[Architectury Transformer DEBUG]  - C:\Users\shiroha\scoop\apps\gradle\current\.gradle\caches\modules-2\files-2.1\org.jcraft\jorbis\0.0.17\8872d22b293e8f5d7d56ff92be966e6dc28ebdc6\jorbis-0.0.17.jar
+[Architectury Transformer DEBUG]  - C:\Users\shiroha\scoop\apps\gradle\current\.gradle\caches\modules-2\files-2.1\org.joml\joml\1.10.5\22566d58af70ad3d72308bab63b8339906deb649\joml-1.10.5.jar
+[Architectury Transformer DEBUG]  - C:\Users\shiroha\scoop\apps\gradle\current\.gradle\caches\modules-2\files-2.1\org.lwjgl\lwjgl-freetype\3.3.3\a0db6c84a8becc8ca05f9dbfa985edc348a824c7\lwjgl-freetype-3.3.3.jar
+[Architectury Transformer DEBUG]  - C:\Users\shiroha\scoop\apps\gradle\current\.gradle\caches\modules-2\files-2.1\org.lwjgl\lwjgl-glfw\3.3.3\efa1eb78c5ccd840e9f329717109b5e892d72f8e\lwjgl-glfw-3.3.3.jar
+[Architectury Transformer DEBUG]  - C:\Users\shiroha\scoop\apps\gradle\current\.gradle\caches\modules-2\files-2.1\org.lwjgl\lwjgl-jemalloc\3.3.3\b543467b7ff3c6920539a88ee602d34098628be5\lwjgl-jemalloc-3.3.3.jar
+[Architectury Transformer DEBUG]  - C:\Users\shiroha\scoop\apps\gradle\current\.gradle\caches\modules-2\files-2.1\org.lwjgl\lwjgl-openal\3.3.3\daada81ceb5fc0c291fbfdd4433cb8d9423577f2\lwjgl-openal-3.3.3.jar
+[Architectury Transformer DEBUG]  - C:\Users\shiroha\scoop\apps\gradle\current\.gradle\caches\modules-2\files-2.1\org.lwjgl\lwjgl-opengl\3.3.3\2f6b0147078396a58979125a4c947664e98293a\lwjgl-opengl-3.3.3.jar
+[Architectury Transformer DEBUG]  - C:\Users\shiroha\scoop\apps\gradle\current\.gradle\caches\modules-2\files-2.1\org.lwjgl\lwjgl-stb\3.3.3\25dd6161988d7e65f71d5065c99902402ee32746\lwjgl-stb-3.3.3.jar
+[Architectury Transformer DEBUG]  - C:\Users\shiroha\scoop\apps\gradle\current\.gradle\caches\modules-2\files-2.1\org.lwjgl\lwjgl-tinyfd\3.3.3\82d755ca94b102e9ca77283b9e2dc46d1b15fbe5\lwjgl-tinyfd-3.3.3.jar
+[Architectury Transformer DEBUG]  - C:\Users\shiroha\scoop\apps\gradle\current\.gradle\caches\modules-2\files-2.1\org.lwjgl\lwjgl\3.3.3\29589b5f87ed335a6c7e7ee6a5775f81f97ecb84\lwjgl-3.3.3.jar
+[Architectury Transformer DEBUG]  - C:\Users\shiroha\scoop\apps\gradle\current\.gradle\caches\modules-2\files-2.1\org.lz4\lz4-java\1.8.0\4b986a99445e49ea5fbf5d149c4b63f6ed6c6780\lz4-java-1.8.0.jar
+[Architectury Transformer DEBUG]  - C:\Users\shiroha\scoop\apps\gradle\current\.gradle\caches\modules-2\files-2.1\org.slf4j\slf4j-api\2.0.9\7cf2726fdcfbc8610f9a71fb3ed639871f315340\slf4j-api-2.0.9.jar
+[Architectury Transformer DEBUG]  - E:\Github\RoadWeaver\.gradle\loom-cache\minecraftMaven\net\minecraft\minecraft-merged-599915033f\1.21.1-net.fabricmc.yarn.1_21_1.1.21.1+build.3-v2\minecraft-merged-599915033f-1.21.1-net.fabricmc.yarn.1_21_1.1.21.1+build.3-v2.jar
+[Architectury Transformer DEBUG]  - C:\Users\shiroha\scoop\apps\gradle\current\.gradle\caches\modules-2\files-2.1\io.netty\netty-transport-native-epoll\4.1.97.Final\54188f271e388e7f313aea995e82f58ce2cdb809\netty-transport-native-epoll-4.1.97.Final-linux-x86_64.jar
+[Architectury Transformer DEBUG]  - C:\Users\shiroha\scoop\apps\gradle\current\.gradle\caches\modules-2\files-2.1\io.netty\netty-transport-native-epoll\4.1.97.Final\5514744c588190ffda076b35a9b8c9f24946a960\netty-transport-native-epoll-4.1.97.Final-linux-aarch_64.jar
+[Architectury Transformer DEBUG]  - E:\Github\RoadWeaver\.gradle\loom-cache\remapped_mods\remapped\maven\modrinth\midnightlib-652de5e3\1.6.9+1.21-fabric\midnightlib-652de5e3-1.6.9+1.21-fabric.jar
+[Architectury Transformer DEBUG]  - E:\Github\RoadWeaver\.gradle\loom-cache\remapped_mods\remapped\net\fabricmc\fabric-api\fabric-api-652de5e3\0.115.1+1.21.1\fabric-api-652de5e3-0.115.1+1.21.1.jar
+[Architectury Transformer DEBUG]  - E:\Github\RoadWeaver\.gradle\loom-cache\remapped_mods\remapped\dev\architectury\architectury-fabric-652de5e3\13.0.8\architectury-fabric-652de5e3-13.0.8.jar
+[Architectury Transformer DEBUG]  - E:\Github\RoadWeaver\.gradle\loom-cache\remapped_mods\remapped\net\fabricmc\fabric-api\fabric-transfer-api-v1-652de5e3\5.4.2+c24bd99419\fabric-transfer-api-v1-652de5e3-5.4.2+c24bd99419.jar
+[Architectury Transformer DEBUG]  - E:\Github\RoadWeaver\.gradle\loom-cache\remapped_mods\remapped\net\fabricmc\fabric-api\fabric-api-lookup-api-v1-652de5e3\1.6.70+b559734419\fabric-api-lookup-api-v1-652de5e3-1.6.70+b559734419.jar
+[Architectury Transformer DEBUG]  - E:\Github\RoadWeaver\.gradle\loom-cache\remapped_mods\remapped\net\fabricmc\fabric-api\fabric-blockrenderlayer-v1-652de5e3\1.1.52+0af3f5a719\fabric-blockrenderlayer-v1-652de5e3-1.1.52+0af3f5a719.jar
+[Architectury Transformer DEBUG]  - E:\Github\RoadWeaver\.gradle\loom-cache\remapped_mods\remapped\net\fabricmc\fabric-api\fabric-client-tags-api-v1-652de5e3\1.1.15+6573ed8c19\fabric-client-tags-api-v1-652de5e3-1.1.15+6573ed8c19.jar
+[Architectury Transformer DEBUG]  - E:\Github\RoadWeaver\.gradle\loom-cache\remapped_mods\remapped\net\fabricmc\fabric-api\fabric-command-api-v1-652de5e3\1.2.49+f71b366f19\fabric-command-api-v1-652de5e3-1.2.49+f71b366f19.jar
+[Architectury Transformer DEBUG]  - E:\Github\RoadWeaver\.gradle\loom-cache\remapped_mods\remapped\net\fabricmc\fabric-api\fabric-commands-v0-652de5e3\0.2.66+df3654b319\fabric-commands-v0-652de5e3-0.2.66+df3654b319.jar
+[Architectury Transformer DEBUG]  - E:\Github\RoadWeaver\.gradle\loom-cache\remapped_mods\remapped\net\fabricmc\fabric-api\fabric-command-api-v2-652de5e3\2.2.28+6ced4dd919\fabric-command-api-v2-652de5e3-2.2.28+6ced4dd919.jar
+[Architectury Transformer DEBUG]  - E:\Github\RoadWeaver\.gradle\loom-cache\remapped_mods\remapped\net\fabricmc\fabric-api\fabric-content-registries-v0-652de5e3\8.0.18+b559734419\fabric-content-registries-v0-652de5e3-8.0.18+b559734419.jar
+[Architectury Transformer DEBUG]  - E:\Github\RoadWeaver\.gradle\loom-cache\remapped_mods\remapped\net\fabricmc\fabric-api\fabric-data-generation-api-v1-652de5e3\20.2.26+16c4ae2519\fabric-data-generation-api-v1-652de5e3-20.2.26+16c4ae2519.jar
+[Architectury Transformer DEBUG]  - E:\Github\RoadWeaver\.gradle\loom-cache\remapped_mods\remapped\net\fabricmc\fabric-api\fabric-convention-tags-v1-652de5e3\2.1.3+7f945d5b19\fabric-convention-tags-v1-652de5e3-2.1.3+7f945d5b19.jar
+[Architectury Transformer DEBUG]  - E:\Github\RoadWeaver\.gradle\loom-cache\remapped_mods\remapped\net\fabricmc\fabric-api\fabric-convention-tags-v2-652de5e3\2.10.0+9465b64419\fabric-convention-tags-v2-652de5e3-2.10.0+9465b64419.jar
+[Architectury Transformer DEBUG]  - E:\Github\RoadWeaver\.gradle\loom-cache\remapped_mods\remapped\net\fabricmc\fabric-api\fabric-data-attachment-api-v1-652de5e3\1.4.1+9ed317f519\fabric-data-attachment-api-v1-652de5e3-1.4.1+9ed317f519.jar
+[Architectury Transformer DEBUG]  - E:\Github\RoadWeaver\.gradle\loom-cache\remapped_mods\remapped\net\fabricmc\fabric-api\fabric-entity-events-v1-652de5e3\1.7.0+2122d82819\fabric-entity-events-v1-652de5e3-1.7.0+2122d82819.jar
+[Architectury Transformer DEBUG]  - E:\Github\RoadWeaver\.gradle\loom-cache\remapped_mods\remapped\net\fabricmc\fabric-api\fabric-events-interaction-v0-652de5e3\0.7.13+ba9dae0619\fabric-events-interaction-v0-652de5e3-0.7.13+ba9dae0619.jar
+[Architectury Transformer DEBUG]  - E:\Github\RoadWeaver\.gradle\loom-cache\remapped_mods\remapped\net\fabricmc\fabric-api\fabric-gametest-api-v1-652de5e3\2.0.5+6fc22b9919\fabric-gametest-api-v1-652de5e3-2.0.5+6fc22b9919.jar
+[Architectury Transformer DEBUG]  - E:\Github\RoadWeaver\.gradle\loom-cache\remapped_mods\remapped\net\fabricmc\fabric-api\fabric-item-api-v1-652de5e3\11.1.1+d5debaed19\fabric-item-api-v1-652de5e3-11.1.1+d5debaed19.jar
+[Architectury Transformer DEBUG]  - E:\Github\RoadWeaver\.gradle\loom-cache\remapped_mods\remapped\net\fabricmc\fabric-api\fabric-item-group-api-v1-652de5e3\4.1.6+6823f7cd19\fabric-item-group-api-v1-652de5e3-4.1.6+6823f7cd19.jar
+[Architectury Transformer DEBUG]  - E:\Github\RoadWeaver\.gradle\loom-cache\remapped_mods\remapped\net\fabricmc\fabric-api\fabric-lifecycle-events-v1-652de5e3\2.5.0+01d9a51c19\fabric-lifecycle-events-v1-652de5e3-2.5.0+01d9a51c19.jar
+[Architectury Transformer DEBUG]  - E:\Github\RoadWeaver\.gradle\loom-cache\remapped_mods\remapped\net\fabricmc\fabric-api\fabric-loot-api-v2-652de5e3\3.0.15+3f89f5a519\fabric-loot-api-v2-652de5e3-3.0.15+3f89f5a519.jar
+[Architectury Transformer DEBUG]  - E:\Github\RoadWeaver\.gradle\loom-cache\remapped_mods\remapped\net\fabricmc\fabric-api\fabric-loot-api-v3-652de5e3\1.0.3+3f89f5a519\fabric-loot-api-v3-652de5e3-1.0.3+3f89f5a519.jar
+[Architectury Transformer DEBUG]  - E:\Github\RoadWeaver\.gradle\loom-cache\remapped_mods\remapped\net\fabricmc\fabric-api\fabric-message-api-v1-652de5e3\6.0.13+6573ed8c19\fabric-message-api-v1-652de5e3-6.0.13+6573ed8c19.jar
+[Architectury Transformer DEBUG]  - E:\Github\RoadWeaver\.gradle\loom-cache\remapped_mods\remapped\net\fabricmc\fabric-api\fabric-model-loading-api-v1-652de5e3\2.0.0+fe474d6b19\fabric-model-loading-api-v1-652de5e3-2.0.0+fe474d6b19.jar
+[Architectury Transformer DEBUG]  - E:\Github\RoadWeaver\.gradle\loom-cache\remapped_mods\remapped\net\fabricmc\fabric-api\fabric-recipe-api-v1-652de5e3\5.0.14+248df81c19\fabric-recipe-api-v1-652de5e3-5.0.14+248df81c19.jar
+[Architectury Transformer DEBUG]  - E:\Github\RoadWeaver\.gradle\loom-cache\remapped_mods\remapped\net\fabricmc\fabric-api\fabric-screen-handler-api-v1-652de5e3\1.3.88+b559734419\fabric-screen-handler-api-v1-652de5e3-1.3.88+b559734419.jar
+[Architectury Transformer DEBUG]  - E:\Github\RoadWeaver\.gradle\loom-cache\remapped_mods\remapped\net\fabricmc\fabric-api\fabric-registry-sync-v0-652de5e3\5.2.0+34f5d91419\fabric-registry-sync-v0-652de5e3-5.2.0+34f5d91419.jar
+[Architectury Transformer DEBUG]  - E:\Github\RoadWeaver\.gradle\loom-cache\remapped_mods\remapped\net\fabricmc\fabric-api\fabric-networking-api-v1-652de5e3\4.3.0+c7469b2119\fabric-networking-api-v1-652de5e3-4.3.0+c7469b2119.jar
+[Architectury Transformer DEBUG]  - E:\Github\RoadWeaver\.gradle\loom-cache\remapped_mods\remapped\net\fabricmc\fabric-api\fabric-object-builder-api-v1-652de5e3\15.2.1+40875a9319\fabric-object-builder-api-v1-652de5e3-15.2.1+40875a9319.jar
+[Architectury Transformer DEBUG]  - E:\Github\RoadWeaver\.gradle\loom-cache\remapped_mods\remapped\net\fabricmc\fabric-api\fabric-particles-v1-652de5e3\4.0.2+6573ed8c19\fabric-particles-v1-652de5e3-4.0.2+6573ed8c19.jar
+[Architectury Transformer DEBUG]  - E:\Github\RoadWeaver\.gradle\loom-cache\remapped_mods\remapped\net\fabricmc\fabric-api\fabric-renderer-indigo-652de5e3\1.7.0+c705a49c19\fabric-renderer-indigo-652de5e3-1.7.0+c705a49c19.jar
+[Architectury Transformer DEBUG]  - E:\Github\RoadWeaver\.gradle\loom-cache\remapped_mods\remapped\net\fabricmc\fabric-api\fabric-renderer-api-v1-652de5e3\3.4.0+c705a49c19\fabric-renderer-api-v1-652de5e3-3.4.0+c705a49c19.jar
+[Architectury Transformer DEBUG]  - E:\Github\RoadWeaver\.gradle\loom-cache\remapped_mods\remapped\net\fabricmc\fabric-api\fabric-rendering-fluids-v1-652de5e3\3.1.6+1daea21519\fabric-rendering-fluids-v1-652de5e3-3.1.6+1daea21519.jar
+[Architectury Transformer DEBUG]  - E:\Github\RoadWeaver\.gradle\loom-cache\remapped_mods\remapped\net\fabricmc\fabric-api\fabric-renderer-registries-v1-652de5e3\3.2.68+df3654b319\fabric-renderer-registries-v1-652de5e3-3.2.68+df3654b319.jar
+[Architectury Transformer DEBUG]  - E:\Github\RoadWeaver\.gradle\loom-cache\remapped_mods\remapped\net\fabricmc\fabric-api\fabric-rendering-v0-652de5e3\1.1.71+df3654b319\fabric-rendering-v0-652de5e3-1.1.71+df3654b319.jar
+[Architectury Transformer DEBUG]  - E:\Github\RoadWeaver\.gradle\loom-cache\remapped_mods\remapped\net\fabricmc\fabric-api\fabric-rendering-v1-652de5e3\5.0.5+df16efd019\fabric-rendering-v1-652de5e3-5.0.5+df16efd019.jar
+[Architectury Transformer DEBUG]  - E:\Github\RoadWeaver\.gradle\loom-cache\remapped_mods\remapped\net\fabricmc\fabric-api\fabric-screen-api-v1-652de5e3\2.0.25+8b68f1c719\fabric-screen-api-v1-652de5e3-2.0.25+8b68f1c719.jar
+[Architectury Transformer DEBUG]  - E:\Github\RoadWeaver\.gradle\loom-cache\remapped_mods\remapped\net\fabricmc\fabric-api\fabric-api-base-652de5e3\0.4.42+6573ed8c19\fabric-api-base-652de5e3-0.4.42+6573ed8c19.jar
+[Architectury Transformer DEBUG]  - E:\Github\RoadWeaver\.gradle\loom-cache\remapped_mods\remapped\net\fabricmc\fabric-api\fabric-biome-api-v1-652de5e3\13.0.31+d527f9fd19\fabric-biome-api-v1-652de5e3-13.0.31+d527f9fd19.jar
+[Architectury Transformer DEBUG]  - E:\Github\RoadWeaver\.gradle\loom-cache\remapped_mods\remapped\net\fabricmc\fabric-api\fabric-block-api-v1-652de5e3\1.0.22+0af3f5a719\fabric-block-api-v1-652de5e3-1.0.22+0af3f5a719.jar
+[Architectury Transformer DEBUG]  - E:\Github\RoadWeaver\.gradle\loom-cache\remapped_mods\remapped\net\fabricmc\fabric-api\fabric-rendering-data-attachment-v1-652de5e3\0.3.48+73761d2e19\fabric-rendering-data-attachment-v1-652de5e3-0.3.48+73761d2e19.jar
+[Architectury Transformer DEBUG]  - E:\Github\RoadWeaver\.gradle\loom-cache\remapped_mods\remapped\net\fabricmc\fabric-api\fabric-block-view-api-v2-652de5e3\1.0.10+6573ed8c19\fabric-block-view-api-v2-652de5e3-1.0.10+6573ed8c19.jar
+[Architectury Transformer DEBUG]  - E:\Github\RoadWeaver\.gradle\loom-cache\remapped_mods\remapped\net\fabricmc\fabric-api\fabric-crash-report-info-v1-652de5e3\0.2.29+0af3f5a719\fabric-crash-report-info-v1-652de5e3-0.2.29+0af3f5a719.jar
+[Architectury Transformer DEBUG]  - E:\Github\RoadWeaver\.gradle\loom-cache\remapped_mods\remapped\net\fabricmc\fabric-api\fabric-dimensions-v1-652de5e3\4.0.0+6fc22b9919\fabric-dimensions-v1-652de5e3-4.0.0+6fc22b9919.jar
+[Architectury Transformer DEBUG]  - E:\Github\RoadWeaver\.gradle\loom-cache\remapped_mods\remapped\net\fabricmc\fabric-api\fabric-game-rule-api-v1-652de5e3\1.0.53+6ced4dd919\fabric-game-rule-api-v1-652de5e3-1.0.53+6ced4dd919.jar
+[Architectury Transformer DEBUG]  - E:\Github\RoadWeaver\.gradle\loom-cache\remapped_mods\remapped\net\fabricmc\fabric-api\fabric-keybindings-v0-652de5e3\0.2.45+df3654b319\fabric-keybindings-v0-652de5e3-0.2.45+df3654b319.jar
+[Architectury Transformer DEBUG]  - E:\Github\RoadWeaver\.gradle\loom-cache\remapped_mods\remapped\net\fabricmc\fabric-api\fabric-key-binding-api-v1-652de5e3\1.0.47+0af3f5a719\fabric-key-binding-api-v1-652de5e3-1.0.47+0af3f5a719.jar
+[Architectury Transformer DEBUG]  - E:\Github\RoadWeaver\.gradle\loom-cache\remapped_mods\remapped\net\fabricmc\fabric-api\fabric-resource-conditions-api-v1-652de5e3\4.3.0+8dc279b119\fabric-resource-conditions-api-v1-652de5e3-4.3.0+8dc279b119.jar
+[Architectury Transformer DEBUG]  - E:\Github\RoadWeaver\.gradle\loom-cache\remapped_mods\remapped\net\fabricmc\fabric-api\fabric-resource-loader-v0-652de5e3\1.3.1+5b5275af19\fabric-resource-loader-v0-652de5e3-1.3.1+5b5275af19.jar
+[Architectury Transformer DEBUG]  - E:\Github\RoadWeaver\.gradle\loom-cache\remapped_mods\remapped\net\fabricmc\fabric-api\fabric-sound-api-v1-652de5e3\1.0.23+6573ed8c19\fabric-sound-api-v1-652de5e3-1.0.23+6573ed8c19.jar
+[Architectury Transformer DEBUG]  - E:\Github\RoadWeaver\.gradle\loom-cache\remapped_mods\remapped\net\fabricmc\fabric-api\fabric-transitive-access-wideners-v1-652de5e3\6.2.0+45b9699719\fabric-transitive-access-wideners-v1-652de5e3-6.2.0+45b9699719.jar
+[Architectury Transformer] Read classpath in 791.8 ms
+[Architectury Transformer DEBUG] Closed File Systems for E:\Github\RoadWeaver\common\build\devlibs\roadweaver-common-dev.jar
+[Architectury Transformer DEBUG] Transforming 5 transformer(s) from E:\Github\RoadWeaver\common\build\devlibs\roadweaver-common-dev.jar to C:\Users\shiroha\AppData\Local\Temp\6639749881214154393.jar: 
+[Architectury Transformer DEBUG]  - dev.architectury.transformer.transformers.RuntimeMixinRefmapDetector@71d15f18
+[Architectury Transformer DEBUG]  - dev.architectury.transformer.transformers.GenerateFakeFabricMod@17695df3
+[Architectury Transformer DEBUG]  - dev.architectury.transformer.transformers.TransformExpectPlatform@6c9f5c0d
+[Architectury Transformer DEBUG]  - dev.architectury.transformer.transformers.RemapInjectables@de3a06f
+[Architectury Transformer DEBUG]  - dev.architectury.transformer.transformers.TransformPlatformOnly@76b10754
+[Architectury Transformer DEBUG] Transforming from E:\Github\RoadWeaver\common\build\devlibs\roadweaver-common-dev.jar to C:\Users\shiroha\AppData\Local\Temp\6639749881214154393.jar with 5 transformer(s) on dev.architectury.transformer.handler.SimpleTransformerHandler
+[Architectury Transformer DEBUG] Found class transformer
+[Architectury Transformer DEBUG] Writing net/countered/settlementroads/client/gui/RoadDebugScreen$1 with maxs=true frames=true
+[Architectury Transformer DEBUG] Writing net/countered/settlementroads/client/gui/RoadDebugScreen$LODLevel with maxs=true frames=true
+[Architectury Transformer DEBUG] Writing net/countered/settlementroads/client/gui/RoadDebugScreen$RoadLODLevel with maxs=true frames=true
+[Architectury Transformer DEBUG] Writing net/countered/settlementroads/client/gui/RoadDebugScreen$ScreenPos with maxs=true frames=true
+[Architectury Transformer DEBUG] Writing net/countered/settlementroads/client/gui/RoadDebugScreen with maxs=true frames=true
+[Architectury Transformer DEBUG] Writing net/countered/settlementroads/client/RoadWeaverClient with maxs=true frames=true
+[Architectury Transformer DEBUG] Writing net/countered/settlementroads/config/ModConfig with maxs=true frames=true
+[Architectury Transformer DEBUG] Writing net/countered/settlementroads/events/CommonEventHandler with maxs=true frames=true
+[Architectury Transformer DEBUG] Writing net/countered/settlementroads/features/config/ModConfiguredFeatures with maxs=true frames=true
+[Architectury Transformer DEBUG] Writing net/countered/settlementroads/features/config/ModPlacedFeatures with maxs=true frames=true
+[Architectury Transformer DEBUG] Writing net/countered/settlementroads/features/config/RoadFeatureConfig with maxs=true frames=true
+[Architectury Transformer DEBUG] Writing net/countered/settlementroads/features/config/RoadFeatureRegistry with maxs=true frames=true
+[Architectury Transformer DEBUG] Writing net/countered/settlementroads/features/decoration/Decoration with maxs=true frames=true
+[Architectury Transformer DEBUG] Writing net/countered/settlementroads/features/decoration/DistanceSignDecoration with maxs=true frames=true
+[Architectury Transformer DEBUG] Writing net/countered/settlementroads/features/decoration/FenceWaypointDecoration with maxs=true frames=true
+[Architectury Transformer DEBUG] Writing net/countered/settlementroads/features/decoration/LamppostDecoration with maxs=true frames=true
+[Architectury Transformer DEBUG] Writing net/countered/settlementroads/features/decoration/NbtStructureDecoration with maxs=true frames=true
+[Architectury Transformer DEBUG] Writing net/countered/settlementroads/features/decoration/OrientedDecoration$DirectionProperties with maxs=true frames=true
+[Architectury Transformer DEBUG] Writing net/countered/settlementroads/features/decoration/OrientedDecoration with maxs=true frames=true
+[Architectury Transformer DEBUG] Writing net/countered/settlementroads/features/decoration/RoadFenceDecoration with maxs=true frames=true
+[Architectury Transformer DEBUG] Writing net/countered/settlementroads/features/decoration/RoadStructures with maxs=true frames=true
+[Architectury Transformer DEBUG] Writing net/countered/settlementroads/features/decoration/StructureDecoration with maxs=true frames=true
+[Architectury Transformer DEBUG] Writing net/countered/settlementroads/features/decoration/SwingDecoration with maxs=true frames=true
+[Architectury Transformer DEBUG] Writing net/countered/settlementroads/features/decoration/util/BiomeWoodAware with maxs=true frames=true
+[Architectury Transformer DEBUG] Writing net/countered/settlementroads/features/decoration/util/WoodSelector with maxs=true frames=true
+[Architectury Transformer DEBUG] Writing net/countered/settlementroads/features/RoadFeature with maxs=true frames=true
+[Architectury Transformer DEBUG] Writing net/countered/settlementroads/features/roadlogic/Road with maxs=true frames=true
+[Architectury Transformer DEBUG] Writing net/countered/settlementroads/features/roadlogic/RoadDirection with maxs=true frames=true
+[Architectury Transformer DEBUG] Writing net/countered/settlementroads/features/roadlogic/RoadPathCalculator$Node with maxs=true frames=true
+[Architectury Transformer DEBUG] Writing net/countered/settlementroads/features/roadlogic/RoadPathCalculator with maxs=true frames=true
+[Architectury Transformer DEBUG] Writing net/countered/settlementroads/helpers/Records$ConnectionStatus with maxs=true frames=true
+[Architectury Transformer DEBUG] Writing net/countered/settlementroads/helpers/Records$RoadData with maxs=true frames=true
+[Architectury Transformer DEBUG] Writing net/countered/settlementroads/helpers/Records$RoadDecoration with maxs=true frames=true
+[Architectury Transformer DEBUG] Writing net/countered/settlementroads/helpers/Records$RoadSegmentPlacement with maxs=true frames=true
+[Architectury Transformer DEBUG] Writing net/countered/settlementroads/helpers/Records$StructureConnection with maxs=true frames=true
+[Architectury Transformer DEBUG] Writing net/countered/settlementroads/helpers/Records$StructureLocationData with maxs=true frames=true
+[Architectury Transformer DEBUG] Writing net/countered/settlementroads/helpers/Records$WoodAssets with maxs=true frames=true
+[Architectury Transformer DEBUG] Writing net/countered/settlementroads/helpers/Records with maxs=true frames=true
+[Architectury Transformer DEBUG] Writing net/countered/settlementroads/helpers/StructureConnector with maxs=true frames=true
+[Architectury Transformer DEBUG] Writing net/countered/settlementroads/helpers/StructureLocator with maxs=true frames=true
+[Architectury Transformer DEBUG] Writing net/countered/settlementroads/mixin/ExampleMixin with maxs=true frames=true
+[Architectury Transformer DEBUG] Writing net/countered/settlementroads/platform/PlatformHelper with maxs=true frames=true
+[Architectury Transformer DEBUG] Writing net/countered/settlementroads/platform/services/WorldDataStorage with maxs=true frames=true
+[Architectury Transformer DEBUG] Writing net/countered/settlementroads/RoadWeaver with maxs=true frames=true
+[Architectury Transformer DEBUG] Checking whether /roadweaver-common-common-refmap.json is a mixin config.
+[Architectury Transformer DEBUG] Checking whether /roadweaver.mixins.json is a mixin config.
+[Architectury Transformer DEBUG] Closed File Systems for C:\Users\shiroha\AppData\Local\Temp\6639749881214154393.jar
+[Architectury Transformer] Listening at E:\Github\RoadWeaver\common\build\devlibs\roadweaver-common-dev.jar
+[Architectury Transformer DEBUG] Temporary jar [C:\Users\shiroha\AppData\Local\Temp\6639749881214154393.jar] contains packages: net.countered.settlementroads.platform.services, net.countered.settlementroads, net.countered.settlementroads.features.decoration.util, net.countered.settlementroads.features.decoration, net.countered.settlementroads.client.gui, net.countered.settlementroads.mixin, net.countered.settlementroads.features, net.countered.settlementroads.features.roadlogic, net.countered.settlementroads.helpers, net.countered.settlementroads.client, net.countered.settlementroads.events, net.countered.settlementroads.platform, net.countered.settlementroads.config, net.countered.settlementroads.features.config
+[Architectury Transformer DEBUG] Closed File Systems for E:\Github\RoadWeaver\common\build\devlibs\roadweaver-common-dev.jar
+[Architectury Transformer DEBUG] Classpath entry [E:\Github\RoadWeaver\fabric\build\resources\main] contains packages: 
+[Architectury Transformer DEBUG] Transforming from net/countered/settlementroads/RoadWeaver.class to net/countered/settlementroads/RoadWeaver.class with 5 transformer(s) on dev.architectury.transformer.handler.TinyRemapperPreparedTransformerHandler
+[Architectury Transformer DEBUG] Found class transformer
+[Architectury Transformer DEBUG] Writing net/countered/settlementroads/RoadWeaver with maxs=true frames=true
+[Architectury Transformer DEBUG] Transformed net/countered/settlementroads/RoadWeaver in 1.031 ms
+[Architectury Transformer DEBUG] Transforming from net/countered/settlementroads/platform/PlatformHelper.class to net/countered/settlementroads/platform/PlatformHelper.class with 5 transformer(s) on dev.architectury.transformer.handler.TinyRemapperPreparedTransformerHandler
+[Architectury Transformer DEBUG] Found class transformer
+[Architectury Transformer DEBUG] Writing net/countered/settlementroads/platform/PlatformHelper with maxs=true frames=true
+[Architectury Transformer DEBUG] Transformed net/countered/settlementroads/platform/PlatformHelper in 376.0 μs
+[Architectury Transformer DEBUG] Transforming from net/countered/settlementroads/helpers/Records$StructureLocationData.class to net/countered/settlementroads/helpers/Records$StructureLocationData.class with 5 transformer(s) on dev.architectury.transformer.handler.TinyRemapperPreparedTransformerHandler
+[Architectury Transformer DEBUG] Found class transformer
+[Architectury Transformer DEBUG] Writing net/countered/settlementroads/helpers/Records$StructureLocationData with maxs=true frames=true
+[Architectury Transformer DEBUG] Transformed net/countered/settlementroads/helpers/Records$StructureLocationData in 565.1 μs
+[Architectury Transformer DEBUG] Transforming from net/countered/settlementroads/helpers/Records.class to net/countered/settlementroads/helpers/Records.class with 5 transformer(s) on dev.architectury.transformer.handler.TinyRemapperPreparedTransformerHandler
+[Architectury Transformer DEBUG] Found class transformer
+[Architectury Transformer DEBUG] Writing net/countered/settlementroads/helpers/Records with maxs=true frames=true
+[Architectury Transformer DEBUG] Transformed net/countered/settlementroads/helpers/Records in 162.5 μs
+[Architectury Transformer DEBUG] Transforming from net/countered/settlementroads/helpers/Records$StructureConnection.class to net/countered/settlementroads/helpers/Records$StructureConnection.class with 5 transformer(s) on dev.architectury.transformer.handler.TinyRemapperPreparedTransformerHandler
+[Architectury Transformer DEBUG] Found class transformer
+[Architectury Transformer DEBUG] Writing net/countered/settlementroads/helpers/Records$StructureConnection with maxs=true frames=true
+[Architectury Transformer DEBUG] Transformed net/countered/settlementroads/helpers/Records$StructureConnection in 546.8 μs
+[Architectury Transformer DEBUG] Transforming from net/countered/settlementroads/helpers/Records$ConnectionStatus.class to net/countered/settlementroads/helpers/Records$ConnectionStatus.class with 5 transformer(s) on dev.architectury.transformer.handler.TinyRemapperPreparedTransformerHandler
+[Architectury Transformer DEBUG] Found class transformer
+[Architectury Transformer DEBUG] Writing net/countered/settlementroads/helpers/Records$ConnectionStatus with maxs=true frames=true
+[Architectury Transformer DEBUG] Transformed net/countered/settlementroads/helpers/Records$ConnectionStatus in 330.0 μs
+[Architectury Transformer DEBUG] Transforming from net/countered/settlementroads/helpers/Records$RoadData.class to net/countered/settlementroads/helpers/Records$RoadData.class with 5 transformer(s) on dev.architectury.transformer.handler.TinyRemapperPreparedTransformerHandler
+[Architectury Transformer DEBUG] Found class transformer
+[Architectury Transformer DEBUG] Writing net/countered/settlementroads/helpers/Records$RoadData with maxs=true frames=true
+[Architectury Transformer DEBUG] Transformed net/countered/settlementroads/helpers/Records$RoadData in 531.0 μs
+[Architectury Transformer DEBUG] Transforming from net/countered/settlementroads/helpers/Records$RoadSegmentPlacement.class to net/countered/settlementroads/helpers/Records$RoadSegmentPlacement.class with 5 transformer(s) on dev.architectury.transformer.handler.TinyRemapperPreparedTransformerHandler
+[Architectury Transformer DEBUG] Found class transformer
+[Architectury Transformer DEBUG] Writing net/countered/settlementroads/helpers/Records$RoadSegmentPlacement with maxs=true frames=true
+[Architectury Transformer DEBUG] Transformed net/countered/settlementroads/helpers/Records$RoadSegmentPlacement in 349.2 μs
+[Architectury Transformer DEBUG] Transforming from net/countered/settlementroads/config/ModConfig.class to net/countered/settlementroads/config/ModConfig.class with 5 transformer(s) on dev.architectury.transformer.handler.TinyRemapperPreparedTransformerHandler
+[Architectury Transformer DEBUG] Found class transformer
+[Architectury Transformer DEBUG] Writing net/countered/settlementroads/config/ModConfig with maxs=true frames=true
+[Architectury Transformer DEBUG] Transformed net/countered/settlementroads/config/ModConfig in 305.4 μs
+[Architectury Transformer DEBUG] Transforming from net/countered/settlementroads/features/config/RoadFeatureRegistry.class to net/countered/settlementroads/features/config/RoadFeatureRegistry.class with 5 transformer(s) on dev.architectury.transformer.handler.TinyRemapperPreparedTransformerHandler
+[Architectury Transformer DEBUG] Found class transformer
+[Architectury Transformer DEBUG] Writing net/countered/settlementroads/features/config/RoadFeatureRegistry with maxs=true frames=true
+[Architectury Transformer DEBUG] Transformed net/countered/settlementroads/features/config/RoadFeatureRegistry in 529.1 μs
+[Architectury Transformer DEBUG] Transforming from net/countered/settlementroads/features/RoadFeature.class to net/countered/settlementroads/features/RoadFeature.class with 5 transformer(s) on dev.architectury.transformer.handler.TinyRemapperPreparedTransformerHandler
+[Architectury Transformer DEBUG] Found class transformer
+[Architectury Transformer DEBUG] Writing net/countered/settlementroads/features/RoadFeature with maxs=true frames=true
+[Architectury Transformer DEBUG] Transformed net/countered/settlementroads/features/RoadFeature in 1.733 ms
+[Architectury Transformer DEBUG] Transforming from net/countered/settlementroads/features/config/RoadFeatureConfig.class to net/countered/settlementroads/features/config/RoadFeatureConfig.class with 5 transformer(s) on dev.architectury.transformer.handler.TinyRemapperPreparedTransformerHandler
+[Architectury Transformer DEBUG] Found class transformer
+[Architectury Transformer DEBUG] Writing net/countered/settlementroads/features/config/RoadFeatureConfig with maxs=true frames=true
+[Architectury Transformer DEBUG] Transformed net/countered/settlementroads/features/config/RoadFeatureConfig in 396.8 μs
+[Architectury Transformer DEBUG] Transforming from net/countered/settlementroads/client/RoadWeaverClient.class to net/countered/settlementroads/client/RoadWeaverClient.class with 5 transformer(s) on dev.architectury.transformer.handler.TinyRemapperPreparedTransformerHandler
+[Architectury Transformer DEBUG] Found class transformer
+[Architectury Transformer DEBUG] Writing net/countered/settlementroads/client/RoadWeaverClient with maxs=true frames=true
+[Architectury Transformer DEBUG] Transformed net/countered/settlementroads/client/RoadWeaverClient in 654.7 μs
+[Architectury Transformer DEBUG] Transforming from net/countered/settlementroads/client/gui/RoadDebugScreen.class to net/countered/settlementroads/client/gui/RoadDebugScreen.class with 5 transformer(s) on dev.architectury.transformer.handler.TinyRemapperPreparedTransformerHandler
+[Architectury Transformer DEBUG] Found class transformer
+[Architectury Transformer DEBUG] Writing net/countered/settlementroads/client/gui/RoadDebugScreen with maxs=true frames=true
+[Architectury Transformer DEBUG] Transformed net/countered/settlementroads/client/gui/RoadDebugScreen in 2.491 ms
+[Architectury Transformer DEBUG] Transforming from net/countered/settlementroads/events/CommonEventHandler.class to net/countered/settlementroads/events/CommonEventHandler.class with 5 transformer(s) on dev.architectury.transformer.handler.TinyRemapperPreparedTransformerHandler
+[Architectury Transformer DEBUG] Found class transformer
+[Architectury Transformer DEBUG] Writing net/countered/settlementroads/events/CommonEventHandler with maxs=true frames=true
+[Architectury Transformer DEBUG] Transformed net/countered/settlementroads/events/CommonEventHandler in 1.970 ms
+[Architectury Transformer DEBUG] Transforming from net/countered/settlementroads/platform/services/WorldDataStorage.class to net/countered/settlementroads/platform/services/WorldDataStorage.class with 5 transformer(s) on dev.architectury.transformer.handler.TinyRemapperPreparedTransformerHandler
+[Architectury Transformer DEBUG] Found class transformer
+[Architectury Transformer DEBUG] Writing net/countered/settlementroads/platform/services/WorldDataStorage with maxs=true frames=true
+[Architectury Transformer DEBUG] Transformed net/countered/settlementroads/platform/services/WorldDataStorage in 431.9 μs
+[Architectury Transformer DEBUG] Transforming from net/countered/settlementroads/helpers/StructureConnector.class to net/countered/settlementroads/helpers/StructureConnector.class with 5 transformer(s) on dev.architectury.transformer.handler.TinyRemapperPreparedTransformerHandler
+[Architectury Transformer DEBUG] Found class transformer
+[Architectury Transformer DEBUG] Writing net/countered/settlementroads/helpers/StructureConnector with maxs=true frames=true
+[Architectury Transformer DEBUG] Transformed net/countered/settlementroads/helpers/StructureConnector in 549.3 μs
+[Architectury Transformer DEBUG] Transforming from net/countered/settlementroads/helpers/StructureLocator.class to net/countered/settlementroads/helpers/StructureLocator.class with 5 transformer(s) on dev.architectury.transformer.handler.TinyRemapperPreparedTransformerHandler
+[Architectury Transformer DEBUG] Found class transformer
+[Architectury Transformer DEBUG] Writing net/countered/settlementroads/helpers/StructureLocator with maxs=true frames=true
+[Architectury Transformer DEBUG] Transformed net/countered/settlementroads/helpers/StructureLocator in 523.4 μs
+[Architectury Transformer DEBUG] Transforming from net/countered/settlementroads/features/roadlogic/Road.class to net/countered/settlementroads/features/roadlogic/Road.class with 5 transformer(s) on dev.architectury.transformer.handler.TinyRemapperPreparedTransformerHandler
+[Architectury Transformer DEBUG] Found class transformer
+[Architectury Transformer DEBUG] Writing net/countered/settlementroads/features/roadlogic/Road with maxs=true frames=true
+[Architectury Transformer DEBUG] Transformed net/countered/settlementroads/features/roadlogic/Road in 579.5 μs
+[Architectury Transformer DEBUG] Transforming from net/countered/settlementroads/features/roadlogic/RoadPathCalculator.class to net/countered/settlementroads/features/roadlogic/RoadPathCalculator.class with 5 transformer(s) on dev.architectury.transformer.handler.TinyRemapperPreparedTransformerHandler
+[Architectury Transformer DEBUG] Found class transformer
+[Architectury Transformer DEBUG] Writing net/countered/settlementroads/features/roadlogic/RoadPathCalculator with maxs=true frames=true
+[Architectury Transformer DEBUG] Transformed net/countered/settlementroads/features/roadlogic/RoadPathCalculator in 998.9 μs
+[Architectury Transformer DEBUG] Transforming from net/countered/settlementroads/features/roadlogic/RoadPathCalculator$Node.class to net/countered/settlementroads/features/roadlogic/RoadPathCalculator$Node.class with 5 transformer(s) on dev.architectury.transformer.handler.TinyRemapperPreparedTransformerHandler
+[Architectury Transformer DEBUG] Found class transformer
+[Architectury Transformer DEBUG] Writing net/countered/settlementroads/features/roadlogic/RoadPathCalculator$Node with maxs=true frames=true
+[Architectury Transformer DEBUG] Transformed net/countered/settlementroads/features/roadlogic/RoadPathCalculator$Node in 160.1 μs
+[Architectury Transformer DEBUG] Transforming from net/countered/settlementroads/features/decoration/RoadStructures.class to net/countered/settlementroads/features/decoration/RoadStructures.class with 5 transformer(s) on dev.architectury.transformer.handler.TinyRemapperPreparedTransformerHandler
+[Architectury Transformer DEBUG] Found class transformer
+[Architectury Transformer DEBUG] Writing net/countered/settlementroads/features/decoration/RoadStructures with maxs=true frames=true
+[Architectury Transformer DEBUG] Transformed net/countered/settlementroads/features/decoration/RoadStructures in 672.5 μs
+[Architectury Transformer DEBUG] Transforming from net/countered/settlementroads/client/gui/RoadDebugScreen$ScreenPos.class to net/countered/settlementroads/client/gui/RoadDebugScreen$ScreenPos.class with 5 transformer(s) on dev.architectury.transformer.handler.TinyRemapperPreparedTransformerHandler
+[Architectury Transformer DEBUG] Found class transformer
+[Architectury Transformer DEBUG] Writing net/countered/settlementroads/client/gui/RoadDebugScreen$ScreenPos with maxs=true frames=true
+[Architectury Transformer DEBUG] Transformed net/countered/settlementroads/client/gui/RoadDebugScreen$ScreenPos in 807.8 μs
+[Architectury Transformer DEBUG] Transforming from net/countered/settlementroads/client/gui/RoadDebugScreen$LODLevel.class to net/countered/settlementroads/client/gui/RoadDebugScreen$LODLevel.class with 5 transformer(s) on dev.architectury.transformer.handler.TinyRemapperPreparedTransformerHandler
+[Architectury Transformer DEBUG] Found class transformer
+[Architectury Transformer DEBUG] Writing net/countered/settlementroads/client/gui/RoadDebugScreen$LODLevel with maxs=true frames=true
+[Architectury Transformer DEBUG] Transformed net/countered/settlementroads/client/gui/RoadDebugScreen$LODLevel in 288.3 μs
+[Architectury Transformer DEBUG] Transforming from net/countered/settlementroads/client/gui/RoadDebugScreen$1.class to net/countered/settlementroads/client/gui/RoadDebugScreen$1.class with 5 transformer(s) on dev.architectury.transformer.handler.TinyRemapperPreparedTransformerHandler
+[Architectury Transformer DEBUG] Found class transformer
+[Architectury Transformer DEBUG] Writing net/countered/settlementroads/client/gui/RoadDebugScreen$1 with maxs=true frames=true
+[Architectury Transformer DEBUG] Transformed net/countered/settlementroads/client/gui/RoadDebugScreen$1 in 222.6 μs
+[Architectury Transformer DEBUG] Transforming from net/countered/settlementroads/features/roadlogic/RoadDirection.class to net/countered/settlementroads/features/roadlogic/RoadDirection.class with 5 transformer(s) on dev.architectury.transformer.handler.TinyRemapperPreparedTransformerHandler
+[Architectury Transformer DEBUG] Found class transformer
+[Architectury Transformer DEBUG] Writing net/countered/settlementroads/features/roadlogic/RoadDirection with maxs=true frames=true
+[Architectury Transformer DEBUG] Transformed net/countered/settlementroads/features/roadlogic/RoadDirection in 545.5 μs
+[Architectury Transformer DEBUG] Transforming from net/countered/settlementroads/client/gui/RoadDebugScreen$RoadLODLevel.class to net/countered/settlementroads/client/gui/RoadDebugScreen$RoadLODLevel.class with 5 transformer(s) on dev.architectury.transformer.handler.TinyRemapperPreparedTransformerHandler
+[Architectury Transformer DEBUG] Found class transformer
+[Architectury Transformer DEBUG] Writing net/countered/settlementroads/client/gui/RoadDebugScreen$RoadLODLevel with maxs=true frames=true
+[Architectury Transformer DEBUG] Transformed net/countered/settlementroads/client/gui/RoadDebugScreen$RoadLODLevel in 829.3 μs
+[Architectury Transformer DEBUG] Transforming from net/countered/settlementroads/features/decoration/RoadFenceDecoration.class to net/countered/settlementroads/features/decoration/RoadFenceDecoration.class with 5 transformer(s) on dev.architectury.transformer.handler.TinyRemapperPreparedTransformerHandler
+[Architectury Transformer DEBUG] Found class transformer
+[Architectury Transformer DEBUG] Writing net/countered/settlementroads/features/decoration/RoadFenceDecoration with maxs=true frames=true
+[Architectury Transformer DEBUG] Transformed net/countered/settlementroads/features/decoration/RoadFenceDecoration in 976.0 μs
+[Architectury Transformer DEBUG] Transforming from net/countered/settlementroads/features/decoration/util/BiomeWoodAware.class to net/countered/settlementroads/features/decoration/util/BiomeWoodAware.class with 5 transformer(s) on dev.architectury.transformer.handler.TinyRemapperPreparedTransformerHandler
+[Architectury Transformer DEBUG] Found class transformer
+[Architectury Transformer DEBUG] Writing net/countered/settlementroads/features/decoration/util/BiomeWoodAware with maxs=true frames=true
+[Architectury Transformer DEBUG] Transformed net/countered/settlementroads/features/decoration/util/BiomeWoodAware in 163.5 μs
+[Architectury Transformer DEBUG] Transforming from net/countered/settlementroads/features/decoration/OrientedDecoration.class to net/countered/settlementroads/features/decoration/OrientedDecoration.class with 5 transformer(s) on dev.architectury.transformer.handler.TinyRemapperPreparedTransformerHandler
+[Architectury Transformer DEBUG] Found class transformer
+[Architectury Transformer DEBUG] Writing net/countered/settlementroads/features/decoration/OrientedDecoration with maxs=true frames=true
+[Architectury Transformer DEBUG] Transformed net/countered/settlementroads/features/decoration/OrientedDecoration in 480.2 μs
+[Architectury Transformer DEBUG] Transforming from net/countered/settlementroads/features/decoration/Decoration.class to net/countered/settlementroads/features/decoration/Decoration.class with 5 transformer(s) on dev.architectury.transformer.handler.TinyRemapperPreparedTransformerHandler
+[Architectury Transformer DEBUG] Found class transformer
+[Architectury Transformer DEBUG] Writing net/countered/settlementroads/features/decoration/Decoration with maxs=true frames=true
+[Architectury Transformer DEBUG] Transformed net/countered/settlementroads/features/decoration/Decoration in 224.4 μs
+[Architectury Transformer DEBUG] Transforming from net/countered/settlementroads/features/decoration/DistanceSignDecoration.class to net/countered/settlementroads/features/decoration/DistanceSignDecoration.class with 5 transformer(s) on dev.architectury.transformer.handler.TinyRemapperPreparedTransformerHandler
+[Architectury Transformer DEBUG] Found class transformer
+[Architectury Transformer DEBUG] Writing net/countered/settlementroads/features/decoration/DistanceSignDecoration with maxs=true frames=true
+[Architectury Transformer DEBUG] Transformed net/countered/settlementroads/features/decoration/DistanceSignDecoration in 604.8 μs
+[Architectury Transformer DEBUG] Transforming from net/countered/settlementroads/features/decoration/LamppostDecoration.class to net/countered/settlementroads/features/decoration/LamppostDecoration.class with 5 transformer(s) on dev.architectury.transformer.handler.TinyRemapperPreparedTransformerHandler
+[Architectury Transformer DEBUG] Found class transformer
+[Architectury Transformer DEBUG] Writing net/countered/settlementroads/features/decoration/LamppostDecoration with maxs=true frames=true
+[Architectury Transformer DEBUG] Transformed net/countered/settlementroads/features/decoration/LamppostDecoration in 346.1 μs
+[Architectury Transformer DEBUG] Transforming from net/countered/settlementroads/features/decoration/FenceWaypointDecoration.class to net/countered/settlementroads/features/decoration/FenceWaypointDecoration.class with 5 transformer(s) on dev.architectury.transformer.handler.TinyRemapperPreparedTransformerHandler
+[Architectury Transformer DEBUG] Found class transformer
+[Architectury Transformer DEBUG] Writing net/countered/settlementroads/features/decoration/FenceWaypointDecoration with maxs=true frames=true
+[Architectury Transformer DEBUG] Transformed net/countered/settlementroads/features/decoration/FenceWaypointDecoration in 152.3 μs
+[Architectury Transformer DEBUG] Transforming from net/countered/settlementroads/features/decoration/util/WoodSelector.class to net/countered/settlementroads/features/decoration/util/WoodSelector.class with 5 transformer(s) on dev.architectury.transformer.handler.TinyRemapperPreparedTransformerHandler
+[Architectury Transformer DEBUG] Found class transformer
+[Architectury Transformer DEBUG] Writing net/countered/settlementroads/features/decoration/util/WoodSelector with maxs=true frames=true
+[Architectury Transformer DEBUG] Transformed net/countered/settlementroads/features/decoration/util/WoodSelector in 281.9 μs
+[Architectury Transformer DEBUG] Transforming from net/countered/settlementroads/helpers/Records$WoodAssets.class to net/countered/settlementroads/helpers/Records$WoodAssets.class with 5 transformer(s) on dev.architectury.transformer.handler.TinyRemapperPreparedTransformerHandler
+[Architectury Transformer DEBUG] Found class transformer
+[Architectury Transformer DEBUG] Writing net/countered/settlementroads/helpers/Records$WoodAssets with maxs=true frames=true
+[Architectury Transformer DEBUG] Transformed net/countered/settlementroads/helpers/Records$WoodAssets in 281.5 μs
+[Architectury Transformer DEBUG] Transforming from net/countered/settlementroads/features/decoration/SwingDecoration.class to net/countered/settlementroads/features/decoration/SwingDecoration.class with 5 transformer(s) on dev.architectury.transformer.handler.TinyRemapperPreparedTransformerHandler
+[Architectury Transformer DEBUG] Found class transformer
+[Architectury Transformer DEBUG] Writing net/countered/settlementroads/features/decoration/SwingDecoration with maxs=true frames=true
+[Architectury Transformer DEBUG] Transformed net/countered/settlementroads/features/decoration/SwingDecoration in 251.2 μs
+[Architectury Transformer DEBUG] Transforming from net/countered/settlementroads/features/decoration/StructureDecoration.class to net/countered/settlementroads/features/decoration/StructureDecoration.class with 5 transformer(s) on dev.architectury.transformer.handler.TinyRemapperPreparedTransformerHandler
+[Architectury Transformer DEBUG] Found class transformer
+[Architectury Transformer DEBUG] Writing net/countered/settlementroads/features/decoration/StructureDecoration with maxs=true frames=true
+[Architectury Transformer DEBUG] Transformed net/countered/settlementroads/features/decoration/StructureDecoration in 674.8 μs
+[Architectury Transformer DEBUG] Transforming from net/countered/settlementroads/features/decoration/NbtStructureDecoration.class to net/countered/settlementroads/features/decoration/NbtStructureDecoration.class with 5 transformer(s) on dev.architectury.transformer.handler.TinyRemapperPreparedTransformerHandler
+[Architectury Transformer DEBUG] Found class transformer
+[Architectury Transformer DEBUG] Writing net/countered/settlementroads/features/decoration/NbtStructureDecoration with maxs=true frames=true
+[Architectury Transformer DEBUG] Transformed net/countered/settlementroads/features/decoration/NbtStructureDecoration in 151.6 μs
+[Architectury Transformer DEBUG] Transforming from net/countered/settlementroads/features/decoration/OrientedDecoration$DirectionProperties.class to net/countered/settlementroads/features/decoration/OrientedDecoration$DirectionProperties.class with 5 transformer(s) on dev.architectury.transformer.handler.TinyRemapperPreparedTransformerHandler
+[Architectury Transformer DEBUG] Found class transformer
+[Architectury Transformer DEBUG] Writing net/countered/settlementroads/features/decoration/OrientedDecoration$DirectionProperties with maxs=true frames=true
+[Architectury Transformer DEBUG] Transformed net/countered/settlementroads/features/decoration/OrientedDecoration$DirectionProperties in 170.1 μs

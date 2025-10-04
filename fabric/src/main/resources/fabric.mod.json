@@ -1,0 +1,35 @@
+{
+	"schemaVersion": 1,
+	"id": "${mod_id}",
+	"version": "${version}",
+	"name": "${mod_name}",
+	"description": "${mod_description}",
+	"authors": [
+		"${mod_author}"
+	],
+	"contact": {
+		"homepage": "https://github.com/shiroha-233/RoadWeaver",
+		"sources": "https://github.com/shiroha-233/RoadWeaver"
+	},
+	"license": "CC0-1.0",
+	"icon": "assets/roadweaver/icon.png",
+	"environment": "*",
+	"entrypoints": {
+		"main": [
+			"net.countered.settlementroads.fabric.RoadWeaverFabric"
+		],
+		"client": [
+			"net.countered.settlementroads.fabric.RoadWeaverFabricClient"
+		]
+	},
+	"mixins": [
+		"roadweaver.mixins.json"
+	],
+	"depends": {
+		"fabricloader": ">=${fabric_loader_version}",
+		"minecraft": "~${minecraft_version}",
+		"java": ">=21",
+		"fabric-api": "*",
+		"architectury": ">=${architectury_version}"
+	}
+}

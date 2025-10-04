@@ -1,0 +1,15 @@
+dependencies {
+	// We depend on fabric loader here to use the fabric @Environment annotations and get the mixin dependencies
+	// Do NOT use other classes from fabric loader
+	modCompileOnly "net.fabricmc:fabric-loader:${rootProject.fabric_loader_version}"
+	
+	// Architectury API
+	modApi "dev.architectury:architectury:${rootProject.architectury_version}"
+
+	// MidnightLib annotations used by `ModConfig`
+	modCompileOnly "maven.modrinth:midnightlib:${rootProject.midnightlib_version}"
+}
+
+architectury {
+	common(rootProject.enabled_platforms.split(","))
+}

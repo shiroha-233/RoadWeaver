@@ -132,7 +132,7 @@ cd RoadWeaver
 
 ## 📄 许可证
 
-本项目采用 [CC0-1.0](LICENSE) 许可证。
+本项目采用 [MIT](LICENSE) 许可证。
 
 ## 🙏 致谢
 

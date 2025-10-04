@@ -1,0 +1,135 @@
+plugins {
+	id 'com.github.johnrengelman.shadow'
+}
+
+architectury {
+	platformSetupLoomIde()
+	neoForge()
+}
+
+configurations {
+	common {
+		canBeResolved = true
+		canBeConsumed = false
+	}
+	compileClasspath.extendsFrom common
+	runtimeClasspath.extendsFrom common
+	developmentNeoForge.extendsFrom common
+	
+	shadowBundle {
+		canBeResolved = true
+		canBeConsumed = false
+	}
+}
+
+repositories {
+	maven {
+		name = 'NeoForged'
+		url = 'https://maven.neoforged.net/releases'
+	}
+}
+
+loom {
+	accessWidenerPath = project(":common").loom.accessWidenerPath
+}
+
+dependencies {
+	// NeoForge 依赖
+	modImplementation "net.neoforged:neoforge:${rootProject.neoforge_version}"
+	
+	// Architectury API
+	modImplementation "dev.architectury:architectury-neoforge:${rootProject.architectury_version}"
+	
+	// MidnightLib for NeoForge
+	modImplementation include("maven.modrinth:midnightlib:${rootProject.midnightlib_neoforge_version}")
+	
+	common(project(path: ":common", configuration: "namedElements")) { transitive = false }
+	shadowBundle project(path: ":common", configuration: "transformProductionNeoForge")
+}
+
+
+apply plugin: 'com.modrinth.minotaur'
+apply plugin: 'net.darkhax.curseforgegradle'
+
+processResources {
+	inputs.property "version", project.version
+	inputs.property "mod_id", rootProject.mod_id
+	inputs.property "mod_name", rootProject.mod_name
+	inputs.property "mod_description", rootProject.mod_description
+	inputs.property "mod_author", rootProject.mod_author
+	inputs.property "neoforge_version", rootProject.neoforge_version
+	inputs.property "minecraft_version", rootProject.minecraft_version
+	inputs.property "architectury_version", rootProject.architectury_version
+
+	filesMatching("META-INF/neoforge.mods.toml") {
+		expand(
+			"version": project.version,
+			"mod_id": rootProject.mod_id,
+			"mod_name": rootProject.mod_name,
+			"mod_description": rootProject.mod_description,
+			"mod_author": rootProject.mod_author,
+			"neoforge_version": rootProject.neoforge_version,
+			"minecraft_version": rootProject.minecraft_version,
+			"architectury_version": rootProject.architectury_version
+		)
+	}
+}
+
+shadowJar {
+	exclude "fabric.mod.json"
+	exclude "architectury.common.json"
+	configurations = [project.configurations.shadowBundle]
+	archiveClassifier = "dev-shadow"
+}
+
+remapJar {
+	input.set shadowJar.archiveFile
+	dependsOn shadowJar
+}
+
+//sourcesJar {
+//	def commonSources = project(":common").sourcesJar
+//	dependsOn commonSources
+//	from commonSources.archiveFile.map { zipTree(it) }
+//	duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+//}
+
+components.java {
+	withVariantsFromConfiguration(project.configurations.shadowRuntimeElements) {
+		skip()
+	}
+}
+
+// Modrinth发布配置
+modrinth {
+	token = System.getenv("MODRINTH_TOKEN")
+	projectId = "countereds-settlement-roads"
+	versionNumber = "${rootProject.mod_version}-neoforge"
+	versionType = "release"
+	uploadFile = remapJar
+	gameVersions = ["1.21.1"]
+	loaders = ["neoforge"]
+	changelog = rootProject.file("changelog.md").text
+	versionName = "RoadWeaver ${rootProject.mod_version} (NeoForge)"
+	dependencies {
+		embedded.project "midnightlib"
+	}
+}
+
+// CurseForge发布配置
+import net.darkhax.curseforgegradle.TaskPublishCurseForge
+
+tasks.register("curseforge", TaskPublishCurseForge) {
+	apiToken = System.getenv("CURSEFORGE_TOKEN")
+	def projectId = "1140708"
+
+	def mainFile = upload(projectId, remapJar)
+	mainFile.changelog = rootProject.file("changelog.md")
+	mainFile.changelogType = "markdown"
+	mainFile.displayName = "RoadWeaver ${rootProject.mod_version} (NeoForge)"
+	mainFile.releaseType = "release"
+	mainFile.addGameVersion("NeoForge")
+	mainFile.addGameVersion("1.21.1")
+
+	mainFile.addEmbedded("midnightlib")
+}
