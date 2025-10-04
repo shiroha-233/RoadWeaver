@@ -29,48 +29,78 @@ public class NeoForgeWorldDataStorage {
     }
     
     public static Records.StructureLocationData getStructureLocations(ServerLevel world) {
-        StructureLocationsSavedData data = getOrCreateData(world, STRUCTURE_LOCATIONS_KEY, 
-                StructureLocationsSavedData::new, StructureLocationsSavedData.class);
+        StructureLocationsSavedData data = world.getDataStorage().computeIfAbsent(
+                new SavedData.Factory<>(
+                        StructureLocationsSavedData::new,
+                        StructureLocationsSavedData::load,
+                        null
+                ),
+                STRUCTURE_LOCATIONS_KEY
+        );
         return data.data;
     }
     
     public static void setStructureLocations(ServerLevel world, Records.StructureLocationData data) {
-        StructureLocationsSavedData savedData = getOrCreateData(world, STRUCTURE_LOCATIONS_KEY,
-                StructureLocationsSavedData::new, StructureLocationsSavedData.class);
+        StructureLocationsSavedData savedData = world.getDataStorage().computeIfAbsent(
+                new SavedData.Factory<>(
+                        StructureLocationsSavedData::new,
+                        StructureLocationsSavedData::load,
+                        null
+                ),
+                STRUCTURE_LOCATIONS_KEY
+        );
         savedData.data = data;
         savedData.setDirty();
     }
     
     public static List<Records.StructureConnection> getStructureConnections(ServerLevel world) {
-        StructureConnectionsSavedData data = getOrCreateData(world, STRUCTURE_CONNECTIONS_KEY,
-                StructureConnectionsSavedData::new, StructureConnectionsSavedData.class);
+        StructureConnectionsSavedData data = world.getDataStorage().computeIfAbsent(
+                new SavedData.Factory<>(
+                        StructureConnectionsSavedData::new,
+                        StructureConnectionsSavedData::load,
+                        null
+                ),
+                STRUCTURE_CONNECTIONS_KEY
+        );
         return data.connections;
     }
     
     public static void setStructureConnections(ServerLevel world, List<Records.StructureConnection> connections) {
-        StructureConnectionsSavedData savedData = getOrCreateData(world, STRUCTURE_CONNECTIONS_KEY,
-                StructureConnectionsSavedData::new, StructureConnectionsSavedData.class);
+        StructureConnectionsSavedData savedData = world.getDataStorage().computeIfAbsent(
+                new SavedData.Factory<>(
+                        StructureConnectionsSavedData::new,
+                        StructureConnectionsSavedData::load,
+                        null
+                ),
+                STRUCTURE_CONNECTIONS_KEY
+        );
         savedData.connections = new ArrayList<>(connections);
         savedData.setDirty();
     }
     
     public static List<Records.RoadData> getRoadDataList(ServerLevel world) {
-        RoadDataListSavedData data = getOrCreateData(world, ROAD_DATA_LIST_KEY,
-                RoadDataListSavedData::new, RoadDataListSavedData.class);
+        RoadDataListSavedData data = world.getDataStorage().computeIfAbsent(
+                new SavedData.Factory<>(
+                        RoadDataListSavedData::new,
+                        RoadDataListSavedData::load,
+                        null
+                ),
+                ROAD_DATA_LIST_KEY
+        );
         return data.roadDataList;
     }
     
     public static void setRoadDataList(ServerLevel world, List<Records.RoadData> roadDataList) {
-        RoadDataListSavedData savedData = getOrCreateData(world, ROAD_DATA_LIST_KEY,
-                RoadDataListSavedData::new, RoadDataListSavedData.class);
+        RoadDataListSavedData savedData = world.getDataStorage().computeIfAbsent(
+                new SavedData.Factory<>(
+                        RoadDataListSavedData::new,
+                        RoadDataListSavedData::load,
+                        null
+                ),
+                ROAD_DATA_LIST_KEY
+        );
         savedData.roadDataList = new ArrayList<>(roadDataList);
         savedData.setDirty();
-    }
-    
-    @SuppressWarnings("unchecked")
-    private static <T extends SavedData> T getOrCreateData(ServerLevel level, String key, 
-                                                            SavedData.Factory<T> factory, Class<T> clazz) {
-        return level.getDataStorage().computeIfAbsent(factory, key);
     }
     
     // SavedData实现类

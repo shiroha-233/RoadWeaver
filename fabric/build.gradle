@@ -9,6 +9,9 @@ configurations {
 }
 
 dependencies {
+	// Yarn 映射仅用于 Fabric
+	mappings "net.fabricmc:yarn:${rootProject.yarn_mappings}:v2"
+
 	modImplementation "net.fabricmc:fabric-loader:${rootProject.fabric_loader_version}"
 	modApi "net.fabricmc.fabric-api:fabric-api:${rootProject.fabric_api_version}"
 	

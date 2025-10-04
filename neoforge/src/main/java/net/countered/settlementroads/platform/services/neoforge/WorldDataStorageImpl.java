@@ -9,6 +9,8 @@ import java.util.List;
 /**
  * NeoForge平台的WorldDataStorage实现
  * 用于Architectury的@ExpectPlatform机制
+ * 
+ * 注意：直接使用 ServerLevel（Mojmap映射），Architectury会自动处理类型转换
  */
 public class WorldDataStorageImpl {
     

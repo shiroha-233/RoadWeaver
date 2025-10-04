@@ -1,4 +1,7 @@
 dependencies {
+	// common 使用 Yarn 映射，供 Fabric 和 Architectury 转换
+	mappings "net.fabricmc:yarn:${rootProject.yarn_mappings}:v2"
+
 	// We depend on fabric loader here to use the fabric @Environment annotations and get the mixin dependencies
 	// Do NOT use other classes from fabric loader
 	modCompileOnly "net.fabricmc:fabric-loader:${rootProject.fabric_loader_version}"

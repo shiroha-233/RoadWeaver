@@ -1,12 +1,9 @@
-plugins {
-	id 'com.github.johnrengelman.shadow'
-}
+apply plugin: 'com.github.johnrengelman.shadow'
 
 architectury {
 	platformSetupLoomIde()
 	neoForge()
 }
-
 configurations {
 	common {
 		canBeResolved = true
@@ -23,18 +20,48 @@ configurations {
 }
 
 repositories {
+	// 中国镜像源 - 优先使用（修正路径）
+	maven {
+		name = 'BMCLAPI-NeoForge'
+		url = 'https://mirrors.qlu.edu.cn/bmclapi'
+		content {
+			includeGroup "net.neoforged"
+		}
+	}
 	maven {
 		name = 'NeoForged'
 		url = 'https://maven.neoforged.net/releases'
+		content {
+			includeGroup "net.neoforged"
+		}
+	}
+	// 阿里云镜像作为备用
+	maven {
+		name = 'AliYun'
+		url = 'https://maven.aliyun.com/repository/public/'
 	}
 }
 
 loom {
 	accessWidenerPath = project(":common").loom.accessWidenerPath
+	
+	// NeoForge 特定配置
+	runs {
+		client {
+			client()
+		}
+		server {
+			server()
+		}
+	}
 }
 
 dependencies {
-	// NeoForge 依赖
+	// Minecraft 和映射 - NeoForge 使用官方 Mojmap
+	minecraft "com.mojang:minecraft:${rootProject.minecraft_version}"
+	mappings loom.officialMojangMappings()
+
+	// NeoForge 依赖 - 使用 modImplementation（Loom 会自动处理）
 	modImplementation "net.neoforged:neoforge:${rootProject.neoforge_version}"
 	
 	// Architectury API

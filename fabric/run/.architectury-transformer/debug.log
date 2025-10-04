@@ -114,15 +114,15 @@
 [Architectury Transformer DEBUG]  - E:\Github\RoadWeaver\.gradle\loom-cache\remapped_mods\remapped\net\fabricmc\fabric-api\fabric-resource-loader-v0-652de5e3\1.3.1+5b5275af19\fabric-resource-loader-v0-652de5e3-1.3.1+5b5275af19.jar
 [Architectury Transformer DEBUG]  - E:\Github\RoadWeaver\.gradle\loom-cache\remapped_mods\remapped\net\fabricmc\fabric-api\fabric-sound-api-v1-652de5e3\1.0.23+6573ed8c19\fabric-sound-api-v1-652de5e3-1.0.23+6573ed8c19.jar
 [Architectury Transformer DEBUG]  - E:\Github\RoadWeaver\.gradle\loom-cache\remapped_mods\remapped\net\fabricmc\fabric-api\fabric-transitive-access-wideners-v1-652de5e3\6.2.0+45b9699719\fabric-transitive-access-wideners-v1-652de5e3-6.2.0+45b9699719.jar
-[Architectury Transformer] Read classpath in 791.8 ms
+[Architectury Transformer] Read classpath in 792.7 ms
 [Architectury Transformer DEBUG] Closed File Systems for E:\Github\RoadWeaver\common\build\devlibs\roadweaver-common-dev.jar
-[Architectury Transformer DEBUG] Transforming 5 transformer(s) from E:\Github\RoadWeaver\common\build\devlibs\roadweaver-common-dev.jar to C:\Users\shiroha\AppData\Local\Temp\6639749881214154393.jar: 
+[Architectury Transformer DEBUG] Transforming 5 transformer(s) from E:\Github\RoadWeaver\common\build\devlibs\roadweaver-common-dev.jar to C:\Users\shiroha\AppData\Local\Temp\11422484993953068202.jar: 
 [Architectury Transformer DEBUG]  - dev.architectury.transformer.transformers.RuntimeMixinRefmapDetector@71d15f18
 [Architectury Transformer DEBUG]  - dev.architectury.transformer.transformers.GenerateFakeFabricMod@17695df3
 [Architectury Transformer DEBUG]  - dev.architectury.transformer.transformers.TransformExpectPlatform@6c9f5c0d
 [Architectury Transformer DEBUG]  - dev.architectury.transformer.transformers.RemapInjectables@de3a06f
 [Architectury Transformer DEBUG]  - dev.architectury.transformer.transformers.TransformPlatformOnly@76b10754
-[Architectury Transformer DEBUG] Transforming from E:\Github\RoadWeaver\common\build\devlibs\roadweaver-common-dev.jar to C:\Users\shiroha\AppData\Local\Temp\6639749881214154393.jar with 5 transformer(s) on dev.architectury.transformer.handler.SimpleTransformerHandler
+[Architectury Transformer DEBUG] Transforming from E:\Github\RoadWeaver\common\build\devlibs\roadweaver-common-dev.jar to C:\Users\shiroha\AppData\Local\Temp\11422484993953068202.jar with 5 transformer(s) on dev.architectury.transformer.handler.SimpleTransformerHandler
 [Architectury Transformer DEBUG] Found class transformer
 [Architectury Transformer DEBUG] Writing net/countered/settlementroads/client/gui/RoadDebugScreen$1 with maxs=true frames=true
 [Architectury Transformer DEBUG] Writing net/countered/settlementroads/client/gui/RoadDebugScreen$LODLevel with maxs=true frames=true
@@ -170,168 +170,64 @@
 [Architectury Transformer DEBUG] Writing net/countered/settlementroads/RoadWeaver with maxs=true frames=true
 [Architectury Transformer DEBUG] Checking whether /roadweaver-common-common-refmap.json is a mixin config.
 [Architectury Transformer DEBUG] Checking whether /roadweaver.mixins.json is a mixin config.
-[Architectury Transformer DEBUG] Closed File Systems for C:\Users\shiroha\AppData\Local\Temp\6639749881214154393.jar
+[Architectury Transformer DEBUG] Closed File Systems for C:\Users\shiroha\AppData\Local\Temp\11422484993953068202.jar
 [Architectury Transformer] Listening at E:\Github\RoadWeaver\common\build\devlibs\roadweaver-common-dev.jar
-[Architectury Transformer DEBUG] Temporary jar [C:\Users\shiroha\AppData\Local\Temp\6639749881214154393.jar] contains packages: net.countered.settlementroads.platform.services, net.countered.settlementroads, net.countered.settlementroads.features.decoration.util, net.countered.settlementroads.features.decoration, net.countered.settlementroads.client.gui, net.countered.settlementroads.mixin, net.countered.settlementroads.features, net.countered.settlementroads.features.roadlogic, net.countered.settlementroads.helpers, net.countered.settlementroads.client, net.countered.settlementroads.events, net.countered.settlementroads.platform, net.countered.settlementroads.config, net.countered.settlementroads.features.config
+[Architectury Transformer DEBUG] Temporary jar [C:\Users\shiroha\AppData\Local\Temp\11422484993953068202.jar] contains packages: net.countered.settlementroads.platform.services, net.countered.settlementroads, net.countered.settlementroads.features.decoration.util, net.countered.settlementroads.features.decoration, net.countered.settlementroads.client.gui, net.countered.settlementroads.mixin, net.countered.settlementroads.features, net.countered.settlementroads.features.roadlogic, net.countered.settlementroads.helpers, net.countered.settlementroads.client, net.countered.settlementroads.events, net.countered.settlementroads.platform, net.countered.settlementroads.config, net.countered.settlementroads.features.config
 [Architectury Transformer DEBUG] Closed File Systems for E:\Github\RoadWeaver\common\build\devlibs\roadweaver-common-dev.jar
 [Architectury Transformer DEBUG] Classpath entry [E:\Github\RoadWeaver\fabric\build\resources\main] contains packages: 
 [Architectury Transformer DEBUG] Transforming from net/countered/settlementroads/RoadWeaver.class to net/countered/settlementroads/RoadWeaver.class with 5 transformer(s) on dev.architectury.transformer.handler.TinyRemapperPreparedTransformerHandler
 [Architectury Transformer DEBUG] Found class transformer
 [Architectury Transformer DEBUG] Writing net/countered/settlementroads/RoadWeaver with maxs=true frames=true
-[Architectury Transformer DEBUG] Transformed net/countered/settlementroads/RoadWeaver in 1.031 ms
+[Architectury Transformer DEBUG] Transformed net/countered/settlementroads/RoadWeaver in 1.157 ms
 [Architectury Transformer DEBUG] Transforming from net/countered/settlementroads/platform/PlatformHelper.class to net/countered/settlementroads/platform/PlatformHelper.class with 5 transformer(s) on dev.architectury.transformer.handler.TinyRemapperPreparedTransformerHandler
 [Architectury Transformer DEBUG] Found class transformer
 [Architectury Transformer DEBUG] Writing net/countered/settlementroads/platform/PlatformHelper with maxs=true frames=true
-[Architectury Transformer DEBUG] Transformed net/countered/settlementroads/platform/PlatformHelper in 376.0 μs
+[Architectury Transformer DEBUG] Transformed net/countered/settlementroads/platform/PlatformHelper in 456.7 μs
 [Architectury Transformer DEBUG] Transforming from net/countered/settlementroads/helpers/Records$StructureLocationData.class to net/countered/settlementroads/helpers/Records$StructureLocationData.class with 5 transformer(s) on dev.architectury.transformer.handler.TinyRemapperPreparedTransformerHandler
 [Architectury Transformer DEBUG] Found class transformer
 [Architectury Transformer DEBUG] Writing net/countered/settlementroads/helpers/Records$StructureLocationData with maxs=true frames=true
-[Architectury Transformer DEBUG] Transformed net/countered/settlementroads/helpers/Records$StructureLocationData in 565.1 μs
+[Architectury Transformer DEBUG] Transformed net/countered/settlementroads/helpers/Records$StructureLocationData in 570.7 μs
 [Architectury Transformer DEBUG] Transforming from net/countered/settlementroads/helpers/Records.class to net/countered/settlementroads/helpers/Records.class with 5 transformer(s) on dev.architectury.transformer.handler.TinyRemapperPreparedTransformerHandler
 [Architectury Transformer DEBUG] Found class transformer
 [Architectury Transformer DEBUG] Writing net/countered/settlementroads/helpers/Records with maxs=true frames=true
-[Architectury Transformer DEBUG] Transformed net/countered/settlementroads/helpers/Records in 162.5 μs
+[Architectury Transformer DEBUG] Transformed net/countered/settlementroads/helpers/Records in 178.9 μs
 [Architectury Transformer DEBUG] Transforming from net/countered/settlementroads/helpers/Records$StructureConnection.class to net/countered/settlementroads/helpers/Records$StructureConnection.class with 5 transformer(s) on dev.architectury.transformer.handler.TinyRemapperPreparedTransformerHandler
 [Architectury Transformer DEBUG] Found class transformer
 [Architectury Transformer DEBUG] Writing net/countered/settlementroads/helpers/Records$StructureConnection with maxs=true frames=true
-[Architectury Transformer DEBUG] Transformed net/countered/settlementroads/helpers/Records$StructureConnection in 546.8 μs
+[Architectury Transformer DEBUG] Transformed net/countered/settlementroads/helpers/Records$StructureConnection in 473.1 μs
 [Architectury Transformer DEBUG] Transforming from net/countered/settlementroads/helpers/Records$ConnectionStatus.class to net/countered/settlementroads/helpers/Records$ConnectionStatus.class with 5 transformer(s) on dev.architectury.transformer.handler.TinyRemapperPreparedTransformerHandler
 [Architectury Transformer DEBUG] Found class transformer
 [Architectury Transformer DEBUG] Writing net/countered/settlementroads/helpers/Records$ConnectionStatus with maxs=true frames=true
-[Architectury Transformer DEBUG] Transformed net/countered/settlementroads/helpers/Records$ConnectionStatus in 330.0 μs
+[Architectury Transformer DEBUG] Transformed net/countered/settlementroads/helpers/Records$ConnectionStatus in 287.9 μs
 [Architectury Transformer DEBUG] Transforming from net/countered/settlementroads/helpers/Records$RoadData.class to net/countered/settlementroads/helpers/Records$RoadData.class with 5 transformer(s) on dev.architectury.transformer.handler.TinyRemapperPreparedTransformerHandler
 [Architectury Transformer DEBUG] Found class transformer
 [Architectury Transformer DEBUG] Writing net/countered/settlementroads/helpers/Records$RoadData with maxs=true frames=true
-[Architectury Transformer DEBUG] Transformed net/countered/settlementroads/helpers/Records$RoadData in 531.0 μs
+[Architectury Transformer DEBUG] Transformed net/countered/settlementroads/helpers/Records$RoadData in 507.2 μs
 [Architectury Transformer DEBUG] Transforming from net/countered/settlementroads/helpers/Records$RoadSegmentPlacement.class to net/countered/settlementroads/helpers/Records$RoadSegmentPlacement.class with 5 transformer(s) on dev.architectury.transformer.handler.TinyRemapperPreparedTransformerHandler
 [Architectury Transformer DEBUG] Found class transformer
 [Architectury Transformer DEBUG] Writing net/countered/settlementroads/helpers/Records$RoadSegmentPlacement with maxs=true frames=true
-[Architectury Transformer DEBUG] Transformed net/countered/settlementroads/helpers/Records$RoadSegmentPlacement in 349.2 μs
+[Architectury Transformer DEBUG] Transformed net/countered/settlementroads/helpers/Records$RoadSegmentPlacement in 378.2 μs
 [Architectury Transformer DEBUG] Transforming from net/countered/settlementroads/config/ModConfig.class to net/countered/settlementroads/config/ModConfig.class with 5 transformer(s) on dev.architectury.transformer.handler.TinyRemapperPreparedTransformerHandler
 [Architectury Transformer DEBUG] Found class transformer
 [Architectury Transformer DEBUG] Writing net/countered/settlementroads/config/ModConfig with maxs=true frames=true
-[Architectury Transformer DEBUG] Transformed net/countered/settlementroads/config/ModConfig in 305.4 μs
+[Architectury Transformer DEBUG] Transformed net/countered/settlementroads/config/ModConfig in 375.4 μs
 [Architectury Transformer DEBUG] Transforming from net/countered/settlementroads/features/config/RoadFeatureRegistry.class to net/countered/settlementroads/features/config/RoadFeatureRegistry.class with 5 transformer(s) on dev.architectury.transformer.handler.TinyRemapperPreparedTransformerHandler
 [Architectury Transformer DEBUG] Found class transformer
 [Architectury Transformer DEBUG] Writing net/countered/settlementroads/features/config/RoadFeatureRegistry with maxs=true frames=true
-[Architectury Transformer DEBUG] Transformed net/countered/settlementroads/features/config/RoadFeatureRegistry in 529.1 μs
+[Architectury Transformer DEBUG] Transformed net/countered/settlementroads/features/config/RoadFeatureRegistry in 495.3 μs
 [Architectury Transformer DEBUG] Transforming from net/countered/settlementroads/features/RoadFeature.class to net/countered/settlementroads/features/RoadFeature.class with 5 transformer(s) on dev.architectury.transformer.handler.TinyRemapperPreparedTransformerHandler
 [Architectury Transformer DEBUG] Found class transformer
 [Architectury Transformer DEBUG] Writing net/countered/settlementroads/features/RoadFeature with maxs=true frames=true
-[Architectury Transformer DEBUG] Transformed net/countered/settlementroads/features/RoadFeature in 1.733 ms
+[Architectury Transformer DEBUG] Transformed net/countered/settlementroads/features/RoadFeature in 1.821 ms
 [Architectury Transformer DEBUG] Transforming from net/countered/settlementroads/features/config/RoadFeatureConfig.class to net/countered/settlementroads/features/config/RoadFeatureConfig.class with 5 transformer(s) on dev.architectury.transformer.handler.TinyRemapperPreparedTransformerHandler
 [Architectury Transformer DEBUG] Found class transformer
 [Architectury Transformer DEBUG] Writing net/countered/settlementroads/features/config/RoadFeatureConfig with maxs=true frames=true
-[Architectury Transformer DEBUG] Transformed net/countered/settlementroads/features/config/RoadFeatureConfig in 396.8 μs
+[Architectury Transformer DEBUG] Transformed net/countered/settlementroads/features/config/RoadFeatureConfig in 401.4 μs
 [Architectury Transformer DEBUG] Transforming from net/countered/settlementroads/client/RoadWeaverClient.class to net/countered/settlementroads/client/RoadWeaverClient.class with 5 transformer(s) on dev.architectury.transformer.handler.TinyRemapperPreparedTransformerHandler
 [Architectury Transformer DEBUG] Found class transformer
 [Architectury Transformer DEBUG] Writing net/countered/settlementroads/client/RoadWeaverClient with maxs=true frames=true
-[Architectury Transformer DEBUG] Transformed net/countered/settlementroads/client/RoadWeaverClient in 654.7 μs
+[Architectury Transformer DEBUG] Transformed net/countered/settlementroads/client/RoadWeaverClient in 884.7 μs
 [Architectury Transformer DEBUG] Transforming from net/countered/settlementroads/client/gui/RoadDebugScreen.class to net/countered/settlementroads/client/gui/RoadDebugScreen.class with 5 transformer(s) on dev.architectury.transformer.handler.TinyRemapperPreparedTransformerHandler
 [Architectury Transformer DEBUG] Found class transformer
 [Architectury Transformer DEBUG] Writing net/countered/settlementroads/client/gui/RoadDebugScreen with maxs=true frames=true
-[Architectury Transformer DEBUG] Transformed net/countered/settlementroads/client/gui/RoadDebugScreen in 2.491 ms
-[Architectury Transformer DEBUG] Transforming from net/countered/settlementroads/events/CommonEventHandler.class to net/countered/settlementroads/events/CommonEventHandler.class with 5 transformer(s) on dev.architectury.transformer.handler.TinyRemapperPreparedTransformerHandler
-[Architectury Transformer DEBUG] Found class transformer
-[Architectury Transformer DEBUG] Writing net/countered/settlementroads/events/CommonEventHandler with maxs=true frames=true
-[Architectury Transformer DEBUG] Transformed net/countered/settlementroads/events/CommonEventHandler in 1.970 ms
-[Architectury Transformer DEBUG] Transforming from net/countered/settlementroads/platform/services/WorldDataStorage.class to net/countered/settlementroads/platform/services/WorldDataStorage.class with 5 transformer(s) on dev.architectury.transformer.handler.TinyRemapperPreparedTransformerHandler
-[Architectury Transformer DEBUG] Found class transformer
-[Architectury Transformer DEBUG] Writing net/countered/settlementroads/platform/services/WorldDataStorage with maxs=true frames=true
-[Architectury Transformer DEBUG] Transformed net/countered/settlementroads/platform/services/WorldDataStorage in 431.9 μs
-[Architectury Transformer DEBUG] Transforming from net/countered/settlementroads/helpers/StructureConnector.class to net/countered/settlementroads/helpers/StructureConnector.class with 5 transformer(s) on dev.architectury.transformer.handler.TinyRemapperPreparedTransformerHandler
-[Architectury Transformer DEBUG] Found class transformer
-[Architectury Transformer DEBUG] Writing net/countered/settlementroads/helpers/StructureConnector with maxs=true frames=true
-[Architectury Transformer DEBUG] Transformed net/countered/settlementroads/helpers/StructureConnector in 549.3 μs
-[Architectury Transformer DEBUG] Transforming from net/countered/settlementroads/helpers/StructureLocator.class to net/countered/settlementroads/helpers/StructureLocator.class with 5 transformer(s) on dev.architectury.transformer.handler.TinyRemapperPreparedTransformerHandler
-[Architectury Transformer DEBUG] Found class transformer
-[Architectury Transformer DEBUG] Writing net/countered/settlementroads/helpers/StructureLocator with maxs=true frames=true
-[Architectury Transformer DEBUG] Transformed net/countered/settlementroads/helpers/StructureLocator in 523.4 μs
-[Architectury Transformer DEBUG] Transforming from net/countered/settlementroads/features/roadlogic/Road.class to net/countered/settlementroads/features/roadlogic/Road.class with 5 transformer(s) on dev.architectury.transformer.handler.TinyRemapperPreparedTransformerHandler
-[Architectury Transformer DEBUG] Found class transformer
-[Architectury Transformer DEBUG] Writing net/countered/settlementroads/features/roadlogic/Road with maxs=true frames=true
-[Architectury Transformer DEBUG] Transformed net/countered/settlementroads/features/roadlogic/Road in 579.5 μs
-[Architectury Transformer DEBUG] Transforming from net/countered/settlementroads/features/roadlogic/RoadPathCalculator.class to net/countered/settlementroads/features/roadlogic/RoadPathCalculator.class with 5 transformer(s) on dev.architectury.transformer.handler.TinyRemapperPreparedTransformerHandler
-[Architectury Transformer DEBUG] Found class transformer
-[Architectury Transformer DEBUG] Writing net/countered/settlementroads/features/roadlogic/RoadPathCalculator with maxs=true frames=true
-[Architectury Transformer DEBUG] Transformed net/countered/settlementroads/features/roadlogic/RoadPathCalculator in 998.9 μs
-[Architectury Transformer DEBUG] Transforming from net/countered/settlementroads/features/roadlogic/RoadPathCalculator$Node.class to net/countered/settlementroads/features/roadlogic/RoadPathCalculator$Node.class with 5 transformer(s) on dev.architectury.transformer.handler.TinyRemapperPreparedTransformerHandler
-[Architectury Transformer DEBUG] Found class transformer
-[Architectury Transformer DEBUG] Writing net/countered/settlementroads/features/roadlogic/RoadPathCalculator$Node with maxs=true frames=true
-[Architectury Transformer DEBUG] Transformed net/countered/settlementroads/features/roadlogic/RoadPathCalculator$Node in 160.1 μs
-[Architectury Transformer DEBUG] Transforming from net/countered/settlementroads/features/decoration/RoadStructures.class to net/countered/settlementroads/features/decoration/RoadStructures.class with 5 transformer(s) on dev.architectury.transformer.handler.TinyRemapperPreparedTransformerHandler
-[Architectury Transformer DEBUG] Found class transformer
-[Architectury Transformer DEBUG] Writing net/countered/settlementroads/features/decoration/RoadStructures with maxs=true frames=true
-[Architectury Transformer DEBUG] Transformed net/countered/settlementroads/features/decoration/RoadStructures in 672.5 μs
-[Architectury Transformer DEBUG] Transforming from net/countered/settlementroads/client/gui/RoadDebugScreen$ScreenPos.class to net/countered/settlementroads/client/gui/RoadDebugScreen$ScreenPos.class with 5 transformer(s) on dev.architectury.transformer.handler.TinyRemapperPreparedTransformerHandler
-[Architectury Transformer DEBUG] Found class transformer
-[Architectury Transformer DEBUG] Writing net/countered/settlementroads/client/gui/RoadDebugScreen$ScreenPos with maxs=true frames=true
-[Architectury Transformer DEBUG] Transformed net/countered/settlementroads/client/gui/RoadDebugScreen$ScreenPos in 807.8 μs
-[Architectury Transformer DEBUG] Transforming from net/countered/settlementroads/client/gui/RoadDebugScreen$LODLevel.class to net/countered/settlementroads/client/gui/RoadDebugScreen$LODLevel.class with 5 transformer(s) on dev.architectury.transformer.handler.TinyRemapperPreparedTransformerHandler
-[Architectury Transformer DEBUG] Found class transformer
-[Architectury Transformer DEBUG] Writing net/countered/settlementroads/client/gui/RoadDebugScreen$LODLevel with maxs=true frames=true
-[Architectury Transformer DEBUG] Transformed net/countered/settlementroads/client/gui/RoadDebugScreen$LODLevel in 288.3 μs
-[Architectury Transformer DEBUG] Transforming from net/countered/settlementroads/client/gui/RoadDebugScreen$1.class to net/countered/settlementroads/client/gui/RoadDebugScreen$1.class with 5 transformer(s) on dev.architectury.transformer.handler.TinyRemapperPreparedTransformerHandler
-[Architectury Transformer DEBUG] Found class transformer
-[Architectury Transformer DEBUG] Writing net/countered/settlementroads/client/gui/RoadDebugScreen$1 with maxs=true frames=true
-[Architectury Transformer DEBUG] Transformed net/countered/settlementroads/client/gui/RoadDebugScreen$1 in 222.6 μs
-[Architectury Transformer DEBUG] Transforming from net/countered/settlementroads/features/roadlogic/RoadDirection.class to net/countered/settlementroads/features/roadlogic/RoadDirection.class with 5 transformer(s) on dev.architectury.transformer.handler.TinyRemapperPreparedTransformerHandler
-[Architectury Transformer DEBUG] Found class transformer
-[Architectury Transformer DEBUG] Writing net/countered/settlementroads/features/roadlogic/RoadDirection with maxs=true frames=true
-[Architectury Transformer DEBUG] Transformed net/countered/settlementroads/features/roadlogic/RoadDirection in 545.5 μs
-[Architectury Transformer DEBUG] Transforming from net/countered/settlementroads/client/gui/RoadDebugScreen$RoadLODLevel.class to net/countered/settlementroads/client/gui/RoadDebugScreen$RoadLODLevel.class with 5 transformer(s) on dev.architectury.transformer.handler.TinyRemapperPreparedTransformerHandler
-[Architectury Transformer DEBUG] Found class transformer
-[Architectury Transformer DEBUG] Writing net/countered/settlementroads/client/gui/RoadDebugScreen$RoadLODLevel with maxs=true frames=true
-[Architectury Transformer DEBUG] Transformed net/countered/settlementroads/client/gui/RoadDebugScreen$RoadLODLevel in 829.3 μs
-[Architectury Transformer DEBUG] Transforming from net/countered/settlementroads/features/decoration/RoadFenceDecoration.class to net/countered/settlementroads/features/decoration/RoadFenceDecoration.class with 5 transformer(s) on dev.architectury.transformer.handler.TinyRemapperPreparedTransformerHandler
-[Architectury Transformer DEBUG] Found class transformer
-[Architectury Transformer DEBUG] Writing net/countered/settlementroads/features/decoration/RoadFenceDecoration with maxs=true frames=true
-[Architectury Transformer DEBUG] Transformed net/countered/settlementroads/features/decoration/RoadFenceDecoration in 976.0 μs
-[Architectury Transformer DEBUG] Transforming from net/countered/settlementroads/features/decoration/util/BiomeWoodAware.class to net/countered/settlementroads/features/decoration/util/BiomeWoodAware.class with 5 transformer(s) on dev.architectury.transformer.handler.TinyRemapperPreparedTransformerHandler
-[Architectury Transformer DEBUG] Found class transformer
-[Architectury Transformer DEBUG] Writing net/countered/settlementroads/features/decoration/util/BiomeWoodAware with maxs=true frames=true
-[Architectury Transformer DEBUG] Transformed net/countered/settlementroads/features/decoration/util/BiomeWoodAware in 163.5 μs
-[Architectury Transformer DEBUG] Transforming from net/countered/settlementroads/features/decoration/OrientedDecoration.class to net/countered/settlementroads/features/decoration/OrientedDecoration.class with 5 transformer(s) on dev.architectury.transformer.handler.TinyRemapperPreparedTransformerHandler
-[Architectury Transformer DEBUG] Found class transformer
-[Architectury Transformer DEBUG] Writing net/countered/settlementroads/features/decoration/OrientedDecoration with maxs=true frames=true
-[Architectury Transformer DEBUG] Transformed net/countered/settlementroads/features/decoration/OrientedDecoration in 480.2 μs
-[Architectury Transformer DEBUG] Transforming from net/countered/settlementroads/features/decoration/Decoration.class to net/countered/settlementroads/features/decoration/Decoration.class with 5 transformer(s) on dev.architectury.transformer.handler.TinyRemapperPreparedTransformerHandler
-[Architectury Transformer DEBUG] Found class transformer
-[Architectury Transformer DEBUG] Writing net/countered/settlementroads/features/decoration/Decoration with maxs=true frames=true
-[Architectury Transformer DEBUG] Transformed net/countered/settlementroads/features/decoration/Decoration in 224.4 μs
-[Architectury Transformer DEBUG] Transforming from net/countered/settlementroads/features/decoration/DistanceSignDecoration.class to net/countered/settlementroads/features/decoration/DistanceSignDecoration.class with 5 transformer(s) on dev.architectury.transformer.handler.TinyRemapperPreparedTransformerHandler
-[Architectury Transformer DEBUG] Found class transformer
-[Architectury Transformer DEBUG] Writing net/countered/settlementroads/features/decoration/DistanceSignDecoration with maxs=true frames=true
-[Architectury Transformer DEBUG] Transformed net/countered/settlementroads/features/decoration/DistanceSignDecoration in 604.8 μs
-[Architectury Transformer DEBUG] Transforming from net/countered/settlementroads/features/decoration/LamppostDecoration.class to net/countered/settlementroads/features/decoration/LamppostDecoration.class with 5 transformer(s) on dev.architectury.transformer.handler.TinyRemapperPreparedTransformerHandler
-[Architectury Transformer DEBUG] Found class transformer
-[Architectury Transformer DEBUG] Writing net/countered/settlementroads/features/decoration/LamppostDecoration with maxs=true frames=true
-[Architectury Transformer DEBUG] Transformed net/countered/settlementroads/features/decoration/LamppostDecoration in 346.1 μs
-[Architectury Transformer DEBUG] Transforming from net/countered/settlementroads/features/decoration/FenceWaypointDecoration.class to net/countered/settlementroads/features/decoration/FenceWaypointDecoration.class with 5 transformer(s) on dev.architectury.transformer.handler.TinyRemapperPreparedTransformerHandler
-[Architectury Transformer DEBUG] Found class transformer
-[Architectury Transformer DEBUG] Writing net/countered/settlementroads/features/decoration/FenceWaypointDecoration with maxs=true frames=true
-[Architectury Transformer DEBUG] Transformed net/countered/settlementroads/features/decoration/FenceWaypointDecoration in 152.3 μs
-[Architectury Transformer DEBUG] Transforming from net/countered/settlementroads/features/decoration/util/WoodSelector.class to net/countered/settlementroads/features/decoration/util/WoodSelector.class with 5 transformer(s) on dev.architectury.transformer.handler.TinyRemapperPreparedTransformerHandler
-[Architectury Transformer DEBUG] Found class transformer
-[Architectury Transformer DEBUG] Writing net/countered/settlementroads/features/decoration/util/WoodSelector with maxs=true frames=true
-[Architectury Transformer DEBUG] Transformed net/countered/settlementroads/features/decoration/util/WoodSelector in 281.9 μs
-[Architectury Transformer DEBUG] Transforming from net/countered/settlementroads/helpers/Records$WoodAssets.class to net/countered/settlementroads/helpers/Records$WoodAssets.class with 5 transformer(s) on dev.architectury.transformer.handler.TinyRemapperPreparedTransformerHandler
-[Architectury Transformer DEBUG] Found class transformer
-[Architectury Transformer DEBUG] Writing net/countered/settlementroads/helpers/Records$WoodAssets with maxs=true frames=true
-[Architectury Transformer DEBUG] Transformed net/countered/settlementroads/helpers/Records$WoodAssets in 281.5 μs
-[Architectury Transformer DEBUG] Transforming from net/countered/settlementroads/features/decoration/SwingDecoration.class to net/countered/settlementroads/features/decoration/SwingDecoration.class with 5 transformer(s) on dev.architectury.transformer.handler.TinyRemapperPreparedTransformerHandler
-[Architectury Transformer DEBUG] Found class transformer
-[Architectury Transformer DEBUG] Writing net/countered/settlementroads/features/decoration/SwingDecoration with maxs=true frames=true
-[Architectury Transformer DEBUG] Transformed net/countered/settlementroads/features/decoration/SwingDecoration in 251.2 μs
-[Architectury Transformer DEBUG] Transforming from net/countered/settlementroads/features/decoration/StructureDecoration.class to net/countered/settlementroads/features/decoration/StructureDecoration.class with 5 transformer(s) on dev.architectury.transformer.handler.TinyRemapperPreparedTransformerHandler
-[Architectury Transformer DEBUG] Found class transformer
-[Architectury Transformer DEBUG] Writing net/countered/settlementroads/features/decoration/StructureDecoration with maxs=true frames=true
-[Architectury Transformer DEBUG] Transformed net/countered/settlementroads/features/decoration/StructureDecoration in 674.8 μs
-[Architectury Transformer DEBUG] Transforming from net/countered/settlementroads/features/decoration/NbtStructureDecoration.class to net/countered/settlementroads/features/decoration/NbtStructureDecoration.class with 5 transformer(s) on dev.architectury.transformer.handler.TinyRemapperPreparedTransformerHandler
-[Architectury Transformer DEBUG] Found class transformer
-[Architectury Transformer DEBUG] Writing net/countered/settlementroads/features/decoration/NbtStructureDecoration with maxs=true frames=true
-[Architectury Transformer DEBUG] Transformed net/countered/settlementroads/features/decoration/NbtStructureDecoration in 151.6 μs
-[Architectury Transformer DEBUG] Transforming from net/countered/settlementroads/features/decoration/OrientedDecoration$DirectionProperties.class to net/countered/settlementroads/features/decoration/OrientedDecoration$DirectionProperties.class with 5 transformer(s) on dev.architectury.transformer.handler.TinyRemapperPreparedTransformerHandler
-[Architectury Transformer DEBUG] Found class transformer
-[Architectury Transformer DEBUG] Writing net/countered/settlementroads/features/decoration/OrientedDecoration$DirectionProperties with maxs=true frames=true
-[Architectury Transformer DEBUG] Transformed net/countered/settlementroads/features/decoration/OrientedDecoration$DirectionProperties in 170.1 μs
+[Architectury Transformer DEBUG] Transformed net/countered/settlementroads/client/gui/RoadDebugScreen in 2.447 ms

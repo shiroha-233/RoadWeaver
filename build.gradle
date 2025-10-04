@@ -38,6 +38,11 @@ subprojects {
 	}
 	
 	repositories {
+		// 中国镜像源 - 优先使用（修正路径）
+		maven {
+			name = 'BMCLAPI'
+			url = 'https://mirrors.qlu.edu.cn/bmclapi'
+		}
 		maven {
 			name = 'Modrinth'
 			url = "https://api.modrinth.com/maven"
@@ -46,21 +51,20 @@ subprojects {
 			name = 'Architectury'
 			url = 'https://maven.architectury.dev/'
 		}
-		mavenCentral()
 		maven {
 			name = 'NeoForged'
-			url = 'https://maven.neoforged.net/releases/'
+			url = 'https://maven.neoforged.net/releases'
 		}
+		// 阿里云镜像
+		maven {
+			name = 'AliYun'
+			url = 'https://maven.aliyun.com/repository/public/'
+		}
+		mavenCentral()
 	}
 	
 	dependencies {
 		minecraft "com.mojang:minecraft:${rootProject.minecraft_version}"
-		
-		// 统一使用 Yarn + NeoForge 补丁映射（所有平台）
-		mappings loom.layered {
-			it.mappings("net.fabricmc:yarn:${rootProject.yarn_mappings}:v2")
-			it.mappings("dev.architectury:yarn-mappings-patch-neoforge:${rootProject.yarn_mappings_patch_neoforge_version}")
-		}
 	}
 	
 	java {

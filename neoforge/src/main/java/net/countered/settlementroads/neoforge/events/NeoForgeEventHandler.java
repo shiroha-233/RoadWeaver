@@ -13,17 +13,19 @@ import net.neoforged.neoforge.event.server.ServerStoppingEvent;
 import net.neoforged.neoforge.event.tick.LevelTickEvent;
 
 /**
- * NeoForge事件处理器
+ * NeoForge事件处理器 - 服务器端事件
  */
 @EventBusSubscriber(modid = RoadWeaver.MOD_ID, bus = EventBusSubscriber.Bus.FORGE)
 public class NeoForgeEventHandler {
     
     public static void register() {
         // NeoForge使用注解自动注册事件
+        RoadWeaver.getLogger().info("NeoForge server event handlers registered via annotations");
     }
     
     public static void registerClient() {
         // 客户端事件也使用注解注册
+        RoadWeaver.getLogger().info("NeoForge client event handlers registered via annotations");
     }
     
     @SubscribeEvent
@@ -52,8 +54,15 @@ public class NeoForgeEventHandler {
         CommonEventHandler.onServerStopping();
     }
     
-    @SubscribeEvent
-    public static void onClientTick(ClientTickEvent.Post event) {
-        RoadWeaverClient.onClientTick(Minecraft.getInstance());
+    /**
+     * 客户端事件处理器 - 独立的内部类，只在客户端加载
+     */
+    @EventBusSubscriber(value = Dist.CLIENT, modid = RoadWeaver.MOD_ID, bus = EventBusSubscriber.Bus.FORGE)
+    public static class ClientEvents {
+        
+        @SubscribeEvent
+        public static void onClientTick(ClientTickEvent.Post event) {
+            RoadWeaverClient.onClientTick(Minecraft.getInstance());
+        }
     }
 }
