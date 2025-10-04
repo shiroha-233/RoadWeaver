@@ -1,0 +1,15 @@
+Java Launcher: C:\Program Files\Zulu\zulu-21\bin\java.exe
+Arguments: '--task, SRG_TO_MCP, --input, C:\Users\shiroha\scoop\apps\gradle\current\.gradle\caches\modules-2\files-2.1\maven.modrinth\midnightlib\1.4.2-forge\9c99369a5b703f428dc31f8e4a1a83fc892bba48\midnightlib-1.4.2-forge.jar, --output, C:\Users\shiroha\scoop\apps\gradle\current\.gradle\caches\forge_gradle\deobf_dependencies\maven\modrinth\midnightlib\1.4.2-forge_mapped_official_1.20.1\midnightlib-1.4.2-forge_mapped_official_1.20.1.jar, --mcp, C:\Users\shiroha\scoop\apps\gradle\current\.gradle\caches\forge_gradle\mcp_repo\net\minecraft\mapping\1.20.1\mapping-1.20.1-mapping.zip, --strip-signatures'
+Classpath:
+ - C:\Users\shiroha\scoop\apps\gradle\current\.gradle\caches\forge_gradle\maven_downloader\net\minecraftforge\installertools\1.4.4\installertools-1.4.4-fatjar.jar
+Working directory: E:\Github\RoadWeaver\forge\build\_RenameSrg2Mcp_-233579588
+Main class: net.minecraftforge.installertools.ConsoleTool
+====================================
+Task: SRG_TO_MCP
+Input:  C:\Users\shiroha\scoop\apps\gradle\current\.gradle\caches\modules-2\files-2.1\maven.modrinth\midnightlib\1.4.2-forge\9c99369a5b703f428dc31f8e4a1a83fc892bba48\midnightlib-1.4.2-forge.jar
+Output: C:\Users\shiroha\scoop\apps\gradle\current\.gradle\caches\forge_gradle\deobf_dependencies\maven\modrinth\midnightlib\1.4.2-forge_mapped_official_1.20.1\midnightlib-1.4.2-forge_mapped_official_1.20.1.jar
+MCP:    C:\Users\shiroha\scoop\apps\gradle\current\.gradle\caches\forge_gradle\mcp_repo\net\minecraft\mapping\1.20.1\mapping-1.20.1-mapping.zip
+Loading MCP Data
+Processing ZIP file
+Stripped Manifest of sha digests
+Process complete

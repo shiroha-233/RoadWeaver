@@ -1,0 +1,17 @@
+{
+  "structureToLocate": "#minecraft:village",
+  "structureSearchRadius": 100,
+  "initialLocatingCount": 7,
+  "averagingRadius": 1,
+  "allowArtificial": true,
+  "allowNatural": true,
+  "placeWaypoints": false,
+  "placeRoadFences": true,
+  "placeSwings": true,
+  "placeBenches": true,
+  "placeGloriettes": true,
+  "structureDistanceFromRoad": 4,
+  "maxHeightDifference": 5,
+  "maxTerrainStability": 4,
+  "maxConcurrentRoadGeneration": 3
+}

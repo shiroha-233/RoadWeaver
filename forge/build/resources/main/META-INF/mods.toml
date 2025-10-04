@@ -1,0 +1,37 @@
+modLoader="javafml"
+loaderVersion="[47,)"
+license="CC0-1.0"
+issueTrackerURL="https://github.com/shiroha-233/RoadWeaver/issues"
+
+[[mods]]
+modId="roadweaver"
+version="${file.jarVersion}"
+displayName="RoadWeaver"
+displayURL="https://github.com/shiroha-233/RoadWeaver"
+logoFile="assets/roadweaver/icon.png"
+credits="shiroha"
+authors="shiroha"
+description='''
+A mod to generate roads between structures!
+'''
+
+[[dependencies.roadweaver]]
+    modId="forge"
+    mandatory=true
+    versionRange="[47,48)"
+    ordering="NONE"
+    side="BOTH"
+
+[[dependencies.roadweaver]]
+    modId="minecraft"
+    mandatory=true
+    versionRange="[1.20.1,1.21)"
+    ordering="NONE"
+    side="BOTH"
+
+[[dependencies.roadweaver]]
+    modId="midnightlib"
+    mandatory=false
+    versionRange="[1.4.1,)"
+    ordering="NONE"
+    side="BOTH"

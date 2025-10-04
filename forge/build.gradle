@@ -1,0 +1,110 @@
+plugins {
+	id 'net.minecraftforge.gradle' version '[6.0,6.2)'
+	id 'maven-publish'
+}
+
+version = project.mod_version
+group = project.maven_group
+
+base {
+	archivesName = "${project.archives_base_name}-forge"
+}
+
+minecraft {
+	mappings channel: 'official', version: project.minecraft_version
+
+	runs {
+		client {
+			workingDirectory project.file('run')
+			property 'forge.logging.console.level', 'debug'
+			mods {
+				roadweaver {
+					source sourceSets.main
+				}
+			}
+		}
+
+		server {
+			workingDirectory project.file('run')
+			property 'forge.logging.console.level', 'debug'
+			mods {
+				roadweaver {
+					source sourceSets.main
+				}
+			}
+		}
+
+		data {
+			workingDirectory project.file('run')
+			property 'forge.logging.console.level', 'debug'
+			args '--mod', 'roadweaver', '--all', '--output', file('src/generated/resources/'), '--existing', file('src/main/resources/')
+			mods {
+				roadweaver {
+					source sourceSets.main
+				}
+			}
+		}
+	}
+}
+
+repositories {
+	maven { url = "https://mirrors.cloud.tencent.com/repository/maven-public/" }
+	mavenCentral()
+	maven {
+		url = "https://maven.su5ed.dev/releases"
+	}
+	maven {
+		name = "Shedaniel Maven"
+		url = "https://maven.shedaniel.me/"
+	}
+}
+
+dependencies {
+	minecraft "net.minecraftforge:forge:${project.minecraft_version}-${project.forge_version}"
+
+	// Cloth Config API for configuration screen
+	implementation fg.deobf("me.shedaniel.cloth:cloth-config-forge:${project.cloth_config_version}")
+
+	// Datagen dependencies
+	implementation fg.deobf("net.minecraftforge:forge:${project.minecraft_version}-${project.forge_version}:universal")
+}
+
+tasks.withType(JavaCompile).configureEach {
+	options.encoding = 'UTF-8'
+	options.release = 21
+}
+
+java {
+	withSourcesJar()
+	sourceCompatibility = JavaVersion.VERSION_21
+	targetCompatibility = JavaVersion.VERSION_21
+}
+
+jar {
+	from("LICENSE") {
+		rename { "${it}_${project.base.archivesName.get()}"}
+	}
+
+	manifest {
+		attributes([
+			"Specification-Title": "RoadWeaver",
+			"Specification-Vendor": "shiroha",
+			"Specification-Version": "1",
+			"Implementation-Title": "RoadWeaver",
+			"Implementation-Version": project.version,
+			"Implementation-Vendor": "shiroha"
+		])
+	}
+}
+
+publishing {
+	publications {
+		create("mavenJava", MavenPublication) {
+			artifactId = "${project.archives_base_name}-forge"
+			from components.java
+		}
+	}
+
+	repositories {
+	}
+}

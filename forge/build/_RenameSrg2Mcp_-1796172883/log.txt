@@ -1,0 +1,15 @@
+Java Launcher: C:\Program Files\Zulu\zulu-21\bin\java.exe
+Arguments: '--task, SRG_TO_MCP, --input, C:\Users\shiroha\scoop\apps\gradle\current\.gradle\caches\modules-2\files-2.1\me.shedaniel.cloth\cloth-config-forge\11.1.118\c46ca3fba95691873a765f4e79750c615f33e446\cloth-config-forge-11.1.118.jar, --output, C:\Users\shiroha\scoop\apps\gradle\current\.gradle\caches\forge_gradle\deobf_dependencies\me\shedaniel\cloth\cloth-config-forge\11.1.118_mapped_official_1.20.1\cloth-config-forge-11.1.118_mapped_official_1.20.1.jar, --mcp, C:\Users\shiroha\scoop\apps\gradle\current\.gradle\caches\forge_gradle\mcp_repo\net\minecraft\mapping\1.20.1\mapping-1.20.1-mapping.zip, --strip-signatures'
+Classpath:
+ - C:\Users\shiroha\scoop\apps\gradle\current\.gradle\caches\forge_gradle\maven_downloader\net\minecraftforge\installertools\1.4.4\installertools-1.4.4-fatjar.jar
+Working directory: E:\Github\RoadWeaver\forge\build\_RenameSrg2Mcp_-1796172883
+Main class: net.minecraftforge.installertools.ConsoleTool
+====================================
+Task: SRG_TO_MCP
+Input:  C:\Users\shiroha\scoop\apps\gradle\current\.gradle\caches\modules-2\files-2.1\me.shedaniel.cloth\cloth-config-forge\11.1.118\c46ca3fba95691873a765f4e79750c615f33e446\cloth-config-forge-11.1.118.jar
+Output: C:\Users\shiroha\scoop\apps\gradle\current\.gradle\caches\forge_gradle\deobf_dependencies\me\shedaniel\cloth\cloth-config-forge\11.1.118_mapped_official_1.20.1\cloth-config-forge-11.1.118_mapped_official_1.20.1.jar
+MCP:    C:\Users\shiroha\scoop\apps\gradle\current\.gradle\caches\forge_gradle\mcp_repo\net\minecraft\mapping\1.20.1\mapping-1.20.1-mapping.zip
+Loading MCP Data
+Processing ZIP file
+Stripped Manifest of sha digests
+Process complete

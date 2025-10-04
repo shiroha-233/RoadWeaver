@@ -1,9 +1,0 @@
-{
-  "feature": "roadweaver:road_feature",
-  "placement": [
-    {
-      "type": "minecraft:heightmap",
-      "heightmap": "WORLD_SURFACE_WG"
-    }
-  ]
-}

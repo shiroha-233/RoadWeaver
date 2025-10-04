@@ -1,0 +1,8 @@
+{
+  "type": "forge:add_features",
+  "biomes": "#minecraft:is_overworld",
+  "features": [
+    "roadweaver:road_feature_placed"
+  ],
+  "step": "local_modifications"
+}

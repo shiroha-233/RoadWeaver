@@ -1,0 +1,83 @@
+{
+  "type": "roadweaver:road_feature",
+  "config": {
+    "artificialMaterials": [
+      [
+        {
+          "Name": "minecraft:mud_bricks"
+        },
+        {
+          "Name": "minecraft:packed_mud"
+        }
+      ],
+      [
+        {
+          "Name": "minecraft:polished_andesite"
+        },
+        {
+          "Name": "minecraft:stone_bricks"
+        }
+      ],
+      [
+        {
+          "Name": "minecraft:stone_bricks"
+        },
+        {
+          "Name": "minecraft:mossy_stone_bricks"
+        },
+        {
+          "Name": "minecraft:cracked_stone_bricks"
+        }
+      ]
+    ],
+    "naturalMaterials": [
+      [
+        {
+          "Name": "minecraft:coarse_dirt"
+        },
+        {
+          "Name": "minecraft:rooted_dirt"
+        },
+        {
+          "Name": "minecraft:packed_mud"
+        }
+      ],
+      [
+        {
+          "Name": "minecraft:cobblestone"
+        },
+        {
+          "Name": "minecraft:mossy_cobblestone"
+        },
+        {
+          "Name": "minecraft:cracked_stone_bricks"
+        }
+      ],
+      [
+        {
+          "Name": "minecraft:dirt_path"
+        },
+        {
+          "Name": "minecraft:coarse_dirt"
+        },
+        {
+          "Name": "minecraft:packed_mud"
+        }
+      ]
+    ],
+    "quality": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9
+    ],
+    "width": [
+      3
+    ]
+  }
+}
