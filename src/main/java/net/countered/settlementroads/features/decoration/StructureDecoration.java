@@ -90,7 +90,7 @@ public abstract class StructureDecoration extends OrientedDecoration implements 
             // 尝试从资源包加载NBT文件
             InputStream inputStream = getClass().getResourceAsStream("/data/roadweaver/structures/" + structureName + ".nbt");
             if (inputStream != null) {
-                NbtCompound nbt = NbtIo.readCompressed(inputStream, net.minecraft.nbt.NbtSizeTracker.ofUnlimitedBytes());
+                NbtCompound nbt = NbtIo.readCompressed(inputStream);
                 template.readNbt(getWorld().getRegistryManager().getWrapperOrThrow(net.minecraft.registry.RegistryKeys.BLOCK), nbt);
                 return template;
             }
@@ -165,7 +165,7 @@ public abstract class StructureDecoration extends OrientedDecoration implements 
      */
     protected boolean shouldReplaceWithAir(BlockState state) {
         // 只替换草、花、小植物等，不替换重要方块
-        return state.getBlock().equals(Blocks.SHORT_GRASS) || 
+        return state.getBlock().equals(Blocks.GRASS) || 
                state.getBlock().equals(Blocks.TALL_GRASS) ||
                state.getBlock().equals(Blocks.FERN) ||
                state.getBlock().equals(Blocks.LARGE_FERN) ||

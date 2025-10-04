@@ -299,7 +299,7 @@ public class RoadDebugScreen extends Screen {
         return true;
     }
 
-    @Override
+    // 1.20.1 中 applyBlur 方法签名不同，移除 @Override
     protected void applyBlur(float delta) {
         // 禁用模糊效果
     }
@@ -339,7 +339,7 @@ public class RoadDebugScreen extends Screen {
     }
 
     @Override
-    public boolean mouseScrolled(double mouseX, double mouseY, double horizontal, double vertical) {
+    public boolean mouseScrolled(double mouseX, double mouseY, double vertical) {
         double old = zoom;
         zoom = vertical > 0 ? zoom * 1.1 : zoom / 1.1;
         zoom = Math.max(0.1, Math.min(10.0, zoom)); // 限制缩放范围

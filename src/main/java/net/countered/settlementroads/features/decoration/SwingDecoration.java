@@ -36,7 +36,7 @@ public class SwingDecoration extends StructureDecoration {
             BlockState state = world.getBlockState(checkPos);
             // 如果上方有实心方块（不是空气、草、花等），不适合放置秋千
             if (!state.isAir() && 
-                !state.getBlock().equals(Blocks.SHORT_GRASS) &&
+                !state.getBlock().equals(Blocks.GRASS) &&
                 !state.getBlock().equals(Blocks.TALL_GRASS) &&
                 !state.isIn(net.minecraft.registry.tag.BlockTags.FLOWERS) &&
                 !state.isIn(net.minecraft.registry.tag.BlockTags.LEAVES)) {
