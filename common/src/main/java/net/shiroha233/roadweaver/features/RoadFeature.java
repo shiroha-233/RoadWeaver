@@ -58,7 +58,7 @@ public class RoadFeature extends Feature<RoadFeatureConfig> {
     
     // 装饰放置相关常量
     private static final int SIGN_PLACEMENT_OFFSET = 65;
-    private static final int LAMPPOST_DECORATION_SPACING = 59;
+    private static final int LAMPPOST_DECORATION_SPACING = 25;
     private static final int FENCE_DECORATION_SPACING = 15;
     private static final int LARGE_DECORATION_SPACING = 80;
     private static final int WAYPOINT_SPACING = 25;
@@ -123,6 +123,7 @@ public class RoadFeature extends Feature<RoadFeatureConfig> {
 
     private void runRoadLogic(WorldGenLevel level, FeaturePlaceContext<RoadFeatureConfig> context, Set<Decoration> roadDecorationPlacementPositions) {
         IModConfig config = ConfigProvider.get();
+        LOGGER.info("WorldDataProvider instance: {}", System.identityHashCode(WorldDataProvider.getInstance()));
         WorldDataProvider dataProvider = WorldDataProvider.getInstance();
         ServerLevel serverLevel = (ServerLevel) level.getLevel();
 

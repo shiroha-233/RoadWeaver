@@ -1,0 +1,6 @@
+{
+  "variants": {
+    "lit=true": { "model": "roadweaver:block/redstone_lamp_of_the_road_lit" },
+    "lit=false": { "model": "roadweaver:block/redstone_lamp_of_the_road" }
+  }
+}

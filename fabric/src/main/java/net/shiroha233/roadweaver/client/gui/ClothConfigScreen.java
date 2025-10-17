@@ -203,7 +203,36 @@ public class ClothConfigScreen {
                 .setTooltip(Component.translatable("config.roadweaver.placeGloriettes.tooltip"))
                 .setSaveConsumer(FabricModConfig::setPlaceGloriettes)
                 .build());
-        
+
+        ConfigCategory mobeffects = builder.getOrCreateCategory(
+                Component.translatable("config.roadweaver.category.mobeffects"));
+        //效果
+        mobeffects.addEntry(entryBuilder.startIntSlider(
+                        Component.translatable("config.roadweaver.powerOfTheRoadSpeedLevel"),
+                        FabricModConfig.getPowerOfTheRoadSpeedLevel(),
+                        0, 5) // 0~5级，根据需求
+                .setDefaultValue(2)
+                .setTooltip(Component.translatable("config.roadweaver.powerOfTheRoadSpeedLevel.tooltip"))
+                .setSaveConsumer(FabricModConfig::setPowerOfTheRoadSpeedLevel)
+                .build());
+
+        mobeffects.addEntry(entryBuilder.startIntSlider(
+                        Component.translatable("config.roadweaver.powerOfTheRoadRegenerationLevel"),
+                        FabricModConfig.getPowerOfTheRoadRegenerationLevel(),
+                        0, 1) // 0~5级，根据需求
+                .setDefaultValue(0)
+                .setTooltip(Component.translatable("config.roadweaver.powerOfTheRoadRegenerationLevel.tooltip"))
+                .setSaveConsumer(FabricModConfig::setPowerOfTheRoadRegenerationLevel)
+                .build());
+        mobeffects.addEntry(entryBuilder.startIntSlider(
+                        Component.translatable("config.roadweaver.powerOfTheRoadJumpLevel"),
+                        FabricModConfig.getPowerOfTheRoadJumpLevel(),
+                        0, 3) // 0~5级，根据需求
+                .setDefaultValue(2)
+                .setTooltip(Component.translatable("config.roadweaver.powerOfTheRoadJumpLevel.tooltip"))
+                .setSaveConsumer(FabricModConfig::setPowerOfTheRoadJumpLevel)
+                .build());
+
         return builder.build();
     }
 }

@@ -92,6 +92,18 @@ public class ForgeJsonConfig {
     public static boolean getPlaceGloriettes() { return data.placeGloriettes; }
     public static void setPlaceGloriettes(boolean value) { data.placeGloriettes = value; }
 
+    //效果
+    public static int getPowerOfTheRoadSpeedLevel() { return data.powerOfTheRoadSpeedLevel; }
+    public static void setPowerOfTheRoadSpeedLevel(int value) { data.powerOfTheRoadSpeedLevel = Math.max(0, value); }
+
+    public static int getPowerOfTheRoadRegenerationLevel() { return data.powerOfTheRoadRegenerationLevel; }
+    public static void setPowerOfTheRoadRegenerationLevel(int value) { data.powerOfTheRoadRegenerationLevel = Math.max(0, value); }
+
+    public static int getPowerOfTheRoadJumpLevel() { return data.powerOfTheRoadJumpLevel; }
+    public static void setPowerOfTheRoadJumpLevel(int value) { data.powerOfTheRoadJumpLevel = Math.max(0, value); }
+
+
+
     public static void load() {
         if (Files.exists(CONFIG_PATH)) {
             try {
@@ -158,6 +170,10 @@ public class ForgeJsonConfig {
         boolean placeSwings = false;
         boolean placeBenches = false;
         boolean placeGloriettes = false;
+
+        int powerOfTheRoadSpeedLevel = 2;
+        int powerOfTheRoadRegenerationLevel = 0;
+        int powerOfTheRoadJumpLevel = 2;
     }
 
     private static List<String> tokenizeToList(String raw) {

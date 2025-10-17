@@ -200,7 +200,38 @@ public class ClothConfigScreen {
                 .setTooltip(Component.translatable("config.roadweaver.placeGloriettes.tooltip"))
                 .setSaveConsumer(ForgeJsonConfig::setPlaceGloriettes)
                 .build());
-        
+
+
+        ConfigCategory mobeffects = builder.getOrCreateCategory(
+                Component.translatable("config.roadweaver.category.mobeffects"));
+        //效果
+        mobeffects.addEntry(entryBuilder.startIntSlider(
+                        Component.translatable("config.roadweaver.powerOfTheRoadSpeedLevel"),
+                        ForgeJsonConfig.getPowerOfTheRoadSpeedLevel(),
+                        0, 5)
+                .setDefaultValue(2)
+                .setTooltip(Component.translatable("config.roadweaver.powerOfTheRoadSpeedLevel.tooltip"))
+                .setSaveConsumer(ForgeJsonConfig::setPowerOfTheRoadSpeedLevel)
+                .build());
+
+        mobeffects.addEntry(entryBuilder.startIntSlider(
+                        Component.translatable("config.roadweaver.powerOfTheRoadRegenerationLevel"),
+                        ForgeJsonConfig.getPowerOfTheRoadRegenerationLevel(),
+                        0, 1)
+                .setDefaultValue(0)
+                .setTooltip(Component.translatable("config.roadweaver.powerOfTheRoadRegenerationLevel.tooltip"))
+                .setSaveConsumer(ForgeJsonConfig::setPowerOfTheRoadRegenerationLevel)
+                .build());
+        mobeffects.addEntry(entryBuilder.startIntSlider(
+                        Component.translatable("config.roadweaver.powerOfTheRoadJumpLevel"),
+                        ForgeJsonConfig.getPowerOfTheRoadJumpLevel(),
+                        0, 3)
+                .setDefaultValue(2)
+                .setTooltip(Component.translatable("config.roadweaver.powerOfTheRoadJumpLevel.tooltip"))
+                .setSaveConsumer(ForgeJsonConfig::setPowerOfTheRoadJumpLevel)
+                .build());
+
+
         return builder.build();
     }
 }

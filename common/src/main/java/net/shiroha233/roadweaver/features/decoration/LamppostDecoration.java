@@ -1,5 +1,6 @@
 package net.shiroha233.roadweaver.features.decoration;
 
+import net.minecraft.world.level.block.Block;
 import net.shiroha233.roadweaver.features.decoration.util.BiomeWoodAware;
 import net.shiroha233.roadweaver.helpers.Records;
 import net.minecraft.core.BlockPos;
@@ -8,6 +9,7 @@ import net.minecraft.world.level.WorldGenLevel;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.Half;
+import net.shiroha233.roadweaver.registry.ModBlocks;
 
 public class LamppostDecoration extends OrientedDecoration implements BiomeWoodAware {
     private final boolean leftRoadSide;
@@ -35,7 +37,8 @@ public class LamppostDecoration extends OrientedDecoration implements BiomeWoodA
         world.setBlock(basePos.above(3), Blocks.COBBLED_DEEPSLATE_WALL.defaultBlockState(), 3);
 
         BlockPos lampPos = basePos.above(4);
-        world.setBlock(lampPos, Blocks.REDSTONE_LAMP.defaultBlockState(), 3);
+        world.setBlock(lampPos, ModBlocks.REDSTONE_LAMP_OF_THE_ROAD.get().defaultBlockState(), 3);
+
         world.setBlock(basePos.above(5), Blocks.DAYLIGHT_DETECTOR.defaultBlockState()
                 .setValue(BlockStateProperties.INVERTED, true), 3);
 

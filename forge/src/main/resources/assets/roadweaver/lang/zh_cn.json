@@ -33,6 +33,7 @@
   "config.roadweaver.category.pregeneration": "预生成设置",
   "config.roadweaver.category.roads": "道路设置",
   "config.roadweaver.category.decorations": "装饰设置",
+  "config.roadweaver.category.mobeffects": "状态效果设置",
 
   "config.roadweaver.structureToLocate": "要定位的结构",
   "config.roadweaver.structureToLocate.tooltip": "每行输入一个结构或标签。例如：#minecraft:village、minecraft:village_plains、modid:custom_structure。支持结构标签（#命名空间:路径）与直接ID。",
@@ -76,6 +77,14 @@
   "config.roadweaver.placeGloriettes": "生成凉亭",
   "config.roadweaver.placeGloriettes.tooltip": "在道路旁生成凉亭装饰，增加道路景观",
 
+  "config.roadweaver.powerOfTheRoadSpeedLevel": "设置迅捷等级",
+  "config.roadweaver.powerOfTheRoadSpeedLevel.tooltip": "设置为0以禁用迅捷",
+  "config.roadweaver.powerOfTheRoadRegenerationLevel": "设置生命恢复等级",
+  "config.roadweaver.powerOfTheRoadRegenerationLevel.tooltip": "设置为0以禁用生命恢复",
+  "config.roadweaver.powerOfTheRoadJumpLevel": "设置跳跃提升等级",
+  "config.roadweaver.powerOfTheRoadJumpLevel.tooltip": "设置为0以禁用跳跃提升",
+
+
   "sign.roadweaver.distance.next_location": "下个地点",
   "sign.roadweaver.distance.welcome": "欢迎",
   "sign.roadweaver.distance.traveller": "旅行者",
@@ -84,5 +93,7 @@
   "roadweaver.debug_map.no_permission": "你没有权限打开调试地图（需要管理员权限）",
   "roadweaver.debug_map.multiplayer_not_supported": "多人服务器暂不支持调试地图功能",
   "roadweaver.debug_map.loading": "正在加载调试数据...",
-  "roadweaver.debug_map.timeout": "加载调试数据超时，请重试"
+  "roadweaver.debug_map.timeout": "加载调试数据超时，请重试",
+
+  "effect.roadweaver.power_of_the_road": "旅行祝福"
 }

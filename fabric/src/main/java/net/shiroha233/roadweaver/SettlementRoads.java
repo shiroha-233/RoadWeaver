@@ -2,6 +2,7 @@ package net.shiroha233.roadweaver;
 
 import net.shiroha233.roadweaver.config.fabric.FabricModConfig;
 import net.shiroha233.roadweaver.events.ModEventHandler;
+import net.shiroha233.roadweaver.events.RedstoneLampOfTheRoadEffectHandler;
 import net.shiroha233.roadweaver.features.config.RoadFeatureRegistry;
 import net.shiroha233.roadweaver.features.config.FabricBiomeInjection;
 import net.shiroha233.roadweaver.network.RoadWeaverNetworkManager;
@@ -9,7 +10,8 @@ import net.shiroha233.roadweaver.persistence.attachments.WorldDataAttachment;
 import net.fabricmc.api.ModInitializer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
+import net.shiroha233.roadweaver.registry.ModEffects;
+import net.shiroha233.roadweaver.registry.ModBlocks;
 public class SettlementRoads implements ModInitializer {
 
 	public static final String MOD_ID = "roadweaver";
@@ -19,7 +21,7 @@ public class SettlementRoads implements ModInitializer {
 	@Override
 	public void onInitialize() {
 		LOGGER.info("Initializing RoadWeaver (Fabric)...");
-		
+        ModBlocks.register();    ModEffects.register();        RedstoneLampOfTheRoadEffectHandler.register();
 		// 注册 Fabric Attachment API
 		WorldDataAttachment.registerWorldDataAttachment();
 		

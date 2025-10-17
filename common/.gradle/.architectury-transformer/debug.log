@@ -1,270 +1,125 @@
 [Architectury Transformer DEBUG] 
 [Architectury Transformer DEBUG] ============================
-[Architectury Transformer DEBUG] Transforming from D:\GITHUB\RoadWeaver-fresh\common\build\devlibs\roadweaver-common-1.0.5-dev.jar to D:\GITHUB\RoadWeaver-fresh\common\build\libs\roadweaver-common-1.0.5-transformProductionFabric.jar
+[Architectury Transformer DEBUG] Transforming from D:\RoadWeaver-1.20.1-Architectury-New\common\build\devlibs\roadweaver-common-1.0.5-dev.jar to D:\RoadWeaver-1.20.1-Architectury-New\common\build\libs\roadweaver-common-1.0.5-transformProductionForge.jar
 [Architectury Transformer DEBUG] ============================
 [Architectury Transformer DEBUG] 
-[Architectury Transformer DEBUG] Transforming 5 transformer(s) from D:\GITHUB\RoadWeaver-fresh\common\build\devlibs\roadweaver-common-1.0.5-dev.jar to D:\GITHUB\RoadWeaver-fresh\common\build\libs\roadweaver-common-1.0.5-transformProductionFabric.jar: 
-[Architectury Transformer DEBUG]  - dev.architectury.transformer.transformers.RemapMixinVariables@11b8663d
-[Architectury Transformer DEBUG]  - dev.architectury.transformer.transformers.TransformExpectPlatform@2a8ca602
-[Architectury Transformer DEBUG]  - dev.architectury.transformer.transformers.RemapInjectables@1b9a0d61
+[Architectury Transformer DEBUG] Transforming 7 transformer(s) from D:\RoadWeaver-1.20.1-Architectury-New\common\build\devlibs\roadweaver-common-1.0.5-dev.jar to D:\RoadWeaver-1.20.1-Architectury-New\common\build\libs\roadweaver-common-1.0.5-transformProductionForge.jar: 
+[Architectury Transformer DEBUG]  - dev.architectury.transformer.transformers.TransformExpectPlatform@2c33e030
+[Architectury Transformer DEBUG]  - dev.architectury.transformer.transformers.RemapInjectables@4d315b3b
 [Architectury Transformer DEBUG]  - AddRefmapName(enabled=() -> kotlin.Boolean)
-[Architectury Transformer DEBUG]  - dev.architectury.transformer.transformers.TransformPlatformOnly@20a14375
-[Architectury Transformer DEBUG] Transforming from D:\GITHUB\RoadWeaver-fresh\common\build\devlibs\roadweaver-common-1.0.5-dev.jar to D:\GITHUB\RoadWeaver-fresh\common\build\libs\roadweaver-common-1.0.5-transformProductionFabric.jar with 5 transformer(s) on dev.architectury.transformer.handler.SimpleTransformerHandler
-[Architectury Transformer DEBUG] Reading mixin mappings file: D:\GITHUB\RoadWeaver-fresh\common\build\loom-cache\mixin-map-loom.mappings.1_20_1.layered+hash.40359-v2.main.tiny
-[Architectury Transformer DEBUG] Reading mixin mappings file: D:\GITHUB\RoadWeaver-fresh\fabric\build\loom-cache\mixin-map-loom.mappings.1_20_1.layered+hash.40359-v2.main.tiny
+[Architectury Transformer DEBUG]  - dev.architectury.transformer.transformers.TransformPlatformOnly@757c0091
+[Architectury Transformer DEBUG]  - dev.architectury.transformer.transformers.TransformForgeAnnotations@57e83634
+[Architectury Transformer DEBUG]  - dev.architectury.transformer.transformers.TransformForgeEnvironment@49852cee
+[Architectury Transformer DEBUG]  - dev.architectury.transformer.transformers.FixForgeMixin@161c8b3f
+[Architectury Transformer DEBUG] Transforming from D:\RoadWeaver-1.20.1-Architectury-New\common\build\devlibs\roadweaver-common-1.0.5-dev.jar to D:\RoadWeaver-1.20.1-Architectury-New\common\build\libs\roadweaver-common-1.0.5-transformProductionForge.jar with 7 transformer(s) on dev.architectury.transformer.handler.SimpleTransformerHandler
+[Architectury Transformer DEBUG] Reading mixin mappings file: D:\RoadWeaver-1.20.1-Architectury-New\fabric\build\loom-cache\mixin-map-loom.mappings.1_20_1.layered+hash.40359-v2.main.tiny
 [Architectury Transformer DEBUG] Remapping with 2 mapping provider(s):
-[Architectury Transformer DEBUG]  - dev.architectury.transformer.shadowed.impl.dev.architectury.tinyremapper.TinyUtils$$Lambda/0x0000023410f1a238@61053fd0
-[Architectury Transformer DEBUG]  - dev.architectury.transformer.shadowed.impl.dev.architectury.tinyremapper.TinyUtils$$Lambda/0x0000023410f1a238@60a6948d
+[Architectury Transformer DEBUG]  - dev.architectury.transformer.transformers.TransformForgeEnvironment$$Lambda/0x0000025510970a48@3f179e5
+[Architectury Transformer DEBUG]  - dev.architectury.transformer.transformers.TransformForgeEnvironment$$Lambda/0x0000025510970c70@77fa8204
 [Architectury Transformer DEBUG] Provided 59 classpath jar(s):
-[Architectury Transformer DEBUG]  - C:\Users\shiroha\scoop\apps\gradle\current\.gradle\caches\modules-2\files-2.1\dev.architectury\architectury-injectables\1.0.10\62db2a366d662606d1b23ad02ccc3212ed37ec3\architectury-injectables-1.0.10.jar
-[Architectury Transformer DEBUG]  - C:\Users\shiroha\scoop\apps\gradle\current\.gradle\caches\modules-2\files-2.1\net.fabricmc\fabric-loader\0.17.3\deafaba5de4d9bbd76105783ff4e21ce0773874f\fabric-loader-0.17.3.jar
-[Architectury Transformer DEBUG]  - C:\Users\shiroha\scoop\apps\gradle\current\.gradle\caches\modules-2\files-2.1\org.jetbrains\annotations\24.1.0\7af6a669488450c4a07c2c3254e2151df42d7d04\annotations-24.1.0.jar
-[Architectury Transformer DEBUG]  - C:\Users\shiroha\scoop\apps\gradle\current\.gradle\caches\modules-2\files-2.1\net.fabricmc\tiny-mappings-parser\0.3.0+build.17\2f10540a290e382a7cd35c16ec3900046a4e252\tiny-mappings-parser-0.3.0+build.17.jar
-[Architectury Transformer DEBUG]  - C:\Users\shiroha\scoop\apps\gradle\current\.gradle\caches\modules-2\files-2.1\net.fabricmc\sponge-mixin\0.12.5+mixin.0.8.5\8d31fb97c3e0cd7c8dad3441851c523bcfae6d8e\sponge-mixin-0.12.5+mixin.0.8.5.jar
-[Architectury Transformer DEBUG]  - C:\Users\shiroha\scoop\apps\gradle\current\.gradle\caches\modules-2\files-2.1\net.fabricmc\tiny-remapper\0.8.2\2cc6565989469ec38893bfb7802b31c0d0d11ea0\tiny-remapper-0.8.2.jar
-[Architectury Transformer DEBUG]  - C:\Users\shiroha\scoop\apps\gradle\current\.gradle\caches\modules-2\files-2.1\net.fabricmc\access-widener\2.1.0\f62a27adbfd8ab4d4fa5681793039f2c0b177155\access-widener-2.1.0.jar
-[Architectury Transformer DEBUG]  - C:\Users\shiroha\scoop\apps\gradle\current\.gradle\caches\modules-2\files-2.1\org.ow2.asm\asm\9.5\dc6ea1875f4d64fbc85e1691c95b96a3d8569c90\asm-9.5.jar
-[Architectury Transformer DEBUG]  - C:\Users\shiroha\scoop\apps\gradle\current\.gradle\caches\modules-2\files-2.1\org.ow2.asm\asm-analysis\9.5\490bacc77de7cbc0be1a30bb3471072d705be4a4\asm-analysis-9.5.jar
-[Architectury Transformer DEBUG]  - C:\Users\shiroha\scoop\apps\gradle\current\.gradle\caches\modules-2\files-2.1\org.ow2.asm\asm-commons\9.5\19ab5b5800a3910d30d3a3e64fdb00fd0cb42de0\asm-commons-9.5.jar
-[Architectury Transformer DEBUG]  - C:\Users\shiroha\scoop\apps\gradle\current\.gradle\caches\modules-2\files-2.1\org.ow2.asm\asm-tree\9.5\fd33c8b6373abaa675be407082fdfda35021254a\asm-tree-9.5.jar
-[Architectury Transformer DEBUG]  - C:\Users\shiroha\scoop\apps\gradle\current\.gradle\caches\modules-2\files-2.1\org.ow2.asm\asm-util\9.5\64b5a1fc8c1b15ed2efd6a063e976bc8d3dc5ffe\asm-util-9.5.jar
-[Architectury Transformer DEBUG]  - C:\Users\shiroha\scoop\apps\gradle\current\.gradle\caches\modules-2\files-2.1\com.github.oshi\oshi-core\6.2.2\54f5efc19bca95d709d9a37d19ffcbba3d21c1a6\oshi-core-6.2.2.jar
-[Architectury Transformer DEBUG]  - C:\Users\shiroha\scoop\apps\gradle\current\.gradle\caches\modules-2\files-2.1\com.google.code.gson\gson\2.10\dd9b193aef96e973d5a11ab13cd17430c2e4306b\gson-2.10.jar
-[Architectury Transformer DEBUG]  - C:\Users\shiroha\scoop\apps\gradle\current\.gradle\caches\modules-2\files-2.1\com.google.guava\failureaccess\1.0.1\1dcf1de382a0bf95a3d8b0849546c88bac1292c9\failureaccess-1.0.1.jar
-[Architectury Transformer DEBUG]  - C:\Users\shiroha\scoop\apps\gradle\current\.gradle\caches\modules-2\files-2.1\com.google.guava\guava\31.1-jre\60458f877d055d0c9114d9e1a2efb737b4bc282c\guava-31.1-jre.jar
-[Architectury Transformer DEBUG]  - C:\Users\shiroha\scoop\apps\gradle\current\.gradle\caches\modules-2\files-2.1\com.ibm.icu\icu4j\71.1\9e7d3304c23f9ba5cb71915f7cce23231a57a445\icu4j-71.1.jar
-[Architectury Transformer DEBUG]  - C:\Users\shiroha\scoop\apps\gradle\current\.gradle\caches\modules-2\files-2.1\com.mojang\authlib\4.0.43\2ff9d747a77570a07a60d32ac77eb6162ad2a2d9\authlib-4.0.43.jar
-[Architectury Transformer DEBUG]  - C:\Users\shiroha\scoop\apps\gradle\current\.gradle\caches\modules-2\files-2.1\com.mojang\blocklist\1.0.10\5c685c5ffa94c4cd39496c7184c1d122e515ecef\blocklist-1.0.10.jar
-[Architectury Transformer DEBUG]  - C:\Users\shiroha\scoop\apps\gradle\current\.gradle\caches\modules-2\files-2.1\com.mojang\brigadier\1.1.8\5244ce82c3337bba4a196a3ce858bfaecc74404a\brigadier-1.1.8.jar
-[Architectury Transformer DEBUG]  - C:\Users\shiroha\scoop\apps\gradle\current\.gradle\caches\modules-2\files-2.1\com.mojang\datafixerupper\6.0.8\3ba4a30557a9b057760af4011f909ba619fc5125\datafixerupper-6.0.8.jar
-[Architectury Transformer DEBUG]  - C:\Users\shiroha\scoop\apps\gradle\current\.gradle\caches\modules-2\files-2.1\com.mojang\logging\1.1.1\832b8e6674a9b325a5175a3a6267dfaf34c85139\logging-1.1.1.jar
-[Architectury Transformer DEBUG]  - C:\Users\shiroha\scoop\apps\gradle\current\.gradle\caches\modules-2\files-2.1\com.mojang\patchy\2.2.10\da05971b07cbb379d002cf7eaec6a2048211fefc\patchy-2.2.10.jar
-[Architectury Transformer DEBUG]  - C:\Users\shiroha\scoop\apps\gradle\current\.gradle\caches\modules-2\files-2.1\com.mojang\text2speech\1.17.9\3cad216e3a7f0c19b4b394388bc9ffc446f13b14\text2speech-1.17.9.jar
-[Architectury Transformer DEBUG]  - C:\Users\shiroha\scoop\apps\gradle\current\.gradle\caches\modules-2\files-2.1\commons-codec\commons-codec\1.15\49d94806b6e3dc933dacbd8acb0fdbab8ebd1e5d\commons-codec-1.15.jar
-[Architectury Transformer DEBUG]  - C:\Users\shiroha\scoop\apps\gradle\current\.gradle\caches\modules-2\files-2.1\commons-io\commons-io\2.11.0\a2503f302b11ebde7ebc3df41daebe0e4eea3689\commons-io-2.11.0.jar
-[Architectury Transformer DEBUG]  - C:\Users\shiroha\scoop\apps\gradle\current\.gradle\caches\modules-2\files-2.1\commons-logging\commons-logging\1.2\4bfc12adfe4842bf07b657f0369c4cb522955686\commons-logging-1.2.jar
-[Architectury Transformer DEBUG]  - C:\Users\shiroha\scoop\apps\gradle\current\.gradle\caches\modules-2\files-2.1\io.netty\netty-buffer\4.1.82.Final\a544270cf1ae8b8077082f5036436a9a9971ea71\netty-buffer-4.1.82.Final.jar
-[Architectury Transformer DEBUG]  - C:\Users\shiroha\scoop\apps\gradle\current\.gradle\caches\modules-2\files-2.1\io.netty\netty-codec\4.1.82.Final\b77200379acb345a9ffdece1c605e591ac3e4e0a\netty-codec-4.1.82.Final.jar
-[Architectury Transformer DEBUG]  - C:\Users\shiroha\scoop\apps\gradle\current\.gradle\caches\modules-2\files-2.1\io.netty\netty-common\4.1.82.Final\22d148e85c3f5ebdacc0ce1f5aabb1d420f73f3\netty-common-4.1.82.Final.jar
-[Architectury Transformer DEBUG]  - C:\Users\shiroha\scoop\apps\gradle\current\.gradle\caches\modules-2\files-2.1\io.netty\netty-handler\4.1.82.Final\644041d1fa96a5d3130a29e8978630d716d76e38\netty-handler-4.1.82.Final.jar
-[Architectury Transformer DEBUG]  - C:\Users\shiroha\scoop\apps\gradle\current\.gradle\caches\modules-2\files-2.1\io.netty\netty-resolver\4.1.82.Final\38f665ae8dcd29032eea31245ba7806bed2e0fa8\netty-resolver-4.1.82.Final.jar
-[Architectury Transformer DEBUG]  - C:\Users\shiroha\scoop\apps\gradle\current\.gradle\caches\modules-2\files-2.1\io.netty\netty-transport-classes-epoll\4.1.82.Final\e7c7dd18deac93105797f30057c912651ea76521\netty-transport-classes-epoll-4.1.82.Final.jar
-[Architectury Transformer DEBUG]  - C:\Users\shiroha\scoop\apps\gradle\current\.gradle\caches\modules-2\files-2.1\io.netty\netty-transport-native-unix-common\4.1.82.Final\3e895b35ca1b8a0eca56cacff4c2dde5d2c6abce\netty-transport-native-unix-common-4.1.82.Final.jar
-[Architectury Transformer DEBUG]  - C:\Users\shiroha\scoop\apps\gradle\current\.gradle\caches\modules-2\files-2.1\io.netty\netty-transport\4.1.82.Final\e431a218d91acb6476ccad5f5aafde50aa3945ca\netty-transport-4.1.82.Final.jar
-[Architectury Transformer DEBUG]  - C:\Users\shiroha\scoop\apps\gradle\current\.gradle\caches\modules-2\files-2.1\it.unimi.dsi\fastutil\8.5.9\bb7ea75ecdb216654237830b3a96d87ad91f8cc5\fastutil-8.5.9.jar
-[Architectury Transformer DEBUG]  - C:\Users\shiroha\scoop\apps\gradle\current\.gradle\caches\modules-2\files-2.1\net.java.dev.jna\jna-platform\5.12.1\97406a297c852f4a41e688a176ec675f72e8329\jna-platform-5.12.1.jar
-[Architectury Transformer DEBUG]  - C:\Users\shiroha\scoop\apps\gradle\current\.gradle\caches\modules-2\files-2.1\net.java.dev.jna\jna\5.12.1\b1e93a735caea94f503e95e6fe79bf9cdc1e985d\jna-5.12.1.jar
-[Architectury Transformer DEBUG]  - C:\Users\shiroha\scoop\apps\gradle\current\.gradle\caches\modules-2\files-2.1\net.sf.jopt-simple\jopt-simple\5.0.4\4fdac2fbe92dfad86aa6e9301736f6b4342a3f5c\jopt-simple-5.0.4.jar
-[Architectury Transformer DEBUG]  - C:\Users\shiroha\scoop\apps\gradle\current\.gradle\caches\modules-2\files-2.1\org.apache.commons\commons-compress\1.21\4ec95b60d4e86b5c95a0e919cb172a0af98011ef\commons-compress-1.21.jar
-[Architectury Transformer DEBUG]  - C:\Users\shiroha\scoop\apps\gradle\current\.gradle\caches\modules-2\files-2.1\org.apache.commons\commons-lang3\3.12.0\c6842c86792ff03b9f1d1fe2aab8dc23aa6c6f0e\commons-lang3-3.12.0.jar
-[Architectury Transformer DEBUG]  - C:\Users\shiroha\scoop\apps\gradle\current\.gradle\caches\modules-2\files-2.1\org.apache.httpcomponents\httpclient\4.5.13\e5f6cae5ca7ecaac1ec2827a9e2d65ae2869cada\httpclient-4.5.13.jar
-[Architectury Transformer DEBUG]  - C:\Users\shiroha\scoop\apps\gradle\current\.gradle\caches\modules-2\files-2.1\org.apache.httpcomponents\httpcore\4.4.15\7f2e0c573eaa7a74bac2e89b359e1f73d92a0a1d\httpcore-4.4.15.jar
-[Architectury Transformer DEBUG]  - C:\Users\shiroha\scoop\apps\gradle\current\.gradle\caches\modules-2\files-2.1\org.apache.logging.log4j\log4j-api\2.19.0\ea1b37f38c327596b216542bc636cfdc0b8036fa\log4j-api-2.19.0.jar
-[Architectury Transformer DEBUG]  - C:\Users\shiroha\scoop\apps\gradle\current\.gradle\caches\modules-2\files-2.1\org.apache.logging.log4j\log4j-core\2.19.0\3b6eeb4de4c49c0fe38a4ee27188ff5fee44d0bb\log4j-core-2.19.0.jar
-[Architectury Transformer DEBUG]  - C:\Users\shiroha\scoop\apps\gradle\current\.gradle\caches\modules-2\files-2.1\org.apache.logging.log4j\log4j-slf4j2-impl\2.19.0\5c04bfdd63ce9dceb2e284b81e96b6a70010ee10\log4j-slf4j2-impl-2.19.0.jar
-[Architectury Transformer DEBUG]  - C:\Users\shiroha\scoop\apps\gradle\current\.gradle\caches\modules-2\files-2.1\org.joml\joml\1.10.5\22566d58af70ad3d72308bab63b8339906deb649\joml-1.10.5.jar
-[Architectury Transformer DEBUG]  - C:\Users\shiroha\scoop\apps\gradle\current\.gradle\caches\modules-2\files-2.1\org.lwjgl\lwjgl-glfw\3.3.1\cbac1b8d30cb4795149c1ef540f912671a8616d0\lwjgl-glfw-3.3.1.jar
-[Architectury Transformer DEBUG]  - C:\Users\shiroha\scoop\apps\gradle\current\.gradle\caches\modules-2\files-2.1\org.lwjgl\lwjgl-jemalloc\3.3.1\a817bcf213db49f710603677457567c37d53e103\lwjgl-jemalloc-3.3.1.jar
-[Architectury Transformer DEBUG]  - C:\Users\shiroha\scoop\apps\gradle\current\.gradle\caches\modules-2\files-2.1\org.lwjgl\lwjgl-openal\3.3.1\2623a6b8ae1dfcd880738656a9f0243d2e6840bd\lwjgl-openal-3.3.1.jar
-[Architectury Transformer DEBUG]  - C:\Users\shiroha\scoop\apps\gradle\current\.gradle\caches\modules-2\files-2.1\org.lwjgl\lwjgl-opengl\3.3.1\831a5533a21a5f4f81bbc51bb13e9899319b5411\lwjgl-opengl-3.3.1.jar
-[Architectury Transformer DEBUG]  - C:\Users\shiroha\scoop\apps\gradle\current\.gradle\caches\modules-2\files-2.1\org.lwjgl\lwjgl-stb\3.3.1\b119297cf8ed01f247abe8685857f8e7fcf5980f\lwjgl-stb-3.3.1.jar
-[Architectury Transformer DEBUG]  - C:\Users\shiroha\scoop\apps\gradle\current\.gradle\caches\modules-2\files-2.1\org.lwjgl\lwjgl-tinyfd\3.3.1\ff1914111ef2e3e0110ef2dabc8d8cdaad82347\lwjgl-tinyfd-3.3.1.jar
-[Architectury Transformer DEBUG]  - C:\Users\shiroha\scoop\apps\gradle\current\.gradle\caches\modules-2\files-2.1\org.lwjgl\lwjgl\3.3.1\ae58664f88e18a9bb2c77b063833ca7aaec484cb\lwjgl-3.3.1.jar
-[Architectury Transformer DEBUG]  - C:\Users\shiroha\scoop\apps\gradle\current\.gradle\caches\modules-2\files-2.1\org.slf4j\slf4j-api\2.0.1\f48d81adce2abf5ad3cfe463df517952749e03bc\slf4j-api-2.0.1.jar
-[Architectury Transformer DEBUG]  - D:\GITHUB\RoadWeaver-fresh\.gradle\loom-cache\minecraftMaven\net\minecraft\minecraft-merged-3760f957dc\1.20.1-loom.mappings.1_20_1.layered+hash.40359-v2\minecraft-merged-3760f957dc-1.20.1-loom.mappings.1_20_1.layered+hash.40359-v2.jar
-[Architectury Transformer DEBUG]  - C:\Users\shiroha\scoop\apps\gradle\current\.gradle\caches\modules-2\files-2.1\io.netty\netty-transport-native-epoll\4.1.82.Final\c7350a71920f3ae9142945e25fed4846cce53374\netty-transport-native-epoll-4.1.82.Final-linux-x86_64.jar
-[Architectury Transformer DEBUG]  - C:\Users\shiroha\scoop\apps\gradle\current\.gradle\caches\modules-2\files-2.1\io.netty\netty-transport-native-epoll\4.1.82.Final\476409d6255001ca53a55f65b01c13822f8dc93a\netty-transport-native-epoll-4.1.82.Final-linux-aarch_64.jar
-[Architectury Transformer DEBUG]  - D:\GITHUB\RoadWeaver-fresh\.gradle\loom-cache\remapped_mods\loom_mappings_1_20_1_layered_hash_40359_v2\dev\architectury\architectury\9.2.14\architectury-9.2.14.jar
-[Architectury Transformer] Read classpath in 926.5 ms
-[Architectury Transformer DEBUG] Remapping Classes:
-[Architectury Transformer DEBUG] Found class transformer
-[Architectury Transformer DEBUG] Writing net/shiroha233/roadweaver/persistence/WorldDataProvider with maxs=true frames=true
-[Architectury Transformer DEBUG] Writing net/shiroha233/roadweaver/network/RoadWeaverNetworkManager with maxs=true frames=true
-[Architectury Transformer DEBUG] Writing net/shiroha233/roadweaver/network/DebugDataPacket with maxs=true frames=true
-[Architectury Transformer DEBUG] Writing net/shiroha233/roadweaver/network/PacketHandler with maxs=true frames=true
-[Architectury Transformer DEBUG] Writing net/shiroha233/roadweaver/helpers/StructureLocatorImpl with maxs=true frames=true
-[Architectury Transformer DEBUG] Writing net/shiroha233/roadweaver/helpers/AsyncStructureLocator with maxs=true frames=true
-[Architectury Transformer DEBUG] Writing net/shiroha233/roadweaver/helpers/StructureConnector$UnionFind with maxs=true frames=true
-[Architectury Transformer DEBUG] Writing net/shiroha233/roadweaver/helpers/Records$RoadData with maxs=true frames=true
-[Architectury Transformer DEBUG] Writing net/shiroha233/roadweaver/helpers/Records$ConnectionStatus with maxs=true frames=true
-[Architectury Transformer DEBUG] Writing net/shiroha233/roadweaver/helpers/StructureConnector with maxs=true frames=true
-[Architectury Transformer DEBUG] Writing net/shiroha233/roadweaver/helpers/StructureLocator with maxs=true frames=true
-[Architectury Transformer DEBUG] Writing net/shiroha233/roadweaver/helpers/Records$RoadSegmentPlacement with maxs=true frames=true
-[Architectury Transformer DEBUG] Writing net/shiroha233/roadweaver/helpers/StructureConnector$Edge with maxs=true frames=true
-[Architectury Transformer DEBUG] Writing net/shiroha233/roadweaver/helpers/Records$StructureLocationData with maxs=true frames=true
-[Architectury Transformer DEBUG] Writing net/shiroha233/roadweaver/helpers/Records$StructureInfo with maxs=true frames=true
-[Architectury Transformer DEBUG] Writing net/shiroha233/roadweaver/helpers/Records with maxs=true frames=true
-[Architectury Transformer DEBUG] Writing net/shiroha233/roadweaver/helpers/Records$WoodAssets with maxs=true frames=true
-[Architectury Transformer DEBUG] Writing net/shiroha233/roadweaver/helpers/Records$StructureConnection with maxs=true frames=true
-[Architectury Transformer DEBUG] Writing net/shiroha233/roadweaver/helpers/Records$RoadDecoration with maxs=true frames=true
-[Architectury Transformer DEBUG] Writing net/shiroha233/roadweaver/helpers/AsyncStructureLocator$StructureLocateResult with maxs=true frames=true
-[Architectury Transformer DEBUG] Writing net/shiroha233/roadweaver/features/RoadFeature with maxs=true frames=true
-[Architectury Transformer DEBUG] Writing net/shiroha233/roadweaver/features/roadlogic/RoadPathCalculator with maxs=true frames=true
-[Architectury Transformer DEBUG] Writing net/shiroha233/roadweaver/features/roadlogic/RoadPathCalculator$Node with maxs=true frames=true
-[Architectury Transformer DEBUG] Writing net/shiroha233/roadweaver/features/roadlogic/RoadDirection with maxs=true frames=true
-[Architectury Transformer DEBUG] Writing net/shiroha233/roadweaver/features/roadlogic/Road with maxs=true frames=true
-[Architectury Transformer DEBUG] Writing net/shiroha233/roadweaver/features/decoration/RoadStructures with maxs=true frames=true
-[Architectury Transformer DEBUG] Writing net/shiroha233/roadweaver/features/decoration/FenceWaypointDecoration with maxs=true frames=true
-[Architectury Transformer DEBUG] Writing net/shiroha233/roadweaver/features/decoration/OrientedDecoration$DirectionProperties with maxs=true frames=true
-[Architectury Transformer DEBUG] Writing net/shiroha233/roadweaver/features/decoration/GlorietteDecoration with maxs=true frames=true
-[Architectury Transformer DEBUG] Writing net/shiroha233/roadweaver/features/decoration/BenchDecoration with maxs=true frames=true
-[Architectury Transformer DEBUG] Writing net/shiroha233/roadweaver/features/decoration/Decoration with maxs=true frames=true
-[Architectury Transformer DEBUG] Writing net/shiroha233/roadweaver/features/decoration/RoadFenceDecoration with maxs=true frames=true
-[Architectury Transformer DEBUG] Writing net/shiroha233/roadweaver/features/decoration/StructureDecoration with maxs=true frames=true
-[Architectury Transformer DEBUG] Writing net/shiroha233/roadweaver/features/decoration/LamppostDecoration with maxs=true frames=true
-[Architectury Transformer DEBUG] Writing net/shiroha233/roadweaver/features/decoration/DistanceSignDecoration with maxs=true frames=true
-[Architectury Transformer DEBUG] Writing net/shiroha233/roadweaver/features/decoration/SwingDecoration with maxs=true frames=true
-[Architectury Transformer DEBUG] Writing net/shiroha233/roadweaver/features/decoration/OrientedDecoration with maxs=true frames=true
-[Architectury Transformer DEBUG] Writing net/shiroha233/roadweaver/features/decoration/RoadPlacementRules with maxs=true frames=true
-[Architectury Transformer DEBUG] Writing net/shiroha233/roadweaver/features/decoration/NbtStructureDecoration with maxs=true frames=true
-[Architectury Transformer DEBUG] Writing net/shiroha233/roadweaver/features/decoration/util/WoodSelector with maxs=true frames=true
-[Architectury Transformer DEBUG] Writing net/shiroha233/roadweaver/features/decoration/util/BiomeWoodAware with maxs=true frames=true
-[Architectury Transformer DEBUG] Writing net/shiroha233/roadweaver/features/config/RoadFeatureConfig with maxs=true frames=true
-[Architectury Transformer DEBUG] Writing net/shiroha233/roadweaver/features/config/RoadFeatureRegistry with maxs=true frames=true
-[Architectury Transformer DEBUG] Writing net/shiroha233/roadweaver/events/ModEventHandler with maxs=true frames=true
-[Architectury Transformer DEBUG] Writing net/shiroha233/roadweaver/config/IModConfig with maxs=true frames=true
-[Architectury Transformer DEBUG] Writing net/shiroha233/roadweaver/config/ServerConfigHolder with maxs=true frames=true
-[Architectury Transformer DEBUG] Writing net/shiroha233/roadweaver/config/SyncedConfigWrapper with maxs=true frames=true
-[Architectury Transformer DEBUG] Writing net/shiroha233/roadweaver/config/ConfigProvider with maxs=true frames=true
-[Architectury Transformer DEBUG] Writing net/shiroha233/roadweaver/client/ConfigScreenFactory with maxs=true frames=true
-[Architectury Transformer DEBUG] Writing net/shiroha233/roadweaver/client/gui/RoadDebugScreen with maxs=true frames=true
-[Architectury Transformer DEBUG] Writing net/shiroha233/roadweaver/client/gui/UIRenderer with maxs=true frames=true
-[Architectury Transformer DEBUG] Writing net/shiroha233/roadweaver/client/gui/MapRenderer with maxs=true frames=true
-[Architectury Transformer DEBUG] Writing net/shiroha233/roadweaver/client/gui/GridRenderer with maxs=true frames=true
-[Architectury Transformer DEBUG] Writing net/shiroha233/roadweaver/client/gui/StructureColorManager with maxs=true frames=true
-[Architectury Transformer DEBUG] Writing net/shiroha233/roadweaver/client/gui/MapRenderer$WorldToScreenConverter with maxs=true frames=true
-[Architectury Transformer DEBUG] Writing net/shiroha233/roadweaver/client/gui/MapRenderer$RoadLODLevel with maxs=true frames=true
-[Architectury Transformer DEBUG] Writing net/shiroha233/roadweaver/client/gui/RoadDebugScreen$ScreenPos with maxs=true frames=true
-[Architectury Transformer DEBUG] Writing net/shiroha233/roadweaver/client/gui/GridRenderer$1 with maxs=true frames=true
-[Architectury Transformer DEBUG] Writing net/shiroha233/roadweaver/client/gui/MapRenderer$1 with maxs=true frames=true
-[Architectury Transformer DEBUG] Writing net/shiroha233/roadweaver/client/gui/RenderUtils with maxs=true frames=true
-[Architectury Transformer DEBUG] Writing net/shiroha233/roadweaver/client/gui/RoadDebugScreen$ScreenBounds with maxs=true frames=true
-[Architectury Transformer DEBUG] Writing net/shiroha233/roadweaver/client/gui/UIRenderer$1 with maxs=true frames=true
-[Architectury Transformer DEBUG] Writing net/shiroha233/roadweaver/client/gui/MapRenderer$LODLevel with maxs=true frames=true
-[Architectury Transformer DEBUG] Closed File Systems for D:\GITHUB\RoadWeaver-fresh\common\build\libs\roadweaver-common-1.0.5-transformProductionFabric.jar
-[Architectury Transformer] Transformed jar with 5 transformer(s) in 1.405 s
-[Architectury Transformer DEBUG] 
-[Architectury Transformer DEBUG] ============================
-[Architectury Transformer DEBUG] Transforming from D:\GITHUB\RoadWeaver-fresh\common\build\devlibs\roadweaver-common-1.0.5-dev.jar to D:\GITHUB\RoadWeaver-fresh\common\build\libs\roadweaver-common-1.0.5-transformProductionForge.jar
-[Architectury Transformer DEBUG] ============================
-[Architectury Transformer DEBUG] 
-[Architectury Transformer DEBUG] Transforming 7 transformer(s) from D:\GITHUB\RoadWeaver-fresh\common\build\devlibs\roadweaver-common-1.0.5-dev.jar to D:\GITHUB\RoadWeaver-fresh\common\build\libs\roadweaver-common-1.0.5-transformProductionForge.jar: 
-[Architectury Transformer DEBUG]  - dev.architectury.transformer.transformers.TransformExpectPlatform@402d2822
-[Architectury Transformer DEBUG]  - dev.architectury.transformer.transformers.RemapInjectables@5d0276e9
-[Architectury Transformer DEBUG]  - AddRefmapName(enabled=() -> kotlin.Boolean)
-[Architectury Transformer DEBUG]  - dev.architectury.transformer.transformers.TransformPlatformOnly@6b6e8f23
-[Architectury Transformer DEBUG]  - dev.architectury.transformer.transformers.TransformForgeAnnotations@1496569c
-[Architectury Transformer DEBUG]  - dev.architectury.transformer.transformers.TransformForgeEnvironment@795cdbcb
-[Architectury Transformer DEBUG]  - dev.architectury.transformer.transformers.FixForgeMixin@a3f1da3
-[Architectury Transformer DEBUG] Transforming from D:\GITHUB\RoadWeaver-fresh\common\build\devlibs\roadweaver-common-1.0.5-dev.jar to D:\GITHUB\RoadWeaver-fresh\common\build\libs\roadweaver-common-1.0.5-transformProductionForge.jar with 7 transformer(s) on dev.architectury.transformer.handler.SimpleTransformerHandler
-[Architectury Transformer DEBUG] Reading mixin mappings file: D:\GITHUB\RoadWeaver-fresh\common\build\loom-cache\mixin-map-loom.mappings.1_20_1.layered+hash.40359-v2.main.tiny
-[Architectury Transformer DEBUG] Reading mixin mappings file: D:\GITHUB\RoadWeaver-fresh\fabric\build\loom-cache\mixin-map-loom.mappings.1_20_1.layered+hash.40359-v2.main.tiny
-[Architectury Transformer DEBUG] Remapping with 3 mapping provider(s):
-[Architectury Transformer DEBUG]  - dev.architectury.transformer.transformers.TransformForgeEnvironment$$Lambda/0x0000023410f847c8@4cb39017
-[Architectury Transformer DEBUG]  - dev.architectury.transformer.transformers.TransformForgeEnvironment$$Lambda/0x0000023410f847c8@7fbb2dc1
-[Architectury Transformer DEBUG]  - dev.architectury.transformer.transformers.TransformForgeEnvironment$$Lambda/0x0000023410f849e0@2940136b
-[Architectury Transformer DEBUG] Provided 59 classpath jar(s):
-[Architectury Transformer DEBUG]  - C:\Users\shiroha\scoop\apps\gradle\current\.gradle\caches\modules-2\files-2.1\dev.architectury\architectury-injectables\1.0.10\62db2a366d662606d1b23ad02ccc3212ed37ec3\architectury-injectables-1.0.10.jar
-[Architectury Transformer DEBUG]  - C:\Users\shiroha\scoop\apps\gradle\current\.gradle\caches\modules-2\files-2.1\net.fabricmc\fabric-loader\0.17.3\deafaba5de4d9bbd76105783ff4e21ce0773874f\fabric-loader-0.17.3.jar
-[Architectury Transformer DEBUG]  - C:\Users\shiroha\scoop\apps\gradle\current\.gradle\caches\modules-2\files-2.1\org.jetbrains\annotations\24.1.0\7af6a669488450c4a07c2c3254e2151df42d7d04\annotations-24.1.0.jar
-[Architectury Transformer DEBUG]  - C:\Users\shiroha\scoop\apps\gradle\current\.gradle\caches\modules-2\files-2.1\net.fabricmc\tiny-mappings-parser\0.3.0+build.17\2f10540a290e382a7cd35c16ec3900046a4e252\tiny-mappings-parser-0.3.0+build.17.jar
-[Architectury Transformer DEBUG]  - C:\Users\shiroha\scoop\apps\gradle\current\.gradle\caches\modules-2\files-2.1\net.fabricmc\sponge-mixin\0.12.5+mixin.0.8.5\8d31fb97c3e0cd7c8dad3441851c523bcfae6d8e\sponge-mixin-0.12.5+mixin.0.8.5.jar
-[Architectury Transformer DEBUG]  - C:\Users\shiroha\scoop\apps\gradle\current\.gradle\caches\modules-2\files-2.1\net.fabricmc\tiny-remapper\0.8.2\2cc6565989469ec38893bfb7802b31c0d0d11ea0\tiny-remapper-0.8.2.jar
-[Architectury Transformer DEBUG]  - C:\Users\shiroha\scoop\apps\gradle\current\.gradle\caches\modules-2\files-2.1\net.fabricmc\access-widener\2.1.0\f62a27adbfd8ab4d4fa5681793039f2c0b177155\access-widener-2.1.0.jar
-[Architectury Transformer DEBUG]  - C:\Users\shiroha\scoop\apps\gradle\current\.gradle\caches\modules-2\files-2.1\org.ow2.asm\asm\9.5\dc6ea1875f4d64fbc85e1691c95b96a3d8569c90\asm-9.5.jar
-[Architectury Transformer DEBUG]  - C:\Users\shiroha\scoop\apps\gradle\current\.gradle\caches\modules-2\files-2.1\org.ow2.asm\asm-analysis\9.5\490bacc77de7cbc0be1a30bb3471072d705be4a4\asm-analysis-9.5.jar
-[Architectury Transformer DEBUG]  - C:\Users\shiroha\scoop\apps\gradle\current\.gradle\caches\modules-2\files-2.1\org.ow2.asm\asm-commons\9.5\19ab5b5800a3910d30d3a3e64fdb00fd0cb42de0\asm-commons-9.5.jar
-[Architectury Transformer DEBUG]  - C:\Users\shiroha\scoop\apps\gradle\current\.gradle\caches\modules-2\files-2.1\org.ow2.asm\asm-tree\9.5\fd33c8b6373abaa675be407082fdfda35021254a\asm-tree-9.5.jar
-[Architectury Transformer DEBUG]  - C:\Users\shiroha\scoop\apps\gradle\current\.gradle\caches\modules-2\files-2.1\org.ow2.asm\asm-util\9.5\64b5a1fc8c1b15ed2efd6a063e976bc8d3dc5ffe\asm-util-9.5.jar
-[Architectury Transformer DEBUG]  - C:\Users\shiroha\scoop\apps\gradle\current\.gradle\caches\modules-2\files-2.1\com.github.oshi\oshi-core\6.2.2\54f5efc19bca95d709d9a37d19ffcbba3d21c1a6\oshi-core-6.2.2.jar
-[Architectury Transformer DEBUG]  - C:\Users\shiroha\scoop\apps\gradle\current\.gradle\caches\modules-2\files-2.1\com.google.code.gson\gson\2.10\dd9b193aef96e973d5a11ab13cd17430c2e4306b\gson-2.10.jar
-[Architectury Transformer DEBUG]  - C:\Users\shiroha\scoop\apps\gradle\current\.gradle\caches\modules-2\files-2.1\com.google.guava\failureaccess\1.0.1\1dcf1de382a0bf95a3d8b0849546c88bac1292c9\failureaccess-1.0.1.jar
-[Architectury Transformer DEBUG]  - C:\Users\shiroha\scoop\apps\gradle\current\.gradle\caches\modules-2\files-2.1\com.google.guava\guava\31.1-jre\60458f877d055d0c9114d9e1a2efb737b4bc282c\guava-31.1-jre.jar
-[Architectury Transformer DEBUG]  - C:\Users\shiroha\scoop\apps\gradle\current\.gradle\caches\modules-2\files-2.1\com.ibm.icu\icu4j\71.1\9e7d3304c23f9ba5cb71915f7cce23231a57a445\icu4j-71.1.jar
-[Architectury Transformer DEBUG]  - C:\Users\shiroha\scoop\apps\gradle\current\.gradle\caches\modules-2\files-2.1\com.mojang\authlib\4.0.43\2ff9d747a77570a07a60d32ac77eb6162ad2a2d9\authlib-4.0.43.jar
-[Architectury Transformer DEBUG]  - C:\Users\shiroha\scoop\apps\gradle\current\.gradle\caches\modules-2\files-2.1\com.mojang\blocklist\1.0.10\5c685c5ffa94c4cd39496c7184c1d122e515ecef\blocklist-1.0.10.jar
-[Architectury Transformer DEBUG]  - C:\Users\shiroha\scoop\apps\gradle\current\.gradle\caches\modules-2\files-2.1\com.mojang\brigadier\1.1.8\5244ce82c3337bba4a196a3ce858bfaecc74404a\brigadier-1.1.8.jar
-[Architectury Transformer DEBUG]  - C:\Users\shiroha\scoop\apps\gradle\current\.gradle\caches\modules-2\files-2.1\com.mojang\datafixerupper\6.0.8\3ba4a30557a9b057760af4011f909ba619fc5125\datafixerupper-6.0.8.jar
-[Architectury Transformer DEBUG]  - C:\Users\shiroha\scoop\apps\gradle\current\.gradle\caches\modules-2\files-2.1\com.mojang\logging\1.1.1\832b8e6674a9b325a5175a3a6267dfaf34c85139\logging-1.1.1.jar
-[Architectury Transformer DEBUG]  - C:\Users\shiroha\scoop\apps\gradle\current\.gradle\caches\modules-2\files-2.1\com.mojang\patchy\2.2.10\da05971b07cbb379d002cf7eaec6a2048211fefc\patchy-2.2.10.jar
-[Architectury Transformer DEBUG]  - C:\Users\shiroha\scoop\apps\gradle\current\.gradle\caches\modules-2\files-2.1\com.mojang\text2speech\1.17.9\3cad216e3a7f0c19b4b394388bc9ffc446f13b14\text2speech-1.17.9.jar
-[Architectury Transformer DEBUG]  - C:\Users\shiroha\scoop\apps\gradle\current\.gradle\caches\modules-2\files-2.1\commons-codec\commons-codec\1.15\49d94806b6e3dc933dacbd8acb0fdbab8ebd1e5d\commons-codec-1.15.jar
-[Architectury Transformer DEBUG]  - C:\Users\shiroha\scoop\apps\gradle\current\.gradle\caches\modules-2\files-2.1\commons-io\commons-io\2.11.0\a2503f302b11ebde7ebc3df41daebe0e4eea3689\commons-io-2.11.0.jar
-[Architectury Transformer DEBUG]  - C:\Users\shiroha\scoop\apps\gradle\current\.gradle\caches\modules-2\files-2.1\commons-logging\commons-logging\1.2\4bfc12adfe4842bf07b657f0369c4cb522955686\commons-logging-1.2.jar
-[Architectury Transformer DEBUG]  - C:\Users\shiroha\scoop\apps\gradle\current\.gradle\caches\modules-2\files-2.1\io.netty\netty-buffer\4.1.82.Final\a544270cf1ae8b8077082f5036436a9a9971ea71\netty-buffer-4.1.82.Final.jar
-[Architectury Transformer DEBUG]  - C:\Users\shiroha\scoop\apps\gradle\current\.gradle\caches\modules-2\files-2.1\io.netty\netty-codec\4.1.82.Final\b77200379acb345a9ffdece1c605e591ac3e4e0a\netty-codec-4.1.82.Final.jar
-[Architectury Transformer DEBUG]  - C:\Users\shiroha\scoop\apps\gradle\current\.gradle\caches\modules-2\files-2.1\io.netty\netty-common\4.1.82.Final\22d148e85c3f5ebdacc0ce1f5aabb1d420f73f3\netty-common-4.1.82.Final.jar
-[Architectury Transformer DEBUG]  - C:\Users\shiroha\scoop\apps\gradle\current\.gradle\caches\modules-2\files-2.1\io.netty\netty-handler\4.1.82.Final\644041d1fa96a5d3130a29e8978630d716d76e38\netty-handler-4.1.82.Final.jar
-[Architectury Transformer DEBUG]  - C:\Users\shiroha\scoop\apps\gradle\current\.gradle\caches\modules-2\files-2.1\io.netty\netty-resolver\4.1.82.Final\38f665ae8dcd29032eea31245ba7806bed2e0fa8\netty-resolver-4.1.82.Final.jar
-[Architectury Transformer DEBUG]  - C:\Users\shiroha\scoop\apps\gradle\current\.gradle\caches\modules-2\files-2.1\io.netty\netty-transport-classes-epoll\4.1.82.Final\e7c7dd18deac93105797f30057c912651ea76521\netty-transport-classes-epoll-4.1.82.Final.jar
-[Architectury Transformer DEBUG]  - C:\Users\shiroha\scoop\apps\gradle\current\.gradle\caches\modules-2\files-2.1\io.netty\netty-transport-native-unix-common\4.1.82.Final\3e895b35ca1b8a0eca56cacff4c2dde5d2c6abce\netty-transport-native-unix-common-4.1.82.Final.jar
-[Architectury Transformer DEBUG]  - C:\Users\shiroha\scoop\apps\gradle\current\.gradle\caches\modules-2\files-2.1\io.netty\netty-transport\4.1.82.Final\e431a218d91acb6476ccad5f5aafde50aa3945ca\netty-transport-4.1.82.Final.jar
-[Architectury Transformer DEBUG]  - C:\Users\shiroha\scoop\apps\gradle\current\.gradle\caches\modules-2\files-2.1\it.unimi.dsi\fastutil\8.5.9\bb7ea75ecdb216654237830b3a96d87ad91f8cc5\fastutil-8.5.9.jar
-[Architectury Transformer DEBUG]  - C:\Users\shiroha\scoop\apps\gradle\current\.gradle\caches\modules-2\files-2.1\net.java.dev.jna\jna-platform\5.12.1\97406a297c852f4a41e688a176ec675f72e8329\jna-platform-5.12.1.jar
-[Architectury Transformer DEBUG]  - C:\Users\shiroha\scoop\apps\gradle\current\.gradle\caches\modules-2\files-2.1\net.java.dev.jna\jna\5.12.1\b1e93a735caea94f503e95e6fe79bf9cdc1e985d\jna-5.12.1.jar
-[Architectury Transformer DEBUG]  - C:\Users\shiroha\scoop\apps\gradle\current\.gradle\caches\modules-2\files-2.1\net.sf.jopt-simple\jopt-simple\5.0.4\4fdac2fbe92dfad86aa6e9301736f6b4342a3f5c\jopt-simple-5.0.4.jar
-[Architectury Transformer DEBUG]  - C:\Users\shiroha\scoop\apps\gradle\current\.gradle\caches\modules-2\files-2.1\org.apache.commons\commons-compress\1.21\4ec95b60d4e86b5c95a0e919cb172a0af98011ef\commons-compress-1.21.jar
-[Architectury Transformer DEBUG]  - C:\Users\shiroha\scoop\apps\gradle\current\.gradle\caches\modules-2\files-2.1\org.apache.commons\commons-lang3\3.12.0\c6842c86792ff03b9f1d1fe2aab8dc23aa6c6f0e\commons-lang3-3.12.0.jar
-[Architectury Transformer DEBUG]  - C:\Users\shiroha\scoop\apps\gradle\current\.gradle\caches\modules-2\files-2.1\org.apache.httpcomponents\httpclient\4.5.13\e5f6cae5ca7ecaac1ec2827a9e2d65ae2869cada\httpclient-4.5.13.jar
-[Architectury Transformer DEBUG]  - C:\Users\shiroha\scoop\apps\gradle\current\.gradle\caches\modules-2\files-2.1\org.apache.httpcomponents\httpcore\4.4.15\7f2e0c573eaa7a74bac2e89b359e1f73d92a0a1d\httpcore-4.4.15.jar
-[Architectury Transformer DEBUG]  - C:\Users\shiroha\scoop\apps\gradle\current\.gradle\caches\modules-2\files-2.1\org.apache.logging.log4j\log4j-api\2.19.0\ea1b37f38c327596b216542bc636cfdc0b8036fa\log4j-api-2.19.0.jar
-[Architectury Transformer DEBUG]  - C:\Users\shiroha\scoop\apps\gradle\current\.gradle\caches\modules-2\files-2.1\org.apache.logging.log4j\log4j-core\2.19.0\3b6eeb4de4c49c0fe38a4ee27188ff5fee44d0bb\log4j-core-2.19.0.jar
-[Architectury Transformer DEBUG]  - C:\Users\shiroha\scoop\apps\gradle\current\.gradle\caches\modules-2\files-2.1\org.apache.logging.log4j\log4j-slf4j2-impl\2.19.0\5c04bfdd63ce9dceb2e284b81e96b6a70010ee10\log4j-slf4j2-impl-2.19.0.jar
-[Architectury Transformer DEBUG]  - C:\Users\shiroha\scoop\apps\gradle\current\.gradle\caches\modules-2\files-2.1\org.joml\joml\1.10.5\22566d58af70ad3d72308bab63b8339906deb649\joml-1.10.5.jar
-[Architectury Transformer DEBUG]  - C:\Users\shiroha\scoop\apps\gradle\current\.gradle\caches\modules-2\files-2.1\org.lwjgl\lwjgl-glfw\3.3.1\cbac1b8d30cb4795149c1ef540f912671a8616d0\lwjgl-glfw-3.3.1.jar
-[Architectury Transformer DEBUG]  - C:\Users\shiroha\scoop\apps\gradle\current\.gradle\caches\modules-2\files-2.1\org.lwjgl\lwjgl-jemalloc\3.3.1\a817bcf213db49f710603677457567c37d53e103\lwjgl-jemalloc-3.3.1.jar
-[Architectury Transformer DEBUG]  - C:\Users\shiroha\scoop\apps\gradle\current\.gradle\caches\modules-2\files-2.1\org.lwjgl\lwjgl-openal\3.3.1\2623a6b8ae1dfcd880738656a9f0243d2e6840bd\lwjgl-openal-3.3.1.jar
-[Architectury Transformer DEBUG]  - C:\Users\shiroha\scoop\apps\gradle\current\.gradle\caches\modules-2\files-2.1\org.lwjgl\lwjgl-opengl\3.3.1\831a5533a21a5f4f81bbc51bb13e9899319b5411\lwjgl-opengl-3.3.1.jar
-[Architectury Transformer DEBUG]  - C:\Users\shiroha\scoop\apps\gradle\current\.gradle\caches\modules-2\files-2.1\org.lwjgl\lwjgl-stb\3.3.1\b119297cf8ed01f247abe8685857f8e7fcf5980f\lwjgl-stb-3.3.1.jar
-[Architectury Transformer DEBUG]  - C:\Users\shiroha\scoop\apps\gradle\current\.gradle\caches\modules-2\files-2.1\org.lwjgl\lwjgl-tinyfd\3.3.1\ff1914111ef2e3e0110ef2dabc8d8cdaad82347\lwjgl-tinyfd-3.3.1.jar
-[Architectury Transformer DEBUG]  - C:\Users\shiroha\scoop\apps\gradle\current\.gradle\caches\modules-2\files-2.1\org.lwjgl\lwjgl\3.3.1\ae58664f88e18a9bb2c77b063833ca7aaec484cb\lwjgl-3.3.1.jar
-[Architectury Transformer DEBUG]  - C:\Users\shiroha\scoop\apps\gradle\current\.gradle\caches\modules-2\files-2.1\org.slf4j\slf4j-api\2.0.1\f48d81adce2abf5ad3cfe463df517952749e03bc\slf4j-api-2.0.1.jar
-[Architectury Transformer DEBUG]  - D:\GITHUB\RoadWeaver-fresh\.gradle\loom-cache\minecraftMaven\net\minecraft\minecraft-merged-3760f957dc\1.20.1-loom.mappings.1_20_1.layered+hash.40359-v2\minecraft-merged-3760f957dc-1.20.1-loom.mappings.1_20_1.layered+hash.40359-v2.jar
-[Architectury Transformer DEBUG]  - C:\Users\shiroha\scoop\apps\gradle\current\.gradle\caches\modules-2\files-2.1\io.netty\netty-transport-native-epoll\4.1.82.Final\c7350a71920f3ae9142945e25fed4846cce53374\netty-transport-native-epoll-4.1.82.Final-linux-x86_64.jar
-[Architectury Transformer DEBUG]  - C:\Users\shiroha\scoop\apps\gradle\current\.gradle\caches\modules-2\files-2.1\io.netty\netty-transport-native-epoll\4.1.82.Final\476409d6255001ca53a55f65b01c13822f8dc93a\netty-transport-native-epoll-4.1.82.Final-linux-aarch_64.jar
-[Architectury Transformer DEBUG]  - D:\GITHUB\RoadWeaver-fresh\.gradle\loom-cache\remapped_mods\loom_mappings_1_20_1_layered_hash_40359_v2\dev\architectury\architectury\9.2.14\architectury-9.2.14.jar
-[Architectury Transformer] Read classpath in 710.9 ms
+[Architectury Transformer DEBUG]  - C:\Users\HZR\.gradle\caches\modules-2\files-2.1\dev.architectury\architectury-injectables\1.0.10\62db2a366d662606d1b23ad02ccc3212ed37ec3\architectury-injectables-1.0.10.jar
+[Architectury Transformer DEBUG]  - C:\Users\HZR\.gradle\caches\modules-2\files-2.1\net.fabricmc\fabric-loader\0.17.3\deafaba5de4d9bbd76105783ff4e21ce0773874f\fabric-loader-0.17.3.jar
+[Architectury Transformer DEBUG]  - C:\Users\HZR\.gradle\caches\modules-2\files-2.1\org.jetbrains\annotations\24.1.0\7af6a669488450c4a07c2c3254e2151df42d7d04\annotations-24.1.0.jar
+[Architectury Transformer DEBUG]  - C:\Users\HZR\.gradle\caches\modules-2\files-2.1\net.fabricmc\tiny-mappings-parser\0.3.0+build.17\2f10540a290e382a7cd35c16ec3900046a4e252\tiny-mappings-parser-0.3.0+build.17.jar
+[Architectury Transformer DEBUG]  - C:\Users\HZR\.gradle\caches\modules-2\files-2.1\net.fabricmc\sponge-mixin\0.12.5+mixin.0.8.5\8d31fb97c3e0cd7c8dad3441851c523bcfae6d8e\sponge-mixin-0.12.5+mixin.0.8.5.jar
+[Architectury Transformer DEBUG]  - C:\Users\HZR\.gradle\caches\modules-2\files-2.1\net.fabricmc\tiny-remapper\0.8.2\2cc6565989469ec38893bfb7802b31c0d0d11ea0\tiny-remapper-0.8.2.jar
+[Architectury Transformer DEBUG]  - C:\Users\HZR\.gradle\caches\modules-2\files-2.1\net.fabricmc\access-widener\2.1.0\f62a27adbfd8ab4d4fa5681793039f2c0b177155\access-widener-2.1.0.jar
+[Architectury Transformer DEBUG]  - C:\Users\HZR\.gradle\caches\modules-2\files-2.1\org.ow2.asm\asm\9.5\dc6ea1875f4d64fbc85e1691c95b96a3d8569c90\asm-9.5.jar
+[Architectury Transformer DEBUG]  - C:\Users\HZR\.gradle\caches\modules-2\files-2.1\org.ow2.asm\asm-analysis\9.5\490bacc77de7cbc0be1a30bb3471072d705be4a4\asm-analysis-9.5.jar
+[Architectury Transformer DEBUG]  - C:\Users\HZR\.gradle\caches\modules-2\files-2.1\org.ow2.asm\asm-commons\9.5\19ab5b5800a3910d30d3a3e64fdb00fd0cb42de0\asm-commons-9.5.jar
+[Architectury Transformer DEBUG]  - C:\Users\HZR\.gradle\caches\modules-2\files-2.1\org.ow2.asm\asm-tree\9.5\fd33c8b6373abaa675be407082fdfda35021254a\asm-tree-9.5.jar
+[Architectury Transformer DEBUG]  - C:\Users\HZR\.gradle\caches\modules-2\files-2.1\org.ow2.asm\asm-util\9.5\64b5a1fc8c1b15ed2efd6a063e976bc8d3dc5ffe\asm-util-9.5.jar
+[Architectury Transformer DEBUG]  - C:\Users\HZR\.gradle\caches\modules-2\files-2.1\com.github.oshi\oshi-core\6.2.2\54f5efc19bca95d709d9a37d19ffcbba3d21c1a6\oshi-core-6.2.2.jar
+[Architectury Transformer DEBUG]  - C:\Users\HZR\.gradle\caches\modules-2\files-2.1\com.google.code.gson\gson\2.10\dd9b193aef96e973d5a11ab13cd17430c2e4306b\gson-2.10.jar
+[Architectury Transformer DEBUG]  - C:\Users\HZR\.gradle\caches\modules-2\files-2.1\com.google.guava\failureaccess\1.0.1\1dcf1de382a0bf95a3d8b0849546c88bac1292c9\failureaccess-1.0.1.jar
+[Architectury Transformer DEBUG]  - C:\Users\HZR\.gradle\caches\modules-2\files-2.1\com.google.guava\guava\31.1-jre\60458f877d055d0c9114d9e1a2efb737b4bc282c\guava-31.1-jre.jar
+[Architectury Transformer DEBUG]  - C:\Users\HZR\.gradle\caches\modules-2\files-2.1\com.ibm.icu\icu4j\71.1\9e7d3304c23f9ba5cb71915f7cce23231a57a445\icu4j-71.1.jar
+[Architectury Transformer DEBUG]  - C:\Users\HZR\.gradle\caches\modules-2\files-2.1\com.mojang\authlib\4.0.43\2ff9d747a77570a07a60d32ac77eb6162ad2a2d9\authlib-4.0.43.jar
+[Architectury Transformer DEBUG]  - C:\Users\HZR\.gradle\caches\modules-2\files-2.1\com.mojang\blocklist\1.0.10\5c685c5ffa94c4cd39496c7184c1d122e515ecef\blocklist-1.0.10.jar
+[Architectury Transformer DEBUG]  - C:\Users\HZR\.gradle\caches\modules-2\files-2.1\com.mojang\brigadier\1.1.8\5244ce82c3337bba4a196a3ce858bfaecc74404a\brigadier-1.1.8.jar
+[Architectury Transformer DEBUG]  - C:\Users\HZR\.gradle\caches\modules-2\files-2.1\com.mojang\datafixerupper\6.0.8\3ba4a30557a9b057760af4011f909ba619fc5125\datafixerupper-6.0.8.jar
+[Architectury Transformer DEBUG]  - C:\Users\HZR\.gradle\caches\modules-2\files-2.1\com.mojang\logging\1.1.1\832b8e6674a9b325a5175a3a6267dfaf34c85139\logging-1.1.1.jar
+[Architectury Transformer DEBUG]  - C:\Users\HZR\.gradle\caches\modules-2\files-2.1\com.mojang\patchy\2.2.10\da05971b07cbb379d002cf7eaec6a2048211fefc\patchy-2.2.10.jar
+[Architectury Transformer DEBUG]  - C:\Users\HZR\.gradle\caches\modules-2\files-2.1\com.mojang\text2speech\1.17.9\3cad216e3a7f0c19b4b394388bc9ffc446f13b14\text2speech-1.17.9.jar
+[Architectury Transformer DEBUG]  - C:\Users\HZR\.gradle\caches\modules-2\files-2.1\commons-codec\commons-codec\1.15\49d94806b6e3dc933dacbd8acb0fdbab8ebd1e5d\commons-codec-1.15.jar
+[Architectury Transformer DEBUG]  - C:\Users\HZR\.gradle\caches\modules-2\files-2.1\commons-io\commons-io\2.11.0\a2503f302b11ebde7ebc3df41daebe0e4eea3689\commons-io-2.11.0.jar
+[Architectury Transformer DEBUG]  - C:\Users\HZR\.gradle\caches\modules-2\files-2.1\commons-logging\commons-logging\1.2\4bfc12adfe4842bf07b657f0369c4cb522955686\commons-logging-1.2.jar
+[Architectury Transformer DEBUG]  - C:\Users\HZR\.gradle\caches\modules-2\files-2.1\io.netty\netty-buffer\4.1.82.Final\a544270cf1ae8b8077082f5036436a9a9971ea71\netty-buffer-4.1.82.Final.jar
+[Architectury Transformer DEBUG]  - C:\Users\HZR\.gradle\caches\modules-2\files-2.1\io.netty\netty-codec\4.1.82.Final\b77200379acb345a9ffdece1c605e591ac3e4e0a\netty-codec-4.1.82.Final.jar
+[Architectury Transformer DEBUG]  - C:\Users\HZR\.gradle\caches\modules-2\files-2.1\io.netty\netty-common\4.1.82.Final\22d148e85c3f5ebdacc0ce1f5aabb1d420f73f3\netty-common-4.1.82.Final.jar
+[Architectury Transformer DEBUG]  - C:\Users\HZR\.gradle\caches\modules-2\files-2.1\io.netty\netty-handler\4.1.82.Final\644041d1fa96a5d3130a29e8978630d716d76e38\netty-handler-4.1.82.Final.jar
+[Architectury Transformer DEBUG]  - C:\Users\HZR\.gradle\caches\modules-2\files-2.1\io.netty\netty-resolver\4.1.82.Final\38f665ae8dcd29032eea31245ba7806bed2e0fa8\netty-resolver-4.1.82.Final.jar
+[Architectury Transformer DEBUG]  - C:\Users\HZR\.gradle\caches\modules-2\files-2.1\io.netty\netty-transport-classes-epoll\4.1.82.Final\e7c7dd18deac93105797f30057c912651ea76521\netty-transport-classes-epoll-4.1.82.Final.jar
+[Architectury Transformer DEBUG]  - C:\Users\HZR\.gradle\caches\modules-2\files-2.1\io.netty\netty-transport-native-unix-common\4.1.82.Final\3e895b35ca1b8a0eca56cacff4c2dde5d2c6abce\netty-transport-native-unix-common-4.1.82.Final.jar
+[Architectury Transformer DEBUG]  - C:\Users\HZR\.gradle\caches\modules-2\files-2.1\io.netty\netty-transport\4.1.82.Final\e431a218d91acb6476ccad5f5aafde50aa3945ca\netty-transport-4.1.82.Final.jar
+[Architectury Transformer DEBUG]  - C:\Users\HZR\.gradle\caches\modules-2\files-2.1\it.unimi.dsi\fastutil\8.5.9\bb7ea75ecdb216654237830b3a96d87ad91f8cc5\fastutil-8.5.9.jar
+[Architectury Transformer DEBUG]  - C:\Users\HZR\.gradle\caches\modules-2\files-2.1\net.java.dev.jna\jna-platform\5.12.1\97406a297c852f4a41e688a176ec675f72e8329\jna-platform-5.12.1.jar
+[Architectury Transformer DEBUG]  - C:\Users\HZR\.gradle\caches\modules-2\files-2.1\net.java.dev.jna\jna\5.12.1\b1e93a735caea94f503e95e6fe79bf9cdc1e985d\jna-5.12.1.jar
+[Architectury Transformer DEBUG]  - C:\Users\HZR\.gradle\caches\modules-2\files-2.1\net.sf.jopt-simple\jopt-simple\5.0.4\4fdac2fbe92dfad86aa6e9301736f6b4342a3f5c\jopt-simple-5.0.4.jar
+[Architectury Transformer DEBUG]  - C:\Users\HZR\.gradle\caches\modules-2\files-2.1\org.apache.commons\commons-compress\1.21\4ec95b60d4e86b5c95a0e919cb172a0af98011ef\commons-compress-1.21.jar
+[Architectury Transformer DEBUG]  - C:\Users\HZR\.gradle\caches\modules-2\files-2.1\org.apache.commons\commons-lang3\3.12.0\c6842c86792ff03b9f1d1fe2aab8dc23aa6c6f0e\commons-lang3-3.12.0.jar
+[Architectury Transformer DEBUG]  - C:\Users\HZR\.gradle\caches\modules-2\files-2.1\org.apache.httpcomponents\httpclient\4.5.13\e5f6cae5ca7ecaac1ec2827a9e2d65ae2869cada\httpclient-4.5.13.jar
+[Architectury Transformer DEBUG]  - C:\Users\HZR\.gradle\caches\modules-2\files-2.1\org.apache.httpcomponents\httpcore\4.4.15\7f2e0c573eaa7a74bac2e89b359e1f73d92a0a1d\httpcore-4.4.15.jar
+[Architectury Transformer DEBUG]  - C:\Users\HZR\.gradle\caches\modules-2\files-2.1\org.apache.logging.log4j\log4j-api\2.19.0\ea1b37f38c327596b216542bc636cfdc0b8036fa\log4j-api-2.19.0.jar
+[Architectury Transformer DEBUG]  - C:\Users\HZR\.gradle\caches\modules-2\files-2.1\org.apache.logging.log4j\log4j-core\2.19.0\3b6eeb4de4c49c0fe38a4ee27188ff5fee44d0bb\log4j-core-2.19.0.jar
+[Architectury Transformer DEBUG]  - C:\Users\HZR\.gradle\caches\modules-2\files-2.1\org.apache.logging.log4j\log4j-slf4j2-impl\2.19.0\5c04bfdd63ce9dceb2e284b81e96b6a70010ee10\log4j-slf4j2-impl-2.19.0.jar
+[Architectury Transformer DEBUG]  - C:\Users\HZR\.gradle\caches\modules-2\files-2.1\org.joml\joml\1.10.5\22566d58af70ad3d72308bab63b8339906deb649\joml-1.10.5.jar
+[Architectury Transformer DEBUG]  - C:\Users\HZR\.gradle\caches\modules-2\files-2.1\org.lwjgl\lwjgl-glfw\3.3.1\cbac1b8d30cb4795149c1ef540f912671a8616d0\lwjgl-glfw-3.3.1.jar
+[Architectury Transformer DEBUG]  - C:\Users\HZR\.gradle\caches\modules-2\files-2.1\org.lwjgl\lwjgl-jemalloc\3.3.1\a817bcf213db49f710603677457567c37d53e103\lwjgl-jemalloc-3.3.1.jar
+[Architectury Transformer DEBUG]  - C:\Users\HZR\.gradle\caches\modules-2\files-2.1\org.lwjgl\lwjgl-openal\3.3.1\2623a6b8ae1dfcd880738656a9f0243d2e6840bd\lwjgl-openal-3.3.1.jar
+[Architectury Transformer DEBUG]  - C:\Users\HZR\.gradle\caches\modules-2\files-2.1\org.lwjgl\lwjgl-opengl\3.3.1\831a5533a21a5f4f81bbc51bb13e9899319b5411\lwjgl-opengl-3.3.1.jar
+[Architectury Transformer DEBUG]  - C:\Users\HZR\.gradle\caches\modules-2\files-2.1\org.lwjgl\lwjgl-stb\3.3.1\b119297cf8ed01f247abe8685857f8e7fcf5980f\lwjgl-stb-3.3.1.jar
+[Architectury Transformer DEBUG]  - C:\Users\HZR\.gradle\caches\modules-2\files-2.1\org.lwjgl\lwjgl-tinyfd\3.3.1\ff1914111ef2e3e0110ef2dabc8d8cdaad82347\lwjgl-tinyfd-3.3.1.jar
+[Architectury Transformer DEBUG]  - C:\Users\HZR\.gradle\caches\modules-2\files-2.1\org.lwjgl\lwjgl\3.3.1\ae58664f88e18a9bb2c77b063833ca7aaec484cb\lwjgl-3.3.1.jar
+[Architectury Transformer DEBUG]  - C:\Users\HZR\.gradle\caches\modules-2\files-2.1\org.slf4j\slf4j-api\2.0.1\f48d81adce2abf5ad3cfe463df517952749e03bc\slf4j-api-2.0.1.jar
+[Architectury Transformer DEBUG]  - D:\RoadWeaver-1.20.1-Architectury-New\.gradle\loom-cache\minecraftMaven\net\minecraft\minecraft-merged-3760f957dc\1.20.1-loom.mappings.1_20_1.layered+hash.40359-v2\minecraft-merged-3760f957dc-1.20.1-loom.mappings.1_20_1.layered+hash.40359-v2.jar
+[Architectury Transformer DEBUG]  - C:\Users\HZR\.gradle\caches\modules-2\files-2.1\io.netty\netty-transport-native-epoll\4.1.82.Final\c7350a71920f3ae9142945e25fed4846cce53374\netty-transport-native-epoll-4.1.82.Final-linux-x86_64.jar
+[Architectury Transformer DEBUG]  - C:\Users\HZR\.gradle\caches\modules-2\files-2.1\io.netty\netty-transport-native-epoll\4.1.82.Final\476409d6255001ca53a55f65b01c13822f8dc93a\netty-transport-native-epoll-4.1.82.Final-linux-aarch_64.jar
+[Architectury Transformer DEBUG]  - D:\RoadWeaver-1.20.1-Architectury-New\.gradle\loom-cache\remapped_mods\loom_mappings_1_20_1_layered_hash_40359_v2\dev\architectury\architectury\9.2.14\architectury-9.2.14.jar
+[Architectury Transformer] Read classpath in 1.829 s
 [Architectury Transformer DEBUG] Remapping Classes:
 [Architectury Transformer DEBUG] net/fabricmc/api/EnvType -> net/minecraftforge/api/distmarker/Dist
 [Architectury Transformer DEBUG] net/fabricmc/api/Environment -> net/minecraftforge/api/distmarker/OnlyIn
 [Architectury Transformer DEBUG] Found class transformer
+[Architectury Transformer DEBUG] Writing net/shiroha233/roadweaver/registry/ModBlocks with maxs=true frames=true
+[Architectury Transformer DEBUG] Writing net/shiroha233/roadweaver/registry/ModEffects with maxs=true frames=true
 [Architectury Transformer DEBUG] Writing net/shiroha233/roadweaver/persistence/WorldDataProvider with maxs=true frames=true
 [Architectury Transformer DEBUG] Writing net/shiroha233/roadweaver/network/RoadWeaverNetworkManager with maxs=true frames=true
-[Architectury Transformer DEBUG] Writing net/shiroha233/roadweaver/network/DebugDataPacket with maxs=true frames=true
 [Architectury Transformer DEBUG] Writing net/shiroha233/roadweaver/network/PacketHandler with maxs=true frames=true
-[Architectury Transformer DEBUG] Writing net/shiroha233/roadweaver/helpers/StructureConnector with maxs=true frames=true
-[Architectury Transformer DEBUG] Writing net/shiroha233/roadweaver/helpers/Records$StructureInfo with maxs=true frames=true
+[Architectury Transformer DEBUG] Writing net/shiroha233/roadweaver/network/DebugDataPacket with maxs=true frames=true
 [Architectury Transformer DEBUG] Writing net/shiroha233/roadweaver/helpers/AsyncStructureLocator with maxs=true frames=true
 [Architectury Transformer DEBUG] Writing net/shiroha233/roadweaver/helpers/Records$RoadData with maxs=true frames=true
-[Architectury Transformer DEBUG] Writing net/shiroha233/roadweaver/helpers/Records$RoadSegmentPlacement with maxs=true frames=true
-[Architectury Transformer DEBUG] Writing net/shiroha233/roadweaver/helpers/Records$ConnectionStatus with maxs=true frames=true
 [Architectury Transformer DEBUG] Writing net/shiroha233/roadweaver/helpers/StructureLocator with maxs=true frames=true
+[Architectury Transformer DEBUG] Writing net/shiroha233/roadweaver/helpers/Records$ConnectionStatus with maxs=true frames=true
+[Architectury Transformer DEBUG] Writing net/shiroha233/roadweaver/helpers/Records$RoadSegmentPlacement with maxs=true frames=true
 [Architectury Transformer DEBUG] Writing net/shiroha233/roadweaver/helpers/StructureConnector$Edge with maxs=true frames=true
 [Architectury Transformer DEBUG] Writing net/shiroha233/roadweaver/helpers/StructureLocatorImpl with maxs=true frames=true
+[Architectury Transformer DEBUG] Writing net/shiroha233/roadweaver/helpers/StructureConnector with maxs=true frames=true
+[Architectury Transformer DEBUG] Writing net/shiroha233/roadweaver/helpers/Records$StructureInfo with maxs=true frames=true
 [Architectury Transformer DEBUG] Writing net/shiroha233/roadweaver/helpers/Records$WoodAssets with maxs=true frames=true
-[Architectury Transformer DEBUG] Writing net/shiroha233/roadweaver/helpers/AsyncStructureLocator$StructureLocateResult with maxs=true frames=true
-[Architectury Transformer DEBUG] Writing net/shiroha233/roadweaver/helpers/Records$RoadDecoration with maxs=true frames=true
 [Architectury Transformer DEBUG] Writing net/shiroha233/roadweaver/helpers/Records with maxs=true frames=true
-[Architectury Transformer DEBUG] Writing net/shiroha233/roadweaver/helpers/Records$StructureConnection with maxs=true frames=true
 [Architectury Transformer DEBUG] Writing net/shiroha233/roadweaver/helpers/StructureConnector$UnionFind with maxs=true frames=true
 [Architectury Transformer DEBUG] Writing net/shiroha233/roadweaver/helpers/Records$StructureLocationData with maxs=true frames=true
+[Architectury Transformer DEBUG] Writing net/shiroha233/roadweaver/helpers/Records$RoadDecoration with maxs=true frames=true
+[Architectury Transformer DEBUG] Writing net/shiroha233/roadweaver/helpers/AsyncStructureLocator$StructureLocateResult with maxs=true frames=true
+[Architectury Transformer DEBUG] Writing net/shiroha233/roadweaver/helpers/Records$StructureConnection with maxs=true frames=true
 [Architectury Transformer DEBUG] Writing net/shiroha233/roadweaver/features/RoadFeature with maxs=true frames=true
 [Architectury Transformer DEBUG] Writing net/shiroha233/roadweaver/features/roadlogic/RoadPathCalculator with maxs=true frames=true
-[Architectury Transformer DEBUG] Writing net/shiroha233/roadweaver/features/roadlogic/Road with maxs=true frames=true
 [Architectury Transformer DEBUG] Writing net/shiroha233/roadweaver/features/roadlogic/RoadPathCalculator$Node with maxs=true frames=true
 [Architectury Transformer DEBUG] Writing net/shiroha233/roadweaver/features/roadlogic/RoadDirection with maxs=true frames=true
+[Architectury Transformer DEBUG] Writing net/shiroha233/roadweaver/features/roadlogic/Road with maxs=true frames=true
+[Architectury Transformer DEBUG] Writing net/shiroha233/roadweaver/features/decoration/BenchDecoration with maxs=true frames=true
+[Architectury Transformer DEBUG] Writing net/shiroha233/roadweaver/features/decoration/RoadFenceDecoration with maxs=true frames=true
 [Architectury Transformer DEBUG] Writing net/shiroha233/roadweaver/features/decoration/FenceWaypointDecoration with maxs=true frames=true
 [Architectury Transformer DEBUG] Writing net/shiroha233/roadweaver/features/decoration/OrientedDecoration$DirectionProperties with maxs=true frames=true
 [Architectury Transformer DEBUG] Writing net/shiroha233/roadweaver/features/decoration/RoadStructures with maxs=true frames=true
 [Architectury Transformer DEBUG] Writing net/shiroha233/roadweaver/features/decoration/GlorietteDecoration with maxs=true frames=true
-[Architectury Transformer DEBUG] Writing net/shiroha233/roadweaver/features/decoration/BenchDecoration with maxs=true frames=true
 [Architectury Transformer DEBUG] Writing net/shiroha233/roadweaver/features/decoration/Decoration with maxs=true frames=true
-[Architectury Transformer DEBUG] Writing net/shiroha233/roadweaver/features/decoration/RoadFenceDecoration with maxs=true frames=true
+[Architectury Transformer DEBUG] Writing net/shiroha233/roadweaver/features/decoration/SwingDecoration with maxs=true frames=true
 [Architectury Transformer DEBUG] Writing net/shiroha233/roadweaver/features/decoration/LamppostDecoration with maxs=true frames=true
 [Architectury Transformer DEBUG] Writing net/shiroha233/roadweaver/features/decoration/StructureDecoration with maxs=true frames=true
-[Architectury Transformer DEBUG] Writing net/shiroha233/roadweaver/features/decoration/SwingDecoration with maxs=true frames=true
-[Architectury Transformer DEBUG] Writing net/shiroha233/roadweaver/features/decoration/DistanceSignDecoration with maxs=true frames=true
 [Architectury Transformer DEBUG] Writing net/shiroha233/roadweaver/features/decoration/OrientedDecoration with maxs=true frames=true
+[Architectury Transformer DEBUG] Writing net/shiroha233/roadweaver/features/decoration/DistanceSignDecoration with maxs=true frames=true
 [Architectury Transformer DEBUG] Writing net/shiroha233/roadweaver/features/decoration/RoadPlacementRules with maxs=true frames=true
 [Architectury Transformer DEBUG] Writing net/shiroha233/roadweaver/features/decoration/NbtStructureDecoration with maxs=true frames=true
 [Architectury Transformer DEBUG] Writing net/shiroha233/roadweaver/features/decoration/util/WoodSelector with maxs=true frames=true
@@ -272,27 +127,42 @@
 [Architectury Transformer DEBUG] Writing net/shiroha233/roadweaver/features/config/RoadFeatureConfig with maxs=true frames=true
 [Architectury Transformer DEBUG] Writing net/shiroha233/roadweaver/features/config/RoadFeatureRegistry with maxs=true frames=true
 [Architectury Transformer DEBUG] Writing net/shiroha233/roadweaver/events/ModEventHandler with maxs=true frames=true
+[Architectury Transformer DEBUG] Writing net/shiroha233/roadweaver/events/RedstoneLampOfTheRoadEffectHandler$PlayerCheckData with maxs=true frames=true
+[Architectury Transformer DEBUG] Writing net/shiroha233/roadweaver/events/RedstoneLampOfTheRoadEffectHandler with maxs=true frames=true
+[Architectury Transformer DEBUG] Writing net/shiroha233/roadweaver/content/effects/PowerOfTheRoad with maxs=true frames=true
+[Architectury Transformer DEBUG] Writing net/shiroha233/roadweaver/content/blocks/RedstoneLampOfTheRoad with maxs=true frames=true
 [Architectury Transformer DEBUG] Writing net/shiroha233/roadweaver/config/ServerConfigHolder with maxs=true frames=true
 [Architectury Transformer DEBUG] Writing net/shiroha233/roadweaver/config/IModConfig with maxs=true frames=true
 [Architectury Transformer DEBUG] Writing net/shiroha233/roadweaver/config/SyncedConfigWrapper with maxs=true frames=true
 [Architectury Transformer DEBUG] Writing net/shiroha233/roadweaver/config/ConfigProvider with maxs=true frames=true
 [Architectury Transformer DEBUG] Writing net/shiroha233/roadweaver/client/ConfigScreenFactory with maxs=true frames=true
-[Architectury Transformer DEBUG] Writing net/shiroha233/roadweaver/client/gui/RoadDebugScreen with maxs=true frames=true
-[Architectury Transformer DEBUG] Writing net/shiroha233/roadweaver/client/gui/StructureColorManager with maxs=true frames=true
-[Architectury Transformer DEBUG] Writing net/shiroha233/roadweaver/client/gui/MapRenderer$WorldToScreenConverter with maxs=true frames=true
-[Architectury Transformer DEBUG] Writing net/shiroha233/roadweaver/client/gui/RoadDebugScreen$ScreenBounds with maxs=true frames=true
-[Architectury Transformer DEBUG] Writing net/shiroha233/roadweaver/client/gui/GridRenderer with maxs=true frames=true
-[Architectury Transformer DEBUG] Writing net/shiroha233/roadweaver/client/gui/UIRenderer with maxs=true frames=true
-[Architectury Transformer DEBUG] Writing net/shiroha233/roadweaver/client/gui/MapRenderer$RoadLODLevel with maxs=true frames=true
-[Architectury Transformer DEBUG] Writing net/shiroha233/roadweaver/client/gui/RoadDebugScreen$ScreenPos with maxs=true frames=true
-[Architectury Transformer DEBUG] Writing net/shiroha233/roadweaver/client/gui/GridRenderer$1 with maxs=true frames=true
-[Architectury Transformer DEBUG] Writing net/shiroha233/roadweaver/client/gui/MapRenderer$1 with maxs=true frames=true
-[Architectury Transformer DEBUG] Writing net/shiroha233/roadweaver/client/gui/MapRenderer with maxs=true frames=true
-[Architectury Transformer DEBUG] Writing net/shiroha233/roadweaver/client/gui/RenderUtils with maxs=true frames=true
-[Architectury Transformer DEBUG] Writing net/shiroha233/roadweaver/client/gui/UIRenderer$1 with maxs=true frames=true
-[Architectury Transformer DEBUG] Writing net/shiroha233/roadweaver/client/gui/MapRenderer$LODLevel with maxs=true frames=true
+[Architectury Transformer DEBUG] Writing net/shiroha233/roadweaver/client/gui/RoadWeaverMapScreen with maxs=true frames=true
+[Architectury Transformer DEBUG] Writing net/shiroha233/roadweaver/client/gui/util/ModernRenderUtils with maxs=true frames=true
+[Architectury Transformer DEBUG] Writing net/shiroha233/roadweaver/client/gui/util/ModernRenderUtils$Icons with maxs=true frames=true
+[Architectury Transformer DEBUG] Writing net/shiroha233/roadweaver/client/gui/util/ModernRenderUtils$1 with maxs=true frames=true
+[Architectury Transformer DEBUG] Writing net/shiroha233/roadweaver/client/gui/util/ModernRenderUtils$Icons$Direction with maxs=true frames=true
+[Architectury Transformer DEBUG] Writing net/shiroha233/roadweaver/client/gui/layers/StructureLayer with maxs=true frames=true
+[Architectury Transformer DEBUG] Writing net/shiroha233/roadweaver/client/gui/layers/OverlayLayer with maxs=true frames=true
+[Architectury Transformer DEBUG] Writing net/shiroha233/roadweaver/client/gui/layers/RoadPathLayer with maxs=true frames=true
+[Architectury Transformer DEBUG] Writing net/shiroha233/roadweaver/client/gui/layers/BackgroundLayer with maxs=true frames=true
+[Architectury Transformer DEBUG] Writing net/shiroha233/roadweaver/client/gui/layers/ConnectionLayer with maxs=true frames=true
+[Architectury Transformer DEBUG] Writing net/shiroha233/roadweaver/client/gui/layers/ConnectionLayer$1 with maxs=true frames=true
+[Architectury Transformer DEBUG] Writing net/shiroha233/roadweaver/client/gui/core/MapViewport$WorldCoord with maxs=true frames=true
+[Architectury Transformer DEBUG] Writing net/shiroha233/roadweaver/client/gui/core/LODManager with maxs=true frames=true
+[Architectury Transformer DEBUG] Writing net/shiroha233/roadweaver/client/gui/core/MapViewport with maxs=true frames=true
+[Architectury Transformer DEBUG] Writing net/shiroha233/roadweaver/client/gui/core/ColorPalette$Utils with maxs=true frames=true
+[Architectury Transformer DEBUG] Writing net/shiroha233/roadweaver/client/gui/core/AnimationState$PulseAnimation with maxs=true frames=true
+[Architectury Transformer DEBUG] Writing net/shiroha233/roadweaver/client/gui/core/AnimationState$FadeAnimation with maxs=true frames=true
+[Architectury Transformer DEBUG] Writing net/shiroha233/roadweaver/client/gui/core/MapViewport$ScreenCoord with maxs=true frames=true
+[Architectury Transformer DEBUG] Writing net/shiroha233/roadweaver/client/gui/core/MapViewport$ViewBounds with maxs=true frames=true
+[Architectury Transformer DEBUG] Writing net/shiroha233/roadweaver/client/gui/core/AnimationState$EasingFunction with maxs=true frames=true
+[Architectury Transformer DEBUG] Writing net/shiroha233/roadweaver/client/gui/core/RenderLayer with maxs=true frames=true
+[Architectury Transformer DEBUG] Writing net/shiroha233/roadweaver/client/gui/core/AnimationState with maxs=true frames=true
+[Architectury Transformer DEBUG] Writing net/shiroha233/roadweaver/client/gui/core/ColorPalette with maxs=true frames=true
+[Architectury Transformer DEBUG] Writing net/shiroha233/roadweaver/client/gui/components/InfoPanel with maxs=true frames=true
+[Architectury Transformer DEBUG] Writing net/shiroha233/roadweaver/client/gui/components/InfoPanel$1 with maxs=true frames=true
+[Architectury Transformer DEBUG] Writing net/shiroha233/roadweaver/client/gui/components/ModernPanel with maxs=true frames=true
 [Architectury Transformer DEBUG] Injecting MixinConfigs into /META-INF/MANIFEST.MF
 [Architectury Transformer DEBUG] Remapping refmap from intermediary to srg: roadweaver-common-common-refmap.json
-[Architectury Transformer DEBUG] Closed File Systems for D:\GITHUB\RoadWeaver-fresh\common\build\libs\roadweaver-common-1.0.5-transformProductionForge.jar
-[Architectury Transformer] Transformed jar with 7 transformer(s) in 990.6 ms
-[Architectury Transformer DEBUG] Closed File Systems for D:\GITHUB\RoadWeaver-fresh\common\build\libs\roadweaver-common-1.0.5.jar
+[Architectury Transformer DEBUG] Closed File Systems for D:\RoadWeaver-1.20.1-Architectury-New\common\build\libs\roadweaver-common-1.0.5-transformProductionForge.jar
+[Architectury Transformer] Transformed jar with 7 transformer(s) in 2.318 s

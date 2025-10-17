@@ -3,14 +3,19 @@ package net.shiroha233.roadweaver;
 import net.shiroha233.roadweaver.client.gui.ClothConfigScreen;
 import net.shiroha233.roadweaver.config.forge.ForgeJsonConfig;
 import net.shiroha233.roadweaver.events.ModEventHandler;
+import net.shiroha233.roadweaver.events.RedstoneLampOfTheRoadEffectHandler;
 import net.shiroha233.roadweaver.features.config.forge.ForgeRoadFeatureRegistry;
 import net.shiroha233.roadweaver.datagen.SettlementRoadsDataGenerator;
 import net.shiroha233.roadweaver.network.RoadWeaverNetworkManager;
 import net.minecraftforge.eventbus.api.IEventBus;
+
+import dev.architectury.platform.forge.EventBuses;
 import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
+import net.shiroha233.roadweaver.registry.ModBlocks;
+import net.shiroha233.roadweaver.registry.ModEffects;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -22,9 +27,14 @@ public class SettlementRoads {
 
 	public SettlementRoads() {
 		LOGGER.info("Initializing RoadWeaver (Forge)...");
-		
-		IEventBus modEventBus = FMLJavaModLoadingContext.get().getModEventBus();
-		
+
+        IEventBus modEventBus = FMLJavaModLoadingContext.get().getModEventBus();
+
+        // 🔹 通知 Architectury 绑定事件总线（非常关键）
+        EventBuses.registerModEventBus(MOD_ID, modEventBus);
+
+        // 🔹 注册方块、物品等
+        ModBlocks.register();ModEffects.register();RedstoneLampOfTheRoadEffectHandler.register();
 		// 加载 JSON 配置（与 Fabric 一致，写入 config/roadweaver.json）
 		ForgeJsonConfig.load();
 		

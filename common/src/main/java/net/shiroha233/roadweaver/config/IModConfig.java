@@ -28,6 +28,9 @@ public interface IModConfig {
     int maxHeightDifference();
     int maxTerrainStability();
 
+    int getPowerOfTheRoadSpeedLevel();
+    int getPowerOfTheRoadRegenerationLevel();
+    int getPowerOfTheRoadJumpLevel();
     // 性能配置
     default int heightCacheMaxSize() {
         return 100_000; // 默认10万个条目

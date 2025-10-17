@@ -100,4 +100,17 @@ public class ForgeModConfigAdapter implements IModConfig {
     public int maxTerrainStability() {
         return ForgeJsonConfig.getMaxTerrainStability();
     }
+
+    @Override
+    public int getPowerOfTheRoadSpeedLevel() {
+        return ForgeJsonConfig.getPowerOfTheRoadSpeedLevel();
+    }
+    @Override
+    public int getPowerOfTheRoadRegenerationLevel() {
+        return ForgeJsonConfig.getPowerOfTheRoadRegenerationLevel();
+    }
+    @Override
+    public int getPowerOfTheRoadJumpLevel() {
+        return ForgeJsonConfig.getPowerOfTheRoadJumpLevel();
+    }
 }

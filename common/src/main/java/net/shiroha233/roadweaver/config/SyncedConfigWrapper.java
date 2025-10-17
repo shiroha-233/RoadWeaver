@@ -108,4 +108,18 @@ public class SyncedConfigWrapper implements IModConfig {
     public int maxTerrainStability() {
         return ServerConfigHolder.getSynced("maxTerrainStability", localConfig.maxTerrainStability());
     }
+
+    //效果
+    @Override
+    public int getPowerOfTheRoadSpeedLevel() {
+        return ServerConfigHolder.getSynced("powerOfTheRoadSpeedLevel", localConfig.getPowerOfTheRoadSpeedLevel());
+    }
+    @Override
+    public int getPowerOfTheRoadRegenerationLevel() {
+        return ServerConfigHolder.getSynced("powerOfTheRoadRegenerationLevel", localConfig.getPowerOfTheRoadRegenerationLevel());
+    }
+    @Override
+    public int getPowerOfTheRoadJumpLevel() {
+        return ServerConfigHolder.getSynced("powerOfTheRoadJumpLevel", localConfig.getPowerOfTheRoadJumpLevel());
+    }
 }

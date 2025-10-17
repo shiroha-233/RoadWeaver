@@ -1,0 +1,6 @@
+{
+  "parent": "block/cube_all",
+  "textures": {
+    "all": "roadweaver:block/redstone_lamp_of_the_road_off"
+  }
+}

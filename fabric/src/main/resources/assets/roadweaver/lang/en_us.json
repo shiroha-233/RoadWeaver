@@ -35,6 +35,7 @@
   "config.roadweaver.category.pregeneration": "Pre-Generation",
   "config.roadweaver.category.roads": "Roads",
   "config.roadweaver.category.decorations": "Decorations",
+  "config.roadweaver.category.mobeffects": "Mob Effects",
 
   "config.roadweaver.structureToLocate": "Structure to locate",
   "config.roadweaver.structureToLocate.tooltip": "Enter one structure or tag per line. Examples: #minecraft:village, minecraft:village_plains, modid:custom_structure. Tags (#namespace:path) and direct IDs are supported.",
@@ -78,6 +79,14 @@
   "config.roadweaver.placeGloriettes": "Generate Gloriettes",
   "config.roadweaver.placeGloriettes.tooltip": "Generate gloriette decorations along roads to enhance road scenery",
 
+  "config.roadweaver.powerOfTheRoadSpeedLevel": "Set the Level of Speed",
+  "config.roadweaver.powerOfTheRoadSpeedLevel.tooltip": "Set 0 to Disable Speed",
+  "config.roadweaver.powerOfTheRoadRegenerationLevel": "Set the Level of Regeneration",
+  "config.roadweaver.powerOfTheRoadRegenerationLevel.tooltip": "Set 0 to Disable Regeneration",
+  "config.roadweaver.powerOfTheRoadJumpLevel": "Set the Level of Jump Boost",
+  "config.roadweaver.powerOfTheRoadJumpLevel.tooltip": "Set 0 to Disable Jump Boost",
+
+
   "sign.roadweaver.distance.next_location": "Next Location",
   "sign.roadweaver.distance.welcome": "Welcome",
   "sign.roadweaver.distance.traveller": "traveller",
@@ -86,5 +95,7 @@
   "roadweaver.debug_map.no_permission": "You don't have permission to open the debug map (requires admin permission)",
   "roadweaver.debug_map.multiplayer_not_supported": "Debug map is not supported on multiplayer servers yet",
   "roadweaver.debug_map.loading": "Loading debug data...",
-  "roadweaver.debug_map.timeout": "Failed to load debug data, please try again"
+  "roadweaver.debug_map.timeout": "Failed to load debug data, please try again",
+
+  "effect.roadweaver.power_of_the_road": "Journey’s Boon"
 }

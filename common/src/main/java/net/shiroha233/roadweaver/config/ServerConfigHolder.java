@@ -101,7 +101,12 @@ public class ServerConfigHolder {
         map.put("structureDistanceFromRoad", config.structureDistanceFromRoad());
         map.put("maxHeightDifference", config.maxHeightDifference());
         map.put("maxTerrainStability", config.maxTerrainStability());
-        
+
+        //效果
+        map.put("powerOfTheRoadSpeedLevel", config.getPowerOfTheRoadSpeedLevel()); // packConfig 内
+        map.put("powerOfTheRoadRegenerationLevel", config.getPowerOfTheRoadRegenerationLevel());
+        map.put("powerOfTheRoadJumpLevel", config.getPowerOfTheRoadJumpLevel());
+
         return map;
     }
 }

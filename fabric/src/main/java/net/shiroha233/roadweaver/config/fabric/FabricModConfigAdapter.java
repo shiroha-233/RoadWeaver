@@ -103,4 +103,19 @@ public class FabricModConfigAdapter implements IModConfig {
     public int maxTerrainStability() {
         return FabricModConfig.getMaxTerrainStability();
     }
+
+    //效果
+    @Override
+    public int getPowerOfTheRoadSpeedLevel() {
+        return FabricModConfig.getPowerOfTheRoadSpeedLevel();
+    }
+    @Override
+    public int getPowerOfTheRoadRegenerationLevel() {
+        return FabricModConfig.getPowerOfTheRoadRegenerationLevel();
+    }
+    @Override
+    public int getPowerOfTheRoadJumpLevel() {
+        return FabricModConfig.getPowerOfTheRoadJumpLevel();
+    }
+
 }
