@@ -34,7 +34,9 @@ public class PowerOfTheRoad extends MobEffect {
         IModConfig cfg = ConfigProvider.get();
 
         if (entity instanceof Player player && !player.level().isClientSide) {
-
+            if (entity.isRemoved() || entity.isDeadOrDying() || !entity.isAlive()) {
+                return;
+            }
             if(cfg.getPowerOfTheRoadJumpLevel()>0) {
                 player.addEffect(new MobEffectInstance(MobEffects.JUMP, 2, cfg.getPowerOfTheRoadJumpLevel() - 1, false, false, false));
             }
