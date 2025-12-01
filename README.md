@@ -1,14 +1,25 @@
-# RoadWeaver
-[![Modrinth Downloads](https://img.shields.io/modrinth/dt/6jk8Pote?style=flat-square&logo=Modrinth&label=Modrinth)](https://modrinth.com/mod/roadweaver)
-[![CurseForge Downloads](https://img.shields.io/curseforge/dt/1358489?style=flat-square&logo=CurseForge&label=CurseForge&color=f16436)](https://www.curseforge.com/minecraft/mc-mods/roadweaver)
-[![Discord Invite](https://img.shields.io/badge/Discord-Join-5865F2?logo=discord&logoColor=white&style=flat-square)](https://discord.gg/tUJMJkbbr2)
-[![Github Stars](https://img.shields.io/github/stars/shiroha-233/RoadWeaver?logo=github&style=flat-square)](https://github.com/shiroha-233/RoadWeaver)
+<div align=center><h1>RoadWeaver</h1></div>
 
-English | [简体中文](README_CN.md)
+<p align="center">
+  <a href="https://modrinth.com/mod/roadweaver"><img src="https://img.shields.io/modrinth/dt/roadweaver?logo=modrinth&label=Modrinth&color=1bd96a&style=flat-square" alt="Modrinth Downloads"></a>
+  <a href="https://www.curseforge.com/minecraft/mc-mods/roadweaver"><img src="https://img.shields.io/curseforge/dt/1358489?logo=curseforge&label=CurseForge&color=f16436&style=flat-square" alt="CurseForge Downloads"></a>
+  <a href="https://discord.gg/tUJMJkbbr2"><img src="https://img.shields.io/badge/Discord-Join-5865F2?logo=discord&logoColor=white&style=flat-square" alt="Discord"></a>
+  <a href="https://github.com/shiroha-233/RoadWeaver"><img src="https://img.shields.io/github/stars/shiroha-233/RoadWeaver?logo=github&style=flat-square" alt="GitHub Stars"></a>
+</p>
 
-A Minecraft mod that automatically generates beautiful roads between villages or custom structures.
+<div align=center><h4>English | <a href="README_CN.md">简体中文</a></h4></div>
 
-## Key Features
+<table>
+  <tr>
+    <td><img src="image/img1.png" width="2000"></td>
+    <td><img src="image/img2.png" width="2000"></td>
+    <td><img src="image/img3.png" width="2000"></td>
+  </tr>
+</table>
+
+<div align=center><h3>A Minecraft mod that automatically generates beautiful roads between villages or custom structures.</h3></div>
+
+## ✨Key Features
 
 ### 1. Smart Road Generation
 
@@ -66,11 +77,11 @@ A Minecraft mod that automatically generates beautiful roads between villages or
 - **Road Network Map**: Press **H** to open the debug map and view the road network
 - **Configuration**: Cloth Config API settings screen (built-in since 2.0.2), accessible from the world creation screen or by pressing **H** in-game and clicking the top-right corner
 
-## Inspiration
+## 💡Inspiration
 
 Based on [Countered's Settlement Roads](https://modrinth.com/mod/countereds-settlement-roads), map inspired by [RoadArchitect](https://github.com/FranckRJ/RoadArchitect).
 
-## Future Plans
+## 🎨Future Plans
 
 - [ ] More roadside decorations?
 - [x] Link multiple structure types
@@ -82,7 +93,8 @@ Based on [Countered's Settlement Roads](https://modrinth.com/mod/countereds-sett
 - [x] Slab transitions
 - [x] Bezier curve smoothing
 
-## Notes
+## 🚨Notes
 
-- The more structures configured to locate when loading a world, the longer world creation takes, but the more complete the road network
-- Roads cannot generate on already-loaded chunks, so don't approach road segments before they finish generating
+>[!NOTE]
+> - The more structures configured to locate when loading a world, the longer world creation takes, but the more complete the road network
+> - Roads cannot generate on already-loaded chunks, so don't approach road segments before they finish generating

@@ -1,14 +1,24 @@
-# RoadWeaver
-[![Modrinth Downloads](https://img.shields.io/modrinth/dt/6jk8Pote?style=flat-square&logo=Modrinth&label=Modrinth)](https://modrinth.com/mod/roadweaver)
-[![CurseForge Downloads](https://img.shields.io/curseforge/dt/1358489?style=flat-square&logo=CurseForge&label=CurseForge&color=f16436)](https://www.curseforge.com/minecraft/mc-mods/roadweaver)
-[![Discord Invite](https://img.shields.io/badge/Discord-Join-5865F2?logo=discord&logoColor=white&style=flat-square)](https://discord.gg/tUJMJkbbr2)
-[![Github Stars](https://img.shields.io/github/stars/shiroha-233/RoadWeaver?logo=github&style=flat-square)](https://github.com/shiroha-233/RoadWeaver)
+<div align=center><h1>RoadWeaver</h1></div>
+<p align="center">
+  <a href="https://modrinth.com/mod/roadweaver"><img src="https://img.shields.io/modrinth/dt/roadweaver?logo=modrinth&label=Modrinth&color=1bd96a&style=flat-square" alt="Modrinth下载"></a>
+  <a href="https://www.curseforge.com/minecraft/mc-mods/roadweaver"><img src="https://img.shields.io/curseforge/dt/1358489?logo=curseforge&label=CurseForge&color=f16436&style=flat-square" alt="CurseForge下载"></a>
+  <a href="https://discord.gg/tUJMJkbbr2"><img src="https://img.shields.io/badge/Discord-Join-5865F2?logo=discord&style=flat-square" alt="Discord 群组"></a>
+  <a href="https://github.com/shiroha-233/RoadWeaver"><img src="https://img.shields.io/github/stars/shiroha-233/RoadWeaver?logo=github&style=flat-square" alt="GitHub 星标数"></a>
+</p>
 
-[English](README.md) | 简体中文
+<div align=center><h4><a href="README.md">English</a> | 简体中文</h4></div>
 
-自动在村庄或自定义结构之间生成美观道路的 Minecraft 模组。
+<table>
+  <tr>
+    <td><img src="image/img1.png" width="2000"></td>
+    <td><img src="image/img2.png" width="2000"></td>
+    <td><img src="image/img3.png" width="2000"></td>
+  </tr>
+</table>
 
-## 主要特性
+<div align=center><h3>自动在村庄或自定义结构之间生成美观道路的 Minecraft 模组。</h3></div>
+
+## ✨主要特性
 
 ### 1. 智能道路生成
 
@@ -66,11 +76,11 @@
 - **路网地图**：按 **H** 打开调试地图查看道路网络
 - **配置选项**：模组 Cloth Config API 配置界面（2.0.2 以上版本已内嵌），可在新建世界界面或在游戏中按快捷键 **H** 打开地图后在右上角打开
 
-## 模组灵感
+## 💡模组灵感
 
 模组基于 [Countered's Settlement Roads](https://modrinth.com/mod/countereds-settlement-roads) 制作，地图灵感来源 [RoadArchitect](https://github.com/FranckRJ/RoadArchitect)。
 
-## 未来计划
+## 🎨未来计划
 
 - [ ] 更多路边装饰？
 - [x] 链接多种结构
@@ -82,7 +92,8 @@
 - [x] 半砖过渡
 - [x] 贝塞尔曲线平滑
 
-## 注意事项
+## 🚨注意事项
 
-- 设置里加载世界时定位的结构数量越多，创建世界的时间就越久，完整度越高
-- 道路无法在已加载区块上生成，所以，如道路未生成完毕，请不要走近该路段
+>[!NOTE]注意
+> - 设置里加载世界时定位的结构数量越多，创建世界的时间就越久，完整度越高
+> - 道路无法在已加载区块上生成，所以，如道路未生成完毕，请不要走近该路段
