@@ -51,12 +51,12 @@
 - **Visual Debugging**: Road network map; status colors (planned/generating/completed/failed); interactions (drag, zoom, right-click teleport); statistics for road count, length and status
 - **Manual Link Mode**: Plan road networks according to your preferences
 
-## Compatibility
+## ⚡️Compatibility
 
 - New versions (2.0.0+) completely abandon the old `/locate` command search mechanism, no longer blocking the game main thread
 - Structure prediction, road network planning and pathfinding all run in dedicated thread pools; main thread only handles driving and result application
 
-### Known Compatibility & Performance Issues
+### ⚡️Known Compatibility & Performance Issues
 
 - This mod (2.0.6+) is compatible with Tectonic-V2 / Epic Terrain / Terralith, but **incompatible with Tectonic-V3**
 - This mod relies on vanilla mechanics, so it's incompatible with mods that overhaul vanilla mechanics like TerraFirmaCraft: The Next Generation
@@ -71,7 +71,7 @@
 - Pathfinding step size and weight configuration
 - Concurrent road generation count and thread pool size
 
-## Usage
+## 📌Usage
 
 - **Auto Generation**: Roads automatically generate between structures after entering the world
 - **Road Network Map**: Press **H** to open the debug map and view the road network
