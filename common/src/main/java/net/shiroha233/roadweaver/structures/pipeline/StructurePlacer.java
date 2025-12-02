@@ -107,23 +107,25 @@ public final class StructurePlacer {
     /**
      * 轻量级结构放置（用于 Feature 阶段，如路边结构）
      * 
-     * @param world       WorldGenLevel
-     * @param server      ServerLevel（用于获取模板管理器）
-     * @param templateId  模板 ID
-     * @param anchor      放置锚点
-     * @param rotation    旋转
-     * @param withTerrace 是否生成地形托盘
-     * @param noBasement  结构是否不带底座（影响地形高度计算）
-     * @param random      随机源
+     * @param world        WorldGenLevel
+     * @param server       ServerLevel（用于获取模板管理器）
+     * @param templateId   模板 ID
+     * @param position     放置位置（若 centerMode=true 则为中心点，否则为锚点）
+     * @param rotation     旋转
+     * @param withTerrace  是否生成地形托盘
+     * @param noBasement   结构是否不带底座（影响地形高度计算）
+     * @param centerMode   是否以中心点模式放置（结构几何中心对齐到 position）
+     * @param random       随机源
      * @return 是否成功放置
      */
     public static boolean placeSimple(WorldGenLevel world,
                                        ServerLevel server,
                                        ResourceLocation templateId,
-                                       BlockPos anchor,
+                                       BlockPos position,
                                        Rotation rotation,
                                        boolean withTerrace,
                                        boolean noBasement,
+                                       boolean centerMode,
                                        RandomSource random) {
         // 获取模板
         StructureTemplateManager mgr = server.getStructureManager();
@@ -135,11 +137,23 @@ public final class StructurePlacer {
         StructureTemplate tpl = opt.get();
         Vec3i size = tpl.getSize(rotation);
         
-        // 生成地形托盘
+        // 计算实际锚点：如果是中心模式，需要偏移使结构中心对齐到 position
+        BlockPos anchor;
+        if (centerMode) {
+            int offsetX = size.getX() / 2;
+            int offsetZ = size.getZ() / 2;
+            anchor = new BlockPos(position.getX() - offsetX, position.getY(), position.getZ() - offsetZ);
+        } else {
+            anchor = position;
+        }
+        
+        // 生成地形托盘（以结构中心为圆心）
         if (withTerrace) {
-            // 对于不带底座的结构，地面应在 anchor.Y - 1
             int targetY = noBasement ? anchor.getY() - 1 : anchor.getY();
-            buildTerraceInternal(world, anchor, size, targetY, random);
+            // 计算结构真正的中心点
+            int centerX = anchor.getX() + size.getX() / 2;
+            int centerZ = anchor.getZ() + size.getZ() / 2;
+            buildTerraceAtCenter(world, centerX, centerZ, size, targetY, random);
         }
         
         // 放置模板
@@ -150,6 +164,20 @@ public final class StructurePlacer {
         tpl.placeInWorld(world, anchor, anchor, settings, random, 2);
         
         return true;
+    }
+    
+    /**
+     * 轻量级结构放置（兼容旧调用，默认非中心模式）
+     */
+    public static boolean placeSimple(WorldGenLevel world,
+                                       ServerLevel server,
+                                       ResourceLocation templateId,
+                                       BlockPos anchor,
+                                       Rotation rotation,
+                                       boolean withTerrace,
+                                       boolean noBasement,
+                                       RandomSource random) {
+        return placeSimple(world, server, templateId, anchor, rotation, withTerrace, noBasement, false, random);
     }
     
     /**
@@ -221,9 +249,12 @@ public final class StructurePlacer {
     }
     
     /**
-     * 内部地形托盘生成（WorldGenLevel 版本）
+     * 以指定中心点生成地形托盘
      */
-    private static void buildTerraceInternal(WorldGenLevel world, BlockPos anchor, Vec3i size, int targetY, RandomSource random) {
-        BeardedTerracePlacer.buildTerrace(world, new BlockPos(anchor.getX(), targetY + 1, anchor.getZ()), size, random);
+    private static void buildTerraceAtCenter(WorldGenLevel world, int centerX, int centerZ, Vec3i size, int targetY, RandomSource random) {
+        // 计算半径
+        double innerRadius = Math.max(size.getX(), size.getZ()) / 2.0 + DEFAULT_TERRACE_BUFFER;
+        double outerRadius = innerRadius + DEFAULT_TERRACE_TRANSITION;
+        BeardedTerracePlacer.buildTerraceByCenter(world, centerX, centerZ, targetY, (int) innerRadius, (int) outerRadius, random);
     }
 }

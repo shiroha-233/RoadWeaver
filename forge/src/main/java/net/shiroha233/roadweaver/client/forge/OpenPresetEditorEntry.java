@@ -44,9 +44,11 @@ public class OpenPresetEditorEntry extends AbstractConfigListEntry<Void> {
 
         Font font = Minecraft.getInstance().font;
         Component label = getDisplayedFieldName();
-        int color = getPreferredTextColor();
-        int textY = y + (entryHeight - font.lineHeight) / 2;
-        g.drawString(font, label, x + 4, textY, color, false);
+        if (label != null) {
+            int color = getPreferredTextColor();
+            int textY = y + (entryHeight - font.lineHeight) / 2;
+            g.drawString(font, label, x + 4, textY, color, false);
+        }
     }
 
     @Override

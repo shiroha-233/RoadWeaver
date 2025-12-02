@@ -15,6 +15,7 @@ import net.shiroha233.roadweaver.client.map.data.MapSnapshot;
 import net.shiroha233.roadweaver.network.MapSnapshotCodec;
 import net.minecraft.world.level.levelgen.Heightmap;
 
+import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import net.shiroha233.roadweaver.util.ComputeService;
@@ -145,9 +146,10 @@ public class MapNetworkForge {
             NetworkEvent.Context c = ctx.get();
             c.enqueueWork(() -> {
                 Minecraft mc = Minecraft.getInstance();
-                if (mc.player == null) return;
-                if (msg.ok) mc.player.displayClientMessage(Component.translatable("gui.roadweaver.map.teleport.success_pos", msg.x, msg.y, msg.z), true);
-                else mc.player.displayClientMessage(Component.translatable("gui.roadweaver.map.teleport.denied"), true);
+                var player = mc.player;
+                if (player == null) return;
+                if (msg.ok) player.displayClientMessage(Objects.requireNonNull(Component.translatable("gui.roadweaver.map.teleport.success_pos", msg.x, msg.y, msg.z)), true);
+                else player.displayClientMessage(Objects.requireNonNull(Component.translatable("gui.roadweaver.map.teleport.denied")), true);
             });
             c.setPacketHandled(true);
         }

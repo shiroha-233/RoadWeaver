@@ -16,6 +16,8 @@ import net.shiroha233.roadweaver.persistence.sharded.RoadShardStorage;
 import net.shiroha233.roadweaver.structures.StructureSystem;
 import net.shiroha233.roadweaver.structures.index.StructureIndexRestorer;
 
+import java.util.Objects;
+
 public final class ServerPlanningHooks {
     private ServerPlanningHooks() {}
 
@@ -30,7 +32,7 @@ public final class ServerPlanningHooks {
     private static void onServerStarted(ServerStartedEvent event) {
         StructureSystem.clearAll();
         net.shiroha233.roadweaver.runtime.ThreadPoolManager.onServerStarted(event.getServer());
-        ServerLevel level = event.getServer().getLevel(Level.OVERWORLD);
+        ServerLevel level = event.getServer().getLevel(Objects.requireNonNull(Level.OVERWORLD));
         if (level == null) return;
         // 从持久化数据恢复结构索引
         StructureIndexRestorer.restore(level);
@@ -58,7 +60,7 @@ public final class ServerPlanningHooks {
                 RoadPlanningService.planAroundPlayer(p);
             }
         }
-        ServerLevel level = server.getLevel(Level.OVERWORLD);
+        ServerLevel level = server.getLevel(Objects.requireNonNull(Level.OVERWORLD));
         if (level != null) {
             RoadGenerationService.tick(level);
         }

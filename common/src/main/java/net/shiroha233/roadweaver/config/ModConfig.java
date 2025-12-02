@@ -68,8 +68,11 @@ public final class ModConfig {
 
     // 路边结构配置
     private boolean roadsideStructuresEnabled;
-    private int roadsideStructureInterval;
-    private float roadsideStructureChance;
+    private int maxStructuresPerRoad;      // 每条道路最多放置的结构数
+    private int minStructureSpacing;       // 两个结构之间的最小间隔（方块）
+    private int smallStructureOffset;      // 小型结构距道路中心的距离
+    private int mediumStructureOffset;     // 中型结构距道路中心的距离
+    private int largeStructureOffset;      // 大型结构距道路中心的距离
 
     // 结构距离控制
     private int structureRoadOffset; // 道路端点距结构中心的缩进距离（方块）
@@ -82,6 +85,7 @@ public final class ModConfig {
     private int stabilityWeight;
     private int waterDepthWeight;
     private int nearWaterCost;
+    private int waterProximityCost;
     private double heuristicWeight;
     private double deviationWeight;
 
@@ -142,8 +146,11 @@ public final class ModConfig {
 
         // 路边结构默认值
         this.roadsideStructuresEnabled = true;
-        this.roadsideStructureInterval = 128;  // 每 128 个路段检查一次
-        this.roadsideStructureChance = 0.3f;  // 30% 概率放置
+        this.maxStructuresPerRoad = 3;        // 每条道路最多3个结构
+        this.minStructureSpacing = 64;        // 结构间最小间隔64格
+        this.smallStructureOffset = 8;        // 小型结构距道路8格
+        this.mediumStructureOffset = 12;      // 中型结构距道路12格
+        this.largeStructureOffset = 16;       // 大型结构距道路16格
 
         // 结构距离控制默认值
         this.structureRoadOffset = 60; // 道路端点默认缩进 60 格
@@ -154,8 +161,9 @@ public final class ModConfig {
         this.elevationWeight = 80;
         this.biomeWeight = 2;
         this.stabilityWeight = 15;
-        this.waterDepthWeight = 40;
-        this.nearWaterCost = 40;
+        this.waterDepthWeight = 80;
+        this.nearWaterCost = 80;
+        this.waterProximityCost = 20;
         this.heuristicWeight = 15.0;
         this.deviationWeight = 0.5;
     }
@@ -306,20 +314,34 @@ public final class ModConfig {
             waterDepthWeight = 0;
         if (nearWaterCost < 0)
             nearWaterCost = 0;
+        if (waterProximityCost < 0)
+            waterProximityCost = 0;
         if (heuristicWeight < 0)
             heuristicWeight = 0;
         if (deviationWeight < 0)
             deviationWeight = 0;
 
         // 路边结构配置校验
-        if (roadsideStructureInterval < 1)
-            roadsideStructureInterval = 1;
-        if (roadsideStructureInterval > 256)
-            roadsideStructureInterval = 256;
-        if (roadsideStructureChance < 0f)
-            roadsideStructureChance = 0f;
-        if (roadsideStructureChance > 1f)
-            roadsideStructureChance = 1f;
+        if (maxStructuresPerRoad < 0)
+            maxStructuresPerRoad = 0;
+        if (maxStructuresPerRoad > 20)
+            maxStructuresPerRoad = 20;
+        if (minStructureSpacing < 1)
+            minStructureSpacing = 1;
+        if (minStructureSpacing > 256)
+            minStructureSpacing = 256;
+        if (smallStructureOffset < 1)
+            smallStructureOffset = 1;
+        if (smallStructureOffset > 64)
+            smallStructureOffset = 64;
+        if (mediumStructureOffset < 1)
+            mediumStructureOffset = 1;
+        if (mediumStructureOffset > 64)
+            mediumStructureOffset = 64;
+        if (largeStructureOffset < 1)
+            largeStructureOffset = 1;
+        if (largeStructureOffset > 64)
+            largeStructureOffset = 64;
 
         // 结构距离控制校验
         if (structureRoadOffset < 0)
@@ -473,6 +495,9 @@ public final class ModConfig {
     public int nearWaterCost() { return nearWaterCost; }
     public void setNearWaterCost(int v) { this.nearWaterCost = v; }
 
+    public int waterProximityCost() { return waterProximityCost; }
+    public void setWaterProximityCost(int v) { this.waterProximityCost = v; }
+
     public double heuristicWeight() { return heuristicWeight; }
     public void setHeuristicWeight(double v) { this.heuristicWeight = v; }
 
@@ -483,11 +508,20 @@ public final class ModConfig {
     public boolean roadsideStructuresEnabled() { return roadsideStructuresEnabled; }
     public void setRoadsideStructuresEnabled(boolean v) { this.roadsideStructuresEnabled = v; }
 
-    public int roadsideStructureInterval() { return roadsideStructureInterval; }
-    public void setRoadsideStructureInterval(int v) { this.roadsideStructureInterval = v; }
+    public int maxStructuresPerRoad() { return maxStructuresPerRoad; }
+    public void setMaxStructuresPerRoad(int v) { this.maxStructuresPerRoad = Math.max(0, v); }
 
-    public float roadsideStructureChance() { return roadsideStructureChance; }
-    public void setRoadsideStructureChance(float v) { this.roadsideStructureChance = v; }
+    public int minStructureSpacing() { return minStructureSpacing; }
+    public void setMinStructureSpacing(int v) { this.minStructureSpacing = Math.max(1, v); }
+
+    public int smallStructureOffset() { return smallStructureOffset; }
+    public void setSmallStructureOffset(int v) { this.smallStructureOffset = Math.max(1, v); }
+
+    public int mediumStructureOffset() { return mediumStructureOffset; }
+    public void setMediumStructureOffset(int v) { this.mediumStructureOffset = Math.max(1, v); }
+
+    public int largeStructureOffset() { return largeStructureOffset; }
+    public void setLargeStructureOffset(int v) { this.largeStructureOffset = Math.max(1, v); }
 
     // 结构距离控制存取
     public int structureRoadOffset() { return structureRoadOffset; }

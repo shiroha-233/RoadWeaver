@@ -1,15 +1,19 @@
 package net.shiroha233.roadweaver.structures.roadside;
 
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Holder;
+import net.minecraft.core.Vec3i;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.WorldGenLevel;
+import net.minecraft.world.level.biome.Biome;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.Rotation;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.levelgen.Heightmap;
 import net.shiroha233.roadweaver.config.ModConfig;
 import net.shiroha233.roadweaver.structures.StructureSystem;
-import net.shiroha233.roadweaver.structures.api.StructureBlueprint;
 import net.shiroha233.roadweaver.structures.pipeline.StructurePlacer;
 
 import java.util.List;
@@ -18,37 +22,33 @@ import java.util.List;
  * 路边结构放置服务
  * 
  * 职责：
- * 1. 根据道路段信息，决定在哪些位置放置路边结构
- * 2. 随机选择结构类型
- * 3. 计算放置位置（路侧偏移）和朝向（面向道路）
- * 4. 直接使用 WorldGenLevel 放置结构模板
- * 5. 通过结构索引检查间距，防止重复放置
+ * 1. 根据群系和道路长度选择可放置的结构类型（硬编码规则）
+ * 2. 根据配置控制每条道路的最大结构数和最小间距
+ * 3. 根据结构规模使用配置的距离偏移
+ * 4. 计算放置位置和朝向
  * 
  * 设计说明：
- * - 路边结构应该在道路两侧随机出现，不是每个路段都有
- * - 使用概率控制密度，通过配置调整
- * - 检查最小间距，避免结构过于密集
- * - 直接使用 WorldGenLevel 放置（而非 StructurePlacer），避免在 Feature 阶段死锁
+ * - 群系限制和道路长度限制是硬编码的（RoadsidePlacementRule）
+ * - 结构数量和间距通过配置界面调整（ModConfig）
+ * - 使用 RoadPlacementContext 跟踪单条道路的放置状态
  */
 public final class RoadsideStructureService {
     private RoadsideStructureService() {}
     
-    // 路边结构距离道路中心线的基础偏移（格）
-    // 增大此值让结构离道路更远
-    private static final int BASE_SIDE_OFFSET = 8;
-    // 额外的随机偏移范围（结构可能在 BASE + 0 ~ BASE + RANDOM 之间）
-    private static final int RANDOM_OFFSET_RANGE = 4;
+    // 额外的随机偏移范围
+    private static final int RANDOM_OFFSET_RANGE = 3;
     
     /**
      * 尝试在指定路段旁放置路边结构
      * 
-     * @param world       世界（用于高度采样和检查）
-     * @param server      服务端世界（用于实际放置）
+     * @param world       世界
+     * @param server      服务端世界
      * @param middlePos   路段中心位置
-     * @param prevPos     前一个路段位置（用于计算方向）
-     * @param nextPos     后一个路段位置（用于计算方向）
+     * @param prevPos     前一个路段位置
+     * @param nextPos     后一个路段位置
      * @param roadWidth   道路宽度
-     * @param segmentIndex 路段索引（用于控制放置频率）
+     * @param roadLength  道路总长度（路段数）
+     * @param ctx         道路放置上下文
      * @param random      随机源
      * @param cfg         模组配置
      * @return 如果成功放置则返回 true
@@ -59,7 +59,8 @@ public final class RoadsideStructureService {
                                    BlockPos prevPos,
                                    BlockPos nextPos,
                                    int roadWidth,
-                                   int segmentIndex,
+                                   int roadLength,
+                                   RoadPlacementContext ctx,
                                    RandomSource random,
                                    ModConfig cfg) {
         // 检查是否启用路边结构
@@ -67,16 +68,19 @@ public final class RoadsideStructureService {
             return false;
         }
         
-        // 概率检查：不是每个路段都放置结构
-        int interval = Math.max(1, cfg.roadsideStructureInterval());
-        if (segmentIndex % interval != 0) {
+        // 检查是否达到每条路的最大结构数
+        if (ctx.isMaxReached(cfg.maxStructuresPerRoad())) {
             return false;
         }
         
-        // 额外的随机概率
-        float chance = Math.max(0f, Math.min(1f, cfg.roadsideStructureChance()));
-        if (random.nextFloat() > chance) {
-            return false;
+        // 获取当前位置的群系分类
+        Holder<Biome> biome = world.getBiome(middlePos);
+        BiomeCategory biomeCategory = BiomeCategory.fromBiome(biome);
+        
+        // 根据群系和道路长度过滤后，按权重选择结构类型
+        RoadsideType type = RoadsideType.chooseWeightedFiltered(random, biomeCategory, roadLength);
+        if (type == null) {
+            return false;  // 当前条件下没有可放置的结构
         }
         
         // 计算道路方向向量
@@ -84,15 +88,11 @@ public final class RoadsideStructureService {
         int dz = nextPos.getZ() - prevPos.getZ();
         double len = Math.sqrt((double) dx * dx + (double) dz * dz);
         if (len < 0.001) {
-            return false;  // 方向不明确，跳过
+            return false;
         }
         
-        // 归一化方向向量
         double dirX = dx / len;
         double dirZ = dz / len;
-        
-        // 计算垂直于道路的向量（正交向量）
-        // 如果道路方向是 (dirX, dirZ)，则垂直方向是 (-dirZ, dirX)
         double orthoX = -dirZ;
         double orthoZ = dirX;
         
@@ -100,59 +100,92 @@ public final class RoadsideStructureService {
         boolean leftSide = random.nextBoolean();
         double sideMultiplier = leftSide ? 1.0 : -1.0;
         
-        // 计算侧向偏移距离
+        // 根据结构规模获取配置的侧向偏移
         int halfWidth = Math.max(1, roadWidth / 2);
-        int sideOffset = BASE_SIDE_OFFSET + halfWidth + random.nextInt(RANDOM_OFFSET_RANGE + 1);
+        int sideOffset = halfWidth + getOffsetForScale(type.scale(), cfg) 
+                       + random.nextInt(RANDOM_OFFSET_RANGE + 1);
         
         // 计算放置位置
         int placeX = middlePos.getX() + (int) Math.round(orthoX * sideOffset * sideMultiplier);
         int placeZ = middlePos.getZ() + (int) Math.round(orthoZ * sideOffset * sideMultiplier);
         
-        // 获取地表高度
-        int placeY = world.getHeight(Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, placeX, placeZ);
+        // 采样地面高度
+        Vec3i sizeHint = type.sizeHint();
+        int halfSizeX = sizeHint.getX() / 2;
+        int halfSizeZ = sizeHint.getZ() / 2;
+        int[] sampleHeights = sampleGroundHeights(world, placeX, placeZ, halfSizeX, halfSizeZ);
+        int placeY = sampleHeights[0];
+        int slopeHeight = sampleHeights[0] - sampleHeights[1];
+        
+        StructureScale scale = type.scale();
+        
+        // 地形检查
+        if (slopeHeight > scale.maxSlope()) {
+            return false;
+        }
+        
         BlockPos placePos = new BlockPos(placeX, placeY, placeZ);
         
-        // 检查高度差：如果与道路高度差太大，不放置
+        // 检查是否在水上（禁止放置）
+        if (isOnWater(world, placeX, placeY, placeZ, halfSizeX, halfSizeZ)) {
+            return false;
+        }
+        
         int heightDiff = Math.abs(placeY - middlePos.getY());
-        if (heightDiff > 5) {
+        if (heightDiff > scale.maxHeightDiff()) {
             return false;
         }
         
-        // 随机选择结构类型
-        RoadsideType type = RoadsideType.chooseWeighted(random);
-        StructureBlueprint bp = RoadsideBlueprints.get(type);
-        if (bp == null) {
+        // 检查与已放置结构的间距（使用配置的最小间距）
+        if (!ctx.checkSpacing(placePos, cfg.minStructureSpacing())) {
             return false;
         }
         
-        // 检查最小间距（separation 表示与其他结构的最小距离）
-        int minDist = bp.spawnRule().separation();
-        if (StructureSystem.index(server).existsNear(placePos, minDist)) {
+        // 检查全局结构索引（防止与其他道路的结构重叠）
+        if (StructureSystem.index(server).existsNear(placePos, cfg.minStructureSpacing())) {
             return false;
         }
         
-        // 计算朝向：使结构面向道路
+        // 计算朝向
         Rotation rotation = calculateRotation(dirX, dirZ, leftSide, type.faceRoad());
         
-        // 使用统一的 StructurePlacer 放置结构
-        // withTerrace=true: 生成地形托盘
-        // noBasement=true: 路边结构不带底座
+        // 放置结构
         ResourceLocation templateId = type.templateId();
-        return StructurePlacer.placeSimple(world, server, templateId, placePos, rotation, 
-                                            true, true, random);
+        boolean placed = StructurePlacer.placeSimple(world, server, templateId, placePos, rotation,
+                                                      true, true, true, random);
+        
+        if (placed) {
+            ctx.recordPlacement(placePos);
+        }
+        
+        return placed;
     }
     
     /**
-     * 批量处理路段，尝试放置路边结构
+     * 根据结构规模获取配置的偏移距离
+     */
+    private static int getOffsetForScale(StructureScale scale, ModConfig cfg) {
+        return switch (scale) {
+            case SMALL -> cfg.smallStructureOffset();
+            case MEDIUM -> cfg.mediumStructureOffset();
+            case LARGE -> cfg.largeStructureOffset();
+        };
+    }
+    
+    /**
+     * 批量处理路段，尝试放置路边结构（独立使用）
      * 
-     * @param world          世界
-     * @param server         服务端世界
+     * 注意：RoadFeature 中使用 tryPlace + 外部检查间隔的方式，
+     * 此方法适用于独立调用场景。
+     * 
+     * @param world           世界
+     * @param server          服务端世界
      * @param middlePositions 所有路段中心位置列表
-     * @param roadWidth      道路宽度
-     * @param random         随机源
-     * @param cfg            配置
-     * @param startIndex     起始索引（跳过首尾段）
-     * @param endIndex       结束索引
+     * @param roadWidth       道路宽度
+     * @param random          随机源
+     * @param cfg             配置
+     * @param startIndex      起始索引
+     * @param endIndex        结束索引
      */
     public static void processSegments(WorldGenLevel world,
                                        ServerLevel server,
@@ -166,16 +199,43 @@ public final class RoadsideStructureService {
             return;
         }
         
+        int roadLength = middlePositions.size();
+        RoadPlacementContext ctx = new RoadPlacementContext(roadLength);
+        
         int safeStart = Math.max(2, startIndex);
         int safeEnd = Math.min(middlePositions.size() - 3, endIndex);
         
+        // 计算均匀分布的检查点
+        int checkInterval = calculateCheckInterval(safeEnd - safeStart, cfg.maxStructuresPerRoad());
+        
         for (int i = safeStart; i < safeEnd; i++) {
+            // 只在特定间隔检查放置
+            if ((i - safeStart) % checkInterval != 0) {
+                continue;
+            }
+            
+            // 已达到最大数量，停止
+            if (ctx.isMaxReached(cfg.maxStructuresPerRoad())) {
+                break;
+            }
+            
             BlockPos middle = middlePositions.get(i);
             BlockPos prev = middlePositions.get(i - 2);
             BlockPos next = middlePositions.get(i + 2);
             
-            tryPlace(world, server, middle, prev, next, roadWidth, i, random, cfg);
+            tryPlace(world, server, middle, prev, next, roadWidth, roadLength, ctx, random, cfg);
         }
+    }
+    
+    /**
+     * 计算检查间隔，使结构在道路上均匀分布
+     */
+    private static int calculateCheckInterval(int totalSegments, int maxStructures) {
+        if (maxStructures <= 0 || totalSegments <= 0) {
+            return Integer.MAX_VALUE;
+        }
+        // 为了放置 N 个结构，将道路分成 N+1 段，在每段中间检查
+        return Math.max(1, totalSegments / (maxStructures + 1));
     }
     
     /**
@@ -220,5 +280,55 @@ public final class RoadsideStructureService {
                 return dirZ > 0 ? Rotation.COUNTERCLOCKWISE_90 : Rotation.CLOCKWISE_90;
             }
         }
+    }
+    
+    /**
+     * 生成 5 点采样偏移（中心 + 四角）
+     */
+    private static int[][] getSampleOffsets(int halfX, int halfZ) {
+        return new int[][] {
+            {0, 0},
+            {-halfX, -halfZ},
+            {halfX, -halfZ},
+            {-halfX, halfZ},
+            {halfX, halfZ}
+        };
+    }
+    
+    /**
+     * 采样结构底部区域的地面高度
+     * @return [0]=最高点, [1]=最低点
+     */
+    private static int[] sampleGroundHeights(WorldGenLevel world, int centerX, int centerZ, int halfX, int halfZ) {
+        int maxY = Integer.MIN_VALUE;
+        int minY = Integer.MAX_VALUE;
+        
+        for (int[] offset : getSampleOffsets(halfX, halfZ)) {
+            int x = centerX + offset[0];
+            int z = centerZ + offset[1];
+            int y = world.getHeight(Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, x, z);
+            maxY = Math.max(maxY, y);
+            minY = Math.min(minY, y);
+        }
+        
+        return new int[]{maxY, minY};
+    }
+    
+    /**
+     * 检查放置位置是否在水上
+     */
+    private static boolean isOnWater(WorldGenLevel world, int centerX, int centerY, int centerZ, int halfX, int halfZ) {
+        for (int[] offset : getSampleOffsets(halfX, halfZ)) {
+            int x = centerX + offset[0];
+            int z = centerZ + offset[1];
+            // 检查放置高度及其下方是否有水
+            for (int dy = 0; dy >= -2; dy--) {
+                BlockState state = world.getBlockState(new BlockPos(x, centerY + dy, z));
+                if (state.is(Blocks.WATER) || state.getFluidState().isSource()) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 }

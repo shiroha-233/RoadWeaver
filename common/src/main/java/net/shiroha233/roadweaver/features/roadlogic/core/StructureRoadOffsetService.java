@@ -136,21 +136,25 @@ public final class StructureRoadOffsetService {
     private static StructureCategory detectCategory(ServerLevel level, BlockPos endpoint) {
         if (!Level.OVERWORLD.equals(level.dimension())) return StructureCategory.UNKNOWN;
 
-        // 只在当前端点所在区块附近做一次小范围结构预测，避免大范围扫描
+        // 扩大搜索范围：搜索端点所在区块及周围 1 格区块（共 3x3 区块）
+        // 这样可以处理端点与结构中心不在同一区块的边界情况
         int cx = endpoint.getX() >> 4;
         int cz = endpoint.getZ() >> 4;
+        int searchRadius = 1; // 搜索半径（区块）
 
         List<Records.StructureInfo> infos = StructurePredictor.predictOverworldStructuresInRect(
                 level,
-                cx, cz,
-                cx, cz,
+                cx - searchRadius, cz - searchRadius,
+                cx + searchRadius, cz + searchRadius,
                 true,
                 java.util.List.of("#minecraft:village"),
                 java.util.List.of()
         );
         if (infos == null || infos.isEmpty()) return StructureCategory.UNKNOWN;
 
-        long tol2 = (long) MATCH_TOLERANCE_BLOCKS * (long) MATCH_TOLERANCE_BLOCKS;
+        // 扩大容差范围，适应 A* 网格对齐后的偏移
+        int tolerance = Math.max(MATCH_TOLERANCE_BLOCKS, ConfigService.get().aStarStep() + 8);
+        long tol2 = (long) tolerance * (long) tolerance;
         for (Records.StructureInfo info : infos) {
             BlockPos p = info.pos();
             long dx = (long) p.getX() - endpoint.getX();

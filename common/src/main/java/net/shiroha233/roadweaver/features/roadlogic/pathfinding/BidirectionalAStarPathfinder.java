@@ -75,11 +75,11 @@ final class BidirectionalAStarPathfinder {
 
             Meet meet;
             if (expandForward) {
-                meet = expandOneSide(openF, nodesF, closedF, nodesB,
-                        startGround, endGround, level, cache, neighborOffsets, d, cfg);
+                meet = expandOneSide(openF, nodesF, closedF, nodesB, closedB, nodesB,
+                        true, startGround, endGround, level, cache, neighborOffsets, d, cfg);
             } else {
-                meet = expandOneSide(openB, nodesB, closedB, nodesF,
-                        endGround, startGround, level, cache, neighborOffsets, d, cfg);
+                meet = expandOneSide(openB, nodesB, closedB, nodesF, closedF, nodesF,
+                        false, endGround, startGround, level, cache, neighborOffsets, d, cfg);
             }
 
             if (meet != null) {
@@ -95,6 +95,9 @@ final class BidirectionalAStarPathfinder {
             Map<BlockPos, Node> nodesThis,
             Set<BlockPos> closedThis,
             Map<BlockPos, Node> nodesOther,
+            Set<BlockPos> closedOther,
+            Map<BlockPos, Node> closedOtherNodes,
+            boolean isForward,
             BlockPos from,
             BlockPos to,
             ServerLevel level,
@@ -109,7 +112,8 @@ final class BidirectionalAStarPathfinder {
             return null;
 
         closedThis.add(current.pos);
-        nodesThis.remove(current.pos);
+        // 保留已关闭节点的引用，供对方搜索检测相遇
+        // nodesThis.remove(current.pos); // 不再移除，保留供相遇检测
 
         for (int[] off : neighborOffsets) {
             if (Thread.currentThread().isInterrupted()) {
@@ -160,10 +164,16 @@ final class BidirectionalAStarPathfinder {
             nodesThis.put(np, next);
             open.add(next);
 
+            // 检测相遇：检查对方的 openSet 和 closedSet
             Node other = nodesOther.get(np);
+            if (other == null && closedOther.contains(np)) {
+                other = closedOtherNodes.get(np);
+            }
             if (other != null) {
-                // 在该位置两侧搜索相遇
-                if (isFromForward(from, to, next, other)) {
+                // isForward 表示当前是否为前向搜索
+                // 前向搜索时：next=前向节点，other=反向节点
+                // 反向搜索时：next=反向节点，other=前向节点
+                if (isForward) {
                     return new Meet(next, other);
                 } else {
                     return new Meet(other, next);
@@ -172,19 +182,6 @@ final class BidirectionalAStarPathfinder {
         }
 
         return null;
-    }
-
-    private static boolean isFromForward(BlockPos from, BlockPos to, Node a, Node b) {
-        // 通过与起点/终点的距离判断哪一侧更接近 from，
-        // 用于决定哪一个视作“前向”节点，哪一个视作“反向”节点。
-        int da = manhattan2d(a.pos, from);
-        int db = manhattan2d(b.pos, from);
-        if (da != db)
-            return da <= db;
-        // 若距离相同，则用到终点的距离作为次要判断，保持稳定性
-        int ea = manhattan2d(a.pos, to);
-        int eb = manhattan2d(b.pos, to);
-        return ea <= eb;
     }
 
     private static List<Records.RoadSegmentPlacement> reconstructPath(Node meetForward,
@@ -201,24 +198,18 @@ final class BidirectionalAStarPathfinder {
         }
         Collections.reverse(rawPath);
 
-        // 2. 从反向搜索链表回溯到终点，注意跳过重复的会合节点
-        List<BlockPos> backward = new ArrayList<>();
-        Node backStart = (meetBackward != null && meetBackward.pos.equals(meetForward.pos)) ? meetBackward.parent
-                : meetBackward;
+        // 2. 从反向搜索的会合节点沿 parent 链回溯到终点
+        // 注意：反向搜索的 parent 链方向是 会合点 → 终点，所以收集后直接添加即可
+        Node backStart = (meetBackward != null && meetBackward.pos.equals(meetForward.pos)) 
+                ? meetBackward.parent : meetBackward;
         cur = backStart;
         while (cur != null) {
-            backward.add(cur.pos);
+            rawPath.add(cur.pos);
             cur = cur.parent;
         }
-        Collections.reverse(backward);
-        rawPath.addAll(backward);
 
         // 3. 交给 PathPostProcessor 做样条平滑和宽度填充
         return PathPostProcessor.process(rawPath, width, level, cache);
-    }
-
-    private static int manhattan2d(BlockPos a, BlockPos b) {
-        return Math.abs(a.getX() - b.getX()) + Math.abs(a.getZ() - b.getZ());
     }
 
     private static double heuristic(BlockPos a, BlockPos b, net.shiroha233.roadweaver.config.ModConfig cfg) {

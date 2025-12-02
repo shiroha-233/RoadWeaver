@@ -92,32 +92,33 @@ public class ForgeWorldDataProvider extends WorldDataProvider {
 
         @Override
         public CompoundTag save(CompoundTag tag) {
+            Objects.requireNonNull(tag);
             DynamicOps<Tag> ops = NbtOps.INSTANCE;
 
             // 结构位置（Record 编码为 CompoundTag）
             Records.StructureLocationData.CODEC.encodeStart(ops, structureLocations)
                     .result()
-                    .ifPresent(nbt -> tag.put(KEY_LOCATIONS, nbt));
+                    .ifPresent(nbt -> tag.put(KEY_LOCATIONS, Objects.requireNonNull(nbt)));
 
             // 结构连接（List 编码为 ListTag）
             Codec.list(Records.StructureConnection.CODEC).encodeStart(ops, connections)
                     .result()
-                    .ifPresent(nbt -> tag.put(KEY_CONNECTIONS, nbt));
+                    .ifPresent(nbt -> tag.put(KEY_CONNECTIONS, Objects.requireNonNull(nbt)));
 
             // 结构实例列表
             StructureInstance.CODEC.listOf().encodeStart(ops, structureInstances)
                     .result()
-                    .ifPresent(nbt -> tag.put(KEY_INSTANCES, nbt));
+                    .ifPresent(nbt -> tag.put(KEY_INSTANCES, Objects.requireNonNull(nbt)));
 
             // 遗留道路数据列表不再保存
 
             Codec.list(Codec.LONG).encodeStart(ops, new java.util.ArrayList<>(plannedTileKeys))
                     .result()
-                    .ifPresent(nbt -> tag.put(KEY_PLANNED_TILES, nbt));
+                    .ifPresent(nbt -> tag.put(KEY_PLANNED_TILES, Objects.requireNonNull(nbt)));
 
             Codec.unboundedMap(Codec.LONG, Codec.LONG).encodeStart(ops, plannedTileCenters)
                     .result()
-                    .ifPresent(nbt -> tag.put(KEY_PLANNED_TILE_CENTERS, nbt));
+                    .ifPresent(nbt -> tag.put(KEY_PLANNED_TILE_CENTERS, Objects.requireNonNull(nbt)));
 
             return tag;
         }

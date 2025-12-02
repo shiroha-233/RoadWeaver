@@ -99,6 +99,12 @@ public class RoadFeature extends Feature<RoadFeatureConfig> {
         int deckY = server.getSeaLevel() + cfg.bridgeDeckClearance();
         int segmentIndex = 0;
         BridgeSegmentPlanner.Context bridgeCtx = BridgeSegmentPlanner.newContext();
+        // 路边结构放置上下文：每条道路共享，用于限制最大结构数
+        int roadLength = segments.size();
+        net.shiroha233.roadweaver.structures.roadside.RoadPlacementContext roadsideCtx = 
+                new net.shiroha233.roadweaver.structures.roadside.RoadPlacementContext(roadLength);
+        // 计算路边结构检查间隔，使结构均匀分布
+        int roadsideCheckInterval = calculateRoadsideCheckInterval(roadLength, cfg.maxStructuresPerRoad());
         for (int i = 2; i < segments.size() - 2; i++) {
             BlockPos middle = middlePositions.get(i);
             if (!processedMiddle.add(middle)) continue;
@@ -140,13 +146,27 @@ public class RoadFeature extends Feature<RoadFeatureConfig> {
                 );
             }
 
-            // 尝试放置路边结构（只在非桥梁段）
-            if (!isBridge[i]) {
-                RoadsideStructureService.tryPlace(
-                        world, server, middle, prev, next,
-                        roadWidth, segmentIndex, random, cfg
-                );
+            // 尝试放置路边结构（只在非桥梁段，且在检查间隔点）
+            if (!isBridge[i] && segmentIndex % roadsideCheckInterval == 0) {
+                // 已达到最大数量则跳过
+                if (!roadsideCtx.isMaxReached(cfg.maxStructuresPerRoad())) {
+                    RoadsideStructureService.tryPlace(
+                            world, server, middle, prev, next,
+                            roadWidth, roadLength, roadsideCtx, random, cfg
+                    );
+                }
             }
         }
+    }
+    
+    /**
+     * 计算路边结构检查间隔，使结构均匀分布
+     */
+    private static int calculateRoadsideCheckInterval(int roadLength, int maxStructures) {
+        if (maxStructures <= 0 || roadLength <= 0) {
+            return Integer.MAX_VALUE;
+        }
+        // 将道路分成 maxStructures+1 段，在每段检查放置
+        return Math.max(1, roadLength / (maxStructures + 1));
     }
 }

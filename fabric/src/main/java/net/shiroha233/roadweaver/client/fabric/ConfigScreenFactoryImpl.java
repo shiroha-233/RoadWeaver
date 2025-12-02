@@ -356,21 +356,48 @@ public class ConfigScreenFactoryImpl {
                                                 .build());
                 roadsideStructures.addEntry(
                                 eb.startIntField(
-                                                Component.translatable("config.roadweaver.roadside_structure_interval"),
-                                                conf.roadsideStructureInterval())
+                                                Component.translatable("config.roadweaver.max_structures_per_road"),
+                                                conf.maxStructuresPerRoad())
                                                 .setTooltip(Component.translatable(
-                                                                "config.roadweaver.roadside_structure_interval.tooltip"))
-                                                .setMin(1).setMax(256)
-                                                .setSaveConsumer(conf::setRoadsideStructureInterval)
+                                                                "config.roadweaver.max_structures_per_road.tooltip"))
+                                                .setMin(0).setMax(20)
+                                                .setSaveConsumer(conf::setMaxStructuresPerRoad)
                                                 .build());
                 roadsideStructures.addEntry(
-                                eb.startFloatField(
-                                                Component.translatable("config.roadweaver.roadside_structure_chance"),
-                                                conf.roadsideStructureChance())
+                                eb.startIntField(
+                                                Component.translatable("config.roadweaver.min_structure_spacing"),
+                                                conf.minStructureSpacing())
                                                 .setTooltip(Component.translatable(
-                                                                "config.roadweaver.roadside_structure_chance.tooltip"))
-                                                .setMin(0f).setMax(1f)
-                                                .setSaveConsumer(conf::setRoadsideStructureChance)
+                                                                "config.roadweaver.min_structure_spacing.tooltip"))
+                                                .setMin(1).setMax(256)
+                                                .setSaveConsumer(conf::setMinStructureSpacing)
+                                                .build());
+                roadsideStructures.addEntry(
+                                eb.startIntField(
+                                                Component.translatable("config.roadweaver.small_structure_offset"),
+                                                conf.smallStructureOffset())
+                                                .setTooltip(Component.translatable(
+                                                                "config.roadweaver.small_structure_offset.tooltip"))
+                                                .setMin(1).setMax(64)
+                                                .setSaveConsumer(conf::setSmallStructureOffset)
+                                                .build());
+                roadsideStructures.addEntry(
+                                eb.startIntField(
+                                                Component.translatable("config.roadweaver.medium_structure_offset"),
+                                                conf.mediumStructureOffset())
+                                                .setTooltip(Component.translatable(
+                                                                "config.roadweaver.medium_structure_offset.tooltip"))
+                                                .setMin(1).setMax(64)
+                                                .setSaveConsumer(conf::setMediumStructureOffset)
+                                                .build());
+                roadsideStructures.addEntry(
+                                eb.startIntField(
+                                                Component.translatable("config.roadweaver.large_structure_offset"),
+                                                conf.largeStructureOffset())
+                                                .setTooltip(Component.translatable(
+                                                                "config.roadweaver.large_structure_offset.tooltip"))
+                                                .setMin(1).setMax(64)
+                                                .setSaveConsumer(conf::setLargeStructureOffset)
                                                 .build());
 
                 ConfigCategory genPerformance = builder.getOrCreateCategory(
@@ -520,6 +547,15 @@ public class ConfigScreenFactoryImpl {
                                                                 "config.roadweaver.near_water_cost.tooltip"))
                                                 .setMin(0)
                                                 .setSaveConsumer(conf::setNearWaterCost)
+                                                .build());
+
+                pathfindingCosts.addEntry(
+                                eb.startIntField(Component.translatable("config.roadweaver.water_proximity_cost"),
+                                                conf.waterProximityCost())
+                                                .setTooltip(Component.translatable(
+                                                                "config.roadweaver.water_proximity_cost.tooltip"))
+                                                .setMin(0)
+                                                .setSaveConsumer(conf::setWaterProximityCost)
                                                 .build());
 
                 pathfindingCosts.addEntry(

@@ -11,6 +11,8 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
+import java.util.Objects;
+
 @Mixin(LevelLoadingScreen.class)
 public abstract class LevelLoadingScreenMixin {
     @Inject(method = "render", at = @At("TAIL"))
@@ -31,10 +33,10 @@ public abstract class LevelLoadingScreenMixin {
         int sw = mc.getWindow().getGuiScaledWidth();
         int sh = mc.getWindow().getGuiScaledHeight();
 
-        Component title = Component.translatable("gui.roadweaver.initgen.title");
-        Component summary = Component.translatable("gui.roadweaver.initgen.summary", total, generating, done,
-                failed);
-        Component progress = Component.translatable("gui.roadweaver.initgen.progress", done, total, percent);
+        Component title = Objects.requireNonNull(Component.translatable("gui.roadweaver.initgen.title"));
+        Component summary = Objects.requireNonNull(Component.translatable("gui.roadweaver.initgen.summary", total, generating, done,
+                failed));
+        Component progress = Objects.requireNonNull(Component.translatable("gui.roadweaver.initgen.progress", done, total, percent));
 
         int y = sh - 60;
 

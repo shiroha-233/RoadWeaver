@@ -112,24 +112,10 @@ public final class RoadsideBlueprints {
      * - avoidRadius: 避让半径（0=不避让）
      */
     private static SpawnRule createSpawnRule(RoadsideType type) {
-        // 根据结构类型设置不同的间距
-        int spacing;     // 同类型之间的间距
-        int separation;  // 与其他结构的间距
-        
-        switch (type) {
-            case BENCH -> {
-                spacing = 64;      // 长椅之间至少 64 格
-                separation = 16;   // 与任意结构至少 16 格
-            }
-            case CAMPFIRE -> {
-                spacing = 96;      // 营火之间至少 96 格
-                separation = 24;   // 与任意结构至少 24 格
-            }
-            default -> {
-                spacing = 48;
-                separation = 12;
-            }
-        }
+        // 使用结构规模的默认间距（添加新结构时无需修改此处）
+        StructureScale scale = type.scale();
+        int spacing = scale.defaultSpacing();
+        int separation = scale.defaultSeparation();
         
         return new SpawnRule(
                 Collections.emptySet(),  // dimensionAllow: 允许的维度（空=全部）

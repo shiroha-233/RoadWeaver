@@ -152,6 +152,13 @@ public final class RoadPlanningService {
 
     public static CompletableFuture<Void> planRectAsync(ServerLevel level, int minBlockX, int minBlockZ, int maxBlockX, int maxBlockZ) {
         final long epoch = ThreadPoolManager.currentEpoch();
+        // 预先获取已有连接，用于增量规划时保持一致性
+        final List<Records.StructureConnection> existingSnapshot;
+        {
+            WorldDataProvider prov = WorldDataProvider.getInstance();
+            List<Records.StructureConnection> ex = prov.getStructureConnections(level);
+            existingSnapshot = ex != null ? new ArrayList<>(ex) : new ArrayList<>();
+        }
         return ComputeService.supplyAsync(() -> {
             if (Thread.currentThread().isInterrupted()) return new ArrayList<Records.StructureConnection>();
             if (!ThreadPoolManager.isEpoch(epoch)) return new ArrayList<Records.StructureConnection>();
@@ -163,7 +170,29 @@ public final class RoadPlanningService {
                 long key = PlanningUtils.pos2dKey(q);
                 if (seenPos.add(key)) points.add(q);
             }
+            // 将已有边的端点也纳入点集，确保 RNG/Delaunay 能看到全局拓扑
+            for (Records.StructureConnection c : existingSnapshot) {
+                BlockPos f = new BlockPos(c.from().getX(), 0, c.from().getZ());
+                BlockPos t = new BlockPos(c.to().getX(), 0, c.to().getZ());
+                long kf = PlanningUtils.pos2dKey(f);
+                long kt = PlanningUtils.pos2dKey(t);
+                if (seenPos.add(kf)) points.add(f);
+                if (seenPos.add(kt)) points.add(t);
+            }
             if (points.size() < 2) return new ArrayList<Records.StructureConnection>();
+            
+            // 收集矩形内的已有边
+            HashSet<BlockPos> inRect = new HashSet<>(points);
+            ArrayList<Records.StructureConnection> existingInRect = new ArrayList<>();
+            HashSet<Long> existingEdgeKeys = new HashSet<>();
+            for (Records.StructureConnection c : existingSnapshot) {
+                if (inRect.contains(new BlockPos(c.from().getX(), 0, c.from().getZ())) &&
+                    inRect.contains(new BlockPos(c.to().getX(), 0, c.to().getZ()))) {
+                    existingInRect.add(c);
+                    existingEdgeKeys.add(PlanningUtils.edgeKey(c.from(), c.to()));
+                }
+            }
+            
             List<Records.StructureConnection> primaryEdges;
             ModConfig cfg0 = ConfigService.get();
             if (cfg0.planningAlgorithm() == ModConfig.PlanningAlgorithm.DELAUNAY) {
@@ -173,10 +202,24 @@ public final class RoadPlanningService {
             } else {
                 primaryEdges = KNNPlanner.planKNN(points, 2, 2048, 1.8, 40.0, 2);
             }
-            if (primaryEdges.isEmpty()) return new ArrayList<Records.StructureConnection>();
-            List<Records.StructureConnection> base = new ArrayList<>(primaryEdges);
+            if (primaryEdges.isEmpty() && existingInRect.isEmpty()) return new ArrayList<Records.StructureConnection>();
+            
+            // 过滤掉与已有边冲突的新边（保持规划一致性）
+            ArrayList<Records.StructureConnection> filteredPrimary = new ArrayList<>();
+            for (Records.StructureConnection c : primaryEdges) {
+                long ek = PlanningUtils.edgeKey(c.from(), c.to());
+                // 只添加已有边中不存在的新边，避免重复
+                if (!existingEdgeKeys.contains(ek)) {
+                    filteredPrimary.add(c);
+                }
+            }
+            
+            // 将已有边和新边合并作为 base 进行连通性修复
+            ArrayList<Records.StructureConnection> base = new ArrayList<>(existingInRect);
+            base.addAll(filteredPrimary);
             List<Records.StructureConnection> bridges = KNNPlanner.connectComponents(points, base, 1536, 35.0, 3);
-            ArrayList<Records.StructureConnection> incoming = new ArrayList<>(primaryEdges);
+            
+            ArrayList<Records.StructureConnection> incoming = new ArrayList<>(filteredPrimary);
             incoming.addAll(bridges);
             return incoming;
         }).thenAccept(incoming -> {

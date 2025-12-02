@@ -41,6 +41,10 @@ public final class BeardedTerracePlacer {
     private static final int TRANSITION_RADIUS = 4;
     // 最小衰减阈值（低于此值不修改地形）
     private static final double MIN_CONTRIBUTION = 0.05;
+    // 小坑填补：在内环区域，向下检查并填补的最大深度
+    private static final int PIT_FILL_DEPTH = 3;
+    // 挖掘允许的最大深度（防止挖穿整座山）
+    private static final int MAX_CUT_DEPTH = 6;
     
     /**
      * 为结构生成地形托盘
@@ -82,11 +86,20 @@ public final class BeardedTerracePlacer {
                 // 获取当前地表高度
                 int groundY = world.getHeight(Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, x, z) - 1;
                 
-                // 在内环（结构区域内）：填充到目标高度
+                // 在内环（结构区域内）：双向适配 + 小坑填补
                 if (dist <= innerRadius) {
                     if (groundY < targetY) {
+                        // 地形低于目标：向上填充
                         fillColumnUp(world, x, z, groundY, targetY, random);
+                    } else if (groundY > targetY) {
+                        // 地形高于目标：向下挖掘（削平）
+                        int cutDepth = groundY - targetY;
+                        if (cutDepth <= MAX_CUT_DEPTH) {
+                            clearColumnDown(world, x, z, targetY + 1, groundY);
+                        }
                     }
+                    // 小坑填补：检查 targetY 以下是否有空洞，防止浮空
+                    fillPitBelow(world, x, z, targetY, random);
                     continue;
                 }
                 
@@ -102,15 +115,86 @@ public final class BeardedTerracePlacer {
                 // 计算目标高度（碗状：内高外低的平滑过渡）
                 int finalY = (int) Math.round(targetY * contribution + groundY * (1.0 - contribution));
                 
-                // 只向上填充，不向下削减
+                // 双向适配：填充或挖掘
                 if (finalY > groundY) {
                     fillColumnUp(world, x, z, groundY, finalY, random);
+                } else if (finalY < groundY) {
+                    int cutDepth = groundY - finalY;
+                    if (cutDepth <= MAX_CUT_DEPTH) {
+                        clearColumnDown(world, x, z, finalY + 1, groundY);
+                    }
                 }
             }
         }
         
         // 表层修复：将暴露在空气中的泥土替换为草方块
         // 这可以修复托盘侧面露出泥土的问题
+        fixExposedDirt(world, centerX, centerZ, searchRadius, targetY);
+    }
+    
+    /**
+     * 以指定中心点生成地形托盘（WorldGenLevel 版本，用于路边结构）
+     * 
+     * @param world       世界
+     * @param centerX     中心点 X
+     * @param centerZ     中心点 Z
+     * @param targetY     目标地面高度
+     * @param innerRadius 内环半径
+     * @param outerRadius 外环半径
+     * @param random      随机源
+     */
+    public static void buildTerraceByCenter(WorldGenLevel world, int centerX, int centerZ, int targetY,
+                                             int innerRadius, int outerRadius, RandomSource random) {
+        int searchRadius = outerRadius + 2;
+        
+        for (int x = centerX - searchRadius; x <= centerX + searchRadius; x++) {
+            for (int z = centerZ - searchRadius; z <= centerZ + searchRadius; z++) {
+                double dx = x - centerX;
+                double dz = z - centerZ;
+                double dist = Math.sqrt(dx * dx + dz * dz);
+                
+                if (dist > outerRadius) {
+                    continue;
+                }
+                
+                int groundY = world.getHeight(Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, x, z) - 1;
+                
+                // 内环：双向适配 + 小坑填补
+                if (dist <= innerRadius) {
+                    if (groundY < targetY) {
+                        fillColumnUp(world, x, z, groundY, targetY, random);
+                    } else if (groundY > targetY) {
+                        int cutDepth = groundY - targetY;
+                        if (cutDepth <= MAX_CUT_DEPTH) {
+                            clearColumnDown(world, x, z, targetY + 1, groundY);
+                        }
+                    }
+                    fillPitBelow(world, x, z, targetY, random);
+                    continue;
+                }
+                
+                // 过渡环：smoothstep 平滑
+                double t = (dist - innerRadius) / (outerRadius - innerRadius);
+                double smooth = smoothstep(t);
+                double contribution = 1.0 - smooth;
+                
+                if (contribution < MIN_CONTRIBUTION) {
+                    continue;
+                }
+                
+                int finalY = (int) Math.round(targetY * contribution + groundY * (1.0 - contribution));
+                
+                if (finalY > groundY) {
+                    fillColumnUp(world, x, z, groundY, finalY, random);
+                } else if (finalY < groundY) {
+                    int cutDepth = groundY - finalY;
+                    if (cutDepth <= MAX_CUT_DEPTH) {
+                        clearColumnDown(world, x, z, finalY + 1, groundY);
+                    }
+                }
+            }
+        }
+        
         fixExposedDirt(world, centerX, centerZ, searchRadius, targetY);
     }
     
@@ -150,11 +234,17 @@ public final class BeardedTerracePlacer {
                 // 获取当前地表高度
                 int groundY = level.getHeight(Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, x, z) - 1;
                 
-                // 在内环（结构区域内）：填充到目标高度
+                // 在内环（结构区域内）：双向适配 + 小坑填补
                 if (dist <= innerRadius) {
                     if (groundY < targetY) {
                         fillColumnUpGeneric(level, x, z, groundY, targetY, random);
+                    } else if (groundY > targetY) {
+                        int cutDepth = groundY - targetY;
+                        if (cutDepth <= MAX_CUT_DEPTH) {
+                            clearColumnDownGeneric(level, x, z, targetY + 1, groundY);
+                        }
                     }
+                    fillPitBelowGeneric(level, x, z, targetY, random);
                     continue;
                 }
                 
@@ -170,9 +260,14 @@ public final class BeardedTerracePlacer {
                 // 计算目标高度
                 int finalY = (int) Math.round(targetY * contribution + groundY * (1.0 - contribution));
                 
-                // 只向上填充，不向下削减
+                // 双向适配：填充或挖掘
                 if (finalY > groundY) {
                     fillColumnUpGeneric(level, x, z, groundY, finalY, random);
+                } else if (finalY < groundY) {
+                    int cutDepth = groundY - finalY;
+                    if (cutDepth <= MAX_CUT_DEPTH) {
+                        clearColumnDownGeneric(level, x, z, finalY + 1, groundY);
+                    }
                 }
             }
         }
@@ -285,6 +380,91 @@ public final class BeardedTerracePlacer {
     private static double smoothstep(double t) {
         t = Mth.clamp(t, 0.0, 1.0);
         return t * t * (3.0 - 2.0 * t);
+    }
+    
+    /**
+     * 向下挖掘地形列（削平高于目标的地形）
+     */
+    private static void clearColumnDown(WorldGenLevel world, int x, int z, int fromY, int toY) {
+        for (int y = fromY; y <= toY; y++) {
+            BlockPos pos = new BlockPos(x, y, z);
+            BlockState state = world.getBlockState(pos);
+            // 只清除自然方块，不破坏人工结构
+            if (isNaturalBlock(state)) {
+                world.setBlock(pos, Blocks.AIR.defaultBlockState(), 2);
+            }
+        }
+    }
+    
+    /**
+     * 通用版本：向下挖掘地形列
+     */
+    private static void clearColumnDownGeneric(LevelAccessor level, int x, int z, int fromY, int toY) {
+        for (int y = fromY; y <= toY; y++) {
+            BlockPos pos = new BlockPos(x, y, z);
+            BlockState state = level.getBlockState(pos);
+            if (isNaturalBlock(state)) {
+                level.setBlock(pos, Blocks.AIR.defaultBlockState(), 3);
+            }
+        }
+    }
+    
+    /**
+     * 填补目标高度以下的小坑（防止结构浮空）
+     */
+    private static void fillPitBelow(WorldGenLevel world, int x, int z, int targetY, RandomSource random) {
+        // 获取表层材质用于填充
+        BlockState surfaceState = world.getBlockState(new BlockPos(x, targetY, z));
+        BlockState fillState = getSuitableFillState(surfaceState);
+        
+        // 从 targetY 向下检查 PIT_FILL_DEPTH 格
+        for (int y = targetY; y > targetY - PIT_FILL_DEPTH; y--) {
+            BlockPos pos = new BlockPos(x, y, z);
+            BlockState state = world.getBlockState(pos);
+            // 如果是空气或可替换方块（水、草等），填充
+            if (state.isAir() || state.canBeReplaced()) {
+                world.setBlock(pos, fillState, 2);
+            } else {
+                // 遇到实心方块，停止向下检查
+                break;
+            }
+        }
+    }
+    
+    /**
+     * 通用版本：填补目标高度以下的小坑
+     */
+    private static void fillPitBelowGeneric(LevelAccessor level, int x, int z, int targetY, RandomSource random) {
+        BlockState surfaceState = level.getBlockState(new BlockPos(x, targetY, z));
+        BlockState fillState = getSuitableFillState(surfaceState);
+        
+        for (int y = targetY; y > targetY - PIT_FILL_DEPTH; y--) {
+            BlockPos pos = new BlockPos(x, y, z);
+            BlockState state = level.getBlockState(pos);
+            if (state.isAir() || state.canBeReplaced()) {
+                level.setBlock(pos, fillState, 3);
+            } else {
+                break;
+            }
+        }
+    }
+    
+    /**
+     * 判断是否为自然生成的方块（可被挖掘）
+     */
+    private static boolean isNaturalBlock(BlockState state) {
+        // 自然方块：泥土、石头、沙子、砂砾、草方块等
+        return state.is(Blocks.DIRT) || state.is(Blocks.GRASS_BLOCK) ||
+               state.is(Blocks.STONE) || state.is(Blocks.SAND) ||
+               state.is(Blocks.RED_SAND) || state.is(Blocks.GRAVEL) ||
+               state.is(Blocks.PODZOL) || state.is(Blocks.MYCELIUM) ||
+               state.is(Blocks.COARSE_DIRT) || state.is(Blocks.ROOTED_DIRT) ||
+               state.is(Blocks.ANDESITE) || state.is(Blocks.DIORITE) ||
+               state.is(Blocks.GRANITE) || state.is(Blocks.DEEPSLATE) ||
+               state.is(Blocks.TUFF) || state.is(Blocks.CALCITE) ||
+               state.is(Blocks.SNOW_BLOCK) || state.is(Blocks.SNOW) ||
+               state.is(Blocks.CLAY) || state.is(Blocks.MUD) ||
+               state.is(Blocks.PACKED_MUD) || state.is(Blocks.MUDDY_MANGROVE_ROOTS);
     }
     
     /**
