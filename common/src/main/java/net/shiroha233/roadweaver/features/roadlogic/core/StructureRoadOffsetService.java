@@ -126,9 +126,10 @@ public final class StructureRoadOffsetService {
      */
     public static int getOffsetBlocksForEndpoint(ServerLevel level, BlockPos endpoint) {
         StructureCategory cat = detectCategory(level, endpoint);
-        int configOffset = ConfigService.get().structureRoadOffset();
+        var cfg = ConfigService.get();
         return switch (cat) {
-            case VILLAGE -> configOffset;
+            case VILLAGE -> cfg.villageRoadOffset();
+            case OTHER -> cfg.otherStructureRoadOffset();
             default -> 0;
         };
     }
@@ -136,13 +137,14 @@ public final class StructureRoadOffsetService {
     private static StructureCategory detectCategory(ServerLevel level, BlockPos endpoint) {
         if (!Level.OVERWORLD.equals(level.dimension())) return StructureCategory.UNKNOWN;
 
-        // 扩大搜索范围：搜索端点所在区块及周围 1 格区块（共 3x3 区块）
-        // 这样可以处理端点与结构中心不在同一区块的边界情况
         int cx = endpoint.getX() >> 4;
         int cz = endpoint.getZ() >> 4;
-        int searchRadius = 1; // 搜索半径（区块）
+        int searchRadius = 1;
+        int tolerance = Math.max(MATCH_TOLERANCE_BLOCKS, ConfigService.get().aStarStep() + 8);
+        long tol2 = (long) tolerance * (long) tolerance;
 
-        List<Records.StructureInfo> infos = StructurePredictor.predictOverworldStructuresInRect(
+        // 先检测村庄
+        List<Records.StructureInfo> villageInfos = StructurePredictor.predictOverworldStructuresInRect(
                 level,
                 cx - searchRadius, cz - searchRadius,
                 cx + searchRadius, cz + searchRadius,
@@ -150,20 +152,41 @@ public final class StructureRoadOffsetService {
                 java.util.List.of("#minecraft:village"),
                 java.util.List.of()
         );
-        if (infos == null || infos.isEmpty()) return StructureCategory.UNKNOWN;
-
-        // 扩大容差范围，适应 A* 网格对齐后的偏移
-        int tolerance = Math.max(MATCH_TOLERANCE_BLOCKS, ConfigService.get().aStarStep() + 8);
-        long tol2 = (long) tolerance * (long) tolerance;
-        for (Records.StructureInfo info : infos) {
-            BlockPos p = info.pos();
-            long dx = (long) p.getX() - endpoint.getX();
-            long dz = (long) p.getZ() - endpoint.getZ();
-            long d2 = dx * dx + dz * dz;
-            if (d2 <= tol2) {
-                return StructureCategory.VILLAGE;
+        if (villageInfos != null && !villageInfos.isEmpty()) {
+            for (Records.StructureInfo info : villageInfos) {
+                BlockPos p = info.pos();
+                long dx = (long) p.getX() - endpoint.getX();
+                long dz = (long) p.getZ() - endpoint.getZ();
+                if (dx * dx + dz * dz <= tol2) {
+                    return StructureCategory.VILLAGE;
+                }
             }
         }
+
+        // 再检测其他结构（使用配置中的白名单）
+        var cfg = ConfigService.get();
+        List<String> whitelist = cfg.structureWhitelist();
+        if (whitelist != null && !whitelist.isEmpty()) {
+            List<Records.StructureInfo> otherInfos = StructurePredictor.predictOverworldStructuresInRect(
+                    level,
+                    cx - searchRadius, cz - searchRadius,
+                    cx + searchRadius, cz + searchRadius,
+                    true,
+                    whitelist,
+                    cfg.structureBlacklist()
+            );
+            if (otherInfos != null && !otherInfos.isEmpty()) {
+                for (Records.StructureInfo info : otherInfos) {
+                    BlockPos p = info.pos();
+                    long dx = (long) p.getX() - endpoint.getX();
+                    long dz = (long) p.getZ() - endpoint.getZ();
+                    if (dx * dx + dz * dz <= tol2) {
+                        return StructureCategory.OTHER;
+                    }
+                }
+            }
+        }
+
         return StructureCategory.UNKNOWN;
     }
 }

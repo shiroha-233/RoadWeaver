@@ -176,13 +176,33 @@ public class ConfigScreenFactoryImpl {
                                                 .setSaveConsumer(conf::setRoadWidth)
                                                 .build());
 
+                // 村庄缩进距离
                 roadGen.addEntry(
-                                eb.startIntField(Component.translatable("config.roadweaver.structure_road_offset"),
-                                                conf.structureRoadOffset())
+                                eb.startIntField(Component.translatable("config.roadweaver.village_road_offset"),
+                                                conf.villageRoadOffset())
                                                 .setTooltip(Component
-                                                                .translatable("config.roadweaver.structure_road_offset.tooltip"))
+                                                                .translatable("config.roadweaver.village_road_offset.tooltip"))
                                                 .setMin(0).setMax(256)
-                                                .setSaveConsumer(conf::setStructureRoadOffset)
+                                                .setSaveConsumer(conf::setVillageRoadOffset)
+                                                .build());
+
+                // 其他结构缩进距离
+                roadGen.addEntry(
+                                eb.startIntField(Component.translatable("config.roadweaver.other_structure_road_offset"),
+                                                conf.otherStructureRoadOffset())
+                                                .setTooltip(Component
+                                                                .translatable("config.roadweaver.other_structure_road_offset.tooltip"))
+                                                .setMin(0).setMax(256)
+                                                .setSaveConsumer(conf::setOtherStructureRoadOffset)
+                                                .build());
+
+                // 结构避让开关
+                roadGen.addEntry(
+                                eb.startBooleanToggle(Component.translatable("config.roadweaver.structure_avoidance_enabled"),
+                                                conf.structureAvoidanceEnabled())
+                                                .setTooltip(Component
+                                                                .translatable("config.roadweaver.structure_avoidance_enabled.tooltip"))
+                                                .setSaveConsumer(conf::setStructureAvoidanceEnabled)
                                                 .build());
 
                 roadGen.addEntry(

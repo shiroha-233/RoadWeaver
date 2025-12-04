@@ -1,7 +1,6 @@
 package net.shiroha233.roadweaver.features.decoration.system;
 
 import net.minecraft.core.BlockPos;
-import net.minecraft.tags.BlockTags;
 import net.minecraft.world.level.WorldGenLevel;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
@@ -9,8 +8,7 @@ import net.shiroha233.roadweaver.config.ModConfig;
 
 /**
  * 路面上方清障器。
- * 清除路面上方的植被和障碍物，但保留木头和栅栏（防止破坏玩家建筑）。
- * 注：树木通过 Mixin 在生成阶段就被阻止，此处仅处理残留植被。
+ * 清除路面上方所有障碍物（树木、植被、建筑等），确保道路畅通。
  */
 public final class AboveColumnClearer {
     private AboveColumnClearer() {}
@@ -27,14 +25,7 @@ public final class AboveColumnClearer {
             BlockState st = world.getBlockState(up);
             if (st.isAir()) continue;
 
-            // 保留木头和栅栏（防止破坏玩家建筑）
-            boolean isLog = st.is(BlockTags.LOGS);
-            boolean isFence = st.is(BlockTags.FENCES);
-            if (isLog || isFence) {
-                break;
-            }
-
-            // 清除其他方块（草、花、藤蔓、雪等）
+            // 清除路面上方所有障碍物（包括树木、植被等）
             world.setBlock(up, Blocks.AIR.defaultBlockState(), 3);
         }
     }

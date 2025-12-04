@@ -22,6 +22,7 @@ import net.shiroha233.roadweaver.features.decoration.system.DecorationExecutor;
 import net.shiroha233.roadweaver.features.roadlogic.bridge.BridgeRangeCalculator;
 import net.shiroha233.roadweaver.features.roadlogic.bridge.BridgeSegmentPlanner;
 import net.shiroha233.roadweaver.features.roadlogic.core.SegmentPaver;
+import net.shiroha233.roadweaver.features.roadlogic.core.StructureAvoidanceService;
 import net.shiroha233.roadweaver.features.roadlogic.surface.BridgeTransitionAdjuster;
 import net.shiroha233.roadweaver.features.roadlogic.surface.HeightProfileService;
 import net.shiroha233.roadweaver.structures.roadside.RoadsideStructureService;
@@ -121,6 +122,12 @@ public class RoadFeature extends Feature<RoadFeatureConfig> {
             int baseYForThis = (baseYArr != null ? baseYArr[i] : topYCenter);
 
             Records.RoadSegmentPlacement seg = segments.get(i);
+            
+            // 结构避让：检测路段中心点是否在结构内，如果是则跳过整个路段
+            if (StructureAvoidanceService.shouldAvoid(world, middle)) {
+                continue;
+            }
+            
             if (cfg.bridgeEnabled() && isBridge[i]) {
                 BridgeSegmentPlanner.processSegment(world, seg, middle, prev, next, roadWidth, baseYForThis, deckY, segmentIndex, random, cfg, bridgeRanges, baseYArr, i, bridgeCtx);
             } else {

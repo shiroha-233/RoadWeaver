@@ -55,6 +55,11 @@ public final class SegmentPaver {
             int y = heights[i];
             BlockPos pos = new BlockPos(widthBlock.getX(), y, widthBlock.getZ());
             
+            // 结构避让：跳过位于结构边界框内的方块
+            if (StructureAvoidanceService.shouldAvoid(world, pos)) {
+                continue;
+            }
+            
             // 选择材质
             List<BlockState> baseMats;
             if (roadType == 1) {

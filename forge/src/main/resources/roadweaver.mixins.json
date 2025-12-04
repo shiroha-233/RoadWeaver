@@ -5,10 +5,7 @@
     "compatibilityLevel": "JAVA_17",
     "mixins": [
         "MinecraftServerMixin",
-        "TreeFeatureMixin",
-        "HugeFungusFeatureMixin",
-        "HugeMushroomFeatureMixin",
-        "BambooFeatureMixin"
+        "GenericFeatureMixin"
     ],
     "client": [
         "CreateWorldScreenMixin",
