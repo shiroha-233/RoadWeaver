@@ -213,7 +213,7 @@
   "config.roadweaver.bridge_ramp_segments.tooltip": "桥面坡道段数。",
   "config.roadweaver.prevent_trees_on_road": "阻止道路上生成树木",
   "config.roadweaver.prevent_trees_on_road.tooltip": "开启后，树木和大型植物（竹子、巨型蘑菇等）不会在道路上或道路附近生成，避免道路切削造成的浮空树。",
-  "tip.roadweaver.loading.1": "按 H 打开 RoadWeaver 地图。",
+  "tip.roadweaver.loading.1": "按 %s 打开 RoadWeaver 地图。",
   "tip.roadweaver.loading.2": "你可以在 RoadWeaver 设置中配置初始规划半径。",
   "tip.roadweaver.loading.3": "较大的初始规划半径可能会显著降低新世界的创建速度。",
   "tip.roadweaver.loading.4": "初始加载是为了确保你进入世界时有完整的道路。",

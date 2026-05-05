@@ -4,6 +4,7 @@ import dev.architectury.platform.Platform;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
+import net.shiroha233.roadweaver.client.Util;
 import net.shiroha233.roadweaver.config.ConfigService;
 import net.shiroha233.roadweaver.config.ModConfig;
 
@@ -23,11 +24,12 @@ public final class LoadingTipsRenderer {
     private static final int TOP_WARNING_COLOR = 0xFFF6D365;
 
     private static final List<Component> TIPS = List.of(
-            Component.translatable("tip.roadweaver.loading.1"),
+            Component.translatable("tip.roadweaver.loading.1", Util.getKey("key.roadweaver.open_map").getTranslatedKeyMessage().getString()),
             Component.translatable("tip.roadweaver.loading.2"),
             Component.translatable("tip.roadweaver.loading.3"),
             Component.translatable("tip.roadweaver.loading.4"),
-            Component.translatable("tip.roadweaver.loading.5"));
+            Component.translatable("tip.roadweaver.loading.5")
+    );
 
     private static int currentIndex = 0;
     private static long lastSwitchTimeMillis = 0L;

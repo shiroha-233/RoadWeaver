@@ -204,7 +204,7 @@
   "config.roadweaver.bridge_keep_lamps.tooltip": "If enabled, keep road lamps/markers on bridge spans.",
   "config.roadweaver.bridge_ramp_segments": "Ramp Segments",
   "config.roadweaver.bridge_ramp_segments.tooltip": "Number of segments used to smoothly ramp from ground height to deck height at both bridge ends.",
-  "tip.roadweaver.loading.1": "Press H to open the RoadWeaver map.",
+  "tip.roadweaver.loading.1": "Press %s to open the RoadWeaver map.",
   "tip.roadweaver.loading.2": "You can configure the initial planning radius in the RoadWeaver settings.",
   "tip.roadweaver.loading.3": "A large initial planning radius may significantly slow down new world creation.",
   "tip.roadweaver.loading.4": "Initial loading is to ensure you have a complete road when entering the world.",
