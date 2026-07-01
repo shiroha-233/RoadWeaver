@@ -175,6 +175,9 @@ dependencies {
     // 联动兼容 动态的树 Dynamic Trees
     // 换成modCompileOnly可以临时关闭此mod的运行以测试非联动状态
     modImplementation("maven.modrinth:dynamictrees:${minecraft_version}-${dynamictrees_version}")
+
+    // Maven Artifact API - 比较模组版本和检测冲突模组
+    include('org.apache.maven:maven-artifact:3.9.6')
 }
 
 // Source JAR 组装（合并 common 源码）

@@ -1,11 +1,13 @@
 package net.shiroha233.roadweaver.client.tips;
 
+import dev.architectury.platform.Mod;
 import dev.architectury.platform.Platform;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
 import net.shiroha233.roadweaver.config.ConfigService;
 import net.shiroha233.roadweaver.config.ModConfig;
+import org.apache.maven.artifact.versioning.*;
 
 import java.util.List;
 
@@ -15,7 +17,6 @@ import java.util.List;
 public final class LoadingTipsRenderer {
 
     private static final long INTERVAL_MILLIS = 3000L;
-    private static final String TECTONIC_MOD_ID = "tectonic";
     private static final String OPEN_MAP_KEY = "key.roadweaver.open_map";
     private static final int TOP_WARNING_Y = 10;
     private static final int TOP_WARNING_PADDING_X = 6;
@@ -30,6 +31,37 @@ public final class LoadingTipsRenderer {
             Component.translatable("tip.roadweaver.loading.4"),
             Component.translatable("tip.roadweaver.loading.5")
     );
+
+    /**
+     * Specify which mod ID should be searched when detecting Tectonic mod conflict. This value should always be
+     * {@code tectonic} unless (very unlikely) the maintainers of Tectonic mod decides to change their mod ID.
+     */
+    private static final String TECTONIC_MOD_ID = "tectonic";
+
+    /**
+     * Specify which versions of Tectonic conflicts with this mod. Currently, any version above {@code 3.0.0} falls into
+     * this range.
+     */
+    private static final VersionRange TECTONIC_CONFLICT_VERSIONS;
+
+	static {
+		try {
+			TECTONIC_CONFLICT_VERSIONS = VersionRange.createFromVersionSpec("[3.0.0,)");
+		} catch (InvalidVersionSpecificationException e) {
+            // The version specification should be always valid! This code block should never be reached!
+			throw new RuntimeException(e);
+		}
+	}
+
+    /**
+     * {@code true} if detects Tectonic mod with version falls into {@link #TECTONIC_CONFLICT_VERSIONS} installed,
+     * {@code false} otherwise.
+     */
+	private static final boolean HAS_CONFLICT_TECTONIC = Platform.getOptionalMod(TECTONIC_MOD_ID)
+                                                             .map(Mod::getVersion)
+                                                             .map(DefaultArtifactVersion::new)
+                                                             .map(TECTONIC_CONFLICT_VERSIONS::containsVersion)
+                                                             .orElse(false); // If no Tectonic mod is installed, no conflict will happen
 
     private static int currentIndex = 0;
     private static long lastSwitchTimeMillis = 0L;
@@ -83,7 +115,7 @@ public final class LoadingTipsRenderer {
     }
 
     private static void renderTectonicWarning(GuiGraphics graphics, Minecraft mc) {
-        if (Platform.getOptionalMod(TECTONIC_MOD_ID).isEmpty()) {
+        if (!HAS_CONFLICT_TECTONIC) {
             return;
         }
 

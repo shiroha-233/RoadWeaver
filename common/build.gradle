@@ -1,4 +1,4 @@
- architectury {
+architectury {
     common("fabric", "forge")
 }
 
@@ -6,12 +6,14 @@ dependencies {
     // Architectury API（作为 mod 依赖以启用 Loom 重映射）
     modImplementation("dev.architectury:architectury:9.2.14")
     compileOnly("net.fabricmc:fabric-loader:${project.loader_version}")
-    
+
     // H2 Database - 编译时依赖，运行时由平台模块提供
     compileOnly("com.h2database:h2:2.2.224")
-    
+
+    // Maven Artifact API - 比较模组版本和检测冲突模组
+    implementation('org.apache.maven:maven-artifact:3.9.6')
 }
- 
+
 sourceSets {
     main {
         java {

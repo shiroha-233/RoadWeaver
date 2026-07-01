@@ -81,12 +81,14 @@ dependencies {
 	}
 	include("me.shedaniel.cloth:cloth-config-fabric:11.1.106")
 
+	// Maven Artifact API - 比较模组版本和检测冲突模组
+	include('org.apache.maven:maven-artifact:3.9.6')
+
 	// H2 Database - 道路数据持久化（纯Java，无native依赖）
 	// compileOnly: 编译时, modLocalRuntime: 开发运行时, shadowSqlite: 生产打包
 	compileOnly("com.h2database:h2:2.2.224") { transitive = false }
 	modLocalRuntime("com.h2database:h2:2.2.224") { transitive = false }
 	shadowSqlite("com.h2database:h2:2.2.224") { transitive = false }
-
 }
 
 processResources {
