@@ -1,4 +1,4 @@
-package net.shiroha233.roadweaver.client.loading;
+package net.shiroha233.roadweaver.client.loading.forge;
 
 import net.shiroha233.roadweaver.client.forge.ClientKeyMappings;
 
