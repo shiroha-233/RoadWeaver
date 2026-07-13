@@ -170,10 +170,9 @@ dependencies {
     }
 
     // LWJGL OpenCL - GPU 加速粗采样
-    // 系统 GPU 驱动提供 OpenCL ICD；模组内嵌 Java binding 与跨平台 LWJGL core JNI，缺少驱动时自动回退 CPU
+    // Minecraft/NeoForge 已提供 org.lwjgl Java 模块；这里只内嵌 OpenCL binding 与跨平台 core JNI 资源。
     compileOnly("org.lwjgl:lwjgl-opencl:3.3.3") { transitive = false }
     include("org.lwjgl:lwjgl-opencl:3.3.3") { transitive = false }
-    include("org.lwjgl:lwjgl:3.3.3") { transitive = false }
     forgeRuntimeLibrary("org.lwjgl:lwjgl-opencl:3.3.3") { transitive = false }
     runtimeOnly("org.lwjgl:lwjgl-opencl:3.3.3") { transitive = false }
     shadowLwjglNatives("org.lwjgl:lwjgl:3.3.3:natives-windows") { transitive = false }
