@@ -1,5 +1,6 @@
 package net.shiroha233.roadweaver.client.tips;
 
+import dev.architectury.platform.Mod;
 import dev.architectury.platform.Platform;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
@@ -9,6 +10,7 @@ import net.shiroha233.roadweaver.config.ConfigService;
 import net.shiroha233.roadweaver.config.ModConfig;
 
 import java.util.List;
+import java.util.NoSuchElementException;
 
 /**
  * 世界加载界面 Tips 渲染器
@@ -89,9 +91,14 @@ public final class LoadingTipsRenderer {
     }
 
     private static void renderTectonicWarning(GuiGraphics graphics, Minecraft mc) {
-        if (Platform.getOptionalMod(TECTONIC_MOD_ID).isEmpty()) {
+        try {
+            Mod tectonicMod = Platform.getMod(TECTONIC_MOD_ID);
+            if (Integer.parseInt(tectonicMod.getVersion().split("\\.")[0]) >= 3)
+                return;
+        } catch (NoSuchElementException e) {
             return;
         }
+
         Component warning = Component.translatable("tip.roadweaver.loading.tectonic");
         var font = mc.font;
         int sw = mc.getWindow().getGuiScaledWidth();
