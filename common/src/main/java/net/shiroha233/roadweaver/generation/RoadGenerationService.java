@@ -133,8 +133,8 @@ public final class RoadGenerationService {
             if (!modCfg.roadAppearance().roadsEnabled()) return true;
 
             RoadGenerationConfig genCfg = RoadGenerationConfig.from(modCfg);
-            new Road(level, conn, cfg, genCfg).generateRoad(modCfg.pathfindingCost().aStarMaxSteps());
-            return true;
+            return new Road(level, conn, cfg, genCfg)
+                    .generateRoad(modCfg.pathfindingCost().aStarMaxSteps()) != null;
         } catch (Throwable t) {
             return false;
         }

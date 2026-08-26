@@ -12,6 +12,13 @@ dependencies {
 
     // H2 仅用于读取旧版世界数据，运行时由平台模块打包。
     compileOnly("com.h2database:h2:2.2.224") { transitive = false }
+
+    testImplementation("org.junit.jupiter:junit-jupiter:5.10.2")
+    testImplementation("org.mockito:mockito-core:5.12.0")
+}
+
+tasks.named('test', Test).configure {
+    useJUnitPlatform()
 }
  
 sourceSets {
