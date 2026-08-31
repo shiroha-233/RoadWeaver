@@ -42,7 +42,10 @@ import java.util.concurrent.locks.ReentrantLock;
  * 单个世界目录的道路存储。
  *
  * <p>第一次访问时将聚合 NBT 全量解码一次并构造不可变快照。之后查询只读取 AtomicReference，
- * 不持锁、不读取文件，也不解析 JSON/NBT。所有修改在写锁内先完整落盘，再一次性发布新快照。</p>
+ * 不持锁、不读取文件，也不解析 JSON/NBT。所有修改在写锁内先落盘新/变 NBT 与分片，
+ * 立即发布新快照；index.json 提交点由后台线程按节流间隔批量提交，
+ * 消除高频修改下按全部道路数重写索引的写放大。崩溃时 index 保持上一提交态，
+ * 加载端一致性校验会触发元数据重建自愈。</p>
  */
 public final class RoadChunkStore implements AutoCloseable {
     public static final int SCHEMA_VERSION = 2;
@@ -60,8 +63,13 @@ public final class RoadChunkStore implements AutoCloseable {
     private final Path root;
     private final ReentrantLock mutationLock = new ReentrantLock();
     private final AtomicReference<RoadSnapshot> snapshot = new AtomicReference<>(RoadSnapshot.empty());
+    private static final long INDEX_COMMIT_INTERVAL_MS = 1000;
     private volatile boolean loaded;
     private long generation;
+    private volatile boolean indexDirty;
+    private long pendingIndexGeneration = -1L;
+    private long lastCommitAttemptMs;
+    private final Set<String> pendingDeletions = new LinkedHashSet<>();
 
     public RoadChunkStore(Path root) {
         this.root = Objects.requireNonNull(root, "root").toAbsolutePath().normalize();
@@ -183,9 +191,10 @@ public final class RoadChunkStore implements AutoCloseable {
         }
     }
 
-    /** 写入操作已经同步落盘；flush 用于确保首次加载和待修复元数据已经完成。 */
+    /** 写入路径已异步化；flush 确保待提交索引、首次加载与待修复元数据全部落盘。 */
     public void flush() {
         ensureLoaded();
+        commitPendingIndex();
     }
 
     public void clear() {
@@ -196,6 +205,9 @@ public final class RoadChunkStore implements AutoCloseable {
             snapshot.set(RoadSnapshot.empty());
             generation = 0L;
             loaded = true;
+            indexDirty = false;
+            pendingIndexGeneration = -1L;
+            pendingDeletions.clear();
         } finally {
             mutationLock.unlock();
         }
@@ -203,7 +215,7 @@ public final class RoadChunkStore implements AutoCloseable {
 
     @Override
     public void close() {
-        // 当前实现没有后台线程或打开的文件句柄；实例由世界路径注册表负责释放。
+        // 无后台长驻资源；索引由后台调度器或 flush 提交，实例由世界路径注册表负责释放。
     }
 
     Path chunkPath(int chunkX, int chunkZ) {
@@ -242,6 +254,7 @@ public final class RoadChunkStore implements AutoCloseable {
                 // 查询仍使用已完成的一次性内存快照；下次实际修改会重新写完整元数据。
                 LOGGER.warn("修复道路 ChunkPos 分片元数据失败: {}", root, e);
             }
+            commitPendingIndex();
         }
     }
 
@@ -421,19 +434,64 @@ public final class RoadChunkStore implements AutoCloseable {
             }
         }
 
-        // index.json 是提交点：它只会引用前面已经成功写入的不可变道路文件。
-        writeIndex(next, targetGeneration);
-
+        // 新/变 NBT 与分片已先行落盘；index.json 提交点与旧文件清理合并到后台批量执行。
+        // 崩溃时 index 保持上一提交态，加载端一致性校验会触发元数据重建自愈。
+        if (targetGeneration > pendingIndexGeneration) pendingIndexGeneration = targetGeneration;
         for (RoadSnapshot.Entry old : previous.entries().values()) {
             RoadSnapshot.Entry current = next.entries().get(old.fingerprint());
             if (current != null && old.fileName().equals(current.fileName())) continue;
-            Path oldPath = safeRoadPath(old.fileName());
-            if (oldPath == null) continue;
-            try {
-                Files.deleteIfExists(oldPath);
-            } catch (IOException e) {
-                LOGGER.warn("清理旧道路聚合文件失败: {}", oldPath, e);
+            pendingDeletions.add(old.fileName());
+        }
+        indexDirty = true;
+    }
+
+    /** 由后台调度器周期调用：按节流间隔提交待落盘索引。 */
+    public void commitPendingIndexIfDue() {
+        if (!indexDirty) return;
+        long now = System.currentTimeMillis();
+        if (now - lastCommitAttemptMs < INDEX_COMMIT_INTERVAL_MS) return;
+        commitPendingIndex();
+    }
+
+    /** 立即同步提交待落盘索引，并在提交成功后清理被替换的旧道路文件。 */
+    public void commitPendingIndex() {
+        lastCommitAttemptMs = System.currentTimeMillis();
+        Set<String> deletions;
+        long targetGeneration;
+        mutationLock.lock();
+        try {
+            if (!indexDirty) return;
+            deletions = Set.copyOf(pendingDeletions);
+            targetGeneration = Math.max(pendingIndexGeneration, generation);
+        } finally {
+            mutationLock.unlock();
+        }
+
+        RoadSnapshot current = snapshot.get();
+        try {
+            Files.createDirectories(root);
+            writeIndex(current, targetGeneration);
+        } catch (IOException e) {
+            LOGGER.warn("道路索引延迟提交失败，稍后重试: {}", root, e);
+            return;
+        }
+
+        mutationLock.lock();
+        try {
+            indexDirty = false;
+            pendingIndexGeneration = -1L;
+            for (String fileName : deletions) {
+                Path oldPath = safeRoadPath(fileName);
+                if (oldPath == null) continue;
+                try {
+                    Files.deleteIfExists(oldPath);
+                } catch (IOException e) {
+                    LOGGER.warn("清理旧道路聚合文件失败: {}", oldPath, e);
+                }
             }
+            pendingDeletions.removeAll(deletions);
+        } finally {
+            mutationLock.unlock();
         }
     }
 

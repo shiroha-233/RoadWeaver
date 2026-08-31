@@ -94,12 +94,16 @@ public final class RoadPlanningService {
         planRect(level, minX, minZ, maxX, maxZ);
     }
 
+    /** 共享池积压超过该值时暂停提交新的规划任务，形成提交端背压。 */
+    private static final int SHARED_BACKLOG_LIMIT = 256;
+
     public static void planAroundPlayer(ServerPlayer player) {
         if (player == null) return;
         ServerLevel level = player.serverLevel();
         if (!Level.OVERWORLD.equals(level.dimension())) return;
         ModConfig cfg = ConfigService.get();
         if (!cfg.planning().dynamicPlanEnabled()) return;
+        if (ThreadPoolManager.sharedBacklog() > SHARED_BACKLOG_LIMIT) return;
         int radiusChunks = Math.max(1, cfg.planning().dynamicPlanRadiusChunks());
         int stride = Math.max(1, cfg.planning().dynamicPlanStrideChunks());
         int tile = Math.max(RoadConstants.PLAN_TILE_MIN, Math.min(RoadConstants.PLAN_TILE_MAX, stride));

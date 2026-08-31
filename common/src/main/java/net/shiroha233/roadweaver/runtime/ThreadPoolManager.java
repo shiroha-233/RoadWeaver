@@ -44,6 +44,7 @@ public final class ThreadPoolManager {
     private static final Logger LOGGER = LoggerFactory.getLogger("roadweaver");
 
     private static final AtomicReference<ThreadPoolExecutor> INITIAL_WORKERS = new AtomicReference<>();
+    private static final AtomicReference<ThreadPoolExecutor> GENERATION_WORKERS = new AtomicReference<>();
     private static final AtomicReference<ThreadPoolExecutor> SHARED_EXEC = new AtomicReference<>();
     private static final AtomicReference<ThreadPoolExecutor> MAP_WORKERS = new AtomicReference<>();
     private static final AtomicLong EPOCH = new AtomicLong(0L);
@@ -64,18 +65,22 @@ public final class ThreadPoolManager {
     public static synchronized void onServerStarted(MinecraftServer server) {
         EPOCH.incrementAndGet();
         rebuildInitialPool(resolveInitialGenerationThreads());
+        rebuildGenerationPool(resolveGenerationThreads());
         rebuildSharedPool(resolveSharedWorkerThreads());
         rebuildMapPool(resolveMapWorkerThreads());
-        LOGGER.debug("ThreadPoolManager: 工作池已启动 (epoch={}, initialThreads={}, sharedThreads={}, mapThreads={})",
-                EPOCH.get(), resolveInitialGenerationThreads(), resolveSharedWorkerThreads(), resolveMapWorkerThreads());
+        LOGGER.debug("ThreadPoolManager: 工作池已启动 (epoch={}, initialThreads={}, generationThreads={}, sharedThreads={}, mapThreads={})",
+                EPOCH.get(), resolveInitialGenerationThreads(), resolveGenerationThreads(),
+                resolveSharedWorkerThreads(), resolveMapWorkerThreads());
     }
 
     public static synchronized void onServerStopping() {
         EPOCH.incrementAndGet();
         shutdownQuietly(INITIAL_WORKERS.get());
+        shutdownQuietly(GENERATION_WORKERS.get());
         shutdownQuietly(SHARED_EXEC.get());
         shutdownQuietly(MAP_WORKERS.get());
         INITIAL_WORKERS.set(null);
+        GENERATION_WORKERS.set(null);
         SHARED_EXEC.set(null);
         MAP_WORKERS.set(null);
         LOGGER.debug("ThreadPoolManager: 工作池已关闭 (epoch={})", EPOCH.get());
@@ -94,7 +99,8 @@ public final class ThreadPoolManager {
     }
 
     public static synchronized void resizeGenerationPool(int threads) {
-        resizeSharedPool(threads);
+        int resolved = threads <= 0 ? resolveGenerationThreads() : Math.max(1, threads);
+        rebuildGenerationPool(resolved);
     }
 
     public static synchronized void resizeComputePool(int threads) {
@@ -192,9 +198,18 @@ public final class ThreadPoolManager {
     private static ThreadPoolExecutor executorFor(TaskRole role) {
         return switch (role == null ? TaskRole.PLANNING : role) {
             case INITIAL -> initialExecutor();
+            case GENERATION -> generationPoolExecutor();
             case MAP -> mapExecutor();
             default -> sharedExecutor();
         };
+    }
+
+    /**
+     * 共享池当前积压任务数，供提交端做背压判断。
+     */
+    public static int sharedBacklog() {
+        ThreadPoolExecutor e = SHARED_EXEC.get();
+        return e == null ? 0 : e.getQueue().size();
     }
 
     private static ThreadPoolExecutor initialExecutor() {
@@ -239,6 +254,20 @@ public final class ThreadPoolManager {
         return e;
     }
 
+    private static ThreadPoolExecutor generationPoolExecutor() {
+        ThreadPoolExecutor e = GENERATION_WORKERS.get();
+        if (e == null || e.isShutdown()) {
+            synchronized (ThreadPoolManager.class) {
+                e = GENERATION_WORKERS.get();
+                if (e == null || e.isShutdown()) {
+                    rebuildGenerationPool(resolveGenerationThreads());
+                    e = GENERATION_WORKERS.get();
+                }
+            }
+        }
+        return e;
+    }
+
     private static void rebuildInitialPool(int threads) {
         shutdownQuietly(INITIAL_WORKERS.get());
         INITIAL_WORKERS.set(new ThreadPoolExecutor(
@@ -248,6 +277,18 @@ public final class ThreadPoolManager {
                 TimeUnit.MILLISECONDS,
                 new PriorityBlockingQueue<>(),
                 namedFactory("RW-Initial")
+        ));
+    }
+
+    private static void rebuildGenerationPool(int threads) {
+        shutdownQuietly(GENERATION_WORKERS.get());
+        GENERATION_WORKERS.set(new ThreadPoolExecutor(
+                threads,
+                threads,
+                0L,
+                TimeUnit.MILLISECONDS,
+                new PriorityBlockingQueue<>(),
+                namedFactory("RW-Gen")
         ));
     }
 
@@ -305,6 +346,18 @@ public final class ThreadPoolManager {
         } catch (Throwable ignored) {}
         int available = Runtime.getRuntime().availableProcessors();
         return Math.max(1, Math.min(4, available - 1));
+    }
+
+    /**
+     * 生成池独立于共享池，线程数跟随最大并发生成配置，
+     * 避免道路生成与规划/地图任务争抢同一组工作线程。
+     */
+    private static int resolveGenerationThreads() {
+        try {
+            int concurrent = ConfigService.get().performance().maxConcurrentGenerations();
+            if (concurrent > 0) return Math.max(2, Math.min(concurrent, RoadConstants.COMPUTE_THREADS_MAX));
+        } catch (Throwable ignored) {}
+        return Math.max(2, Math.min(4, Runtime.getRuntime().availableProcessors()));
     }
 
     private static int resolveMapWorkerThreads() {

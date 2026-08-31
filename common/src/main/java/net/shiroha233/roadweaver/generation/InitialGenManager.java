@@ -217,6 +217,7 @@ public final class InitialGenManager {
     private static void flushAndFinish(ServerLevel level) {
         InitialGenerationProgressTracker.enterStage(InitialGenerationStage.POST_PROCESSING, "flushing_road_data");
         RoadShardStorage.flushAll(level);
+        net.shiroha233.roadweaver.persistence.files.StructureFileStorage.flush(level);
         RoadPositionQuery.clearCache(level);
         active = false;
         InitialGenerationProgressTracker.updateConnections(total.get(), generating.get(), done.get(), failed.get());

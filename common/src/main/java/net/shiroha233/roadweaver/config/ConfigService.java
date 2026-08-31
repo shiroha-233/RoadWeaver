@@ -22,7 +22,7 @@ public final class ConfigService {
     private static final String BASE_DIR = "roadweaver";
     private static final String FILE_NAME = "roadweaver.json";
 
-    private static ModConfig INSTANCE = new ModConfig();
+    private static volatile ModConfig INSTANCE = new ModConfig();
 
     private ConfigService() {}
 
@@ -64,7 +64,11 @@ public final class ConfigService {
         }
     }
 
-    public static synchronized ModConfig get() {
+    /**
+     * 无锁读取配置。世界生成最内层循环（Beardifier/Feature mixin）高频调用，
+     * 写入侧由 synchronized 保护，读取侧依赖 volatile 保证可见性。
+     */
+    public static ModConfig get() {
         return INSTANCE;
     }
 

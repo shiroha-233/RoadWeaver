@@ -14,6 +14,8 @@ import net.shiroha233.roadweaver.pathfinding.cache.opencl.OpenCLRuntime;
 import net.shiroha233.roadweaver.pathfinding.cache.opencl.OpenCLWorldSupport;
 import net.shiroha233.roadweaver.pathfinding.terrain.region.CoarseTerrainTileCache;
 import net.shiroha233.roadweaver.persistence.RoadSpatialIndex;
+import net.shiroha233.roadweaver.persistence.WorldgenFingerprintService;
+import net.shiroha233.roadweaver.persistence.files.StructureFileStorage;
 import net.shiroha233.roadweaver.persistence.sharded.RoadShardStorage;
 import net.shiroha233.roadweaver.planning.RoadPlanningService;
 import net.shiroha233.roadweaver.planning.path.PlannedPathCache;
@@ -42,6 +44,8 @@ public final class CacheManager {
         RoadsideStructureRegistry.clearCache();
         BridgeTemplateStructureRegistry.clearCache();
         RoadSpatialIndex.clearAllCache();
+        StructureFileStorage.shutdown();
+        WorldgenFingerprintService.clearMemo();
         TerrainSamplingStats.reset();
         AccurateSamplingStats.reset();
         OpenCLAvailability.reset();
@@ -78,6 +82,8 @@ public final class CacheManager {
         }
 
         RoadShardStorage.shutdown();
+        StructureFileStorage.shutdown();
+        WorldgenFingerprintService.clearMemo();
         RoadWorldgenPlanCache.clearAll();
 
         RoadsideStructureRegistry.clearCache();
@@ -103,6 +109,13 @@ public final class CacheManager {
      */
     public static void onDimensionUnload(ServerLevel level) {
         if (level == null) return;
+
+        try {
+            StructureFileStorage.flush(level);
+        } catch (Exception e) {
+            LOGGER.warn("刷新维度 {} 结构状态失败: {}",
+                    level.dimension().location(), e.getMessage());
+        }
 
         TerrainSamplingSessions.clear(level);
         AutomaticPlanningSamplingActivities.clear(level);

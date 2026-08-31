@@ -9,6 +9,7 @@ import net.shiroha233.roadweaver.core.model.RoadSegmentPlacement;
 import net.shiroha233.roadweaver.core.model.RoadSpan;
 import net.shiroha233.roadweaver.persistence.RoadReplacement;
 import net.shiroha233.roadweaver.persistence.sharded.RoadShardStorage;
+import net.shiroha233.roadweaver.runtime.ThreadPoolManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -63,12 +64,14 @@ public final class RoadSnapService {
         int maxZ = Math.max(from.getZ(), to.getZ());
         int margin = SPLIT_THRESHOLD * 2;
 
+        // 吸附计算与道路替换均为内存/持久层操作（mutationLock 保护），调度至后台池执行，
+        // 不再占用主线程；结果广播由 MapPatchService 自行回到主线程发包
         return RoadShardStorage.queryRectAsync(level,
                 minX - margin, minZ - margin, maxX + margin, maxZ + margin)
                 .thenAcceptAsync(roads -> {
                     if (roads == null || roads.size() < 2) return;
                     snapRoadList(level, roads);
-                }, command -> level.getServer().execute(command));
+                }, ThreadPoolManager.roleExecutor(ThreadPoolManager.TaskRole.POSTPROCESS));
     }
 
     private static void snapRoadList(ServerLevel level, List<RoadData> roads) {

@@ -14,18 +14,20 @@ import org.slf4j.LoggerFactory;
 import java.io.IOException;
 import java.util.Collections;
 import java.util.IdentityHashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * 持久路径仓库的进程内前台。
+ * 路径点列表可达数十万级，按维度设置 LRU 容量上限防止内存无界增长。
  */
 public final class PlannedPathCache {
     private static final Logger LOGGER = LoggerFactory.getLogger("roadweaver");
     private static final int PATH_WORLDGEN_SCHEMA = 1;
-    private static final Map<ServerLevel, ConcurrentHashMap<PlannedPathKey, Entry>> BY_LEVEL =
+    private static final int MAX_ENTRIES_PER_LEVEL = 256;
+    private static final Map<ServerLevel, LinkedHashMap<PlannedPathKey, Entry>> BY_LEVEL =
             Collections.synchronizedMap(new IdentityHashMap<>());
 
     private PlannedPathCache() {}
@@ -38,7 +40,7 @@ public final class PlannedPathCache {
         String computedFingerprint = fingerprintOrNull(level, effectiveMode, config);
         boolean persistent = computedFingerprint != null;
         String fingerprint = persistent ? computedFingerprint : "";
-        ConcurrentHashMap<PlannedPathKey, Entry> memory = memory(level);
+        LinkedHashMap<PlannedPathKey, Entry> memory = memory(level);
         PlannedPathStore store = store(level);
         for (Map.Entry<StructureConnection, List<BlockPos>> item : paths.entrySet()) {
             StructureConnection connection = item.getKey();
@@ -66,7 +68,7 @@ public final class PlannedPathCache {
         String computedFingerprint = fingerprintOrNull(level, effectiveMode, config);
         boolean persistent = computedFingerprint != null;
         String fingerprint = persistent ? computedFingerprint : "";
-        ConcurrentHashMap<PlannedPathKey, Entry> memory = memory(level);
+        LinkedHashMap<PlannedPathKey, Entry> memory = memory(level);
         Entry cached = memory.get(key);
         if (cached != null && cached.fingerprint().equals(fingerprint)) {
             return Optional.of(cached.path());
@@ -85,10 +87,8 @@ public final class PlannedPathCache {
     public static void discard(ServerLevel level, StructureConnection connection) {
         if (level == null || connection == null) return;
         PlannedPathKey key = PlannedPathKey.of(connection);
-        synchronized (BY_LEVEL) {
-            ConcurrentHashMap<PlannedPathKey, Entry> memory = BY_LEVEL.get(level);
-            if (memory != null) memory.remove(key);
-        }
+        LinkedHashMap<PlannedPathKey, Entry> memory = BY_LEVEL.get(level);
+        if (memory != null) memory.remove(key);
         try {
             store(level).delete(key);
         } catch (IOException failure) {
@@ -109,9 +109,14 @@ public final class PlannedPathCache {
         }
     }
 
-    private static ConcurrentHashMap<PlannedPathKey, Entry> memory(ServerLevel level) {
+    private static LinkedHashMap<PlannedPathKey, Entry> memory(ServerLevel level) {
         synchronized (BY_LEVEL) {
-            return BY_LEVEL.computeIfAbsent(level, ignored -> new ConcurrentHashMap<>());
+            return BY_LEVEL.computeIfAbsent(level, ignored -> new LinkedHashMap<>(128, 0.75f, true) {
+                @Override
+                protected boolean removeEldestEntry(Map.Entry<PlannedPathKey, Entry> eldest) {
+                    return size() > MAX_ENTRIES_PER_LEVEL;
+                }
+            });
         }
     }
 

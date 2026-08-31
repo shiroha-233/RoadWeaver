@@ -44,12 +44,15 @@ class RoadChunkStoreTest {
         assertTrue(Files.isRegularFile(temporaryDirectory.resolve("chunks/-1_0.json")));
         assertTrue(Files.isRegularFile(temporaryDirectory.resolve("chunks/0_0.json")));
 
-        RoadChunkStore reloaded = new RoadChunkStore(temporaryDirectory);
+        RoadChunkStore reloaded;
+        first.flush();
+        reloaded = new RoadChunkStore(temporaryDirectory);
         assertNotNull(reloaded.loadByFingerprint(fingerprint));
         assertEquals(1, reloaded.queryRect(-4, 8, 4, 8).size());
 
         reloaded.deleteRoad(fingerprint);
         assertFalse(reloaded.hasAnyRoad());
+        reloaded.flush();
         assertFalse(Files.exists(temporaryDirectory.resolve("chunks/-1_0.json")));
         assertFalse(Files.exists(temporaryDirectory.resolve("chunks/0_0.json")));
     }
@@ -72,6 +75,7 @@ class RoadChunkStoreTest {
 
         assertEquals(firstReplacement, store.loadByFingerprint(RoadFingerprint.compute(firstReplacement)));
         assertEquals(secondReplacement, store.loadByFingerprint(RoadFingerprint.compute(secondReplacement)));
+        store.flush();
         Path roadDirectory = temporaryDirectory.resolve("roads");
         assertTrue(Files.isRegularFile(roadDirectory.resolve(roadFileName(firstFingerprint, 3L))));
         assertTrue(Files.isRegularFile(roadDirectory.resolve(roadFileName(secondFingerprint, 3L))));

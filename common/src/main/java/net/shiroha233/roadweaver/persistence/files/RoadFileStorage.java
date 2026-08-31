@@ -1,4 +1,4 @@
-/* 文件职责：按世界路径路由道路 ChunkPos 存储，并保留旧文件存储门面的对外语义。 */
+/* 文件职责：按世界路径路由道路 ChunkPos 存储，驱动索引延迟提交，并保留旧文件存储门面的对外语义。 */
 package net.shiroha233.roadweaver.persistence.files;
 
 import net.minecraft.world.level.ChunkPos;
@@ -8,6 +8,8 @@ import net.shiroha233.roadweaver.core.model.RoadData;
 import net.shiroha233.roadweaver.persistence.RoadReplacement;
 import net.shiroha233.roadweaver.persistence.chunk.RoadChunkStore;
 import net.shiroha233.roadweaver.persistence.chunk.RoadFingerprint;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.nio.file.Path;
 import java.util.Collection;
@@ -15,6 +17,9 @@ import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ScheduledThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 
 /**
  * 道路文件存储门面。
@@ -23,10 +28,29 @@ import java.util.concurrent.ConcurrentMap;
  * 实例路由表，不共享任何道路快照。世界关闭时由 {@link #close(ServerLevel)} 移除对应实例。</p>
  */
 public final class RoadFileStorage {
+    private static final Logger LOGGER = LoggerFactory.getLogger("roadweaver");
     private static final String CATEGORY = "roads";
     private static final ConcurrentMap<Path, RoadChunkStore> STORES = new ConcurrentHashMap<>();
 
+    private static final ScheduledExecutorService INDEX_COMMITTER = initIndexCommitter();
+
     private RoadFileStorage() {}
+
+    private static ScheduledExecutorService initIndexCommitter() {
+        ScheduledThreadPoolExecutor executor = new ScheduledThreadPoolExecutor(1, runnable -> {
+            Thread thread = new Thread(runnable, "roadweaver-road-index-committer");
+            thread.setDaemon(true);
+            return thread;
+        });
+        executor.scheduleWithFixedDelay(() -> {
+            try {
+                for (RoadChunkStore store : STORES.values()) store.commitPendingIndexIfDue();
+            } catch (Throwable t) {
+                LOGGER.warn("道路索引周期提交失败", t);
+            }
+        }, 1000, 1000, TimeUnit.MILLISECONDS);
+        return executor;
+    }
 
     public static void addRoad(ServerLevel level, RoadData road) {
         if (!isOverworld(level)) return;
@@ -104,10 +128,23 @@ public final class RoadFileStorage {
         if (!isOverworld(level)) return;
         Path key = storagePath(level);
         RoadChunkStore removed = STORES.remove(key);
-        if (removed != null) removed.close();
+        if (removed == null) return;
+        try {
+            removed.flush();
+        } catch (Throwable t) {
+            LOGGER.warn("维度卸载刷新道路存储失败: {}", key, t);
+        }
+        removed.close();
     }
 
     public static void shutdown() {
+        for (RoadChunkStore store : STORES.values()) {
+            try {
+                store.flush();
+            } catch (Throwable t) {
+                LOGGER.warn("关服刷新道路存储失败: {}", store.root(), t);
+            }
+        }
         for (RoadChunkStore store : STORES.values()) store.close();
         STORES.clear();
     }

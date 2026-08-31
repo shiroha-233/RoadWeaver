@@ -9,15 +9,17 @@ import net.minecraft.world.level.block.Rotation;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * 预计算结构存储服务
  */
 public final class PendingStructureStorage {
     private PendingStructureStorage() {}
-    
+
     private static final ConcurrentHashMap<Long, List<PendingRoadsideStructure>> PENDING = new ConcurrentHashMap<>();
-    
+    private static final AtomicInteger PENDING_COUNT = new AtomicInteger();
+    private static final int MAX_PENDING_TOTAL = 8192;
     private static final int MAX_INJECTED = 4096;
     private static final Set<Long> INJECTED = createLimitedSet();
     
@@ -40,13 +42,16 @@ public final class PendingStructureStorage {
                                            Rotation rotation,
                                            int sizeX, int sizeY, int sizeZ) {
         if (!isOverworld(level) || structureId == null || anchor == null || rotation == null) return;
+        if (PENDING_COUNT.get() >= MAX_PENDING_TOTAL) return;
+
         PendingRoadsideStructure pending = new PendingRoadsideStructure(
             structureId, anchor, rotation, sizeX, sizeY, sizeZ
         );
-        
+
         long chunkKey = pending.chunkKey();
         PENDING.computeIfAbsent(chunkKey, k -> Collections.synchronizedList(new ArrayList<>()))
                .add(pending);
+        PENDING_COUNT.incrementAndGet();
     }
     
     public static List<PendingRoadsideStructure> getPendingStructures(ServerLevel level, ChunkPos chunkPos) {
@@ -66,7 +71,8 @@ public final class PendingStructureStorage {
         long chunkKey = ((long) chunkPos.x << 32) | (chunkPos.z & 0xFFFFFFFFL);
         
         INJECTED.add(chunkKey);
-        PENDING.remove(chunkKey);
+        List<PendingRoadsideStructure> removed = PENDING.remove(chunkKey);
+        if (removed != null) PENDING_COUNT.addAndGet(-removed.size());
     }
     
     public static boolean hasPendingStructures(ServerLevel level, ChunkPos chunkPos) {
@@ -84,11 +90,12 @@ public final class PendingStructureStorage {
     public static void clearAll() {
         PENDING.clear();
         INJECTED.clear();
+        PENDING_COUNT.set(0);
     }
-    
+
     public static int getPendingCount(ServerLevel level) {
         if (!isOverworld(level)) return 0;
-        return PENDING.values().stream().mapToInt(List::size).sum();
+        return PENDING_COUNT.get();
     }
 
     private static boolean isOverworld(ServerLevel level) {

@@ -154,13 +154,13 @@ public final class RoadGenerationService {
             boolean ok = generateTask(level, conn);
             ConnectionStatus st = ok ? ConnectionStatus.COMPLETED : ConnectionStatus.FAILED;
 
-            executeOnMainThread(level, epoch, () -> {
-                updateConnectionStatus(level, conn, st);
-                removeProcessed(level, conn);
-                if (st == ConnectionStatus.COMPLETED) {
-                    RoadSnapService.snapAroundConnectionAsync(level, conn.from(), conn.to());
-                }
-            });
+            // 状态存储已内存化、地图补丁广播内部自行回主线程发包，
+            // 完成回调无需再调度到主线程，吸附后处理亦全程后台执行
+            updateConnectionStatus(level, conn, st);
+            removeProcessed(level, conn);
+            if (st == ConnectionStatus.COMPLETED) {
+                RoadSnapService.snapAroundConnectionAsync(level, conn.from(), conn.to());
+            }
         } catch (Throwable t) {
             executeOnMainThread(level, epoch, () -> {
                 updateConnectionStatus(level, conn, ConnectionStatus.FAILED);

@@ -20,18 +20,36 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.Objects;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * 世界生成指纹计算服务。
+ * 指纹在一次服务器会话内不变，按维度与 schemaVersion 记忆化，
+ * 避免每次调用重复执行噪声设置的双重 NBT 编码与 SHA-256。
  */
 public final class WorldgenFingerprintService {
     public static final int CURRENT_SCHEMA_VERSION = 1;
     private static final String DOMAIN = "roadweaver:worldgen_fingerprint";
 
+    private static final ConcurrentHashMap<String, WorldgenFingerprint> MEMO = new ConcurrentHashMap<>();
+
     private WorldgenFingerprintService() {}
+
+    public static void clearMemo() {
+        MEMO.clear();
+    }
 
     public static WorldgenFingerprint forLevel(ServerLevel level, int schemaVersion) {
         Objects.requireNonNull(level, "level");
+        String memoKey = level.dimension().location() + "|" + schemaVersion;
+        return MEMO.computeIfAbsent(memoKey, key -> computeForLevel(level, schemaVersion));
+    }
+
+    public static WorldgenFingerprint forLevel(ServerLevel level) {
+        return forLevel(level, CURRENT_SCHEMA_VERSION);
+    }
+
+    private static WorldgenFingerprint computeForLevel(ServerLevel level, int schemaVersion) {
         ChunkGenerator generator = level.getChunkSource().getGenerator();
         Holder<NoiseGeneratorSettings> settingsHolder = generator instanceof NoiseBasedChunkGenerator noiseGenerator
                 ? noiseGenerator.generatorSettings()
@@ -44,10 +62,6 @@ public final class WorldgenFingerprintService {
                 settingsHolder,
                 SharedConstants.getCurrentVersion().getDataVersion().getVersion(),
                 schemaVersion);
-    }
-
-    public static WorldgenFingerprint forLevel(ServerLevel level) {
-        return forLevel(level, CURRENT_SCHEMA_VERSION);
     }
 
     public static WorldgenFingerprint create(ResourceLocation dimension,
