@@ -17,7 +17,7 @@ import java.util.List;
  * 地图笔记编辑界面 - 采用类似原版书与笔的风格
  */
 public class NoteEditScreen extends RoadWeaverScreen {
-    private static final ResourceLocation BOOK_TEXTURE = ResourceLocation.fromNamespaceAndPath("minecraft", "textures/gui/book.png");
+    private static final ResourceLocation BOOK_TEXTURE = new ResourceLocation("minecraft", "textures/gui/book.png");
     
     // 书本尺寸（原版书本纹理参数）
     private static final int BOOK_WIDTH = 192;

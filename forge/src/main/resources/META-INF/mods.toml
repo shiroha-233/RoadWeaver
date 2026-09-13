@@ -1,0 +1,30 @@
+modLoader = "javafml"
+loaderVersion = "[47,)"
+license = "MIT"
+
+[[mods]]
+    modId = "roadweaver"
+    version = "${mod_version}"
+    displayName = "${mod_name}"
+    authors = "${mod_authors}"
+    description = "${mod_description}"
+    logoFile = "assets/roadweaver/icon.png"
+
+[[mixins]]
+    config = "roadweaver.mixins.json"
+
+[[dependencies.roadweaver]]
+    modId = "forge"
+    mandatory = true
+    type = "required"
+    versionRange = "[47,48)"
+    ordering = "NONE"
+    side = "BOTH"
+
+[[dependencies.roadweaver]]
+    modId = "minecraft"
+    mandatory = true
+    type = "required"
+    versionRange = "[1.20.1,1.21)"
+    ordering = "NONE"
+    side = "BOTH"

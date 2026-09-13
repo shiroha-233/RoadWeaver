@@ -269,14 +269,14 @@ public class MaterialPresetEditorScreen extends Screen {
         String rest = p.id.substring("natural_".length());
         if (rest.isBlank()) return null;
 
-        ResourceLocation vanilla = ResourceLocation.fromNamespaceAndPath("minecraft", rest);
+        ResourceLocation vanilla = new ResourceLocation("minecraft", rest);
 
         int firstUnderscore = rest.indexOf('_');
         if (firstUnderscore > 0 && firstUnderscore < rest.length() - 1) {
             String ns = rest.substring(0, firstUnderscore);
             String path = rest.substring(firstUnderscore + 1);
             try {
-                ResourceLocation candidate = ResourceLocation.fromNamespaceAndPath(ns, path);
+                ResourceLocation candidate = new ResourceLocation(ns, path);
                 String key = "biome." + candidate.getNamespace() + "." + candidate.getPath();
                 Component translated = Component.translatable(key);
                 if (!Objects.equals(translated.getString(), key)) {
@@ -424,7 +424,7 @@ public class MaterialPresetEditorScreen extends Screen {
     
     @Override
     public void render(GuiGraphics g, int mouseX, int mouseY, float partialTick) {
-        this.renderBackground(g, mouseX, mouseY, partialTick);
+        this.renderBackground(g);
         super.render(g, mouseX, mouseY, partialTick);
 
         UiPreset p = (activePresetIndex >= 0 && activePresetIndex < presets.size()) ? presets.get(activePresetIndex) : null;

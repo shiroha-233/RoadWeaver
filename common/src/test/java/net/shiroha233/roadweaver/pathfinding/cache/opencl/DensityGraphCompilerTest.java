@@ -38,7 +38,7 @@ class DensityGraphCompilerTest {
                 program.root(DensityGraphRoot.EROSION));
         assertEquals(1, program.interpolatedNodes().size());
 
-        int markerIndex = program.interpolatedNodes().getFirst();
+        int markerIndex = program.interpolatedNodes().get(0);
         DensityGraphNode marker = program.nodes().get(markerIndex);
         assertEquals(DensityGraphNodeType.INTERPOLATED, marker.type());
         assertTrue(marker.left() < markerIndex);

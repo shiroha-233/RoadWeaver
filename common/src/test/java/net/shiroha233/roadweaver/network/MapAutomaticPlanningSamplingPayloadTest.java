@@ -17,7 +17,7 @@ class MapAutomaticPlanningSamplingPayloadTest {
     void roundTripsAllActiveRanges() {
         MapNetworkPayloads.MapAutomaticPlanningSamplingPayload payload =
                 new MapNetworkPayloads.MapAutomaticPlanningSamplingPayload(
-                        ResourceLocation.fromNamespaceAndPath("minecraft", "overworld"),
+                        new ResourceLocation("minecraft", "overworld"),
                         List.of(
                                 new AutomaticPlanningSamplingBounds(-256, -128, 0, 128),
                                 new AutomaticPlanningSamplingBounds(512, 256, 768, 512)));

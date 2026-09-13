@@ -75,7 +75,7 @@ public final class WorldgenFingerprintService {
         Objects.requireNonNull(generatorIdentity, "generatorIdentity");
         Objects.requireNonNull(registries, "registries");
 
-        var registryNbtOps = registries.createSerializationContext(NbtOps.INSTANCE);
+        var registryNbtOps = NbtOps.INSTANCE;
         byte[] settingsIdentityBytes = settingsHolder == null
                 ? new byte[0]
                 : serialize(NoiseGeneratorSettings.CODEC.encodeStart(registryNbtOps, settingsHolder)
@@ -122,7 +122,7 @@ public final class WorldgenFingerprintService {
         try {
             ByteArrayOutputStream raw = new ByteArrayOutputStream();
             try (DataOutputStream out = new DataOutputStream(raw)) {
-                NbtIo.writeAnyTag(tag, out);
+                NbtIo.writeUnnamedTag(tag, out);
             }
             return raw.toByteArray();
         } catch (IOException failure) {

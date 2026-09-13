@@ -149,8 +149,7 @@ public final class RoadsideVillageJigsawPlanner {
                     position,
                     element.getGroundLevelDelta(),
                     rotation,
-                    box,
-                    JigsawStructure.DEFAULT_LIQUID_SETTINGS
+                    box
                 ));
             }
         }
@@ -182,8 +181,7 @@ public final class RoadsideVillageJigsawPlanner {
                 position,
                 element.getGroundLevelDelta(),
                 rotation,
-                box,
-                JigsawStructure.DEFAULT_LIQUID_SETTINGS
+                box
             ));
         }
 

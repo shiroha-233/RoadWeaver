@@ -1,6 +1,6 @@
 // 文件职责：配置 common 模块的共享源码、资源与单元测试依赖。
  architectury {
-    common("fabric", "neoforge")
+    common("fabric", "forge")
 }
 
 dependencies {

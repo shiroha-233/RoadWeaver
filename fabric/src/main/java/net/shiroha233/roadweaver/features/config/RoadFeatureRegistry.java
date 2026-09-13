@@ -23,11 +23,11 @@ public final class RoadFeatureRegistry {
 
     public static void register() {
         Feature<PathFeatureConfig> feature = new PathFeature(PathFeatureConfig.CODEC);
-        Registry.register(BuiltInRegistries.FEATURE, ResourceLocation.fromNamespaceAndPath(RoadWeaver.MOD_ID, "road_feature"), feature);
+        Registry.register(BuiltInRegistries.FEATURE, new ResourceLocation(RoadWeaver.MOD_ID, "road_feature"), feature);
 
         ResourceKey<PlacedFeature> placedKey = ResourceKey.create(
                 Registries.PLACED_FEATURE,
-                ResourceLocation.fromNamespaceAndPath(RoadWeaver.MOD_ID, "road_feature_placed"));
+                new ResourceLocation(RoadWeaver.MOD_ID, "road_feature_placed"));
         BiomeModifications.addFeature(
                 BiomeSelectors.foundInOverworld(),
                 GenerationStep.Decoration.TOP_LAYER_MODIFICATION,

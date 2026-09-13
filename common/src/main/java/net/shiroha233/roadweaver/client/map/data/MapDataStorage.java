@@ -119,7 +119,7 @@ public final class MapDataStorage {
         int separator = key.indexOf('|');
         if (separator <= 0 || separator >= key.length() - 1) return null;
         try {
-            ResourceLocation dimension = ResourceLocation.parse(key.substring(0, separator));
+            ResourceLocation dimension = new ResourceLocation(key.substring(0, separator));
             BlockPos pos = keyToPos(key.substring(separator + 1));
             return pos == null ? null : new DimensionPos(dimension, pos);
         } catch (RuntimeException invalidKey) {

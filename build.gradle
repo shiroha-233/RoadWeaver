@@ -1,17 +1,17 @@
 // 根项目配置 - 多模块项目
 plugins {
 	id 'architectury-plugin' version '3.4-SNAPSHOT'
-	id 'dev.architectury.loom' version '1.7-SNAPSHOT' apply false
+	id 'dev.architectury.loom' version '1.6-SNAPSHOT' apply false
 }
 
 architectury {
-	minecraft = '1.21.1'
+	minecraft = '1.20.1'
 }
 
 def legacyIdeOutputDirs = [
 	file('common/bin'),
 	file('fabric/bin'),
-	file('neoforge/bin')
+	file('forge/bin')
 ]
 
 tasks.register('cleanLegacyIdeOutputs', Delete) {
@@ -24,7 +24,7 @@ allprojects {
 	apply plugin: 'architectury-plugin'
 	
 	group = 'net.shiroha233.roadweaver'
-	version = '2.3.1-1.21.1'
+	version = '2.3.1-1.20.1'
 	
 	repositories {
 		maven { url = 'https://maven.architectury.dev/' }
@@ -60,21 +60,21 @@ allprojects {
 	
 	tasks.withType(JavaCompile).configureEach {
 		options.encoding = 'UTF-8'
-		options.release = 21
+		options.release = 17
 	}
 	
 	java {
 		toolchain {
-			languageVersion = JavaLanguageVersion.of(21)
+			languageVersion = JavaLanguageVersion.of(17)
 		}
 		withSourcesJar()
 	}
 	
 	// Gradle toolchain 默认只影响编译任务；runClient/Transformer 属于 JavaExec，
-	// 这里强制所有 JavaExec 使用 Java 21 launcher，保证开发运行环境一致。
+	// 这里强制所有 JavaExec 使用 Java 17 launcher，保证开发运行环境一致。
 	tasks.withType(JavaExec).configureEach {
 		javaLauncher = javaToolchains.launcherFor {
-			languageVersion = JavaLanguageVersion.of(21)
+			languageVersion = JavaLanguageVersion.of(17)
 		}
 		// 设置运行游戏时的玩家名称
 		systemProperty 'minecraft.username', rootProject.properties.getOrDefault('minecraft_username', 'Player')
@@ -101,7 +101,7 @@ subprojects {
 	}
 	
 	dependencies {
-		minecraft "com.mojang:minecraft:1.21.1"
+		minecraft "com.mojang:minecraft:1.20.1"
 		mappings loom.officialMojangMappings()
 	}
 	

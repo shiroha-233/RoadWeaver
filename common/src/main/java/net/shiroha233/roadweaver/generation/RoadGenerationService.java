@@ -49,7 +49,7 @@ public final class RoadGenerationService {
         return CURRENT_TICK;
     }
 
-    private static final ResourceLocation ROAD_CF_ID = ResourceLocation.fromNamespaceAndPath("roadweaver", "road_feature");
+    private static final ResourceLocation ROAD_CF_ID = new ResourceLocation("roadweaver", "road_feature");
 
     public static void onServerStarted() {
         ALL_RUNNING.clear();

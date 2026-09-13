@@ -5,7 +5,6 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Vec3i;
 import net.minecraft.core.registries.Registries;
-import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.ServerLevelAccessor;
@@ -52,8 +51,7 @@ public record LootConfig(
         }
         
         if (blockEntity instanceof RandomizableContainerBlockEntity container) {
-            ResourceKey<LootTable> lootTableKey = ResourceKey.create(Registries.LOOT_TABLE, lootTable);
-            container.setLootTable(lootTableKey, random.nextLong());
+            container.setLootTable(lootTable, random.nextLong());
             return true;
         }
         
@@ -71,8 +69,7 @@ public record LootConfig(
         
         BlockEntity blockEntity = level.getBlockEntity(containerPos);
         if (blockEntity instanceof RandomizableContainerBlockEntity container) {
-            ResourceKey<LootTable> lootTableKey = ResourceKey.create(Registries.LOOT_TABLE, lootTable);
-            container.setLootTable(lootTableKey, random.nextLong());
+            container.setLootTable(lootTable, random.nextLong());
             return true;
         }
         
@@ -80,19 +77,19 @@ public record LootConfig(
     }
     
     public static final LootConfig ROADSIDE_SUPPLIES = new LootConfig(
-        ResourceLocation.fromNamespaceAndPath("roadweaver", "chests/roadside_supplies"),
+        new ResourceLocation("roadweaver", "chests/roadside_supplies"),
         new Vec3i(0, 1, 0),
         1.0f
     );
     
     public static final LootConfig CABIN_CHEST = new LootConfig(
-        ResourceLocation.fromNamespaceAndPath("roadweaver", "chests/cabin_chest"),
+        new ResourceLocation("roadweaver", "chests/cabin_chest"),
         new Vec3i(0, 1, 0),
         1.0f
     );
     
     public static final LootConfig RARE_LOOT = new LootConfig(
-        ResourceLocation.fromNamespaceAndPath("roadweaver", "chests/rare_loot"),
+        new ResourceLocation("roadweaver", "chests/rare_loot"),
         new Vec3i(0, 1, 0),
         0.2f
     );

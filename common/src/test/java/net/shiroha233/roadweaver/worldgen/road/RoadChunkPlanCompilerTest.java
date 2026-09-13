@@ -62,7 +62,7 @@ class RoadChunkPlanCompilerTest {
             targetY.add(70);
         }
         List<RoadSpan> spans = bridge
-                ? List.of(new RoadSpan(segments.getFirst().middlePos(), segments.getLast().middlePos(), SpanType.BRIDGE))
+                ? List.of(new RoadSpan(segments.get(0).middlePos(), segments.get(segments.size() - 1).middlePos(), SpanType.BRIDGE))
                 : List.of();
         return new RoadData(3, 0, List.of(), List.of(), segments, spans, targetY, 11L, 22L);
     }

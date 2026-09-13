@@ -28,9 +28,9 @@ public record PendingRoadsideVillageSlot(
 
     public ResourceLocation poolId(ResourceLocation style) {
         return switch (kind) {
-            case HOUSE -> ResourceLocation.fromNamespaceAndPath("minecraft", "village/" + style.getPath() + "/houses");
-            case DECOR -> ResourceLocation.fromNamespaceAndPath("minecraft", "village/" + style.getPath() + "/decor");
-            case VILLAGER -> ResourceLocation.fromNamespaceAndPath("minecraft", "village/" + style.getPath() + "/villagers");
+            case HOUSE -> new ResourceLocation("minecraft", "village/" + style.getPath() + "/houses");
+            case DECOR -> new ResourceLocation("minecraft", "village/" + style.getPath() + "/decor");
+            case VILLAGER -> new ResourceLocation("minecraft", "village/" + style.getPath() + "/villagers");
         };
     }
 }

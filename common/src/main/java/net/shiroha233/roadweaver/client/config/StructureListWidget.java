@@ -69,16 +69,16 @@ public class StructureListWidget extends RoadWeaverSelectionList<StructureListWi
                         if (slash >= 0) {
                             String ns = rel.substring(0, slash);
                             String path = rel.substring(slash + 1);
-                            candidates.add(ResourceLocation.fromNamespaceAndPath(ns, path));
+                            candidates.add(new ResourceLocation(ns, path));
                         }
                     } else if (logoPath.indexOf(':') >= 0) {
                         ResourceLocation rl = ResourceLocation.tryParse(logoPath);
                         if (rl != null) candidates.add(rl);
                     } else {
-                        candidates.add(ResourceLocation.fromNamespaceAndPath(modId, logoPath));
+                        candidates.add(new ResourceLocation(modId, logoPath));
                         if (!logoPath.startsWith("textures/")) {
-                            candidates.add(ResourceLocation.fromNamespaceAndPath(modId, "textures/" + logoPath));
-                            candidates.add(ResourceLocation.fromNamespaceAndPath(modId, "textures/gui/" + logoPath));
+                            candidates.add(new ResourceLocation(modId, "textures/" + logoPath));
+                            candidates.add(new ResourceLocation(modId, "textures/gui/" + logoPath));
                         }
                     }
 

@@ -109,7 +109,7 @@ public final class PresetService {
         List<String> valid = new ArrayList<>();
         for (String s : ids) {
             try {
-                ResourceLocation rl = ResourceLocation.parse(s);
+                ResourceLocation rl = new ResourceLocation(s);
                 Block b = BuiltInRegistries.BLOCK.get(rl);
                 if (b != null && b != Blocks.AIR)
                     valid.add(s);
@@ -212,7 +212,7 @@ public final class PresetService {
             return out;
         for (String s : ids) {
             try {
-                ResourceLocation rl = ResourceLocation.parse(s);
+                ResourceLocation rl = new ResourceLocation(s);
                 Block b = BuiltInRegistries.BLOCK.get(rl);
                 if (b != null && b != Blocks.AIR)
                     out.add(b.defaultBlockState());
@@ -230,7 +230,7 @@ public final class PresetService {
             return out;
         for (String s : ids) {
             try {
-                ResourceLocation rl = ResourceLocation.parse(s);
+                ResourceLocation rl = new ResourceLocation(s);
                 Block b = BuiltInRegistries.BLOCK.get(rl);
                 if (b != null && b != Blocks.AIR)
                     out.add(b.defaultBlockState());

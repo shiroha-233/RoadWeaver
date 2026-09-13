@@ -35,7 +35,6 @@ dependencyResolutionManagement {
 		maven { url = 'https://maven.architectury.dev/' }
 		maven { url = 'https://api.modrinth.com/maven' }
 		maven { url = 'https://maven.minecraftforge.net/' }
-		maven { url = 'https://maven.neoforged.net/releases/' }
 		maven { url = 'https://bmclapi2.bangbang93.com/maven/' }
 
 		exclusiveContent {
@@ -63,8 +62,8 @@ def requestedTaskRoots = gradle.startParameter.taskNames
 	.toSet()
 
 def includeFabric = requestedTaskRoots.isEmpty() || requestedTaskRoots.contains('fabric')
-def includeNeoForge = requestedTaskRoots.isEmpty() || requestedTaskRoots.contains('neoforge')
-def includeAllLoaders = requestedTaskRoots.isEmpty() || (!includeFabric && !includeNeoForge)
+def includeForge = requestedTaskRoots.isEmpty() || requestedTaskRoots.contains('forge')
+def includeAllLoaders = requestedTaskRoots.isEmpty() || (!includeFabric && !includeForge)
 
 include 'common'
 
@@ -72,6 +71,6 @@ if (includeFabric || includeAllLoaders) {
 	include 'fabric'
 }
 
-if (includeNeoForge || includeAllLoaders) {
-	include 'neoforge'
+if (includeForge || includeAllLoaders) {
+	include 'forge'
 }

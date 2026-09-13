@@ -73,7 +73,7 @@ public final class MapOverlayRenderer {
         int sy = view.toScreenY((int) Math.round(wz), 0, 0, contentH);
         if (!inputHandler.insideMap(sx, sy)) return;
 
-        ResourceLocation skinTexture = mc.player.getSkin().texture();
+        ResourceLocation skinTexture = mc.player.getSkinTextureLocation();
         float yaw = mc.player.getYRot();
         MapRenderers.drawPlayerAvatar(g, skinTexture, sx, sy, yaw,
                 MapTheme.PLAYER_AVATAR_SIZE,

@@ -42,7 +42,7 @@ class AccurateHeightSamplerTest {
         assertThrows(UnsupportedOperationException.class,
                 () -> first.put(ChunkPos.asLong(999, 0), chunk(999, 0)));
 
-        sampler.sampleChunks(List.of(keys.getFirst()));
+        sampler.sampleChunks(List.of(keys.get(0)));
         assertEquals(2, backend.invocations.get(), "the first chunk should have been evicted from the 256-entry LRU");
     }
 

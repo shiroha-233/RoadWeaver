@@ -36,7 +36,7 @@ public final class RoadsideVillagePrecomputer {
 
     private static final Logger LOGGER = LoggerFactory.getLogger("RoadWeaver/RoadsideVillagePrecomputer");
     private static final String MOD_ID = "roadweaver";
-    private static final ResourceLocation STRUCTURE_ID = ResourceLocation.fromNamespaceAndPath(MOD_ID, "roadside_village");
+    private static final ResourceLocation STRUCTURE_ID = new ResourceLocation(MOD_ID, "roadside_village");
 
     public static int precomputeVillages(ServerLevel level,
                                          List<RoadSegmentPlacement> segments,
@@ -108,7 +108,7 @@ public final class RoadsideVillagePrecomputer {
                 continue;
             }
 
-            ResourceLocation placementId = ResourceLocation.fromNamespaceAndPath(
+            ResourceLocation placementId = new ResourceLocation(
                 MOD_ID,
                 "roadside_village/" + originChunk.x + "_" + originChunk.z + "_" + candidate.startIndex()
             );
@@ -625,11 +625,11 @@ public final class RoadsideVillagePrecomputer {
 
     private static ResourceLocation styleForBiome(BiomeCategory category) {
         return switch (category) {
-            case DESERT, BADLANDS -> ResourceLocation.fromNamespaceAndPath("minecraft", "desert");
-            case SAVANNA -> ResourceLocation.fromNamespaceAndPath("minecraft", "savanna");
-            case TAIGA -> ResourceLocation.fromNamespaceAndPath("minecraft", "taiga");
-            case SNOWY -> ResourceLocation.fromNamespaceAndPath("minecraft", "snowy");
-            default -> ResourceLocation.fromNamespaceAndPath("minecraft", "plains");
+            case DESERT, BADLANDS -> new ResourceLocation("minecraft", "desert");
+            case SAVANNA -> new ResourceLocation("minecraft", "savanna");
+            case TAIGA -> new ResourceLocation("minecraft", "taiga");
+            case SNOWY -> new ResourceLocation("minecraft", "snowy");
+            default -> new ResourceLocation("minecraft", "plains");
         };
     }
 

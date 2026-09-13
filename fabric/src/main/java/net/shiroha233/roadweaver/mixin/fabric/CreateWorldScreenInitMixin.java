@@ -37,7 +37,7 @@ public abstract class CreateWorldScreenInitMixin extends Screen {
     }
 
     /**
-     * 在 CreateWorldScreen 初始化完成后注入，避免 1.21.1 构造器签名变化导致注入失效。
+     * 在 CreateWorldScreen 初始化完成后注入，避免构造器签名变化导致注入失效。
      */
     @Inject(method = "init", at = @At("TAIL"))
     private void onInitEnd(CallbackInfo ci) {

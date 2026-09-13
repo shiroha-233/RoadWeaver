@@ -200,8 +200,7 @@ public class SimpleTemplatePiece extends TemplateStructurePiece {
          
          BlockEntity blockEntity = level.getBlockEntity(containerPos);
          if (blockEntity instanceof RandomizableContainerBlockEntity container) {
-             ResourceKey<LootTable> lootTableKey = ResourceKey.create(Registries.LOOT_TABLE, config.lootTable());
-             container.setLootTable(lootTableKey, random.nextLong());
+            container.setLootTable(config.lootTable(), random.nextLong());
              LOGGER.debug("设置战利品表 {} at {}", config.lootTable(), containerPos);
              return true;
          } else {
@@ -241,7 +240,7 @@ public class SimpleTemplatePiece extends TemplateStructurePiece {
             
             if (entity instanceof Mob mob) {
                 mob.finalizeSpawn(level, level.getCurrentDifficultyAt(spawnPos),
-                    MobSpawnType.STRUCTURE, null);
+                    MobSpawnType.STRUCTURE, null, null);
                 mob.setPersistenceRequired();
             }
             

@@ -3,9 +3,6 @@ package net.shiroha233.roadweaver.network;
 
 import io.netty.handler.codec.DecoderException;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.network.codec.ByteBufCodecs;
-import net.minecraft.network.codec.StreamCodec;
-import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.core.BlockPos;
 import net.shiroha233.roadweaver.client.map.MapLoadPhase;
@@ -17,20 +14,42 @@ import net.shiroha233.roadweaver.planning.terrain.AutomaticPlanningSamplingBound
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.BiConsumer;
+import java.util.function.Function;
 
 public class MapNetworkPayloads {
+    public interface Codec<T> {
+        void encode(FriendlyByteBuf buf, T value);
+        T decode(FriendlyByteBuf buf);
+
+        static <T> Codec<T> of(BiConsumer<FriendlyByteBuf, T> encoder,
+                               Function<FriendlyByteBuf, T> decoder) {
+            return new Codec<>() {
+                @Override
+                public void encode(FriendlyByteBuf buf, T value) {
+                    encoder.accept(buf, value);
+                }
+
+                @Override
+                public T decode(FriendlyByteBuf buf) {
+                    return decoder.apply(buf);
+                }
+            };
+        }
+    }
+
     private static final int MAX_AUTOMATIC_PLANNING_SAMPLING_REGIONS = 256;
 
-    public static final CustomPacketPayload.Type<MapRequestRectPayload> REQ_RECT = new CustomPacketPayload.Type<>(ResourceLocation.fromNamespaceAndPath("roadweaver", "map_request_rect"));
-    public static final CustomPacketPayload.Type<MapSnapshotPayload> SNAP = new CustomPacketPayload.Type<>(ResourceLocation.fromNamespaceAndPath("roadweaver", "map_snapshot"));
-    public static final CustomPacketPayload.Type<MapPatchPayload> PATCH = new CustomPacketPayload.Type<>(ResourceLocation.fromNamespaceAndPath("roadweaver", "map_patch"));
-    public static final CustomPacketPayload.Type<MapAutomaticPlanningSamplingPayload> AUTO_PLANNING_SAMPLING = new CustomPacketPayload.Type<>(ResourceLocation.fromNamespaceAndPath("roadweaver", "map_automatic_planning_sampling"));
-    public static final CustomPacketPayload.Type<MapTeleportPayload> TP_REQ = new CustomPacketPayload.Type<>(ResourceLocation.fromNamespaceAndPath("roadweaver", "map_teleport"));
-    public static final CustomPacketPayload.Type<MapTeleportAckPayload> TP_ACK = new CustomPacketPayload.Type<>(ResourceLocation.fromNamespaceAndPath("roadweaver", "map_teleport_ack"));
-    public static final CustomPacketPayload.Type<MapManualConnectPayload> MAN_REQ = new CustomPacketPayload.Type<>(ResourceLocation.fromNamespaceAndPath("roadweaver", "map_manual_connect"));
-    public static final CustomPacketPayload.Type<MapAccessSyncPayload> ACCESS_SYNC = new CustomPacketPayload.Type<>(ResourceLocation.fromNamespaceAndPath("roadweaver", "map_access_sync"));
-    public static final CustomPacketPayload.Type<MapSearchRequestPayload> SEARCH_REQ = new CustomPacketPayload.Type<>(ResourceLocation.fromNamespaceAndPath("roadweaver", "map_search_request"));
-    public static final CustomPacketPayload.Type<MapSearchResponsePayload> SEARCH_RESP = new CustomPacketPayload.Type<>(ResourceLocation.fromNamespaceAndPath("roadweaver", "map_search_response"));
+    public static final ResourceLocation REQ_RECT = new ResourceLocation("roadweaver", "map_request_rect");
+    public static final ResourceLocation SNAP = new ResourceLocation("roadweaver", "map_snapshot");
+    public static final ResourceLocation PATCH = new ResourceLocation("roadweaver", "map_patch");
+    public static final ResourceLocation AUTO_PLANNING_SAMPLING = new ResourceLocation("roadweaver", "map_automatic_planning_sampling");
+    public static final ResourceLocation TP_REQ = new ResourceLocation("roadweaver", "map_teleport");
+    public static final ResourceLocation TP_ACK = new ResourceLocation("roadweaver", "map_teleport_ack");
+    public static final ResourceLocation MAN_REQ = new ResourceLocation("roadweaver", "map_manual_connect");
+    public static final ResourceLocation ACCESS_SYNC = new ResourceLocation("roadweaver", "map_access_sync");
+    public static final ResourceLocation SEARCH_REQ = new ResourceLocation("roadweaver", "map_search_request");
+    public static final ResourceLocation SEARCH_RESP = new ResourceLocation("roadweaver", "map_search_response");
 
     public record MapRequestRectPayload(int requestSeq,
                                         ResourceLocation dimension,
@@ -39,8 +58,8 @@ public class MapNetworkPayloads {
                                         int minX,
                                         int minZ,
                                         int maxX,
-                                        int maxZ) implements CustomPacketPayload {
-        public static final StreamCodec<FriendlyByteBuf, MapRequestRectPayload> CODEC = StreamCodec.of(
+                                        int maxZ) {
+        public static final Codec<MapRequestRectPayload> CODEC = Codec.of(
             (buf, val) -> {
                 buf.writeVarInt(val.requestSeq);
                 buf.writeResourceLocation(val.dimension);
@@ -62,7 +81,6 @@ public class MapNetworkPayloads {
                 buf.readVarInt()
             )
         );
-        @Override public Type<MapRequestRectPayload> type() { return REQ_RECT; }
     }
 
     public record MapSnapshotPayload(int requestSeq,
@@ -70,7 +88,7 @@ public class MapNetworkPayloads {
                                      MapLoadPhase phase,
                                      int responseIndex,
                                      MapSnapshot snapshot,
-                                     List<AutomaticPlanningSamplingBounds> automaticPlanningSamplingBounds) implements CustomPacketPayload {
+                                     List<AutomaticPlanningSamplingBounds> automaticPlanningSamplingBounds) {
         public MapSnapshotPayload {
             automaticPlanningSamplingBounds = immutableAutomaticPlanningSamplingBounds(
                     automaticPlanningSamplingBounds);
@@ -84,7 +102,7 @@ public class MapNetworkPayloads {
             this(requestSeq, dimension, phase, responseIndex, snapshot, List.of());
         }
 
-        public static final StreamCodec<FriendlyByteBuf, MapSnapshotPayload> CODEC = StreamCodec.of(
+        public static final Codec<MapSnapshotPayload> CODEC = Codec.of(
             (buf, val) -> {
                 buf.writeVarInt(val.requestSeq);
                 buf.writeResourceLocation(val.dimension);
@@ -102,28 +120,26 @@ public class MapNetworkPayloads {
                 readAutomaticPlanningSamplingBounds(buf)
             )
         );
-        @Override public Type<MapSnapshotPayload> type() { return SNAP; }
     }
 
-    public record MapPatchPayload(ResourceLocation dimension, MapSnapshotPatch patch) implements CustomPacketPayload {
-        public static final StreamCodec<FriendlyByteBuf, MapPatchPayload> CODEC = StreamCodec.of(
+    public record MapPatchPayload(ResourceLocation dimension, MapSnapshotPatch patch) {
+        public static final Codec<MapPatchPayload> CODEC = Codec.of(
             (buf, val) -> {
                 buf.writeResourceLocation(val.dimension);
                 MapSnapshotCodec.writePatch(buf, val.patch);
             },
             buf -> new MapPatchPayload(buf.readResourceLocation(), MapSnapshotCodec.readPatch(buf))
         );
-        @Override public Type<MapPatchPayload> type() { return PATCH; }
     }
 
     public record MapAutomaticPlanningSamplingPayload(
             ResourceLocation dimension,
-            List<AutomaticPlanningSamplingBounds> bounds) implements CustomPacketPayload {
+            List<AutomaticPlanningSamplingBounds> bounds) {
         public MapAutomaticPlanningSamplingPayload {
             bounds = immutableAutomaticPlanningSamplingBounds(bounds);
         }
 
-        public static final StreamCodec<FriendlyByteBuf, MapAutomaticPlanningSamplingPayload> CODEC = StreamCodec.of(
+        public static final Codec<MapAutomaticPlanningSamplingPayload> CODEC = Codec.of(
                 (buf, value) -> {
                     buf.writeResourceLocation(value.dimension);
                     writeAutomaticPlanningSamplingBounds(buf, value.bounds);
@@ -133,51 +149,48 @@ public class MapNetworkPayloads {
                         readAutomaticPlanningSamplingBounds(buf))
         );
 
-        @Override public Type<MapAutomaticPlanningSamplingPayload> type() { return AUTO_PLANNING_SAMPLING; }
     }
 
-    public record MapTeleportPayload(int x, int y, int z) implements CustomPacketPayload {
-        public static final StreamCodec<FriendlyByteBuf, MapTeleportPayload> CODEC = StreamCodec.composite(
-            ByteBufCodecs.VAR_INT, MapTeleportPayload::x,
-            ByteBufCodecs.VAR_INT, MapTeleportPayload::y,
-            ByteBufCodecs.VAR_INT, MapTeleportPayload::z,
-            MapTeleportPayload::new
-        );
-        @Override public Type<MapTeleportPayload> type() { return TP_REQ; }
+    public record MapTeleportPayload(int x, int y, int z) {
+        public static final Codec<MapTeleportPayload> CODEC = Codec.of(
+                (buf, value) -> {
+                    buf.writeVarInt(value.x);
+                    buf.writeVarInt(value.y);
+                    buf.writeVarInt(value.z);
+                },
+                buf -> new MapTeleportPayload(buf.readVarInt(), buf.readVarInt(), buf.readVarInt()));
     }
 
-    public record MapTeleportAckPayload(boolean success, int x, int y, int z) implements CustomPacketPayload {
-        public static final StreamCodec<FriendlyByteBuf, MapTeleportAckPayload> CODEC = StreamCodec.composite(
-            ByteBufCodecs.BOOL, MapTeleportAckPayload::success,
-            ByteBufCodecs.VAR_INT, MapTeleportAckPayload::x,
-            ByteBufCodecs.VAR_INT, MapTeleportAckPayload::y,
-            ByteBufCodecs.VAR_INT, MapTeleportAckPayload::z,
-            MapTeleportAckPayload::new
-        );
-        @Override public Type<MapTeleportAckPayload> type() { return TP_ACK; }
+    public record MapTeleportAckPayload(boolean success, int x, int y, int z) {
+        public static final Codec<MapTeleportAckPayload> CODEC = Codec.of(
+                (buf, value) -> {
+                    buf.writeBoolean(value.success);
+                    buf.writeVarInt(value.x);
+                    buf.writeVarInt(value.y);
+                    buf.writeVarInt(value.z);
+                },
+                buf -> new MapTeleportAckPayload(buf.readBoolean(), buf.readVarInt(), buf.readVarInt(), buf.readVarInt()));
     }
 
-    public record MapManualConnectPayload(BlockPos from, BlockPos to) implements CustomPacketPayload {
-        public static final StreamCodec<FriendlyByteBuf, MapManualConnectPayload> CODEC = StreamCodec.composite(
-            BlockPos.STREAM_CODEC, MapManualConnectPayload::from,
-            BlockPos.STREAM_CODEC, MapManualConnectPayload::to,
-            MapManualConnectPayload::new
-        );
-        @Override public Type<MapManualConnectPayload> type() { return MAN_REQ; }
+    public record MapManualConnectPayload(BlockPos from, BlockPos to) {
+        public static final Codec<MapManualConnectPayload> CODEC = Codec.of(
+                (buf, value) -> {
+                    buf.writeBlockPos(value.from);
+                    buf.writeBlockPos(value.to);
+                },
+                buf -> new MapManualConnectPayload(buf.readBlockPos(), buf.readBlockPos()));
     }
 
-    public record MapAccessSyncPayload(boolean allowed) implements CustomPacketPayload {
-        public static final StreamCodec<FriendlyByteBuf, MapAccessSyncPayload> CODEC = StreamCodec.composite(
-            ByteBufCodecs.BOOL, MapAccessSyncPayload::allowed,
-            MapAccessSyncPayload::new
-        );
-        @Override public Type<MapAccessSyncPayload> type() { return ACCESS_SYNC; }
+    public record MapAccessSyncPayload(boolean allowed) {
+        public static final Codec<MapAccessSyncPayload> CODEC = Codec.of(
+                (buf, value) -> buf.writeBoolean(value.allowed),
+                buf -> new MapAccessSyncPayload(buf.readBoolean()));
     }
 
     public record MapSearchRequestPayload(int requestSeq,
                                           ResourceLocation dimension,
-                                          String query) implements CustomPacketPayload {
-        public static final StreamCodec<FriendlyByteBuf, MapSearchRequestPayload> CODEC = StreamCodec.of(
+                                          String query) {
+        public static final Codec<MapSearchRequestPayload> CODEC = Codec.of(
                 (buf, value) -> {
                     buf.writeVarInt(value.requestSeq);
                     buf.writeResourceLocation(value.dimension);
@@ -189,18 +202,17 @@ public class MapNetworkPayloads {
                         buf.readUtf(MapStructureSearchService.MAX_QUERY_LENGTH))
         );
 
-        @Override public Type<MapSearchRequestPayload> type() { return SEARCH_REQ; }
     }
 
     public record MapSearchResponsePayload(int requestSeq,
                                            ResourceLocation dimension,
                                            boolean success,
-                                           List<MapSearchResult> results) implements CustomPacketPayload {
+                                           List<MapSearchResult> results) {
         public MapSearchResponsePayload {
             results = results == null ? List.of() : List.copyOf(results);
         }
 
-        public static final StreamCodec<FriendlyByteBuf, MapSearchResponsePayload> CODEC = StreamCodec.of(
+        public static final Codec<MapSearchResponsePayload> CODEC = Codec.of(
                 (buf, value) -> {
                     buf.writeVarInt(value.requestSeq);
                     buf.writeResourceLocation(value.dimension);
@@ -233,7 +245,6 @@ public class MapNetworkPayloads {
                 }
         );
 
-        @Override public Type<MapSearchResponsePayload> type() { return SEARCH_RESP; }
     }
 
     private static void writeAutomaticPlanningSamplingBounds(

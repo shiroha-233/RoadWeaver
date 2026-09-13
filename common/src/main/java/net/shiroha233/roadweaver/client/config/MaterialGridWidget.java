@@ -126,7 +126,7 @@ public class MaterialGridWidget extends AbstractWidget {
 
     private Block blockFromId(String id) {
         try {
-            ResourceLocation rl = ResourceLocation.parse(id);
+            ResourceLocation rl = new ResourceLocation(id);
             return BuiltInRegistries.BLOCK.get(rl);
         } catch (Exception e) {
             return Blocks.AIR;

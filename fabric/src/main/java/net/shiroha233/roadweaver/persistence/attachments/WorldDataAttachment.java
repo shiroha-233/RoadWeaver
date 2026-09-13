@@ -22,22 +22,22 @@ public class WorldDataAttachment {
     private static final Logger LOGGER = LoggerFactory.getLogger(RoadWeaver.MOD_ID);
 
     public static final AttachmentType<List<StructureConnection>> CONNECTED_STRUCTURES = AttachmentRegistry.createPersistent(
-            ResourceLocation.fromNamespaceAndPath(RoadWeaver.MOD_ID, "connected_villages"),
+            new ResourceLocation(RoadWeaver.MOD_ID, "connected_villages"),
             Codec.list(StructureConnection.CODEC)
     );
 
     public static final AttachmentType<StructureLocationData> STRUCTURE_LOCATIONS = AttachmentRegistry.createPersistent(
-            ResourceLocation.fromNamespaceAndPath(RoadWeaver.MOD_ID, "village_locations"),
+            new ResourceLocation(RoadWeaver.MOD_ID, "village_locations"),
             StructureLocationData.CODEC
     );
 
     public static final AttachmentType<java.util.Set<Long>> PLANNED_TILE_KEYS = AttachmentRegistry.createPersistent(
-            ResourceLocation.fromNamespaceAndPath(RoadWeaver.MOD_ID, "planned_tiles"),
+            new ResourceLocation(RoadWeaver.MOD_ID, "planned_tiles"),
             Codec.list(Codec.LONG).xmap(HashSet::new, ArrayList::new)
     );
 
     public static final AttachmentType<java.util.Map<Long, Long>> PLANNED_TILE_CENTERS = AttachmentRegistry.createPersistent(
-            ResourceLocation.fromNamespaceAndPath(RoadWeaver.MOD_ID, "planned_tile_centers"),
+            new ResourceLocation(RoadWeaver.MOD_ID, "planned_tile_centers"),
             Codec.unboundedMap(Codec.STRING, Codec.LONG).xmap(
                     m -> {
                         java.util.HashMap<Long, Long> out = new java.util.HashMap<>();
@@ -59,7 +59,7 @@ public class WorldDataAttachment {
     );
 
     public static final AttachmentType<MapAccessPolicy> MAP_ACCESS_POLICY = AttachmentRegistry.createPersistent(
-            ResourceLocation.fromNamespaceAndPath(RoadWeaver.MOD_ID, "map_access_policy"),
+            new ResourceLocation(RoadWeaver.MOD_ID, "map_access_policy"),
             MapAccessPolicy.CODEC
     );
 

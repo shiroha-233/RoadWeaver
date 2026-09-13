@@ -11,7 +11,7 @@ import java.util.Locale;
  * 结构点图标的分类与扁平化绘制。
  */
 public final class StructureIconRenderer {
-    private static final ResourceLocation VILLAGER_TEXTURE = ResourceLocation.fromNamespaceAndPath("minecraft", "textures/entity/villager/villager.png");
+    private static final ResourceLocation VILLAGER_TEXTURE = new ResourceLocation("minecraft", "textures/entity/villager/villager.png");
     private static final int BORDER_COLOR = 0xE0101214;
     private static final int UNKNOWN_BACKGROUND = 0xE0282C31;
     private static final int UNKNOWN_TEXT = 0xFFF4F1E8;

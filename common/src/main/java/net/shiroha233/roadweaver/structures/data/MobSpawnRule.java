@@ -95,7 +95,7 @@ public record MobSpawnRule(
             
             if (entity instanceof Mob mob) {
                 mob.finalizeSpawn(level, level.getCurrentDifficultyAt(spawnPos), 
-                    MobSpawnType.STRUCTURE, null);
+                    MobSpawnType.STRUCTURE, null, null);
                 mob.setPersistenceRequired();
             }
             
@@ -108,18 +108,18 @@ public record MobSpawnRule(
     }
     
     public static final MobSpawnRule SINGLE_VILLAGER = new MobSpawnRule(
-        ResourceLocation.fromNamespaceAndPath("minecraft", "villager"), 1, 1, new Vec3i(0, 1, 0), 1.0f
+        new ResourceLocation("minecraft", "villager"), 1, 1, new Vec3i(0, 1, 0), 1.0f
     );
     
     public static final MobSpawnRule VILLAGERS = new MobSpawnRule(
-        ResourceLocation.fromNamespaceAndPath("minecraft", "villager"), 1, 2, new Vec3i(0, 1, 0), 1.0f
+        new ResourceLocation("minecraft", "villager"), 1, 2, new Vec3i(0, 1, 0), 1.0f
     );
     
     public static final MobSpawnRule CAT = new MobSpawnRule(
-        ResourceLocation.fromNamespaceAndPath("minecraft", "cat"), 1, 1, new Vec3i(0, 1, 0), 0.5f
+        new ResourceLocation("minecraft", "cat"), 1, 1, new Vec3i(0, 1, 0), 0.5f
     );
     
     public static final MobSpawnRule IRON_GOLEM = new MobSpawnRule(
-        ResourceLocation.fromNamespaceAndPath("minecraft", "iron_golem"), 1, 1, new Vec3i(0, 1, 0), 0.3f
+        new ResourceLocation("minecraft", "iron_golem"), 1, 1, new Vec3i(0, 1, 0), 0.3f
     );
 }

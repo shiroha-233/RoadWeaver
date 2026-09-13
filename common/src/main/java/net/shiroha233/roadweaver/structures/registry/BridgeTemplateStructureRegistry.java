@@ -143,7 +143,7 @@ public final class BridgeTemplateStructureRegistry {
             if (!pTag.contains("Name", 8)) {
                 return Blocks.AIR.defaultBlockState();
             } else {
-                ResourceLocation resourcelocation = ResourceLocation.parse(pTag.getString("Name"));
+                ResourceLocation resourcelocation = new ResourceLocation(pTag.getString("Name"));
                 Optional<? extends Holder<Block>> optional = BuiltInRegistries.BLOCK.asLookup().get(ResourceKey.create(Registries.BLOCK, resourcelocation));
                 if (optional.isEmpty()) {
                     return Blocks.AIR.defaultBlockState();

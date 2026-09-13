@@ -15,7 +15,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class MapTerrainSamplingServiceTest {
     private static final ResourceLocation DIMENSION =
-            ResourceLocation.fromNamespaceAndPath("minecraft", "overworld");
+            new ResourceLocation("minecraft", "overworld");
 
     @Test
     void routesManualSamplingFromTheActualEffectiveMode() {

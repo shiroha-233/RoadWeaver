@@ -99,36 +99,15 @@ public final class StructureVerificationService {
                 continue;
             }
 
-            var structureHolder = structureRegistry.getHolder(rl);
-            if (structureHolder.isEmpty()) {
-                result.add(info);
-                continue;
-            }
-
-            List<StructurePlacement> placements = generatorState.getPlacementsForStructure(structureHolder.get());
-            if (placements.isEmpty()) {
-                result.add(info);
-                continue;
-            }
-
             ChunkPos chunkPos = new ChunkPos(info.pos().getX() >> 4, info.pos().getZ() >> 4);
-
-            boolean verified = false;
-            for (StructurePlacement placement : placements) {
-                StructureCheckResult checkResult;
-                try {
-                    checkResult = checker.checkStart(chunkPos, structure, placement, false);
-                } catch (Throwable t) {
-                    continue;
-                }
-
-                if (checkResult == StructureCheckResult.START_PRESENT || checkResult == StructureCheckResult.CHUNK_LOAD_NEEDED) {
-                    verified = true;
-                    break;
-                }
+            StructureCheckResult checkResult;
+            try {
+                checkResult = checker.checkStart(chunkPos, structure, false);
+            } catch (Throwable t) {
+                result.add(info);
+                continue;
             }
-
-            if (verified) {
+            if (checkResult == StructureCheckResult.START_PRESENT || checkResult == StructureCheckResult.CHUNK_LOAD_NEEDED) {
                 result.add(info);
             }
         }

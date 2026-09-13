@@ -105,7 +105,7 @@ public class BlockCandidateWidget extends AbstractContainerEventHandler implemen
     }
 
     private void addBlocksFromTab(Set<Block> out, String tabId) {
-        ResourceKey<CreativeModeTab> key = ResourceKey.create(Registries.CREATIVE_MODE_TAB, ResourceLocation.parse(tabId));
+        ResourceKey<CreativeModeTab> key = ResourceKey.create(Registries.CREATIVE_MODE_TAB, new ResourceLocation(tabId));
         CreativeModeTab tab = BuiltInRegistries.CREATIVE_MODE_TAB.get(key);
         if (tab == null) return;
         for (ItemStack stack : tab.getDisplayItems()) {
@@ -277,7 +277,7 @@ public class BlockCandidateWidget extends AbstractContainerEventHandler implemen
     }
 
     @Override
-    public boolean mouseScrolled(double mouseX, double mouseY, double scrollX, double scrollY) {
+    public boolean mouseScrolled(double mouseX, double mouseY, double scrollY) {
         if (mouseX >= x && mouseX < x + width && mouseY >= y && mouseY < y + height) {
             if (scrollY > 0) scrollOffset--;
             else if (scrollY < 0) scrollOffset++;

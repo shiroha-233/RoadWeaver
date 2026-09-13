@@ -309,7 +309,7 @@ public class RoadMapScreen extends Screen implements MapInputHandler.Callbacks {
     // ========== 输入处理 ==========
     
     @Override
-    public boolean mouseScrolled(double mouseX, double mouseY, double scrollX, double scrollY) {
+    public boolean mouseScrolled(double mouseX, double mouseY, double scrollY) {
         dockLayout = MapDockRenderer.layout(this.width, this.height);
         int workspaceBottom = workspaceBottomLimit(dockLayout);
         if (dockLayout.contains(mouseX, mouseY)) return true;
@@ -318,7 +318,7 @@ public class RoadMapScreen extends Screen implements MapInputHandler.Callbacks {
             return true;
         }
         return inputHandler.mouseScrolled(mouseX, mouseY, scrollY)
-               || super.mouseScrolled(mouseX, mouseY, scrollX, scrollY);
+               || super.mouseScrolled(mouseX, mouseY, scrollY);
     }
 
     @Override
@@ -647,7 +647,7 @@ public class RoadMapScreen extends Screen implements MapInputHandler.Callbacks {
 
         ResourceLocation did = (mc.level != null) ? mc.level.dimension().location() : currentDimensionId;
         if (did == null) {
-            did = ResourceLocation.fromNamespaceAndPath("minecraft", "overworld");
+            did = new ResourceLocation("minecraft", "overworld");
         }
         if (currentDimensionId == null || !did.equals(currentDimensionId)) {
             snapshotStore = MapSnapshotCache.store(did);

@@ -13,7 +13,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class MapAutomaticPlanningSamplingCacheTest {
 
-    private static final ResourceLocation OVERWORLD = ResourceLocation.fromNamespaceAndPath("minecraft", "overworld");
+    private static final ResourceLocation OVERWORLD = new ResourceLocation("minecraft", "overworld");
 
     @AfterEach
     void tearDown() {

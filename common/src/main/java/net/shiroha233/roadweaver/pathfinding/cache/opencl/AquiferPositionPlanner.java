@@ -1,4 +1,4 @@
-/* 文件职责：按原版 1.21.1 aquifer 网格生成 GPU 批次所需的确定性候选位置。 */
+/* 文件职责：按原版 aquifer 网格生成 GPU 批次所需的确定性候选位置。 */
 package net.shiroha233.roadweaver.pathfinding.cache.opencl;
 
 import net.minecraft.util.RandomSource;

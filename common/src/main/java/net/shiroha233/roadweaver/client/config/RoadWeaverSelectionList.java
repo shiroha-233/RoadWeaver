@@ -13,12 +13,12 @@ public abstract class RoadWeaverSelectionList<E extends ContainerObjectSelection
     private int backgroundColor = DEFAULT_BACKGROUND;
 
     protected RoadWeaverSelectionList(Minecraft minecraft, int width, int height, int top, int rowHeight, int rowWidthPadding) {
-        super(minecraft, width, height, top, rowHeight);
+        super(minecraft, width, height, top, top + height, rowHeight);
         this.rowWidthPadding = rowWidthPadding;
     }
 
     public void setLeftPos(int left) {
-        setX(left);
+        super.setLeftPos(left);
     }
 
     public void setRenderBackground(boolean renderBackground) {
@@ -44,17 +44,10 @@ public abstract class RoadWeaverSelectionList<E extends ContainerObjectSelection
     }
 
     @Override
-    protected void renderListBackground(GuiGraphics graphics) {
+    protected void renderBackground(GuiGraphics graphics) {
         if (!renderBackground) {
             return;
         }
-        graphics.fill(getX(), getY(), getRight(), getBottom(), backgroundColor);
-    }
-
-    @Override
-    protected void renderListSeparators(GuiGraphics graphics) {
-        if (renderTopAndBottom) {
-            super.renderListSeparators(graphics);
-        }
+        graphics.fill(x0, y0, x1, y1, backgroundColor);
     }
 }

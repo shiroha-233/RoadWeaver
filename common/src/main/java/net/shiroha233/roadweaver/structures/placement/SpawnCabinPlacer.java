@@ -21,7 +21,7 @@ import net.shiroha233.roadweaver.structures.types.SpawnCabinStructure;
 public final class SpawnCabinPlacer {
     private SpawnCabinPlacer() {}
     
-    private static final ResourceLocation STRUCTURE_ID = ResourceLocation.fromNamespaceAndPath("roadweaver", "spawn_cabin");
+    private static final ResourceLocation STRUCTURE_ID = new ResourceLocation("roadweaver", "spawn_cabin");
     
     public static boolean ensurePlaced(ServerLevel level) {
         if (level == null) return false;

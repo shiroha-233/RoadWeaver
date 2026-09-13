@@ -1,0 +1,31 @@
+{
+  "required": true,
+  "minVersion": "0.8",
+  "package": "net.shiroha233.roadweaver.mixin",
+  "compatibilityLevel": "JAVA_17",
+  "plugin": "net.shiroha233.roadweaver.mixin.MixinConfigPlugin",
+  "mixins": [
+    "forge.MinecraftServerMixin",
+    "forge.TreeFeatureMixin",
+    "forge.HugeMushroomFeatureMixin",
+    "forge.HugeFungusFeatureMixin",
+    "forge.BambooFeatureMixin",
+    "forge.GenericVegetationFeatureMixin",
+    "forge.BeardifierMixin",
+    "forge.StructureManagerAccessor",
+    "forge.dynamictree.DynamicTreeFeatureMixin",
+    "forge.ServerLevelStructureMixin",
+    "forge.tyg.TreeFromStructureNBTFeatureMixin",
+    "forge.rtf.RTFTemplateFeatureMixin",
+    "forge.rtf.RTFBushFeatureMixin"
+  ],
+  "client": [
+    "forge.CreateWorldScreenMixin",
+    "forge.CreateWorldScreenInitMixin",
+    "forge.LevelLoadingScreenMixin",
+    "forge.BiomeGrassColorFailSafeMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}
