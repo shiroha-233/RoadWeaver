@@ -50,4 +50,22 @@ class DensityGraphCompilerTest {
         assertTrue(root.left() < program.root(DensityGraphRoot.FINAL_DENSITY));
         assertTrue(root.right() < program.root(DensityGraphRoot.FINAL_DENSITY));
     }
+
+    @Test
+    void readsRecordComponentsFromRemappedInstanceFields() {
+        LegacyRecordLike value = new LegacyRecordLike("first", 7);
+
+        assertEquals("first", DensityGraphReflection.readRecord(value, 0));
+        assertEquals(7, DensityGraphReflection.readRecordInt(value, 1, -1));
+    }
+
+    private static final class LegacyRecordLike {
+        private final String first;
+        private final int second;
+
+        private LegacyRecordLike(String first, int second) {
+            this.first = first;
+            this.second = second;
+        }
+    }
 }

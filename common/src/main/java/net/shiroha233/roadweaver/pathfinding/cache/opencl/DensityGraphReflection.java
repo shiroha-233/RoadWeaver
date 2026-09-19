@@ -26,20 +26,28 @@ final class DensityGraphReflection {
     }
 
     static Object readRecord(Object owner, int componentIndex) {
-        if (owner == null || componentIndex < 0 || !owner.getClass().isRecord()) {
+        if (owner == null || componentIndex < 0) {
             return null;
         }
-        RecordComponent[] components = owner.getClass().getRecordComponents();
-        if (componentIndex >= components.length) {
-            return null;
+        if (owner.getClass().isRecord()) {
+            RecordComponent[] components = owner.getClass().getRecordComponents();
+            if (componentIndex >= components.length) {
+                return null;
+            }
+            try {
+                Method accessor = components[componentIndex].getAccessor();
+                accessor.setAccessible(true);
+                return accessor.invoke(owner);
+            } catch (Throwable ignored) {
+                // Forge's production remapper can make a record accessor inaccessible.
+                // First use the component's runtime name, then fall back to field order.
+                Object value = readExact(owner, components[componentIndex].getName());
+                if (value != null) {
+                    return value;
+                }
+            }
         }
-        try {
-            Method accessor = components[componentIndex].getAccessor();
-            accessor.setAccessible(true);
-            return accessor.invoke(owner);
-        } catch (Throwable ignored) {
-            return null;
-        }
+        return readInstanceField(owner, componentIndex);
     }
 
     static double readRecordDouble(Object owner, int componentIndex, double fallback) {
@@ -93,6 +101,29 @@ final class DensityGraphReflection {
     static int readFieldInt(Object owner, int ordinal, int fallback) {
         Object value = readField(owner, int.class, ordinal);
         return value instanceof Number number ? number.intValue() : fallback;
+    }
+
+    private static Object readInstanceField(Object owner, int ordinal) {
+        int match = 0;
+        Class<?> type = owner.getClass();
+        while (type != null) {
+            for (Field field : type.getDeclaredFields()) {
+                if (Modifier.isStatic(field.getModifiers()) || field.isSynthetic()) {
+                    continue;
+                }
+                if (match++ != ordinal) {
+                    continue;
+                }
+                try {
+                    field.setAccessible(true);
+                    return field.get(owner);
+                } catch (Throwable ignored) {
+                    return null;
+                }
+            }
+            type = type.getSuperclass();
+        }
+        return null;
     }
 
     private static Object readExact(Object owner, String name) {
