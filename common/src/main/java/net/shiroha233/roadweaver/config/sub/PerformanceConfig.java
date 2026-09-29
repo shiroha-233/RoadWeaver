@@ -13,6 +13,7 @@ public final class PerformanceConfig implements SubConfig {
     private int maxConcurrentGenerations = Math.max(1, Math.min(2, sharedWorkerThreads));
     private int threadDutyCycle = RoadConstants.DEFAULT_DUTY_CYCLE;
     private boolean idleGenerationEnabled = false;
+    private int idleMaxConcurrentGenerations = RoadConstants.DEFAULT_IDLE_MAX_CONCURRENT_GENERATIONS;
     private int idleThreadDutyCycle = 20;
     private boolean openclCoarseSamplingEnabled = true;
     private boolean openclAccurateSamplingEnabled = true;
@@ -28,6 +29,7 @@ public final class PerformanceConfig implements SubConfig {
         if (threadDutyCycle < RoadConstants.DUTY_CYCLE_MIN || threadDutyCycle > RoadConstants.DUTY_CYCLE_MAX) {
             threadDutyCycle = RoadConstants.DEFAULT_DUTY_CYCLE;
         }
+        idleMaxConcurrentGenerations = sanitizeIdleMaxConcurrentGenerations(idleMaxConcurrentGenerations);
         if (idleThreadDutyCycle < RoadConstants.DUTY_CYCLE_MIN || idleThreadDutyCycle > RoadConstants.DUTY_CYCLE_MAX) {
             idleThreadDutyCycle = 20;
         }
@@ -43,6 +45,7 @@ public final class PerformanceConfig implements SubConfig {
         copy.maxConcurrentGenerations = this.maxConcurrentGenerations;
         copy.threadDutyCycle = this.threadDutyCycle;
         copy.idleGenerationEnabled = this.idleGenerationEnabled;
+        copy.idleMaxConcurrentGenerations = this.idleMaxConcurrentGenerations;
         copy.idleThreadDutyCycle = this.idleThreadDutyCycle;
         copy.openclCoarseSamplingEnabled = this.openclCoarseSamplingEnabled;
         copy.openclAccurateSamplingEnabled = this.openclAccurateSamplingEnabled;
@@ -62,6 +65,8 @@ public final class PerformanceConfig implements SubConfig {
     public void setThreadDutyCycle(int v) { this.threadDutyCycle = Math.max(RoadConstants.DUTY_CYCLE_MIN, Math.min(RoadConstants.DUTY_CYCLE_MAX, v)); }
     public boolean idleGenerationEnabled() { return idleGenerationEnabled; }
     public void setIdleGenerationEnabled(boolean v) { this.idleGenerationEnabled = v; }
+    public int idleMaxConcurrentGenerations() { return idleMaxConcurrentGenerations; }
+    public void setIdleMaxConcurrentGenerations(int v) { this.idleMaxConcurrentGenerations = sanitizeIdleMaxConcurrentGenerations(v); }
     public int idleThreadDutyCycle() { return idleThreadDutyCycle; }
     public void setIdleThreadDutyCycle(int v) { this.idleThreadDutyCycle = Math.max(RoadConstants.DUTY_CYCLE_MIN, Math.min(RoadConstants.DUTY_CYCLE_MAX, v)); }
     public boolean openclCoarseSamplingEnabled() { return openclCoarseSamplingEnabled; }
@@ -86,6 +91,11 @@ public final class PerformanceConfig implements SubConfig {
             return defaultInitialGenerationThreads();
         }
         return Math.max(1, Math.min(RoadConstants.COMPUTE_THREADS_MAX, value));
+    }
+
+    private static int sanitizeIdleMaxConcurrentGenerations(int value) {
+        return Math.max(RoadConstants.IDLE_MAX_CONCURRENT_GENERATIONS_MIN,
+                Math.min(RoadConstants.IDLE_MAX_CONCURRENT_GENERATIONS_MAX, value));
     }
 
     private static String normalizeOpenCLDevicePreference(String value) {

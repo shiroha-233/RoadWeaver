@@ -161,7 +161,7 @@ public final class IdleRoadGenerationService {
         List<ServerPlayer> players = collectPlayers(level);
         int duty = cfg.performance().idleThreadDutyCycle();
 
-        int limit = Math.min(1, Math.max(1, cfg.performance().maxConcurrentGenerations()));
+        int limit = cfg.performance().idleMaxConcurrentGenerations();
 
         while (running.get() < limit) {
             StructureConnection conn = pollNearestOwnedPlanned(level, players);

@@ -504,6 +504,14 @@ public class ConfigScreenFactoryImpl {
                 .build());
 
         category.addEntry(eb
+                .startIntField(Component.translatable("config.roadweaver.idle_max_concurrent_generations"), cfg.idleMaxConcurrentGenerations())
+                .setDefaultValue(def.idleMaxConcurrentGenerations())
+                .setTooltip(Component.translatable("config.roadweaver.idle_max_concurrent_generations.tooltip"))
+                .setMin(1).setMax(8)
+                .setSaveConsumer(cfg::setIdleMaxConcurrentGenerations)
+                .build());
+
+        category.addEntry(eb
                 .startIntSlider(Component.translatable("config.roadweaver.thread_duty_cycle"), cfg.threadDutyCycle(), 1, 100)
                 .setDefaultValue(def.threadDutyCycle())
                 .setTooltip(Component.translatable("config.roadweaver.thread_duty_cycle.tooltip"))

@@ -94,6 +94,8 @@
   "config.roadweaver.a_star_step.tooltip": "A* 在网格上的邻居采样间距。数值越大节点越少，性能更好但路径精度降低。默认 8。",
   "config.roadweaver.max_concurrent_generations": "普通生成并发上限",
   "config.roadweaver.max_concurrent_generations.tooltip": "进入世界后同时进行道路生成的最大任务数上限，不影响创建世界时的初始生成。",
+  "config.roadweaver.idle_max_concurrent_generations": "闲时生成并发上限",
+  "config.roadweaver.idle_max_concurrent_generations.tooltip": "闲时生成同时进行的道路生成任务数上限（1-8）。默认 1。闲时生成与路网规划、粗采样共用同一个工作池，调高可能拖慢路网规划。",
   "config.roadweaver.a_star_max_steps": "A* 最大搜索步数",
   "config.roadweaver.a_star_max_steps.tooltip": "A* 算法单次搜索的最大步数限制，防止在复杂地形中无限搜索。默认 200000。",
   "config.roadweaver.pathfinding_algorithm": "寻路算法",
