@@ -96,6 +96,8 @@
   "config.roadweaver.a_star_step.tooltip": "Grid step between sampled neighbors for A*. Larger values reduce nodes and improve performance but may reduce path fidelity. Default 8.",
   "config.roadweaver.max_concurrent_generations": "Normal Generation Concurrency",
   "config.roadweaver.max_concurrent_generations.tooltip": "Cap the number of road generation tasks running in parallel after entering a world. This does not affect initial generation.",
+  "config.roadweaver.idle_max_concurrent_generations": "Idle Generation Concurrency",
+  "config.roadweaver.idle_max_concurrent_generations.tooltip": "Cap the number of parallel road generation tasks used by idle generation (1-8). Default 1. Idle generation shares the same worker pool as planning and coarse sampling, so raising this can slow down network planning.",
   "config.roadweaver.a_star_max_steps": "A* Max Search Steps",
   "config.roadweaver.a_star_max_steps.tooltip": "Maximum search steps for A* algorithm per generation to prevent infinite loops in complex terrain. Default 200000.",
   "config.roadweaver.pathfinding_algorithm": "Pathfinding Algorithm",

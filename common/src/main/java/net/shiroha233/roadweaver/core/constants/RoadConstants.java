@@ -49,6 +49,11 @@ public final class RoadConstants {
     public static final int DEFAULT_INITIAL_GENERATION_THREADS = 6;
     public static final int COMPUTE_THREADS_MAX = 128;
 
+    // 闲时生成与普通生成共享同一个工作池，故单独限制其并发上限，默认保持单并发。
+    public static final int DEFAULT_IDLE_MAX_CONCURRENT_GENERATIONS = 1;
+    public static final int IDLE_MAX_CONCURRENT_GENERATIONS_MIN = 1;
+    public static final int IDLE_MAX_CONCURRENT_GENERATIONS_MAX = 8;
+
     public static final int DEFAULT_BRIDGE_DECK_CLEARANCE = 2;
     public static final int BRIDGE_DECK_CLEARANCE_MIN = 1;
     public static final int BRIDGE_DECK_CLEARANCE_MAX = 8;
