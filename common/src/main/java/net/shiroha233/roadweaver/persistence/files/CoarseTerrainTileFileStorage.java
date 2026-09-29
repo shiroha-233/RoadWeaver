@@ -49,11 +49,6 @@ public final class CoarseTerrainTileFileStorage {
         FileStorageIO.deleteTree(FileStoragePathResolver.categoryRoot(level, CATEGORY), null, "清理旧版粗采样地形文件失败");
     }
 
-    public static void pruneOldTiles(ServerLevel level, long olderThanEpochSeconds) {
-        if (level == null) return;
-        // 文件型存储采用按需覆盖，这里保留接口，未来可接入 TTL 清理。
-    }
-
     private static CoarseTerrainTile readFile(ServerLevel level, CoarseTerrainTileKey key) {
         Path file = tilePath(level, key);
         if (!Files.exists(file)) {
