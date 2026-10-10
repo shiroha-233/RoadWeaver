@@ -7,6 +7,7 @@ import net.shiroha233.roadweaver.core.model.ConnectionStatus;
 import net.shiroha233.roadweaver.core.model.StructureConnection;
 import net.shiroha233.roadweaver.core.model.StructureInfo;
 import net.shiroha233.roadweaver.core.model.StructureLocationData;
+import net.shiroha233.roadweaver.generation.ConnectionListUpdater;
 import net.shiroha233.roadweaver.generation.RoadGenerationService;
 import net.shiroha233.roadweaver.map.MapPatchService;
 import net.shiroha233.roadweaver.persistence.WorldDataProvider;
@@ -15,6 +16,7 @@ import net.shiroha233.roadweaver.planning.RoadPlanningService;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 public final class RoadNetworkApi {
     private RoadNetworkApi() {
@@ -102,60 +104,47 @@ public final class RoadNetworkApi {
                 StructureFileStorage.SOURCE_MANUAL
         );
 
-        List<StructureConnection> existingConns = provider.getStructureConnections(level);
-        List<StructureConnection> list = existingConns != null ? new ArrayList<>(existingConns)
-                : new ArrayList<>();
-        boolean exists = false;
-        for (StructureConnection c : list) {
-            if (sameEdge(c, from, to)) {
-                exists = true;
-                break;
+        StructureConnection created = ConnectionListUpdater.update(level, all -> {
+            for (StructureConnection c : all) {
+                if (sameEdge(c, from, to)) return Optional.empty();
             }
-        }
-
-        if (!exists) {
             StructureConnection connection = new StructureConnection(from, to, ConnectionStatus.PLANNED);
-            list.add(connection);
-            provider.setStructureConnections(level, list);
-            MapPatchService.publishConnection(level, connection);
+            all.add(connection);
+            return Optional.of(connection);
+        });
+        if (created != null) {
+            MapPatchService.publishConnection(level, created);
         }
 
         if (generateImmediately) {
             StructureConnection conn = new StructureConnection(from, to,
                     ConnectionStatus.GENERATING);
-            List<StructureConnection> currentList = provider.getStructureConnections(level);
-            List<StructureConnection> all = currentList != null ? new ArrayList<>(currentList)
-                    : new ArrayList<>();
-            boolean found = false;
-            for (int i = 0; i < all.size(); i++) {
-                if (sameEdge(all.get(i), from, to)) {
-                    all.set(i, conn);
-                    found = true;
-                    break;
-                }
-            }
-            if (!found)
-                all.add(conn);
-            provider.setStructureConnections(level, all);
+            ConnectionListUpdater.update(level, all -> {
+                replaceEdge(all, from, to, conn);
+                return Optional.of(Boolean.TRUE);
+            });
             boolean success = RoadGenerationService.generateTask(level, conn);
             ConnectionStatus finalStatus = success ? ConnectionStatus.COMPLETED
                     : ConnectionStatus.FAILED;
             StructureConnection finalConn = new StructureConnection(from, to, finalStatus);
 
-            currentList = provider.getStructureConnections(level);
-            all = currentList != null ? new ArrayList<>(currentList) : new ArrayList<>();
-            found = false;
-            for (int i = 0; i < all.size(); i++) {
-                if (sameEdge(all.get(i), from, to)) {
-                    all.set(i, finalConn);
-                    found = true;
-                    break;
-                }
-            }
-            if (!found)
-                all.add(finalConn);
-            provider.setStructureConnections(level, all);
+            ConnectionListUpdater.update(level, all -> {
+                replaceEdge(all, from, to, finalConn);
+                return Optional.of(Boolean.TRUE);
+            });
         }
+    }
+
+    /** 就地替换同一条边，不存在时追加。与逐条重建列表的旧写法等价。 */
+    private static void replaceEdge(List<StructureConnection> all, BlockPos from, BlockPos to,
+                                    StructureConnection replacement) {
+        for (int i = 0; i < all.size(); i++) {
+            if (sameEdge(all.get(i), from, to)) {
+                all.set(i, replacement);
+                return;
+            }
+        }
+        all.add(replacement);
     }
 
     public static void planRegion(ServerLevel level, int minBlockX, int minBlockZ, int maxBlockX, int maxBlockZ) {

@@ -21,7 +21,9 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -123,6 +125,60 @@ public final class StructureFileStorage {
         Entry entry = entry(level);
         synchronized (entry.lock) {
             return new HashSet<>(loaded(entry).plannedTileKeys);
+        }
+    }
+
+    /** 单键成员查询：供「每玩家每秒一次」的热路径避免深拷贝整个键集合。 */
+    public static boolean isPlannedTile(ServerLevel level, long tileKey) {
+        Entry entry = entry(level);
+        synchronized (entry.lock) {
+            return loaded(entry).plannedTileKeys.contains(tileKey);
+        }
+    }
+
+    /** 原子登记，避免「拷贝整个键集合 -> 加一条 -> 整体写回」。 */
+    public static void markPlannedTile(ServerLevel level, long tileKey, int centerChunkX, int centerChunkZ) {
+        Entry entry = entry(level);
+        synchronized (entry.lock) {
+            StateData state = loaded(entry);
+            if (state.plannedTileKeys.add(tileKey)) {
+                markDirty(entry);
+            }
+            long center = (((long) centerChunkX) << 32) ^ (centerChunkZ & 0xffffffffL);
+            if (state.plannedTileCenters.get(tileKey) == null) {
+                state.plannedTileCenters.put(tileKey, center);
+                markDirty(entry);
+            }
+        }
+    }
+
+    /** 就地裁剪，不做全量拷贝。 */
+    public static void prunePlannedTilesIfTooLarge(ServerLevel level, int maxKeys) {
+        if (maxKeys <= 0) return;
+        Entry entry = entry(level);
+        synchronized (entry.lock) {
+            StateData state = loaded(entry);
+
+            int excess = state.plannedTileKeys.size() - maxKeys;
+            if (excess > 0) {
+                Iterator<Long> it = state.plannedTileKeys.iterator();
+                while (excess > 0 && it.hasNext()) {
+                    Long removed = it.next();
+                    it.remove();
+                    state.plannedTileCenters.remove(removed);
+                }
+                markDirty(entry);
+            }
+
+            excess = state.plannedTileCenters.size() - maxKeys;
+            if (excess > 0) {
+                Iterator<Long> it = state.plannedTileCenters.keySet().iterator();
+                while (excess > 0 && it.hasNext()) {
+                    it.next();
+                    it.remove();
+                }
+                markDirty(entry);
+            }
         }
     }
 
@@ -266,10 +322,7 @@ public final class StructureFileStorage {
         Entry entry = entry(level);
         synchronized (entry.lock) {
             StateData state = loaded(entry);
-            for (StructureInfo info : infos) {
-                if (info == null || info.pos() == null) continue;
-                putStructure(state, info, source);
-            }
+            putStructures(state, infos, source);
             markDirty(entry);
         }
     }
@@ -521,16 +574,16 @@ public final class StructureFileStorage {
 
     private static StructureLocationData normalizeStructureLocations(StructureLocationData data) {
         StructureLocationData normalized = new StructureLocationData(data.structureLocations(), data.structureInfos());
+        // 先建索引再单遍补齐，替代 O(位置数 × info 数) 的双重扫描
+        HashSet<Long> knownKeys = new HashSet<>(Math.max(16, normalized.structureInfos().size() * 2));
+        for (StructureInfo info : normalized.structureInfos()) {
+            if (info != null && info.pos() != null) {
+                knownKeys.add(posKey(info.pos()));
+            }
+        }
         for (BlockPos pos : normalized.structureLocations()) {
             if (pos == null) continue;
-            boolean hasInfo = false;
-            for (StructureInfo info : normalized.structureInfos()) {
-                if (info != null && samePos(info.pos(), pos.getX(), pos.getZ())) {
-                    hasInfo = true;
-                    break;
-                }
-            }
-            if (!hasInfo) {
+            if (knownKeys.add(posKey(pos))) {
                 normalized.structureInfos().add(new StructureInfo(pos, "unknown"));
             }
         }
@@ -552,6 +605,80 @@ public final class StructureFileStorage {
             }
         }
         return out;
+    }
+
+    /**
+     * 批量写入结构，复杂度 O(已有结构数 + 本批数量)。
+     * 逐条调用 {@link #putStructure} 会对两个列表各做一次全量 removeIf
+     * 线性扫描，批量写入时退化为 O(已有总数 × 本批数量)。
+     * 此处先按 posKey 定位本批槽位、在内存中复现单条写入的决策后统一落盘，
+     * 语义与逐条调用一致（含同一位置重复写入时后写覆盖并排到队尾）。
+     */
+    private static void putStructures(StateData state, List<StructureInfo> infos, int defaultSource) {
+        StructureLocationData locations = state.structureLocations;
+        List<StructureInfo> existingInfos = locations.structureInfos();
+        List<BlockPos> existingPositions = locations.structureLocations();
+
+        HashMap<Long, Slot> slots = new HashMap<>(Math.max(16, infos.size() * 2));
+        // 保持逐条调用时的追加顺序：同一 key 重复写入需移动到队尾
+        LinkedHashSet<Long> appendOrder = new LinkedHashSet<>();
+
+        for (StructureInfo incoming : infos) {
+            if (incoming == null || incoming.pos() == null) continue;
+            long key = posKey(incoming.pos());
+            Slot slot = slots.get(key);
+            if (slot == null) {
+                slot = new Slot(findStructureInfo(existingInfos, incoming.pos().getX(), incoming.pos().getZ()),
+                        state.structureSources.get(key));
+                slots.put(key, slot);
+            }
+
+            int source = defaultSource;
+            boolean incomingKnown = StructureInfo.isKnownId(incoming.structureId());
+            boolean existingKnown = slot.info != null && StructureInfo.isKnownId(slot.info.structureId());
+
+            if (source == SOURCE_PREDICTED && slot.source != null && slot.source == SOURCE_MANUAL) {
+                if (!incomingKnown || existingKnown) continue;
+                source = SOURCE_MANUAL;
+            } else if (!incomingKnown && existingKnown) {
+                if (source == SOURCE_MANUAL) {
+                    slot.source = SOURCE_MANUAL;
+                    state.structureSources.put(key, SOURCE_MANUAL);
+                }
+                continue;
+            }
+
+            slot.info = incoming;
+            slot.source = normalizeSource(source);
+            // remove + add 即为「移动到队尾」，与逐条调用时的语义一致
+            appendOrder.remove(key);
+            appendOrder.add(key);
+        }
+
+        if (appendOrder.isEmpty()) return;
+
+        for (long key : appendOrder) {
+            final long posKey = key;
+            existingInfos.removeIf(info -> info != null && info.pos() != null && posKey(info.pos()) == posKey);
+            existingPositions.removeIf(pos -> pos != null && posKey(pos) == posKey);
+            state.structureSources.put(key, slots.get(key).source);
+        }
+        for (long key : appendOrder) {
+            StructureInfo info = slots.get(key).info;
+            existingInfos.add(info);
+            existingPositions.add(info.pos());
+        }
+    }
+
+    /** 批量写入过程中单个位置的临时状态。 */
+    private static final class Slot {
+        StructureInfo info;
+        Integer source;
+
+        Slot(StructureInfo info, Integer source) {
+            this.info = info;
+            this.source = source;
+        }
     }
 
     private static void putStructure(StateData state, StructureInfo info, int source) {

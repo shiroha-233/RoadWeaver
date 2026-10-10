@@ -20,9 +20,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
@@ -155,7 +156,6 @@ public final class IdleRoadGenerationService {
         cleanupWindows(level);
 
         ALL_RUNNING.removeIf(f -> f == null || f.isDone() || f.isCancelled());
-        reservePlannedEdges(level);
 
         AtomicInteger running = RUNNING;
         List<ServerPlayer> players = collectPlayers(level);
@@ -163,9 +163,13 @@ public final class IdleRoadGenerationService {
 
         int limit = cfg.performance().idleMaxConcurrentGenerations();
 
-        while (running.get() < limit) {
-            StructureConnection conn = pollNearestOwnedPlanned(level, players);
-            if (conn == null) break;
+        // 连接列表每 tick 只取一次
+        List<StructureConnection> conns = WorldDataProvider.getInstance().getStructureConnections(level);
+        reservePlannedEdges(level, conns);
+
+        List<StructureConnection> candidates = collectOwnedPlannedCandidates(conns, players);
+        for (StructureConnection conn : candidates) {
+            if (running.get() >= limit) break;
 
             PlannedPathKey key = PlannedPathKey.of(conn);
             ConcurrentHashMap<PlannedPathKey, Boolean> inFlight = IN_FLIGHT;
@@ -185,25 +189,51 @@ public final class IdleRoadGenerationService {
 
     public static boolean shouldReserveForIdle(ServerLevel level, StructureConnection conn) {
         if (level == null || conn == null || !Level.OVERWORLD.equals(level.dimension())) return false;
-        if (!ConfigService.get().performance().idleGenerationEnabled()) return false;
 
         ConcurrentHashMap<PlannedPathKey, Boolean> owned = IDLE_OWNED;
+        // 主线程每 tick 逐条调用，先判最廉价条件以短路配置读取与窗口判定
         if (owned.isEmpty()) return false;
+        if (!ConfigService.get().performance().idleGenerationEnabled()) return false;
 
         PlannedPathKey key = PlannedPathKey.of(conn);
         if (!owned.containsKey(key)) return false;
-        if (isInsideAnyWindow(level, conn)) return true;
+        if (isInsideAnyWindow(conn)) return true;
 
+        owned.remove(key);
+        return false;
+    }
+
+    /** 供 {@link RoadGenerationService#tick} 遍历全连接时复用 key 与配置读取的版本。 */
+    public static boolean shouldReserveForIdleCached(StructureConnection conn,
+                                                     PlannedPathKey key,
+                                                     boolean idleEnabled) {
+        ConcurrentHashMap<PlannedPathKey, Boolean> owned = IDLE_OWNED;
+        if (!idleEnabled || owned.isEmpty()) return false;
+        if (!owned.containsKey(key)) return false;
+        if (isInsideAnyWindow(conn)) return true;
         owned.remove(key);
         return false;
     }
 
     public static boolean isManagedByIdle(ServerLevel level, StructureConnection conn) {
         if (level == null || conn == null || !Level.OVERWORLD.equals(level.dimension())) return false;
+        ConcurrentHashMap<PlannedPathKey, Boolean> owned = IDLE_OWNED;
+        ConcurrentHashMap<PlannedPathKey, Boolean> inFlight = IN_FLIGHT;
+        if (owned.isEmpty() && inFlight.isEmpty()) return false;
         if (!ConfigService.get().performance().idleGenerationEnabled()) return false;
         PlannedPathKey key = PlannedPathKey.of(conn);
-        if (IN_FLIGHT.containsKey(key)) return true;
-        return IDLE_OWNED.containsKey(key);
+        if (inFlight.containsKey(key)) return true;
+        return owned.containsKey(key);
+    }
+
+    public static boolean isManagedByIdleCached(StructureConnection conn,
+                                                PlannedPathKey key,
+                                                boolean idleEnabled) {
+        ConcurrentHashMap<PlannedPathKey, Boolean> owned = IDLE_OWNED;
+        ConcurrentHashMap<PlannedPathKey, Boolean> inFlight = IN_FLIGHT;
+        if (!idleEnabled) return false;
+        if (owned.isEmpty() && inFlight.isEmpty()) return false;
+        return inFlight.containsKey(key) || owned.containsKey(key);
     }
 
     private static void runIdleTask(ServerLevel level,
@@ -246,68 +276,86 @@ public final class IdleRoadGenerationService {
         IN_FLIGHT.remove(key);
     }
 
-    private static void reservePlannedEdges(ServerLevel level) {
-        List<StructureConnection> conns = WorldDataProvider.getInstance().getStructureConnections(level);
+    private static void reservePlannedEdges(ServerLevel level, List<StructureConnection> conns) {
         if (conns == null || conns.isEmpty()) return;
-        if (!hasWindows(level)) return;
+        if (!hasWindows()) return;
 
         ConcurrentHashMap<PlannedPathKey, Boolean> owned = IDLE_OWNED;
         for (StructureConnection c : conns) {
             if (c == null || c.status() != ConnectionStatus.PLANNED) continue;
-            if (!isInsideAnyWindow(level, c)) continue;
+            if (!isInsideAnyWindow(c)) continue;
             owned.putIfAbsent(PlannedPathKey.of(c), Boolean.TRUE);
         }
     }
 
-    private static StructureConnection pollNearestOwnedPlanned(ServerLevel level, List<ServerPlayer> players) {
-        List<StructureConnection> conns = WorldDataProvider.getInstance().getStructureConnections(level);
-        if (conns == null || conns.isEmpty()) return null;
+    /**
+     * 一次性收集本 tick 可用的候选连接，按到玩家的距离升序返回。
+     * 调用方顺序消费即可得到与逐次「取最近一条」完全一致的选择顺序。
+     */
+    private static List<StructureConnection> collectOwnedPlannedCandidates(
+            List<StructureConnection> conns, List<ServerPlayer> players) {
+        if (conns == null || conns.isEmpty()) return List.of();
 
         ConcurrentHashMap<PlannedPathKey, Boolean> owned = IDLE_OWNED;
-        if (owned.isEmpty()) return null;
+        if (owned.isEmpty()) return List.of();
+        if (!hasWindows()) return List.of();
+        ConcurrentHashMap<UUID, IdleWindow> windows = WINDOWS;
         ConcurrentHashMap<PlannedPathKey, Boolean> inFlight = IN_FLIGHT;
 
-        ConcurrentHashMap<UUID, IdleWindow> perLevel = WINDOWS;
-        if (perLevel.isEmpty()) return null;
-
-        StructureConnection best = null;
-        long bestDist = Long.MAX_VALUE;
-
-        for (Map.Entry<UUID, IdleWindow> windowEntry : perLevel.entrySet()) {
-            IdleWindow w = windowEntry.getValue();
+        // 窗口摊平成数组，避免逐条连接遍历 UUID 哈希表
+        int windowCount = 0;
+        int[] centersX = new int[windows.size()];
+        int[] centersZ = new int[windows.size()];
+        int[] radii = new int[windows.size()];
+        for (IdleWindow w : windows.values()) {
             if (w == null) continue;
-            int wcCx = w.centerChunkX;
-            int wcCz = w.centerChunkZ;
-            int wRadius = w.radiusChunks;
+            centersX[windowCount] = w.centerChunkX;
+            centersZ[windowCount] = w.centerChunkZ;
+            radii[windowCount] = w.radiusChunks;
+            windowCount++;
+        }
+        if (windowCount == 0) return List.of();
 
-            for (StructureConnection c : conns) {
-                if (c == null || c.status() != ConnectionStatus.PLANNED) continue;
-                PlannedPathKey key = PlannedPathKey.of(c);
-                if (!owned.containsKey(key)) continue;
-                int mx = (c.from().getX() + c.to().getX()) >> 1;
-                int mz = (c.from().getZ() + c.to().getZ()) >> 1;
-                int mcx = mx >> 4;
-                int mcz = mz >> 4;
-                if (Math.abs(mcx - wcCx) > wRadius || Math.abs(mcz - wcCz) > wRadius) {
-                    owned.remove(key);
-                    continue;
-                }
-                if (inFlight.containsKey(key)) continue;
-                long d = playerDistance2(c, players);
-                if (d < bestDist) {
-                    bestDist = d;
-                    best = c;
+        // 配对记录以避免 Map<Integer, ...> 装箱
+        List<Candidate> candidates = new ArrayList<>();
+        for (StructureConnection c : conns) {
+            if (c == null || c.status() != ConnectionStatus.PLANNED) continue;
+            PlannedPathKey key = PlannedPathKey.of(c);
+            if (!owned.containsKey(key)) continue;
+
+            int mcx = ((c.from().getX() + c.to().getX()) >> 1) >> 4;
+            int mcz = ((c.from().getZ() + c.to().getZ()) >> 1) >> 4;
+
+            boolean inside = false;
+            for (int i = 0; i < windowCount; i++) {
+                if (Math.abs(mcx - centersX[i]) <= radii[i] && Math.abs(mcz - centersZ[i]) <= radii[i]) {
+                    inside = true;
+                    break;
                 }
             }
+            if (!inside) {
+                owned.remove(key);
+                continue;
+            }
+            if (inFlight.containsKey(key)) continue;
+            candidates.add(new Candidate(playerDistance2(c, players), c));
         }
-        return best;
+
+        if (candidates.isEmpty()) return List.of();
+        candidates.sort(Candidate.BY_DISTANCE);
+        List<StructureConnection> ordered = new ArrayList<>(candidates.size());
+        for (Candidate candidate : candidates) {
+            ordered.add(candidate.connection());
+        }
+        return ordered;
+    }
+
+    /** 候选连接及其到玩家的距离。 */
+    private record Candidate(long distance, StructureConnection connection) {
+        static final Comparator<Candidate> BY_DISTANCE = Comparator.comparingLong(Candidate::distance);
     }
 
     private static boolean updateStatus(ServerLevel level, StructureConnection conn, ConnectionStatus to, ConnectionStatus... allowedFrom) {
-        WorldDataProvider provider = WorldDataProvider.getInstance();
-        List<StructureConnection> origin = provider.getStructureConnections(level);
-        if (origin == null || origin.isEmpty()) return false;
-
         Set<ConnectionStatus> allowed = new HashSet<>();
         if (allowedFrom != null) {
             for (ConnectionStatus st : allowedFrom) {
@@ -315,21 +363,24 @@ public final class IdleRoadGenerationService {
             }
         }
 
-        List<StructureConnection> all = new ArrayList<>(origin);
-        for (int i = 0; i < all.size(); i++) {
-            StructureConnection c = all.get(i);
-            if (!PlanningUtils.sameEdge(c, conn)) continue;
-            if (!allowed.isEmpty() && !allowed.contains(c.status())) return false;
-            StructureConnection updated = new StructureConnection(c.from(), c.to(), to);
-            all.set(i, updated);
-            provider.setStructureConnections(level, all);
-            MapPatchService.publishConnection(level, updated);
-            if (to == ConnectionStatus.COMPLETED) {
-                MapPatchService.publishRoadForConnectionAsync(level, updated);
+        StructureConnection updated = ConnectionListUpdater.update(level, all -> {
+            for (int i = 0; i < all.size(); i++) {
+                StructureConnection c = all.get(i);
+                if (!PlanningUtils.sameEdge(c, conn)) continue;
+                if (!allowed.isEmpty() && !allowed.contains(c.status())) return Optional.empty();
+                StructureConnection next = new StructureConnection(c.from(), c.to(), to);
+                all.set(i, next);
+                return Optional.of(next);
             }
-            return true;
+            return Optional.empty();
+        });
+        if (updated == null) return false;
+
+        MapPatchService.publishConnection(level, updated);
+        if (to == ConnectionStatus.COMPLETED) {
+            MapPatchService.publishRoadForConnectionAsync(level, updated);
         }
-        return false;
+        return true;
     }
 
     private static void cleanupWindows(ServerLevel level) {
@@ -356,20 +407,24 @@ public final class IdleRoadGenerationService {
         RUNNING.set(0);
     }
 
-    private static boolean hasWindows(ServerLevel level) {
+    /**
+     * 闲时窗口只为主世界建立（{@link #tick} 入口已限定 OVERWORLD），
+     * 故此处无需再按维度过滤。
+     */
+    private static boolean hasWindows() {
         return !WINDOWS.isEmpty();
     }
 
-    private static boolean isInsideAnyWindow(ServerLevel level, StructureConnection conn) {
-        ConcurrentHashMap<UUID, IdleWindow> perLevel = WINDOWS;
-        if (perLevel.isEmpty() || conn == null) return false;
+    private static boolean isInsideAnyWindow(StructureConnection conn) {
+        ConcurrentHashMap<UUID, IdleWindow> windows = WINDOWS;
+        if (windows.isEmpty() || conn == null) return false;
 
         int mx = (conn.from().getX() + conn.to().getX()) >> 1;
         int mz = (conn.from().getZ() + conn.to().getZ()) >> 1;
         int mcx = mx >> 4;
         int mcz = mz >> 4;
 
-        for (IdleWindow w : perLevel.values()) {
+        for (IdleWindow w : windows.values()) {
             if (w == null) continue;
             if (Math.abs(mcx - w.centerChunkX) <= w.radiusChunks
                     && Math.abs(mcz - w.centerChunkZ) <= w.radiusChunks) {

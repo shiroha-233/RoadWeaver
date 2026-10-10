@@ -40,26 +40,30 @@ public final class HeightProfileService {
             return new HeightProfile(true, null);
         }
         int[] baseYArr = new int[n];
+        int currentChunkX = currentChunk.x;
+        int currentChunkZ = currentChunk.z;
         for (int ii = 0; ii < n; ii++) {
-            java.util.List<Integer> hs = new java.util.ArrayList<>();
-            for (int jj = ii - averagingRadius; jj <= ii + averagingRadius; jj++) {
-                if (jj >= 0 && jj < n) {
-                    BlockPos sp = middlePositions.get(jj);
-                    if (new ChunkPos(sp).equals(currentChunk)) {
-                        int yTop = world.getHeight(Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, sp.getX(), sp.getZ());
-                        hs.add(yTop);
-                    }
+            BlockPos mid = middlePositions.get(ii);
+            int heightSum = 0;
+            int heightCount = 0;
+            int from = Math.max(0, ii - averagingRadius);
+            int to = Math.min(n - 1, ii + averagingRadius);
+            for (int jj = from; jj <= to; jj++) {
+                BlockPos sp = middlePositions.get(jj);
+                // 位移比较替代 new ChunkPos(sp).equals(currentChunk)，避免逐点分配
+                if ((sp.getX() >> 4) == currentChunkX && (sp.getZ() >> 4) == currentChunkZ) {
+                    heightSum += world.getHeight(Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, sp.getX(), sp.getZ());
+                    heightCount++;
                 }
             }
-            if (hs.isEmpty()) {
-                BlockPos mid = middlePositions.get(ii);
-                if (new ChunkPos(mid).equals(currentChunk)) {
+            if (heightCount == 0) {
+                if ((mid.getX() >> 4) == currentChunkX && (mid.getZ() >> 4) == currentChunkZ) {
                     baseYArr[ii] = world.getHeight(Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, mid.getX(), mid.getZ());
                 } else {
-                    baseYArr[ii] = middlePositions.get(ii).getY();
+                    baseYArr[ii] = mid.getY();
                 }
             } else {
-                baseYArr[ii] = (int) Math.round(hs.stream().mapToInt(Integer::intValue).average().orElse(middlePositions.get(ii).getY()));
+                baseYArr[ii] = (int) Math.round(heightSum / (double) heightCount);
             }
         }
         if (!slopeLimitEnabled) {

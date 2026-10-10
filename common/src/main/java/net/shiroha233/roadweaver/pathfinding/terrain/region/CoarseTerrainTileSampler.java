@@ -129,14 +129,15 @@ public final class CoarseTerrainTileSampler {
 
                 double shade = 1.0;
                 if (x > 0 && x < sampleWidth - 1 && z > 0 && z < sampleHeight - 1) {
-                    int[][] local = {
-                            {heights[(z - 1) * sampleWidth + x - 1], heights[(z - 1) * sampleWidth + x], heights[(z - 1) * sampleWidth + x + 1]},
-                            {heights[z * sampleWidth + x - 1], heights[index], heights[z * sampleWidth + x + 1]},
-                            {heights[(z + 1) * sampleWidth + x - 1], heights[(z + 1) * sampleWidth + x], heights[(z + 1) * sampleWidth + x + 1]}
-                    };
-                    shade = HeightShader.computeShade(local);
+                    // 展开 3x3 邻域走无分配重载，避免逐采样点构造 int[3][3]
+                    int upBase = (z - 1) * sampleWidth;
+                    int downBase = (z + 1) * sampleWidth;
+                    shade = HeightShader.computeShade(
+                            heights[upBase + x - 1], heights[upBase + x], heights[upBase + x + 1],
+                            heights[index - 1], heights[index], heights[index + 1],
+                            heights[downBase + x - 1], heights[downBase + x], heights[downBase + x + 1]);
                 } else if (x > 0) {
-                    shade = HeightShader.simpleShade(heights[index], heights[z * sampleWidth + x - 1], step);
+                    shade = HeightShader.simpleShade(heights[index], heights[index - 1], step);
                 }
 
                 terrainArgb[index] = HeightShader.multiplyRgb(baseColor, shade);

@@ -7,6 +7,7 @@ import net.shiroha233.roadweaver.map.tile.core.MapTileLayer;
 import net.shiroha233.roadweaver.map.tile.core.MapTileScheme;
 import net.shiroha233.roadweaver.map.tile.storage.ServerMapTileStorage;
 import net.shiroha233.roadweaver.map.tile.storage.TerrainTileWritePlan;
+import net.shiroha233.roadweaver.util.StripedLocks;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
@@ -50,11 +51,7 @@ public final class CoarseTerrainPngWriter {
     }
 
     private static Object tileLock(ServerLevel level, MapTileCoord coord) {
-        return ServerMapTileStorage.path(level, TARGET_LAYER, coord)
-                .toAbsolutePath()
-                .normalize()
-                .toString()
-                .intern();
+        return StripedLocks.lockForPath(ServerMapTileStorage.path(level, TARGET_LAYER, coord));
     }
 
     private static BufferedImage renderTile(ServerLevel level, CoarseTerrainRegion region, MapTileCoord coord) {

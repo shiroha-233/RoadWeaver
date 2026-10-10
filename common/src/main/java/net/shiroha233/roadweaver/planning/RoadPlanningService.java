@@ -11,6 +11,7 @@ import net.shiroha233.roadweaver.core.constants.RoadConstants;
 import net.shiroha233.roadweaver.core.model.ConnectionStatus;
 import net.shiroha233.roadweaver.core.model.StructureConnection;
 import net.shiroha233.roadweaver.core.model.StructureInfo;
+import net.shiroha233.roadweaver.generation.ConnectionListUpdater;
 import net.shiroha233.roadweaver.generation.progress.InitialGenerationProgressTracker;
 import net.shiroha233.roadweaver.generation.progress.InitialGenerationStage;
 import net.shiroha233.roadweaver.map.MapPatchService;
@@ -46,6 +47,7 @@ import org.slf4j.LoggerFactory;
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.AtomicReference;
 
 /**
  * 道路规划服务
@@ -60,21 +62,8 @@ public final class RoadPlanningService {
     private static final RoadTerrainPlanningPipeline TERRAIN_PLANNING = new RoadTerrainPlanningPipeline();
 
     private static void prunePlannedIfTooLarge(Level level) {
-        WorldDataProvider provider = WorldDataProvider.getInstance();
-        Set<Long> keys = new HashSet<>(provider.getPlannedTileKeys((ServerLevel) level));
-        if (keys.size() > RoadConstants.MAX_PLANNED_KEYS) {
-            int remove = keys.size() - RoadConstants.MAX_PLANNED_KEYS;
-            Iterator<Long> it = keys.iterator();
-            while (remove > 0 && it.hasNext()) { it.next(); it.remove(); remove--; }
-            provider.setPlannedTileKeys((ServerLevel) level, keys);
-        }
-        Map<Long, Long> centers = new HashMap<>(provider.getPlannedTileCenters((ServerLevel) level));
-        if (centers.size() > RoadConstants.MAX_PLANNED_KEYS) {
-            int remove2 = centers.size() - RoadConstants.MAX_PLANNED_KEYS;
-            Iterator<Long> it2 = centers.keySet().iterator();
-            while (remove2 > 0 && it2.hasNext()) { it2.next(); it2.remove(); remove2--; }
-            provider.setPlannedTileCenters((ServerLevel) level, centers);
-        }
+        WorldDataProvider.getInstance()
+                .prunePlannedTilesIfTooLarge((ServerLevel) level, RoadConstants.MAX_PLANNED_KEYS);
     }
 
     public static void initialPlan(ServerLevel level) {
@@ -117,7 +106,7 @@ public final class RoadPlanningService {
         int minZ = (pcz - radiusChunks) * 16;
         int maxZ = (pcz + radiusChunks) * 16;
         WorldDataProvider provider0 = WorldDataProvider.getInstance();
-        boolean alreadyPlanned = provider0.getPlannedTileKeys(level).contains(key);
+        boolean alreadyPlanned = provider0.isPlannedTile(level, key);
         boolean hasExistingRoads = RoadShardStorage.hasRoadInRect(level, minX, minZ, maxX, maxZ);
         boolean backfillPlan = hasExistingRoads && markRoadBackfillPlanTile(level, key);
         boolean shouldPlan = !alreadyPlanned || backfillPlan;
@@ -215,13 +204,7 @@ public final class RoadPlanningService {
     }
 
     private static void markPlannedTile(ServerLevel level, long tileKey, int centerChunkX, int centerChunkZ) {
-        WorldDataProvider provider = WorldDataProvider.getInstance();
-        Set<Long> set = new HashSet<>(provider.getPlannedTileKeys(level));
-        set.add(tileKey);
-        Map<Long, Long> centers = new HashMap<>(provider.getPlannedTileCenters(level));
-        centers.putIfAbsent(tileKey, (((long) centerChunkX) << 32) ^ (centerChunkZ & 0xffffffffL));
-        provider.setPlannedTileKeys(level, set);
-        provider.setPlannedTileCenters(level, centers);
+        WorldDataProvider.getInstance().markPlannedTile(level, tileKey, centerChunkX, centerChunkZ);
     }
 
     private static void ensureTerrainMapTilesAsync(ServerLevel level,
@@ -335,10 +318,20 @@ public final class RoadPlanningService {
 
         ArrayList<StructureConnection> incoming = new ArrayList<>(primaryEdges);
         incoming.addAll(bridges);
-        List<StructureConnection> merged = mergeConnections(existing, incoming);
-        if (merged.size() != (existing == null ? 0 : existing.size())) {
-            provider.setStructureConnections(level, merged);
-            publishNewConnections(level, existing, incoming);
+        // 与生成侧走同一把锁，避免规划收尾的合并结果被并发的状态回写覆盖
+        AtomicReference<List<StructureConnection>> before = new AtomicReference<>();
+        boolean merged = ConnectionListUpdater.update(level, current -> {
+            List<StructureConnection> next = mergeConnections(current, incoming);
+            if (next.size() == current.size()) {
+                return Optional.empty();
+            }
+            before.set(new ArrayList<>(current));
+            current.clear();
+            current.addAll(next);
+            return Optional.of(Boolean.TRUE);
+        }) != null;
+        if (merged) {
+            publishNewConnections(level, before.get(), incoming);
         }
         planRoadTerrain(level, minBlockX, minBlockZ, maxBlockX, maxBlockZ, incoming);
     }
@@ -451,12 +444,20 @@ public final class RoadPlanningService {
         ArrayList<StructureConnection> snapshot = new ArrayList<>(incoming);
         server.execute(() -> {
             if (!ThreadPoolManager.isEpoch(epoch)) return;
-            WorldDataProvider provider = WorldDataProvider.getInstance();
-            List<StructureConnection> existing = provider.getStructureConnections(level);
-            List<StructureConnection> merged = mergeConnections(existing, snapshot);
-            if (merged.size() != (existing == null ? 0 : existing.size())) {
-                provider.setStructureConnections(level, merged);
-                publishNewConnections(level, existing, snapshot);
+            // 合并前的列表：用于只向客户端广播真正新增的连接
+            AtomicReference<List<StructureConnection>> before = new AtomicReference<>();
+            boolean changed = ConnectionListUpdater.update(level, existing -> {
+                List<StructureConnection> merged = mergeConnections(existing, snapshot);
+                if (merged.size() == existing.size()) {
+                    return Optional.empty();
+                }
+                before.set(new ArrayList<>(existing));
+                existing.clear();
+                existing.addAll(merged);
+                return Optional.of(Boolean.TRUE);
+            }) != null;
+            if (changed) {
+                publishNewConnections(level, before.get(), snapshot);
             }
         });
     }

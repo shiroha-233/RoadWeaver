@@ -18,6 +18,7 @@ import net.shiroha233.roadweaver.persistence.WorldgenFingerprintService;
 import net.shiroha233.roadweaver.persistence.files.StructureFileStorage;
 import net.shiroha233.roadweaver.persistence.sharded.RoadShardStorage;
 import net.shiroha233.roadweaver.planning.RoadPlanningService;
+import net.shiroha233.roadweaver.generation.ConnectionListUpdater;
 import net.shiroha233.roadweaver.planning.path.PlannedPathCache;
 import net.shiroha233.roadweaver.planning.terrain.AutomaticPlanningSamplingActivities;
 import net.shiroha233.roadweaver.planning.terrain.TerrainSamplingSessions;
@@ -121,6 +122,7 @@ public final class CacheManager {
         AutomaticPlanningSamplingActivities.clear(level);
         AccurateHeightSampler.clearForLevel(level);
         PlannedPathCache.clear(level);
+        ConnectionListUpdater.clear(level);
         RoadWorldgenPlanCache.clear(level);
         try {
             OpenCLAccurateProgramCache.clear(level.getChunkSource().getGeneratorState().randomState());

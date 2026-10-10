@@ -15,6 +15,7 @@ import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Pattern;
 
 /**
  * 地图数据本地存储管理
@@ -38,11 +39,14 @@ public final class MapDataStorage {
         return Minecraft.getInstance().gameDirectory.toPath().resolve(DATA_DIR);
     }
 
+    private static final Pattern ILLEGAL_NAME_CHARS =
+            Pattern.compile("[<>:\"/\\\\|?*]");
+
     public static Path getWorldDataDir() {
         String worldId = getWorldId();
         if (worldId == null) return null;
-        
-        String safeName = worldId.replaceAll("[<>:\"/\\\\|?*]", "_");
+
+        String safeName = ILLEGAL_NAME_CHARS.matcher(worldId).replaceAll("_");
         return getDataRoot().resolve(safeName);
     }
 

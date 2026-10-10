@@ -8,6 +8,7 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.StructureManager;
 import net.minecraft.world.level.WorldGenLevel;
+import net.minecraft.world.level.chunk.ChunkAccess;
 import net.minecraft.world.level.chunk.status.ChunkStatus;
 import net.minecraft.world.level.levelgen.structure.BoundingBox;
 import net.minecraft.world.level.levelgen.structure.Structure;
@@ -29,6 +30,8 @@ public final class StructureAvoidanceService {
     private static final int SEA_LEVEL = 63;
     private static final int CACHE_CAPACITY = 256;
     private static final AtomicLong PENDING_REQUESTS = new AtomicLong(0);
+    /** 单次主线程回调的区块查询上限，避免密集结构区长时间占用 tick。 */
+    private static final int MAX_CHUNK_LOOKUPS_PER_TICK = 16;
 
     private static final Map<Long, ChunkEntry> CHUNK_BBOX_CACHE = Collections.synchronizedMap(
             new LinkedHashMap<Long, ChunkEntry>(CACHE_CAPACITY, 0.75f, true) {
@@ -126,15 +129,28 @@ public final class StructureAvoidanceService {
                     return;
                 }
                 Set<BoundingBox> boxes = new HashSet<>();
+                int lookups = 0;
                 for (Map.Entry<Structure, LongSet> e : allStructures.entrySet()) {
                     Structure structure = e.getKey();
                     for (long chunkLong : e.getValue()) {
+                        if (lookups >= MAX_CHUNK_LOOKUPS_PER_TICK) {
+                            // 保持未就绪，稍后重试
+                            CHUNK_BBOX_CACHE.remove(key);
+                            return;
+                        }
+                        lookups++;
                         ChunkPos cp = new ChunkPos(chunkLong);
                         SectionPos sp = SectionPos.of(cp, level.getMinSection());
-                        StructureStart start = sm.getStartForStructure(
-                                sp,
-                                structure,
-                                level.getChunk(cp.x, cp.z, ChunkStatus.STRUCTURE_STARTS));
+                        // load=true 会同步等待区块生成并拖住 tick。
+                        // 但 null 只能表示「尚未就绪」而非「此处无结构」：若继续遍历，
+                        // 空结果会被写入缓存并长期生效，道路将直接穿过村庄。
+                        ChunkAccess chunk = level.getChunk(cp.x, cp.z, ChunkStatus.STRUCTURE_STARTS, false);
+                        if (chunk == null) {
+                            // 保持未就绪，整体稍后重试
+                            CHUNK_BBOX_CACHE.remove(key);
+                            return;
+                        }
+                        StructureStart start = sm.getStartForStructure(sp, structure, chunk);
                         if (start == null || !start.isValid()) continue;
                         for (StructurePiece piece : start.getPieces()) {
                             BoundingBox bb = piece.getBoundingBox();
