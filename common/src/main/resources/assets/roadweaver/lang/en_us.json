@@ -199,10 +199,8 @@
   "config.roadweaver.category.gen_performance": "Performance",
   "gui.roadweaver.initgen.title": "RoadWeaver Initial Generation",
   "gui.roadweaver.initgen.summary": "Total: %s  Generating: %s  Done: %s  Failed: %s",
-  "gui.roadweaver.initgen.progress": "Progress: %s/%s (%s%%)",
   "gui.roadweaver.initgen.debug": "Cache: %s%% | Noise: %s/s | Total: %s",
   "gui.roadweaver.initgen.debug2": "Accurate: %s%% | BaseHeight: %s/s | Total: %s",
-  "gui.roadweaver.initgen.overall": "Overall Progress: %s%%",
   "gui.roadweaver.initgen.stage_progress": "Stage Progress: %s%%",
   "gui.roadweaver.initgen.device": "Backend: %s | Device: %s | Preference: %s",
   "gui.roadweaver.initgen.tiles": "Tiles: %s/%s | Memory: %s | Disk: %s | Sampled: %s",
@@ -347,5 +345,7 @@
   "config.roadweaver.loading_tips_enabled": "Enable Loading Tips",
   "config.roadweaver.loading_tips_enabled.tooltip": "Show RoadWeaver related tips and tricks in the bottom right corner of the world loading screen.",
   "config.roadweaver.loading_progress_enabled": "Enable Loading Progress",
-  "config.roadweaver.loading_progress_enabled.tooltip": "Show RoadWeaver generation progress information on the world loading screen."
+  "config.roadweaver.loading_progress_enabled.tooltip": "Show RoadWeaver generation progress information on the world loading screen.",
+  "config.roadweaver.loading_progress_debug_enabled": "Loading Screen Debug Details",
+  "config.roadweaver.loading_progress_debug_enabled.tooltip": "Show extra backend, tile and throughput diagnostics below the loading screen progress bar. Off by default; holding Shift while loading also reveals them temporarily."
 }

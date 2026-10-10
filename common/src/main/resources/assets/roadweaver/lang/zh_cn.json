@@ -195,10 +195,8 @@
   "config.roadweaver.category.gen_performance": "性能",
   "gui.roadweaver.initgen.title": "RoadWeaver 初始生成",
   "gui.roadweaver.initgen.summary": "总数: %s  生成中: %s  已完成: %s  失败: %s",
-  "gui.roadweaver.initgen.progress": "进度: %s/%s (%s%%)",
   "gui.roadweaver.initgen.debug": "缓存命中: %s%% | 噪声采样: %s/秒 | 总计: %s",
   "gui.roadweaver.initgen.debug2": "精确采样: %s%% | BaseHeight: %s/秒 | 总计: %s",
-  "gui.roadweaver.initgen.overall": "总进度: %s%%",
   "gui.roadweaver.initgen.stage_progress": "阶段进度: %s%%",
   "gui.roadweaver.initgen.device": "后端: %s | 设备: %s | 偏好: %s",
   "gui.roadweaver.initgen.tiles": "瓦片: %s/%s | 内存: %s | 磁盘: %s | 新采样: %s",
@@ -347,5 +345,7 @@
   "config.roadweaver.loading_tips_enabled": "启用加载界面 Tips",
   "config.roadweaver.loading_tips_enabled.tooltip": "在世界加载界面右下角显示 RoadWeaver 相关的提示和技巧。",
   "config.roadweaver.loading_progress_enabled": "启用加载进度显示",
-  "config.roadweaver.loading_progress_enabled.tooltip": "在世界加载界面显示 RoadWeaver 的生成进度信息。"
+  "config.roadweaver.loading_progress_enabled.tooltip": "在世界加载界面显示 RoadWeaver 的生成进度信息。",
+  "config.roadweaver.loading_progress_debug_enabled": "加载界面调试明细",
+  "config.roadweaver.loading_progress_debug_enabled.tooltip": "在加载界面的进度条下方额外显示后端、瓦片与吞吐等调试数据。默认关闭，加载时按住 Shift 也可临时展开。"
 }
