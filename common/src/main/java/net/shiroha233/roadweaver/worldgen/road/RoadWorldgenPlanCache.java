@@ -20,6 +20,8 @@ import java.util.concurrent.atomic.AtomicLong;
 public final class RoadWorldgenPlanCache {
     private static final int QUERY_MARGIN_BLOCKS = 32;
     private static final int MAX_PLANS_PER_LEVEL = 4096;
+    /** 编译重试上限；耗尽后接受当前最佳结果，避免工作线程空转。 */
+    private static final int MAX_COMPILE_ATTEMPTS = 8;
     private static final Logger LOGGER = LoggerFactory.getLogger("roadweaver");
     private static final ConcurrentHashMap<ServerLevel, Session> SESSIONS = new ConcurrentHashMap<>();
 
@@ -88,7 +90,9 @@ public final class RoadWorldgenPlanCache {
 
         RoadChunkPlan get(ServerLevel level, ChunkPos chunkPos, PlanConfig requested) {
             long key = chunkPos.toLong();
-            while (true) {
+            // 有界重试：持续失效下 while(true) 会让工作线程空转吃满一个核。
+            // 该计划只是密度戳缓存，略微陈旧远优于持续占用 CPU。
+            for (int attempt = 1; ; attempt++) {
                 CachedPlan cached = plans.get(key);
                 long expectedRevision = revision(key);
                 if (cached != null && cached.matches(requested, expectedRevision)) {
@@ -110,6 +114,14 @@ public final class RoadWorldgenPlanCache {
                     trimIfNeeded();
                     return published.plan();
                 }
+                if (attempt >= MAX_COMPILE_ATTEMPTS) {
+                    trimIfNeeded();
+                    CachedPlan best = plans.get(key);
+                    // 只放宽 revision，不放宽 config：配置不符的计划会把道路生成在错误的 Y 层
+                    if (best != null && best.config().equals(requested)) return best.plan();
+                    return compile(level, chunkPos, requested, currentRevision);
+                }
+                Thread.onSpinWait();
             }
         }
 

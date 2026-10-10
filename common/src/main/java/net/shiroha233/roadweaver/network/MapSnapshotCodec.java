@@ -21,6 +21,9 @@ import java.util.Map;
  * 地图快照编解码器
  */
 public final class MapSnapshotCodec {
+    /** 状态序数查表：{@code values()} 每次调用都会克隆整个枚举数组。 */
+    private static final ConnectionStatus[] STATUSES = ConnectionStatus.values();
+
     private MapSnapshotCodec() {}
 
     public static void write(FriendlyByteBuf buf, MapSnapshot s) {
@@ -83,8 +86,7 @@ public final class MapSnapshotCodec {
             BlockPos a = buf.readBlockPos();
             BlockPos b = buf.readBlockPos();
             int ord = buf.readVarInt();
-            ConnectionStatus[] statuses = ConnectionStatus.values();
-            ConnectionStatus st = ord >= 0 && ord < statuses.length ? statuses[ord] : ConnectionStatus.FAILED;
+            ConnectionStatus st = ord >= 0 && ord < STATUSES.length ? STATUSES[ord] : ConnectionStatus.FAILED;
             conns.add(new StructureConnection(a, b, st));
         }
         
@@ -161,9 +163,8 @@ public final class MapSnapshotCodec {
             BlockPos from = buf.readBlockPos();
             BlockPos to = buf.readBlockPos();
             int ordinal = buf.readVarInt();
-            ConnectionStatus[] statuses = ConnectionStatus.values();
-            if (ordinal < 0 || ordinal >= statuses.length) throw new DecoderException("invalid connection status: " + ordinal);
-            ConnectionStatus status = statuses[ordinal];
+            if (ordinal < 0 || ordinal >= STATUSES.length) throw new DecoderException("invalid connection status: " + ordinal);
+            ConnectionStatus status = STATUSES[ordinal];
             connections.add(new StructureConnection(from, to, status));
         }
 

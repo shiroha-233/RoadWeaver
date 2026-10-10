@@ -34,6 +34,18 @@ public final class FilePlannedPathStore implements PlannedPathStore {
     private static final int SCHEMA = 1;
     private static final int MAX_PATH_POINTS = 4_000_000;
 
+    private static final ThreadLocal<MessageDigest> DIGEST =
+            ThreadLocal.withInitial(FilePlannedPathStore::createDigest);
+    private static final HexFormat HEX_FORMAT = HexFormat.of();
+
+    private static MessageDigest createDigest() {
+        try {
+            return MessageDigest.getInstance("SHA-256");
+        } catch (NoSuchAlgorithmException impossible) {
+            throw new IllegalStateException("SHA-256 unavailable", impossible);
+        }
+    }
+
     private final Path root;
 
     public FilePlannedPathStore(Path root) {
@@ -146,12 +158,11 @@ public final class FilePlannedPathStore implements PlannedPathStore {
     private static String fileName(PlannedPathKey key) {
         String value = key.first().x() + ":" + key.first().y() + ":" + key.first().z() + "|"
                 + key.second().x() + ":" + key.second().y() + ":" + key.second().z();
-        try {
-            byte[] digest = MessageDigest.getInstance("SHA-256").digest(value.getBytes(StandardCharsets.UTF_8));
-            return HexFormat.of().formatHex(digest);
-        } catch (NoSuchAlgorithmException impossible) {
-            throw new IllegalStateException("SHA-256 unavailable", impossible);
-        }
+        // 按线程复用：getInstance 每次都做 JCA provider 查找并分配新实例；
+        // MessageDigest 非线程安全，故不能用单一静态实例
+        MessageDigest digest = DIGEST.get();
+        digest.reset();
+        return HEX_FORMAT.formatHex(digest.digest(value.getBytes(StandardCharsets.UTF_8)));
     }
 
     private static String normalize(String fingerprint) {

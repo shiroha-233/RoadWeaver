@@ -9,6 +9,7 @@ import net.shiroha233.roadweaver.map.tile.render.HeightShader;
 import net.shiroha233.roadweaver.map.tile.render.TerrainTilePalette;
 import net.shiroha233.roadweaver.map.tile.storage.ServerMapTileStorage;
 import net.shiroha233.roadweaver.map.tile.storage.TerrainTileWritePlan;
+import net.shiroha233.roadweaver.util.StripedLocks;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
@@ -96,8 +97,7 @@ public final class AccurateTerrainPngWriter {
     }
 
     private static Object tileLock(ServerLevel level, MapTileCoord coord) {
-        return ServerMapTileStorage.path(level, TARGET_LAYER, coord)
-                .toAbsolutePath().normalize().toString().intern();
+        return StripedLocks.lockForPath(ServerMapTileStorage.path(level, TARGET_LAYER, coord));
     }
 
     private static BufferedImage loadExistingTile(ServerLevel level, MapTileCoord coord) {

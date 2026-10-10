@@ -27,6 +27,7 @@ import net.shiroha233.roadweaver.runtime.ThreadPoolManager;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -185,19 +186,17 @@ public final class RoadGenerationService {
     // ==================== 状态更新辅助 ====================
 
     private static void updateConnectionStatus(ServerLevel level, StructureConnection conn, ConnectionStatus status) {
-        WorldDataProvider provider = WorldDataProvider.getInstance();
-        List<StructureConnection> origin = provider.getStructureConnections(level);
-        List<StructureConnection> all = origin != null ? new ArrayList<>(origin) : new ArrayList<>();
-        StructureConnection updated = null;
-        for (int i = 0; i < all.size(); i++) {
-            StructureConnection c = all.get(i);
-            if (PlanningUtils.sameEdge(c, conn)) {
-                updated = new StructureConnection(c.from(), c.to(), status);
-                all.set(i, updated);
-                break;
+        StructureConnection updated = ConnectionListUpdater.update(level, all -> {
+            for (int i = 0; i < all.size(); i++) {
+                StructureConnection c = all.get(i);
+                if (PlanningUtils.sameEdge(c, conn)) {
+                    StructureConnection next = new StructureConnection(c.from(), c.to(), status);
+                    all.set(i, next);
+                    return Optional.of(next);
+                }
             }
-        }
-        provider.setStructureConnections(level, all);
+            return Optional.empty();
+        });
         if (updated != null) {
             MapPatchService.publishConnection(level, updated);
             if (status == ConnectionStatus.COMPLETED) {
@@ -220,17 +219,21 @@ public final class RoadGenerationService {
         ConcurrentLinkedQueue<StructureConnection> q = QUEUE;
         ConcurrentHashMap<PlannedPathKey, Boolean> proc = PROCESSED;
 
+        // 配置读取提到循环外：本方法每 tick 遍历全部连接
+        boolean idleEnabled = ConfigService.get().performance().idleGenerationEnabled();
+
         for (StructureConnection c : list) {
-            if (c.status() != ConnectionStatus.PLANNED && c.status() != ConnectionStatus.GENERATING) continue;
-            if (c.status() == ConnectionStatus.PLANNED
-                    && IdleRoadGenerationService.shouldReserveForIdle(level, c)) {
-                continue;
-            }
-            if (c.status() == ConnectionStatus.GENERATING
-                    && IdleRoadGenerationService.isManagedByIdle(level, c)) {
-                continue;
-            }
+            ConnectionStatus status = c.status();
+            if (status != ConnectionStatus.PLANNED && status != ConnectionStatus.GENERATING) continue;
             PlannedPathKey key = PlannedPathKey.of(c);
+            if (status == ConnectionStatus.PLANNED
+                    && IdleRoadGenerationService.shouldReserveForIdleCached(c, key, idleEnabled)) {
+                continue;
+            }
+            if (status == ConnectionStatus.GENERATING
+                    && IdleRoadGenerationService.isManagedByIdleCached(c, key, idleEnabled)) {
+                continue;
+            }
             if (proc.putIfAbsent(key, Boolean.TRUE) == null) {
                 q.add(c);
             }

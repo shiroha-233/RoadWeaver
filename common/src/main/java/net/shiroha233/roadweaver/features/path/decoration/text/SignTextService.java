@@ -36,6 +36,12 @@ public final class SignTextService {
 
     private static final ConcurrentLinkedQueue<Long> DIRTY_CHUNKS = new ConcurrentLinkedQueue<>();
     private static final ConcurrentHashMap<Long, Boolean> DIRTY_MARKS = new ConcurrentHashMap<>();
+    /**
+     * 保护「出队 + 清标记」与「打标记 + 入队」。
+     * 二者不互斥时，tick 在 poll 之后、清除标记之前到达的打标请求会被误判为
+     * 已入队而丢弃，随后标记又被清除，该区块的路牌将永久丢失。
+     */
+    private static final Object DIRTY_LOCK = new Object();
 
     public static void tick(ServerLevel level) {
         if (level == null || !Level.OVERWORLD.equals(level.dimension())) return;
@@ -44,9 +50,14 @@ public final class SignTextService {
 
         int budget = CHUNK_BUDGET_PER_TICK;
         while (budget-- > 0) {
-            Long chunkKey = DIRTY_CHUNKS.poll();
+            Long chunkKey;
+            synchronized (DIRTY_LOCK) {
+                chunkKey = DIRTY_CHUNKS.poll();
+                if (chunkKey != null) {
+                    DIRTY_MARKS.remove(chunkKey);
+                }
+            }
             if (chunkKey == null) return;
-            DIRTY_MARKS.remove(chunkKey);
 
             int chunkX = ChunkPos.getX(chunkKey);
             int chunkZ = ChunkPos.getZ(chunkKey);
@@ -55,8 +66,11 @@ public final class SignTextService {
     }
 
     public static void clearPending() {
-        DIRTY_CHUNKS.clear();
-        DIRTY_MARKS.clear();
+        synchronized (DIRTY_LOCK) {
+            DIRTY_CHUNKS.clear();
+            DIRTY_MARKS.clear();
+        }
+        SignTextFileIo.clearMemory();
         SignTextShardStorage.clearAllMemory();
     }
 
@@ -67,8 +81,11 @@ public final class SignTextService {
 
     public static void onDimensionUnload(ServerLevel level) {
         if (level == null || !Level.OVERWORLD.equals(level.dimension())) return;
-        DIRTY_CHUNKS.clear();
-        DIRTY_MARKS.clear();
+        synchronized (DIRTY_LOCK) {
+            DIRTY_CHUNKS.clear();
+            DIRTY_MARKS.clear();
+        }
+        SignTextFileIo.clearMemory();
         SignTextShardStorage.clearLevel(level);
     }
 
@@ -150,6 +167,7 @@ public final class SignTextService {
         if (level.getChunkSource().getChunkNow(chunkX, chunkZ) == null) return;
         boolean needRetry = false;
 
+        // 内存区与文件区共用一份预算，避免主线程方块实体写入量翻倍
         List<SignTextShardStorage.PendingSignWrite> memoryPending =
                 SignTextShardStorage.takeMemoryByChunk(level, chunkX, chunkZ, WRITE_BUDGET_PER_CHUNK);
         for (SignTextShardStorage.PendingSignWrite row : memoryPending) {
@@ -157,7 +175,7 @@ public final class SignTextService {
             boolean ok = tryWrite(level, row.pos(), row.signType(), row.payload());
             if (!ok && !shouldDrop(level, row.pos())) {
                 if (row.retryCount() >= MAX_MEMORY_RETRIES) {
-                    SignTextFileStorage.upsertBatch(level, List.of(new SignTextFileStorage.PendingSignWrite(row.pos(), row.signType(), row.payload())));
+                    SignTextFileIo.upsert(level, new SignTextFileStorage.PendingSignWrite(row.pos(), row.signType(), row.payload()));
                 } else {
                     SignTextShardStorage.requeue(level, row);
                 }
@@ -165,15 +183,20 @@ public final class SignTextService {
             }
         }
 
-        int remainingBudget = Math.max(0, WRITE_BUDGET_PER_CHUNK - memoryPending.size());
-        if (remainingBudget == 0) {
+        int remainingBudget = WRITE_BUDGET_PER_CHUNK - memoryPending.size();
+        if (remainingBudget <= 0) {
             if (needRetry || SignTextShardStorage.hasMemoryPending(level, chunkX, chunkZ)) {
                 markChunkDirty(level, chunkX, chunkZ);
             }
             return;
         }
 
-        List<SignTextFileStorage.PendingSignText> pending = SignTextFileStorage.queryByChunk(level, chunkX, chunkZ, remainingBudget);
+        // 返回 null 表示缓存未就绪；后台线程加载完成后会重新标记本区块
+        List<SignTextFileStorage.PendingSignText> pending =
+                SignTextFileIo.poll(level, chunkX, chunkZ, remainingBudget);
+        if (pending == null) {
+            return;
+        }
         if (pending.isEmpty()) {
             if (needRetry || SignTextShardStorage.hasMemoryPending(level, chunkX, chunkZ)) {
                 markChunkDirty(level, chunkX, chunkZ);
@@ -194,7 +217,7 @@ public final class SignTextService {
         }
 
         if (!doneIds.isEmpty()) {
-            SignTextFileStorage.deleteByIds(level, doneIds);
+            SignTextFileIo.reportDone(level, chunkX, chunkZ, doneIds);
         }
         if (needRetry || SignTextShardStorage.hasMemoryPending(level, chunkX, chunkZ)) {
             markChunkDirty(level, chunkX, chunkZ);
@@ -204,8 +227,10 @@ public final class SignTextService {
     private static void markChunkDirty(ServerLevel level, int chunkX, int chunkZ) {
         if (level == null || !Level.OVERWORLD.equals(level.dimension())) return;
         long key = ChunkPos.asLong(chunkX, chunkZ);
-        if (DIRTY_MARKS.putIfAbsent(key, Boolean.TRUE) != null) return;
-        DIRTY_CHUNKS.add(key);
+        synchronized (DIRTY_LOCK) {
+            if (DIRTY_MARKS.putIfAbsent(key, Boolean.TRUE) != null) return;
+            DIRTY_CHUNKS.add(key);
+        }
     }
 
     private static boolean shouldDrop(ServerLevel level, BlockPos pos) {

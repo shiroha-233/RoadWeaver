@@ -24,6 +24,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.concurrent.CancellationException;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
@@ -107,7 +108,7 @@ public final class InitialGenManager {
 
         if (!roadTasks.isEmpty()) {
             Map<PlannedPathKey, Boolean> results = submitAndCollect(level, roadTasks);
-            batchUpdateConnectionStatus(provider, level, results);
+            batchUpdateConnectionStatus(level, results);
         }
         snapInitialRoads(level, list);
         flushAndFinish(level);
@@ -181,31 +182,25 @@ public final class InitialGenManager {
         return results;
     }
 
-    private static void batchUpdateConnectionStatus(WorldDataProvider provider,
-                                                    ServerLevel level,
+    private static void batchUpdateConnectionStatus(ServerLevel level,
                                                     Map<PlannedPathKey, Boolean> results) {
         if (results.isEmpty()) return;
 
-        List<StructureConnection> current = provider.getStructureConnections(level);
-        if (current == null) return;
-
-        List<StructureConnection> updated = new ArrayList<>(current);
-        List<StructureConnection> changedConnections = new ArrayList<>();
-        boolean changed = false;
-        for (int i = 0; i < updated.size(); i++) {
-            StructureConnection original = updated.get(i);
-            PlannedPathKey k = PlannedPathKey.of(original);
-            Boolean ok = results.get(k);
-            if (ok == null) continue;
-            ConnectionStatus newStatus = ok ? ConnectionStatus.COMPLETED : ConnectionStatus.FAILED;
-            StructureConnection changedConnection = new StructureConnection(original.from(), original.to(), newStatus);
-            updated.set(i, changedConnection);
-            changedConnections.add(changedConnection);
-            changed = true;
-        }
-        if (changed) {
-            provider.setStructureConnections(level, updated);
-            for (StructureConnection changedConnection : changedConnections) {
+        List<StructureConnection> updated = ConnectionListUpdater.update(level, all -> {
+            List<StructureConnection> changedConnections = new ArrayList<>();
+            for (int i = 0; i < all.size(); i++) {
+                StructureConnection original = all.get(i);
+                Boolean ok = results.get(PlannedPathKey.of(original));
+                if (ok == null) continue;
+                ConnectionStatus newStatus = ok ? ConnectionStatus.COMPLETED : ConnectionStatus.FAILED;
+                StructureConnection changedConnection = new StructureConnection(original.from(), original.to(), newStatus);
+                all.set(i, changedConnection);
+                changedConnections.add(changedConnection);
+            }
+            return changedConnections.isEmpty() ? Optional.empty() : Optional.of(changedConnections);
+        });
+        if (updated != null) {
+            for (StructureConnection changedConnection : updated) {
                 MapPatchService.publishConnection(level, changedConnection);
                 if (changedConnection.status() == ConnectionStatus.COMPLETED) {
                     MapPatchService.publishRoadForConnectionAsync(level, changedConnection);

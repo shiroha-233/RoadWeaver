@@ -21,6 +21,13 @@ public final class MapSnapshotCache {
     private MapSnapshotCache() {}
 
     public static void setCurrentWorldId(String worldId) {
+        String previous = currentWorldId;
+        if (previous != null && !previous.equals(worldId)) {
+            // 释放上一个存档的桶：调用方随后的 clearNow() 清的是新存档，
+            // 不在此释放会随每次进出存档累积一份完整路网副本
+            BY_WORLD.remove(previous);
+            STORES_BY_WORLD.remove(previous);
+        }
         currentWorldId = worldId;
     }
 

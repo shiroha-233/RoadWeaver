@@ -5,6 +5,7 @@ import net.minecraft.server.level.ServerLevel;
 import net.shiroha233.roadweaver.map.tile.core.MapTileLayer;
 import net.shiroha233.roadweaver.persistence.files.FileStorageIO;
 import net.shiroha233.roadweaver.persistence.WorldgenFingerprintService;
+import net.shiroha233.roadweaver.util.StripedLocks;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -37,7 +38,7 @@ public final class AccurateTerrainMapFingerprintGuard {
         String expected = Objects.requireNonNull(fingerprint, "fingerprint");
         Path dimensionRoot = ServerMapTilePathResolver.dimensionRoot(level);
         Path marker = dimensionRoot.resolve("migration").resolve(MARKER);
-        synchronized ((marker.toAbsolutePath().normalize() + "#lock").intern()) {
+        synchronized (StripedLocks.lockForPath(marker)) {
             try {
                 String current = Files.exists(marker)
                         ? Files.readString(marker, StandardCharsets.UTF_8).trim()

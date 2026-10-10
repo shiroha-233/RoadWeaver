@@ -11,6 +11,7 @@ import net.shiroha233.roadweaver.pathfinding.cache.AccurateHeightSample;
 import net.shiroha233.roadweaver.pathfinding.cache.AccurateSampleStore;
 import net.shiroha233.roadweaver.persistence.WorldgenFingerprint;
 import net.shiroha233.roadweaver.persistence.WorldgenFingerprintService;
+import net.shiroha233.roadweaver.util.StripedLocks;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -48,7 +49,6 @@ public final class FileBackedAccurateSampleStore implements AccurateSampleStore 
     private final Path dimensionRoot;
     private final Path namespaceRoot;
     private final WorldgenFingerprint fingerprint;
-    private final Map<TileCoord, Object> tileLocks = new ConcurrentHashMap<>();
     private final Object decodedTileCacheLock = new Object();
     private final Map<TileCoord, SparseTile> decodedTileCache = new LinkedHashMap<>(32, 0.75F, true) {
         @Override
@@ -276,8 +276,9 @@ public final class FileBackedAccurateSampleStore implements AccurateSampleStore 
         }
     }
 
+    /** 采样瓦片坐标无上界，按坐标缓存锁对象会只增不减，故用分片锁。 */
     private Object lockFor(TileCoord tileCoord) {
-        return tileLocks.computeIfAbsent(tileCoord, ignored -> new Object());
+        return StripedLocks.lockFor(tileCoord == null ? 0 : tileCoord.hashCode());
     }
 
     private SparseTile loadTileForRead(TileCoord tileCoord) {
