@@ -138,7 +138,7 @@ public final class RoadPathCalculator {
                 cache,
                 terrain,
                 RoadConstants.DEFAULT_BRIDGE_MIN_WATER_DEPTH,
-                net.shiroha233.roadweaver.pathfinding.impl.SplineHelper.CurveMode.CATMULL_ROM,
+                net.shiroha233.roadweaver.pathfinding.impl.SplineHelper.CurveMode.BEZIER_CASTELJAU,
                 accurate);
         if (segments == null) {
             return PathCalculationResult.failure();

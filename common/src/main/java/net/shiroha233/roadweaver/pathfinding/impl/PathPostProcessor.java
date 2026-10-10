@@ -23,6 +23,11 @@ import static net.shiroha233.roadweaver.pathfinding.impl.SplineHelper.*;
 public final class PathPostProcessor {
     private PathPostProcessor() {}
 
+    /** Maximum lateral allowance for normal spline smoothing before terrain checks reject it. */
+    private static final double MAX_SPLINE_OFFSET = 16.0;
+    private static final double MAX_CONTROL_SPAN = 64.0;
+    private static final double CONTROL_DEVIATION = 4.0;
+
     public static List<RoadSegmentPlacement> process(List<BlockPos> rawPath, int width,
                                                      ServerLevel level, TerrainSamplingCache cache,
                                                      int bridgeMinWaterDepth) {
@@ -61,14 +66,20 @@ public final class PathPostProcessor {
                 ? accurate
                 : (cache != null ? cache.getAccurateSampler(level) : AccurateHeightSampler.create(level));
 
-        // Preserve the search-node spacing and water transitions. Simplifying first turns a
-        // local averaging filter into a hundreds-of-blocks shortcut across the terrain.
         boolean[] bridgeMask = detectBridgeMask(rawPath, level, cache, terrain, bridgeMinWaterDepth, sampler);
-        // Bridge construction may straighten locally, but must not relocate a whole water run.
-        List<BlockPos> controlPoints = relaxPathSkippingBridge(rawPath, bridgeMask);
+        List<BlockPos> reference;
+        boolean[] controlBridgeMask;
+        List<Integer> indices = boundedControlIndices(rawPath, bridgeMask, MAX_CONTROL_SPAN);
+        reference = new ArrayList<>(indices.size());
+        controlBridgeMask = new boolean[indices.size()];
+        for (int i = 0; i < indices.size(); i++) {
+            reference.add(rawPath.get(indices.get(i)));
+            controlBridgeMask[i] = bridgeMask[indices.get(i)];
+        }
+        List<BlockPos> controlPoints = relaxPathSkippingBridge(reference, controlBridgeMask);
         if (controlPoints.size() < 2) return new ArrayList<>();
 
-        List<Vec2d> splinePoints = generateSplinePoints(controlPoints, bridgeMask, curveMode, rawPath, sampler, level.getSeaLevel());
+        List<Vec2d> splinePoints = generateSplinePoints(controlPoints, controlBridgeMask, curveMode, reference, sampler, level.getSeaLevel());
         List<Double> centerDists = new ArrayList<>();
         List<BlockPos> centers = extractCenters(splinePoints, rawPath, rawTargetY, centerDists);
         centers = AccuratePathHeightResolver.resolve(centers, null, sampler);
@@ -105,7 +116,7 @@ public final class PathPostProcessor {
                             p2.getX(), p2.getZ(), p3.getX(), p3.getZ(), t);
                 }
                 BlockPos a = reference.get(i), b = reference.get(i + 1);
-                splinePoints.add(boundToSegment(pt, a, b, 2.0));
+                splinePoints.add(boundToSegment(pt, a, b, MAX_SPLINE_OFFSET));
                 baseline.add(lerp2d(a.getX(), a.getZ(), b.getX(), b.getZ(), t));
                 segmentIndices.add(i);
             }
@@ -129,7 +140,7 @@ public final class PathPostProcessor {
             if (candidate.equals(original)) continue;
             AccurateHeightSample c = samples.get(AccurateHeightSample.key(candidate.getX(), candidate.getZ()));
             AccurateHeightSample o = samples.get(AccurateHeightSample.key(original.getX(), original.getZ()));
-            if (c == null || o == null || Math.abs(sampler.surfaceHeight(c) - sampler.surfaceHeight(o)) > 2
+            if (c == null || o == null || Math.abs(sampler.surfaceHeight(c) - sampler.surfaceHeight(o)) > 8
                     || (c.oceanFloorWg() < c.worldSurfaceWg() && o.oceanFloorWg() >= o.worldSurfaceWg())
                     || (c.oceanFloorWg() < seaLevel && o.oceanFloorWg() >= seaLevel)) {
                 rejected[segmentIndices.get(i)] = true;
@@ -152,6 +163,37 @@ public final class PathPostProcessor {
 
     private static BlockPos rounded(Vec2d point) {
         return new BlockPos((int) Math.round(point.x()), 0, (int) Math.round(point.z()));
+    }
+
+    static List<Integer> boundedControlIndices(List<BlockPos> path, boolean[] bridgeMask, double maxSpan) {
+        List<Integer> indices = new ArrayList<>();
+        indices.add(0);
+        int anchor = 0;
+        while (anchor < path.size() - 1) {
+            int end = anchor + 1;
+            while (end + 1 < path.size()) {
+                int candidate = end + 1;
+                if (path.get(anchor).distSqr(path.get(candidate)) > maxSpan * maxSpan
+                        || bridgeMask[candidate] != bridgeMask[anchor]
+                        || bridgeMask[end] != bridgeMask[anchor]) break;
+                boolean fits = true;
+                Vec2d a = new Vec2d(path.get(anchor).getX(), path.get(anchor).getZ());
+                Vec2d b = new Vec2d(path.get(candidate).getX(), path.get(candidate).getZ());
+                for (int k = anchor + 1; k < candidate; k++) {
+                    if (distToSegmentSq(path.get(k).getX(), path.get(k).getZ(), a, b)
+                            > CONTROL_DEVIATION * CONTROL_DEVIATION) {
+                        fits = false;
+                        break;
+                    }
+                }
+                if (!fits) break;
+                end = candidate;
+            }
+            // Include the last bank node and the first water node as distinct anchors.
+            indices.add(end);
+            anchor = end;
+        }
+        return indices;
     }
 
     /** A local corridor bound, not a nearest-point search that can jump to another path branch. */
