@@ -694,5 +694,12 @@ public class ConfigScreenFactoryImpl {
                 .setTooltip(Component.translatable("config.roadweaver.loading_progress_enabled.tooltip"))
                 .setSaveConsumer(cfg::setLoadingProgressEnabled)
                 .build());
+
+        category.addEntry(eb
+                .startBooleanToggle(Component.translatable("config.roadweaver.loading_progress_debug_enabled"), cfg.loadingProgressDebugEnabled())
+                .setDefaultValue(def.loadingProgressDebugEnabled())
+                .setTooltip(Component.translatable("config.roadweaver.loading_progress_debug_enabled.tooltip"))
+                .setSaveConsumer(cfg::setLoadingProgressDebugEnabled)
+                .build());
     }
 }
