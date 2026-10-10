@@ -14,6 +14,7 @@ import net.shiroha233.roadweaver.pathfinding.terrain.region.CoarseTerrainRegionS
 
 import java.util.LinkedHashMap;
 import java.util.List;
+import net.shiroha233.roadweaver.planning.path.RawPathDebugService;
 
 /**
  * 粗地形道路规划器。
@@ -52,7 +53,16 @@ final class CoarseCorridorPlanningAdapter implements RoadTerrainPlanningPort {
                     List<BlockPos> path = RawPathSearch.find(
                             request.level(), connection, request.pathfinding(), cache, terrain);
                     if (path != null && !path.isEmpty()) {
-                        paths.put(connection, List.copyOf(path));
+                        RawPathDebugService.captureSearch(request.level(), connection, TerrainSamplingMode.COARSE_CORRIDOR, path);
+                        AccurateCorridorTerrain corridor = new AccurateCorridorTerrain(request.level(), cache, path, step);
+                        List<BlockPos> refined = RawPathSearch.find(request.level(), connection,
+                                request.pathfinding(), cache, corridor);
+                        // Do not silently pave the coarse route when the accurate search fails.
+                        if (refined != null && refined.size() >= 2) {
+                            RawPathDebugService.captureResolved(request.level(), connection,
+                                    TerrainSamplingMode.COARSE_CORRIDOR, path, refined);
+                            paths.put(connection, List.copyOf(refined));
+                        }
                     }
                 } finally {
                     InitialGenerationProgressTracker.recordCoarsePathDone();

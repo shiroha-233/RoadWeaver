@@ -32,6 +32,7 @@ import net.shiroha233.roadweaver.config.sub.TerrainSamplingMode;
 import net.shiroha233.roadweaver.planning.impl.KNNPlanner;
 import net.shiroha233.roadweaver.planning.path.PlannedPathCache;
 import net.shiroha233.roadweaver.planning.path.PlannedPathKey;
+import net.shiroha233.roadweaver.planning.path.RawPathDebugService;
 import net.shiroha233.roadweaver.planning.terrain.RoadTerrainPlanningPipeline;
 import net.shiroha233.roadweaver.planning.terrain.RoadTerrainPlanningPort;
 import net.shiroha233.roadweaver.planning.terrain.AutomaticPlanningSamplingActivities;
@@ -518,6 +519,10 @@ public final class RoadPlanningService {
                 config.pathfindingCost());
         RoadTerrainPlanningPort.Result result = TERRAIN_PLANNING.plan(request);
         PlannedPathCache.register(level, result.mode(), config.pathfindingCost(), result.paths());
+        if (RawPathDebugService.enabled() && result.mode() == TerrainSamplingMode.FULL_REGION) {
+            result.paths().forEach((connection, path) ->
+                    RawPathDebugService.captureSearch(level, connection, result.mode(), path));
+        }
     }
 
     private static ArrayList<BlockPos> collectComponentPoints(List<BlockPos> seed,
