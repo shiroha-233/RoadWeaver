@@ -27,6 +27,9 @@ import net.shiroha233.roadweaver.client.map.data.MapSnapshotPatch;
 import net.shiroha233.roadweaver.client.map.data.MapAutomaticPlanningSamplingCache;
 import net.shiroha233.roadweaver.map.permission.MapAccessService;
 import net.shiroha233.roadweaver.network.MapNetworkPayloads;
+import net.shiroha233.roadweaver.network.RawPathDebugPayloads;
+import net.shiroha233.roadweaver.planning.path.RawPathDebugService;
+import net.shiroha233.roadweaver.client.debug.RawPathDebugOverlay;
 import net.shiroha233.roadweaver.map.search.MapStructureSearchService;
 import net.shiroha233.roadweaver.runtime.ThreadPoolManager;
 import net.shiroha233.roadweaver.planning.terrain.AutomaticPlanningSamplingActivities;
@@ -50,6 +53,7 @@ public final class MapNetworkNeoForge {
         registrar.playToServer(MapNetworkPayloads.TP_REQ, MapNetworkPayloads.MapTeleportPayload.CODEC, MapNetworkNeoForge::handleTeleportRequest);
         registrar.playToServer(MapNetworkPayloads.MAN_REQ, MapNetworkPayloads.MapManualConnectPayload.CODEC, MapNetworkNeoForge::handleManualConnect);
         registrar.playToServer(MapNetworkPayloads.SEARCH_REQ, MapNetworkPayloads.MapSearchRequestPayload.CODEC, MapNetworkNeoForge::handleSearchRequest);
+        registrar.playToServer(RawPathDebugPayloads.REQUEST, RawPathDebugPayloads.Request.CODEC, MapNetworkNeoForge::handleRawPathRequest);
 
         registrar.playToClient(MapNetworkPayloads.SNAP, MapNetworkPayloads.MapSnapshotPayload.CODEC, MapNetworkNeoForge::handleSnapshot);
         registrar.playToClient(MapNetworkPayloads.PATCH, MapNetworkPayloads.MapPatchPayload.CODEC, MapNetworkNeoForge::handlePatch);
@@ -57,6 +61,7 @@ public final class MapNetworkNeoForge {
         registrar.playToClient(MapNetworkPayloads.TP_ACK, MapNetworkPayloads.MapTeleportAckPayload.CODEC, MapNetworkNeoForge::handleTeleportAck);
         registrar.playToClient(MapNetworkPayloads.ACCESS_SYNC, MapNetworkPayloads.MapAccessSyncPayload.CODEC, MapNetworkNeoForge::handleAccessSync);
         registrar.playToClient(MapNetworkPayloads.SEARCH_RESP, MapNetworkPayloads.MapSearchResponsePayload.CODEC, MapNetworkNeoForge::handleSearchResponse);
+        registrar.playToClient(RawPathDebugPayloads.RESPONSE, RawPathDebugPayloads.Response.CODEC, MapNetworkNeoForge::handleRawPathResponse);
     }
 
     private static void handleRequestRect(MapNetworkPayloads.MapRequestRectPayload payload, IPayloadContext context) {
@@ -201,6 +206,30 @@ public final class MapNetworkNeoForge {
         });
     }
 
+    private static void handleRawPathRequest(RawPathDebugPayloads.Request payload, IPayloadContext context) {
+        context.enqueueWork(() -> {
+            if (!(context.player() instanceof ServerPlayer player)) return;
+            ServerLevel level = player.serverLevel();
+            if (!player.hasPermissions(2)) {
+                player.displayClientMessage(Component.translatable("debug.roadweaver.raw_paths.denied"), true);
+                return;
+            }
+            if (!level.dimension().location().equals(payload.dimension())) return;
+            int x = player.getBlockX(), z = player.getBlockZ();
+            CompletableFuture.supplyAsync(() -> new RawPathDebugPayloads.Response(
+                            payload.sequence(), level.dimension().location(), RawPathDebugService.enabled(),
+                            RawPathDebugService.nearby(level, x, z)),
+                    ThreadPoolManager.roleExecutor(ThreadPoolManager.TaskRole.MAP))
+                    .thenAccept(reply -> level.getServer().execute(() -> {
+                        if (!player.isRemoved() && player.serverLevel() == level) PacketDistributor.sendToPlayer(player, reply);
+                    }));
+        });
+    }
+
+    private static void handleRawPathResponse(RawPathDebugPayloads.Response payload, IPayloadContext context) {
+        context.enqueueWork(() -> RawPathDebugOverlay.accept(payload));
+    }
+
     private static void handleManualConnect(MapNetworkPayloads.MapManualConnectPayload payload, IPayloadContext context) {
         context.enqueueWork(() -> {
             if (!(context.player() instanceof ServerPlayer player)) return;
@@ -249,6 +278,10 @@ public final class MapNetworkNeoForge {
 
     public static void requestSearch(int requestSeq, ResourceLocation dimensionId, String query) {
         PacketDistributor.sendToServer(new MapNetworkPayloads.MapSearchRequestPayload(requestSeq, dimensionId, query));
+    }
+
+    public static void requestRawPathDebug(int requestSeq, ResourceLocation dimensionId) {
+        PacketDistributor.sendToServer(new RawPathDebugPayloads.Request(requestSeq, dimensionId));
     }
 
     public static void broadcastPatch(ServerPlayer player, ResourceLocation dimensionId, MapSnapshotPatch patch) {

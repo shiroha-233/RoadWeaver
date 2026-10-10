@@ -20,6 +20,8 @@ public final class PlanningConfig implements SubConfig {
     private int dynamicPlanStrideChunks = RoadConstants.DEFAULT_DYNAMIC_PLAN_STRIDE_CHUNKS;
     private PlanningAlgorithm planningAlgorithm = PlanningAlgorithm.RNG;
     private TerrainSamplingMode terrainSamplingMode = TerrainSamplingMode.COARSE_CORRIDOR;
+    /** Capture the unprocessed path nodes for the in-world debug overlay. */
+    private boolean debugRawPaths = false;
 
     @Override
     public void sanitize() {
@@ -48,6 +50,7 @@ public final class PlanningConfig implements SubConfig {
         copy.dynamicPlanStrideChunks = this.dynamicPlanStrideChunks;
         copy.planningAlgorithm = this.planningAlgorithm;
         copy.terrainSamplingMode = this.terrainSamplingMode;
+        copy.debugRawPaths = this.debugRawPaths;
         return copy;
     }
 
@@ -65,4 +68,6 @@ public final class PlanningConfig implements SubConfig {
     public void setAlgorithm(PlanningAlgorithm v) { this.planningAlgorithm = v; }
     public TerrainSamplingMode terrainSamplingMode() { return terrainSamplingMode; }
     public void setTerrainSamplingMode(TerrainSamplingMode v) { this.terrainSamplingMode = v; }
+    public boolean debugRawPaths() { return debugRawPaths; }
+    public void setDebugRawPaths(boolean value) { this.debugRawPaths = value; }
 }

@@ -31,4 +31,8 @@ public final class ClientNetBridgeImpl {
     public static void requestSearch(int requestSeq, ResourceLocation dimensionId, String query) {
         MapNetworkFabric.requestSearch(requestSeq, dimensionId, query);
     }
+
+    public static void requestRawPathDebug(int requestSeq, ResourceLocation dimensionId) {
+        MapNetworkFabric.requestRawPathDebug(requestSeq, dimensionId);
+    }
 }

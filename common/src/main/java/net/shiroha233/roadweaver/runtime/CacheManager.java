@@ -20,6 +20,7 @@ import net.shiroha233.roadweaver.persistence.sharded.RoadShardStorage;
 import net.shiroha233.roadweaver.planning.RoadPlanningService;
 import net.shiroha233.roadweaver.generation.ConnectionListUpdater;
 import net.shiroha233.roadweaver.planning.path.PlannedPathCache;
+import net.shiroha233.roadweaver.planning.path.RawPathDebugService;
 import net.shiroha233.roadweaver.planning.terrain.AutomaticPlanningSamplingActivities;
 import net.shiroha233.roadweaver.planning.terrain.TerrainSamplingSessions;
 import net.shiroha233.roadweaver.structures.precompute.PendingRoadsideVillageStorage;
@@ -98,6 +99,7 @@ public final class CacheManager {
         TerrainSamplingSessions.clearAll();
         AccurateHeightSampler.clearAll();
         PlannedPathCache.clearAll();
+        RawPathDebugService.clearAll();
         CoarseTerrainTileCache.clearAll();
         OpenCLRuntime.closeAll();
         OpenCLWorldSupport.clear();
@@ -122,6 +124,7 @@ public final class CacheManager {
         AutomaticPlanningSamplingActivities.clear(level);
         AccurateHeightSampler.clearForLevel(level);
         PlannedPathCache.clear(level);
+        RawPathDebugService.clear(level);
         ConnectionListUpdater.clear(level);
         RoadWorldgenPlanCache.clear(level);
         try {

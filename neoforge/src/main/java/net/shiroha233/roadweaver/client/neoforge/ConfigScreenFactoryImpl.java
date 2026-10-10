@@ -473,6 +473,13 @@ public class ConfigScreenFactoryImpl {
                 .build());
 
         category.addEntry(eb
+                .startBooleanToggle(Component.translatable("config.roadweaver.debug_raw_paths"), planning.debugRawPaths())
+                .setDefaultValue(planningDef.debugRawPaths())
+                .setTooltip(Component.translatable("config.roadweaver.debug_raw_paths.tooltip"))
+                .setSaveConsumer(planning::setDebugRawPaths)
+                .build());
+
+        category.addEntry(eb
                 .startIntField(Component.translatable("config.roadweaver.initial_generation_threads"), cfg.initialGenerationThreads())
                 .setDefaultValue(def.initialGenerationThreads())
                 .setTooltip(Component.translatable("config.roadweaver.initial_generation_threads.tooltip"))

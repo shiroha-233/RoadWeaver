@@ -22,6 +22,9 @@ import net.shiroha233.roadweaver.client.map.data.MapSnapshotPatch;
 import net.shiroha233.roadweaver.client.map.data.MapAutomaticPlanningSamplingCache;
 import net.shiroha233.roadweaver.map.permission.MapAccessService;
 import net.shiroha233.roadweaver.network.MapNetworkPayloads;
+import net.shiroha233.roadweaver.network.RawPathDebugPayloads;
+import net.shiroha233.roadweaver.planning.path.RawPathDebugService;
+import net.shiroha233.roadweaver.client.debug.RawPathDebugOverlay;
 import net.shiroha233.roadweaver.map.search.MapStructureSearchService;
 import net.shiroha233.roadweaver.runtime.ThreadPoolManager;
 import net.shiroha233.roadweaver.planning.terrain.AutomaticPlanningSamplingActivities;
@@ -43,6 +46,7 @@ public final class MapNetworkFabric {
         PayloadTypeRegistry.playC2S().register(MapNetworkPayloads.TP_REQ, MapNetworkPayloads.MapTeleportPayload.CODEC);
         PayloadTypeRegistry.playC2S().register(MapNetworkPayloads.MAN_REQ, MapNetworkPayloads.MapManualConnectPayload.CODEC);
         PayloadTypeRegistry.playC2S().register(MapNetworkPayloads.SEARCH_REQ, MapNetworkPayloads.MapSearchRequestPayload.CODEC);
+        PayloadTypeRegistry.playC2S().register(RawPathDebugPayloads.REQUEST, RawPathDebugPayloads.Request.CODEC);
 
         PayloadTypeRegistry.playS2C().register(MapNetworkPayloads.SNAP, MapNetworkPayloads.MapSnapshotPayload.CODEC);
         PayloadTypeRegistry.playS2C().register(MapNetworkPayloads.PATCH, MapNetworkPayloads.MapPatchPayload.CODEC);
@@ -50,12 +54,14 @@ public final class MapNetworkFabric {
         PayloadTypeRegistry.playS2C().register(MapNetworkPayloads.TP_ACK, MapNetworkPayloads.MapTeleportAckPayload.CODEC);
         PayloadTypeRegistry.playS2C().register(MapNetworkPayloads.ACCESS_SYNC, MapNetworkPayloads.MapAccessSyncPayload.CODEC);
         PayloadTypeRegistry.playS2C().register(MapNetworkPayloads.SEARCH_RESP, MapNetworkPayloads.MapSearchResponsePayload.CODEC);
+        PayloadTypeRegistry.playS2C().register(RawPathDebugPayloads.RESPONSE, RawPathDebugPayloads.Response.CODEC);
 
         payloadTypesRegistered = true;
     }
 
     public static void registerServerReceivers() {
         registerPayloadTypes();
+        registerRawPathRequest();
 
         ServerPlayNetworking.registerGlobalReceiver(MapNetworkPayloads.REQ_RECT, (payload, context) -> {
             ServerPlayer player = context.player();
@@ -186,6 +192,30 @@ public final class MapNetworkFabric {
                     }
                 })
         );
+
+        ClientPlayNetworking.registerGlobalReceiver(RawPathDebugPayloads.RESPONSE, (payload, context) ->
+                context.client().execute(() -> RawPathDebugOverlay.accept(payload)));
+    }
+
+    private static void registerRawPathRequest() {
+        ServerPlayNetworking.registerGlobalReceiver(RawPathDebugPayloads.REQUEST, (payload, context) -> {
+            ServerPlayer player = context.player();
+            var level = player.serverLevel();
+            if (!player.hasPermissions(2)) {
+                context.server().execute(() -> player.displayClientMessage(
+                        Component.translatable("debug.roadweaver.raw_paths.denied"), true));
+                return;
+            }
+            if (!level.dimension().location().equals(payload.dimension())) return;
+            int x = player.getBlockX(), z = player.getBlockZ();
+            CompletableFuture.supplyAsync(() -> new RawPathDebugPayloads.Response(
+                            payload.sequence(), level.dimension().location(), RawPathDebugService.enabled(),
+                            RawPathDebugService.nearby(level, x, z)),
+                    ThreadPoolManager.roleExecutor(ThreadPoolManager.TaskRole.MAP))
+                    .thenAccept(reply -> context.server().execute(() -> {
+                        if (!player.isRemoved() && player.serverLevel() == level) ServerPlayNetworking.send(player, reply);
+                    }));
+        });
     }
 
     private static MapSnapshot buildSnapshot(net.minecraft.server.level.ServerLevel level,
@@ -245,6 +275,10 @@ public final class MapNetworkFabric {
 
     public static void requestSearch(int requestSeq, ResourceLocation dimensionId, String query) {
         ClientPlayNetworking.send(new MapNetworkPayloads.MapSearchRequestPayload(requestSeq, dimensionId, query));
+    }
+
+    public static void requestRawPathDebug(int requestSeq, ResourceLocation dimensionId) {
+        ClientPlayNetworking.send(new RawPathDebugPayloads.Request(requestSeq, dimensionId));
     }
 
     public static void broadcastPatch(ServerPlayer player, ResourceLocation dimensionId, MapSnapshotPatch patch) {

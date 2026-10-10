@@ -36,4 +36,9 @@ public final class ClientNetBridge {
     public static void requestSearch(int requestSeq, ResourceLocation dimensionId, String query) {
         throw new AssertionError();
     }
+
+    @ExpectPlatform
+    public static void requestRawPathDebug(int requestSeq, ResourceLocation dimensionId) {
+        throw new AssertionError();
+    }
 }
