@@ -16,6 +16,8 @@ import net.shiroha233.roadweaver.core.model.ConnectionStatus;
 import net.shiroha233.roadweaver.core.model.StructureConnection;
 import net.shiroha233.roadweaver.planning.terrain.RoadTerrainPlanningPipeline;
 import net.shiroha233.roadweaver.planning.terrain.RoadTerrainPlanningPort;
+import net.shiroha233.roadweaver.planning.path.RawPathDebugService;
+import net.shiroha233.roadweaver.config.sub.TerrainSamplingMode;
 
 import java.util.List;
 
@@ -88,32 +90,47 @@ public final class RoadPathCalculator {
         if (rawPath == null || rawPath.isEmpty()) {
             return PathCalculationResult.failure();
         }
-        return finalizePath(rawPath, width, level, cache, null);
+        return finalizePath(rawPath, width, level, cache, null, connection, planned.mode());
     }
 
     /**
      * 直接后处理规划阶段已经完成的精确路径，不再采样或重复寻路。
      */
     public static PathCalculationResult calculateFromPlannedPath(List<BlockPos> plannedPath,
-                                                                  int width,
-                                                                  ServerLevel level,
-                                                                  TerrainSamplingCache cache) {
+                                                                   int width,
+                                                                   ServerLevel level,
+                                                                   TerrainSamplingCache cache) {
+        return calculateFromPlannedPath(plannedPath, width, level, cache, null, null);
+    }
+
+    public static PathCalculationResult calculateFromPlannedPath(List<BlockPos> plannedPath,
+                                                                   int width,
+                                                                   ServerLevel level,
+                                                                   TerrainSamplingCache cache,
+                                                                   StructureConnection connection,
+                                                                   TerrainSamplingMode mode) {
         if (plannedPath == null || plannedPath.isEmpty()) {
             return PathCalculationResult.failure();
         }
-        return finalizePath(plannedPath, width, level, cache, null);
+        return finalizePath(plannedPath, width, level, cache, null, connection, mode);
     }
 
     private static PathCalculationResult finalizePath(List<BlockPos> rawPath,
                                                       int width,
-                                                      ServerLevel level,
-                                                      TerrainSamplingCache cache,
-                                                      PathTerrainField terrain) {
+                                                       ServerLevel level,
+                                                       TerrainSamplingCache cache,
+                                                       PathTerrainField terrain,
+                                                       StructureConnection connection,
+                                                       TerrainSamplingMode mode) {
         if (rawPath == null || rawPath.size() < 2) {
             return PathCalculationResult.failure();
         }
         AccurateHeightSampler accurate = cache.getAccurateSampler(level);
-        List<BlockPos> finalPath = AccuratePathHeightResolver.resolve(rawPath, terrain, accurate);
+        List<BlockPos> finalPath = mode == TerrainSamplingMode.COARSE_CORRIDOR || mode == TerrainSamplingMode.FULL_REGION
+                ? rawPath : AccuratePathHeightResolver.resolve(rawPath, terrain, accurate);
+        if (connection != null && mode != null && mode != TerrainSamplingMode.COARSE_CORRIDOR) {
+            RawPathDebugService.captureResolved(level, connection, mode, rawPath, finalPath);
+        }
         List<RoadSegmentPlacement> segments = PathPostProcessor.process(
                 finalPath,
                 width,
@@ -121,7 +138,7 @@ public final class RoadPathCalculator {
                 cache,
                 terrain,
                 RoadConstants.DEFAULT_BRIDGE_MIN_WATER_DEPTH,
-                net.shiroha233.roadweaver.pathfinding.impl.SplineHelper.CurveMode.CATMULL_ROM,
+                net.shiroha233.roadweaver.pathfinding.impl.SplineHelper.CurveMode.BEZIER_CASTELJAU,
                 accurate);
         if (segments == null) {
             return PathCalculationResult.failure();

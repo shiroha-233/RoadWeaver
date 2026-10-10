@@ -79,7 +79,8 @@ public final class Road {
             PathCalculationResult pathResult;
             if (planned.isPresent()) {
                 pathResult = RoadPathCalculator.calculateFromPlannedPath(
-                        planned.get(), width, level, cache);
+                        planned.get(), width, level, cache, connection,
+                        TerrainSamplingSessions.forLevel(level).effectiveMode());
             } else {
                 pathResult = RoadPathCalculator.calculateAStarRoadPathDetailed(
                         rawStart, rawEnd, width, level, maxSteps, cache, genConfig);

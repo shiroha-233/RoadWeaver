@@ -6,6 +6,7 @@ import net.minecraft.server.level.ServerLevel;
 import net.shiroha233.roadweaver.core.model.RoadSegmentPlacement;
 import net.shiroha233.roadweaver.pathfinding.cache.AccurateHeightSampler;
 import net.shiroha233.roadweaver.pathfinding.cache.AccurateHeightSample;
+import net.shiroha233.roadweaver.pathfinding.cache.AccuratePathHeightResolver;
 import net.shiroha233.roadweaver.pathfinding.cache.TerrainSamplingCache;
 import net.shiroha233.roadweaver.pathfinding.impl.SplineHelper.CurveMode;
 import net.shiroha233.roadweaver.pathfinding.impl.SplineHelper.Vec2d;
@@ -21,6 +22,11 @@ import static net.shiroha233.roadweaver.pathfinding.impl.SplineHelper.*;
  */
 public final class PathPostProcessor {
     private PathPostProcessor() {}
+
+    /** Maximum lateral allowance for normal spline smoothing before terrain checks reject it. */
+    private static final double MAX_SPLINE_OFFSET = 16.0;
+    private static final double MAX_CONTROL_SPAN = 64.0;
+    private static final double CONTROL_DEVIATION = 4.0;
 
     public static List<RoadSegmentPlacement> process(List<BlockPos> rawPath, int width,
                                                      ServerLevel level, TerrainSamplingCache cache,
@@ -60,26 +66,37 @@ public final class PathPostProcessor {
                 ? accurate
                 : (cache != null ? cache.getAccurateSampler(level) : AccurateHeightSampler.create(level));
 
-        List<BlockPos> simplified = simplifyPath(rawPath);
-        boolean[] bridgeMask = detectBridgeMask(simplified, level, cache, terrain, bridgeMinWaterDepth, sampler);
-        List<BlockPos> straightened = straightenBridgeRuns(simplified, bridgeMask);
-        List<BlockPos> controlPoints = relaxPathSkippingBridge(straightened, bridgeMask);
+        boolean[] bridgeMask = detectBridgeMask(rawPath, level, cache, terrain, bridgeMinWaterDepth, sampler);
+        List<BlockPos> reference;
+        boolean[] controlBridgeMask;
+        List<Integer> indices = boundedControlIndices(rawPath, bridgeMask, MAX_CONTROL_SPAN);
+        reference = new ArrayList<>(indices.size());
+        controlBridgeMask = new boolean[indices.size()];
+        for (int i = 0; i < indices.size(); i++) {
+            reference.add(rawPath.get(indices.get(i)));
+            controlBridgeMask[i] = bridgeMask[indices.get(i)];
+        }
+        List<BlockPos> controlPoints = relaxPathSkippingBridge(reference, controlBridgeMask);
         if (controlPoints.size() < 2) return new ArrayList<>();
 
-        List<Vec2d> splinePoints = generateSplinePoints(controlPoints, bridgeMask, curveMode);
+        List<Vec2d> splinePoints = generateSplinePoints(controlPoints, controlBridgeMask, curveMode, reference, sampler, level.getSeaLevel());
         List<Double> centerDists = new ArrayList<>();
         List<BlockPos> centers = extractCenters(splinePoints, rawPath, rawTargetY, centerDists);
+        centers = AccuratePathHeightResolver.resolve(centers, null, sampler);
         return rasterizeSegments(splinePoints, centers, centerDists, width);
     }
 
     private static List<Vec2d> generateSplinePoints(List<BlockPos> controlPoints,
-                                                     boolean[] bridgeMask, CurveMode curveMode) {
+                                                      boolean[] bridgeMask, CurveMode curveMode, List<BlockPos> reference,
+                                                      AccurateHeightSampler sampler, int seaLevel) {
         List<BlockPos> ext = new ArrayList<>();
         ext.add(controlPoints.get(0));
         ext.addAll(controlPoints);
         ext.add(controlPoints.get(controlPoints.size() - 1));
 
         List<Vec2d> splinePoints = new ArrayList<>();
+        List<Vec2d> baseline = new ArrayList<>();
+        List<Integer> segmentIndices = new ArrayList<>();
         for (int i = 0; i < controlPoints.size() - 1; i++) {
             BlockPos p0 = ext.get(i), p1 = ext.get(i + 1), p2 = ext.get(i + 2), p3 = ext.get(i + 3);
             double dist = Math.sqrt(p1.distSqr(p2));
@@ -98,12 +115,106 @@ public final class PathPostProcessor {
                     pt = catmullRomSpline(p0.getX(), p0.getZ(), p1.getX(), p1.getZ(),
                             p2.getX(), p2.getZ(), p3.getX(), p3.getZ(), t);
                 }
-                splinePoints.add(pt);
+                BlockPos a = reference.get(i), b = reference.get(i + 1);
+                splinePoints.add(boundToSegment(pt, a, b, MAX_SPLINE_OFFSET));
+                baseline.add(lerp2d(a.getX(), a.getZ(), b.getX(), b.getZ(), t));
+                segmentIndices.add(i);
             }
         }
         BlockPos last = controlPoints.get(controlPoints.size() - 1);
         splinePoints.add(new Vec2d(last.getX(), last.getZ()));
+        baseline.add(new Vec2d(last.getX(), last.getZ()));
+        segmentIndices.add(controlPoints.size() - 2);
+        // Reject the entire local curve if smoothing introduces a new water crossing or
+        // moves it onto substantially different terrain. Heights are sampled at the new X/Z,
+        // not guessed from the old search nodes.
+        List<BlockPos> checks = new ArrayList<>();
+        for (int i = 0; i < splinePoints.size(); i++) {
+            BlockPos candidate = rounded(splinePoints.get(i)), original = rounded(baseline.get(i));
+            if (!candidate.equals(original)) { checks.add(candidate); checks.add(original); }
+        }
+        Map<Long, AccurateHeightSample> samples = sampler.samplePositions(checks);
+        boolean[] rejected = new boolean[controlPoints.size() - 1];
+        for (int i = 0; i < splinePoints.size(); i++) {
+            BlockPos candidate = rounded(splinePoints.get(i)), original = rounded(baseline.get(i));
+            if (candidate.equals(original)) continue;
+            AccurateHeightSample c = samples.get(AccurateHeightSample.key(candidate.getX(), candidate.getZ()));
+            AccurateHeightSample o = samples.get(AccurateHeightSample.key(original.getX(), original.getZ()));
+            if (c == null || o == null || Math.abs(sampler.surfaceHeight(c) - sampler.surfaceHeight(o)) > 8
+                    || (c.oceanFloorWg() < c.worldSurfaceWg() && o.oceanFloorWg() >= o.worldSurfaceWg())
+                    || (c.oceanFloorWg() < seaLevel && o.oceanFloorWg() >= seaLevel)) {
+                rejected[segmentIndices.get(i)] = true;
+            }
+        }
+        for (int i = 0; i < splinePoints.size(); i++) {
+            if (rejected[segmentIndices.get(i)]) splinePoints.set(i, baseline.get(i));
+        }
+        // Anchor both ends of rejected curves so adjacent curves cannot leave small gaps.
+        for (int i = 0; i < splinePoints.size(); i++) {
+            int segment = segmentIndices.get(i);
+            if (i == 0 || segmentIndices.get(i - 1) != segment) {
+                if (rejected[segment] || (segment > 0 && rejected[segment - 1])) {
+                    splinePoints.set(i, baseline.get(i));
+                }
+            }
+        }
         return splinePoints;
+    }
+
+    private static BlockPos rounded(Vec2d point) {
+        return new BlockPos((int) Math.round(point.x()), 0, (int) Math.round(point.z()));
+    }
+
+    static List<Integer> boundedControlIndices(List<BlockPos> path, boolean[] bridgeMask, double maxSpan) {
+        List<Integer> indices = new ArrayList<>();
+        indices.add(0);
+        int anchor = 0;
+        while (anchor < path.size() - 1) {
+            int end = anchor + 1;
+            for (int candidate = anchor + 2; candidate < path.size(); candidate++) {
+                if (path.get(anchor).distSqr(path.get(candidate)) > maxSpan * maxSpan
+                        || bridgeMask[candidate] != bridgeMask[anchor]
+                        || bridgeMask[candidate - 1] != bridgeMask[anchor]) break;
+                boolean fits = true;
+                Vec2d a = new Vec2d(path.get(anchor).getX(), path.get(anchor).getZ());
+                Vec2d b = new Vec2d(path.get(candidate).getX(), path.get(candidate).getZ());
+                for (int k = anchor + 1; k < candidate; k++) {
+                    if (distToSegmentSq(path.get(k).getX(), path.get(k).getZ(), a, b)
+                            > CONTROL_DEVIATION * CONTROL_DEVIATION) {
+                        fits = false;
+                        break;
+                    }
+                }
+                // A single staircase corner may lie outside the bound for a short
+                // chord yet fit a longer diagonal. Keep looking within this span.
+                if (fits) end = candidate;
+            }
+            // Include the last bank node and the first water node as distinct anchors.
+            indices.add(end);
+            anchor = end;
+        }
+        return indices;
+    }
+
+    /** A local corridor bound, not a nearest-point search that can jump to another path branch. */
+    static Vec2d boundToSegment(Vec2d point, BlockPos a, BlockPos b, double maxOffset) {
+        double dx = (double) b.getX() - a.getX(), dz = (double) b.getZ() - a.getZ();
+        double lengthSq = dx * dx + dz * dz;
+        double t = lengthSq == 0 ? 0 : Math.max(0, Math.min(1,
+                ((point.x() - a.getX()) * dx + (point.z() - a.getZ()) * dz) / lengthSq));
+        double px = a.getX() + dx * t, pz = a.getZ() + dz * t;
+        double ox = point.x() - px, oz = point.z() - pz;
+        double distance = Math.hypot(ox, oz);
+        return distance <= maxOffset ? point : new Vec2d(px + ox * maxOffset / distance, pz + oz * maxOffset / distance);
+    }
+
+    private static BlockPos boundedRelaxation(BlockPos prev, BlockPos curr, BlockPos next) {
+        double x = ((double) prev.getX() + curr.getX() * 2.0 + next.getX()) / 4;
+        double z = ((double) prev.getZ() + curr.getZ() * 2.0 + next.getZ()) / 4;
+        double distance = Math.hypot(x - curr.getX(), z - curr.getZ());
+        double scale = distance > 1.0 ? 1.0 / distance : 1.0;
+        return new BlockPos((int) Math.round(curr.getX() + (x - curr.getX()) * scale), curr.getY(),
+                (int) Math.round(curr.getZ() + (z - curr.getZ()) * scale));
     }
 
     private static List<BlockPos> extractCenters(List<Vec2d> splinePoints,
@@ -303,9 +414,7 @@ public final class PathPostProcessor {
         relaxed.add(nodes.get(0));
         for (int i = 1; i < nodes.size() - 1; i++) {
             BlockPos prev = nodes.get(i - 1), curr = nodes.get(i), next = nodes.get(i + 1);
-            int nx = (prev.getX() + curr.getX() * 2 + next.getX()) / 4;
-            int nz = (prev.getZ() + curr.getZ() * 2 + next.getZ()) / 4;
-            relaxed.add(new BlockPos(nx, curr.getY(), nz));
+            relaxed.add(boundedRelaxation(prev, curr, next));
         }
         relaxed.add(nodes.get(nodes.size() - 1));
         return relaxed;
@@ -330,9 +439,7 @@ public final class PathPostProcessor {
                 continue;
             }
             BlockPos prev = nodes.get(i - 1), curr = nodes.get(i), next = nodes.get(i + 1);
-            int nx = (prev.getX() + curr.getX() * 2 + next.getX()) / 4;
-            int nz = (prev.getZ() + curr.getZ() * 2 + next.getZ()) / 4;
-            relaxed.add(new BlockPos(nx, curr.getY(), nz));
+            relaxed.add(boundedRelaxation(prev, curr, next));
         }
         relaxed.add(nodes.get(nodes.size() - 1));
         return relaxed;

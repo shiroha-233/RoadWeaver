@@ -22,7 +22,10 @@ import net.shiroha233.roadweaver.client.map.data.MapSnapshotCache;
 import net.shiroha233.roadweaver.client.map.data.MapSnapshotPatch;
 import net.shiroha233.roadweaver.map.permission.MapAccessService;
 import net.shiroha233.roadweaver.map.search.MapStructureSearchService;
+import net.shiroha233.roadweaver.client.debug.RawPathDebugOverlay;
 import net.shiroha233.roadweaver.network.MapNetworkPayloads;
+import net.shiroha233.roadweaver.network.RawPathDebugPayloads;
+import net.shiroha233.roadweaver.planning.path.RawPathDebugService;
 import net.shiroha233.roadweaver.planning.terrain.AutomaticPlanningSamplingActivities;
 import net.shiroha233.roadweaver.runtime.ThreadPoolManager;
 import java.util.List;
@@ -32,6 +35,25 @@ public final class MapNetworkFabric {
     private MapNetworkFabric() {}
 
     public static void registerServerReceivers() {
+        ServerPlayNetworking.registerGlobalReceiver(RawPathDebugPayloads.REQUEST, (server, player, handler, buf, sender) -> {
+            var request = RawPathDebugPayloads.Request.CODEC.decode(buf);
+            server.execute(() -> {
+                var level = player.serverLevel();
+                if (!player.hasPermissions(2)) {
+                    player.displayClientMessage(Component.translatable("debug.roadweaver.raw_paths.denied"), true);
+                    return;
+                }
+                if (!level.dimension().location().equals(request.dimension())) return;
+                int x = player.getBlockX(), z = player.getBlockZ();
+                CompletableFuture.supplyAsync(() -> new RawPathDebugPayloads.Response(
+                        request.sequence(), level.dimension().location(), RawPathDebugService.enabled(),
+                        RawPathDebugService.nearby(level, x, z)), ThreadPoolManager.roleExecutor(ThreadPoolManager.TaskRole.MAP))
+                        .thenAccept(reply -> server.execute(() -> {
+                            if (!player.isRemoved() && player.serverLevel() == level)
+                                sendRawPath(player, reply);
+                        }));
+            });
+        });
         ServerPlayNetworking.registerGlobalReceiver(MapNetworkPayloads.REQ_RECT, (server, player, handler, buf, responseSender) -> {
             MapNetworkPayloads.MapRequestRectPayload request = MapNetworkPayloads.MapRequestRectPayload.CODEC.decode(buf);
             if (!MapAccessService.canOpenMap(player)) { server.execute(() -> syncMapAccess(player)); return; }
@@ -51,6 +73,10 @@ public final class MapNetworkFabric {
     }
 
     public static void registerClientReceivers() {
+        ClientPlayNetworking.registerGlobalReceiver(RawPathDebugPayloads.RESPONSE, (client, handler, buf, sender) -> {
+            var response = RawPathDebugPayloads.Response.CODEC.decode(buf);
+            client.execute(() -> RawPathDebugOverlay.accept(response));
+        });
         ClientPlayNetworking.registerGlobalReceiver(MapNetworkPayloads.SNAP, (client, handler, buf, responseSender) -> { var payload = MapNetworkPayloads.MapSnapshotPayload.CODEC.decode(buf); client.execute(() -> { MapAutomaticPlanningSamplingCache.replace(payload.dimension(), payload.automaticPlanningSamplingBounds()); if (client.screen instanceof RoadMapScreen screen) screen.acceptSnapshotPart(payload.requestSeq(), payload.dimension(), payload.phase(), payload.responseIndex(), payload.snapshot()); }); });
         ClientPlayNetworking.registerGlobalReceiver(MapNetworkPayloads.PATCH, (client, handler, buf, responseSender) -> { var payload = MapNetworkPayloads.MapPatchPayload.CODEC.decode(buf); client.execute(() -> { if (client.screen instanceof RoadMapScreen screen) screen.acceptPatch(payload.dimension(), payload.patch()); else MapSnapshotCache.applyPatch(payload.dimension(), payload.patch()); }); });
         ClientPlayNetworking.registerGlobalReceiver(MapNetworkPayloads.TP_ACK, (client, handler, buf, responseSender) -> { var payload = MapNetworkPayloads.MapTeleportAckPayload.CODEC.decode(buf); client.execute(() -> { if (client.player != null) client.player.displayClientMessage(payload.success() ? Component.translatable("gui.roadweaver.map.teleport.success_pos", payload.x(), payload.y(), payload.z()) : Component.translatable("gui.roadweaver.map.teleport.denied"), true); }); });
@@ -63,6 +89,16 @@ public final class MapNetworkFabric {
     private static void handleTeleport(MapNetworkPayloads.MapTeleportPayload request, ServerPlayer player, net.minecraft.server.MinecraftServer server) { if (!player.isCreative() && !player.hasPermissions(2)) { send(player, MapNetworkPayloads.TP_ACK, MapNetworkPayloads.MapTeleportAckPayload.CODEC, new MapNetworkPayloads.MapTeleportAckPayload(false, 0, 0, 0)); return; } var level = player.serverLevel(); int x = request.x(), z = request.z(); level.getChunkSource().getChunkFuture(x >> 4, z >> 4, ChunkStatus.FULL, true).thenAccept(ignored -> server.execute(() -> { if (player.isRemoved() || player.hasDisconnected()) return; int y = level.getHeight(Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, x, z); y = y <= level.getMinBuildHeight() ? level.getSeaLevel() + 1 : y + 1; player.teleportTo(level, x + 0.5, y, z + 0.5, player.getYRot(), player.getXRot()); send(player, MapNetworkPayloads.TP_ACK, MapNetworkPayloads.MapTeleportAckPayload.CODEC, new MapNetworkPayloads.MapTeleportAckPayload(true, x, y, z)); })); }
     private static <T> void send(ServerPlayer player, ResourceLocation id, MapNetworkPayloads.Codec<T> codec, T payload) { FriendlyByteBuf out = new FriendlyByteBuf(Unpooled.buffer()); codec.encode(out, payload); ServerPlayNetworking.send(player, id, out); }
     private static <T> void sendClient(ResourceLocation id, MapNetworkPayloads.Codec<T> codec, T payload) { FriendlyByteBuf out = new FriendlyByteBuf(Unpooled.buffer()); codec.encode(out, payload); ClientPlayNetworking.send(id, out); }
+    private static void sendRawPath(ServerPlayer player, RawPathDebugPayloads.Response response) {
+        FriendlyByteBuf out = new FriendlyByteBuf(Unpooled.buffer());
+        RawPathDebugPayloads.Response.CODEC.encode(out, response);
+        ServerPlayNetworking.send(player, RawPathDebugPayloads.RESPONSE, out);
+    }
+    public static void requestRawPathDebug(int sequence, ResourceLocation dimension) {
+        FriendlyByteBuf out = new FriendlyByteBuf(Unpooled.buffer());
+        RawPathDebugPayloads.Request.CODEC.encode(out, new RawPathDebugPayloads.Request(sequence, dimension));
+        ClientPlayNetworking.send(RawPathDebugPayloads.REQUEST, out);
+    }
     public static void requestSnapshot(int requestSeq, ResourceLocation dimensionId, MapLoadPhase phase, int responseIndex, int minX, int minZ, int maxX, int maxZ) { sendClient(MapNetworkPayloads.REQ_RECT, MapNetworkPayloads.MapRequestRectPayload.CODEC, new MapNetworkPayloads.MapRequestRectPayload(requestSeq, dimensionId, phase, responseIndex, minX, minZ, maxX, maxZ)); }
     public static void requestTeleport(int x, int y, int z) { sendClient(MapNetworkPayloads.TP_REQ, MapNetworkPayloads.MapTeleportPayload.CODEC, new MapNetworkPayloads.MapTeleportPayload(x, y, z)); }
     public static void requestManualConnect(int ax, int az, int bx, int bz) { sendClient(MapNetworkPayloads.MAN_REQ, MapNetworkPayloads.MapManualConnectPayload.CODEC, new MapNetworkPayloads.MapManualConnectPayload(new BlockPos(ax, 0, az), new BlockPos(bx, 0, bz))); }

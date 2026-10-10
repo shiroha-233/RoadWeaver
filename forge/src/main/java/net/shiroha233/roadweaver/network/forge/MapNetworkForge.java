@@ -26,6 +26,9 @@ import net.shiroha233.roadweaver.client.map.data.MapSnapshotPatch;
 import net.shiroha233.roadweaver.client.map.data.MapAutomaticPlanningSamplingCache;
 import net.shiroha233.roadweaver.map.permission.MapAccessService;
 import net.shiroha233.roadweaver.network.MapNetworkPayloads;
+import net.shiroha233.roadweaver.network.RawPathDebugPayloads;
+import net.shiroha233.roadweaver.client.debug.RawPathDebugOverlay;
+import net.shiroha233.roadweaver.planning.path.RawPathDebugService;
 import net.shiroha233.roadweaver.map.search.MapStructureSearchService;
 import net.shiroha233.roadweaver.runtime.ThreadPoolManager;
 import net.shiroha233.roadweaver.planning.terrain.AutomaticPlanningSamplingActivities;
@@ -54,6 +57,34 @@ public final class MapNetworkForge {
         CHANNEL.registerMessage(id++, MapNetworkPayloads.MapSearchRequestPayload.class, (m,b)->MapNetworkPayloads.MapSearchRequestPayload.CODEC.encode(b,m), b->MapNetworkPayloads.MapSearchRequestPayload.CODEC.decode(b), MapNetworkForge::handleSearchRequest, Optional.of(NetworkDirection.PLAY_TO_SERVER));
         CHANNEL.registerMessage(id++, MapNetworkPayloads.MapSearchResponsePayload.class, (m,b)->MapNetworkPayloads.MapSearchResponsePayload.CODEC.encode(b,m), b->MapNetworkPayloads.MapSearchResponsePayload.CODEC.decode(b), MapNetworkForge::handleSearchResponse, Optional.of(NetworkDirection.PLAY_TO_CLIENT));
         CHANNEL.registerMessage(id++, MapNetworkPayloads.MapAutomaticPlanningSamplingPayload.class, (m,b)->MapNetworkPayloads.MapAutomaticPlanningSamplingPayload.CODEC.encode(b,m), b->MapNetworkPayloads.MapAutomaticPlanningSamplingPayload.CODEC.decode(b), MapNetworkForge::handleAutomaticPlanningSampling, Optional.of(NetworkDirection.PLAY_TO_CLIENT));
+        CHANNEL.registerMessage(id++, RawPathDebugPayloads.Request.class, (m,b)->RawPathDebugPayloads.Request.CODEC.encode(b,m), b->RawPathDebugPayloads.Request.CODEC.decode(b), MapNetworkForge::handleRawPathRequest, Optional.of(NetworkDirection.PLAY_TO_SERVER));
+        CHANNEL.registerMessage(id++, RawPathDebugPayloads.Response.class, (m,b)->RawPathDebugPayloads.Response.CODEC.encode(b,m), b->RawPathDebugPayloads.Response.CODEC.decode(b), MapNetworkForge::handleRawPathResponse, Optional.of(NetworkDirection.PLAY_TO_CLIENT));
+    }
+
+    private static void handleRawPathRequest(RawPathDebugPayloads.Request payload, Supplier<NetworkEvent.Context> context) {
+        NetworkEvent.Context c = context.get();
+        c.enqueueWork(() -> {
+            ServerPlayer player = c.getSender();
+            if (player == null) return;
+            ServerLevel level = player.serverLevel();
+            if (!player.hasPermissions(2)) {
+                player.displayClientMessage(Component.translatable("debug.roadweaver.raw_paths.denied"), true);
+                return;
+            }
+            if (!level.dimension().location().equals(payload.dimension())) return;
+            int x = player.getBlockX(), z = player.getBlockZ();
+            CompletableFuture.supplyAsync(() -> new RawPathDebugPayloads.Response(
+                    payload.sequence(), level.dimension().location(), RawPathDebugService.enabled(),
+                    RawPathDebugService.nearby(level, x, z)), ThreadPoolManager.roleExecutor(ThreadPoolManager.TaskRole.MAP))
+                    .thenAccept(reply -> level.getServer().execute(() -> {
+                        if (!player.isRemoved() && player.serverLevel() == level)
+                            CHANNEL.sendTo(reply, player.connection.connection, NetworkDirection.PLAY_TO_CLIENT);
+                    }));
+        });
+    }
+
+    private static void handleRawPathResponse(RawPathDebugPayloads.Response payload, Supplier<NetworkEvent.Context> context) {
+        context.get().enqueueWork(() -> RawPathDebugOverlay.accept(payload));
     }
 
     private static void handleRequestRect(MapNetworkPayloads.MapRequestRectPayload payload, Supplier<NetworkEvent.Context> context) {
@@ -263,6 +294,10 @@ public final class MapNetworkForge {
 
     public static void requestSearch(int requestSeq, ResourceLocation dimensionId, String query) {
         CHANNEL.sendToServer(new MapNetworkPayloads.MapSearchRequestPayload(requestSeq, dimensionId, query));
+    }
+
+    public static void requestRawPathDebug(int requestSeq, ResourceLocation dimensionId) {
+        CHANNEL.sendToServer(new RawPathDebugPayloads.Request(requestSeq, dimensionId));
     }
 
     public static void broadcastPatch(ServerPlayer player, ResourceLocation dimensionId, MapSnapshotPatch patch) {

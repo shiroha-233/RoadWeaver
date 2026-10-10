@@ -28,4 +28,8 @@ public final class ClientNetBridgeImpl {
     public static void requestSearch(int requestSeq, ResourceLocation dimensionId, String query) {
         MapNetworkForge.requestSearch(requestSeq, dimensionId, query);
     }
+
+    public static void requestRawPathDebug(int requestSeq, ResourceLocation dimensionId) {
+        MapNetworkForge.requestRawPathDebug(requestSeq, dimensionId);
+    }
 }

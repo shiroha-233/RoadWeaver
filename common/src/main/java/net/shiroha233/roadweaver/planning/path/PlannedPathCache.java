@@ -31,7 +31,7 @@ import java.util.Optional;
  */
 public final class PlannedPathCache {
     private static final Logger LOGGER = LoggerFactory.getLogger("roadweaver");
-    private static final int PATH_WORLDGEN_SCHEMA = 1;
+    private static final int PATH_WORLDGEN_SCHEMA = 2;
     private static final long MAX_PATH_POINTS_PER_LEVEL = 400_000L;
     private static final int LRU_INITIAL_CAPACITY = 128;
 
