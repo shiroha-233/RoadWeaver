@@ -20,6 +20,7 @@ import java.util.concurrent.atomic.AtomicLong;
 public final class RoadWorldgenPlanCache {
     private static final int QUERY_MARGIN_BLOCKS = 32;
     private static final int MAX_PLANS_PER_LEVEL = 4096;
+    private static final int MAX_CHUNK_REVISIONS_PER_LEVEL = 8192;
     /** 编译重试上限；耗尽后接受当前最佳结果，避免工作线程空转。 */
     private static final int MAX_COMPILE_ATTEMPTS = 8;
     private static final Logger LOGGER = LoggerFactory.getLogger("roadweaver");
@@ -72,14 +73,9 @@ public final class RoadWorldgenPlanCache {
         int minZ = chunkPos.getMinBlockZ() - QUERY_MARGIN_BLOCKS;
         int maxX = chunkPos.getMaxBlockX() + QUERY_MARGIN_BLOCKS;
         int maxZ = chunkPos.getMaxBlockZ() + QUERY_MARGIN_BLOCKS;
-        try {
-            var roads = RoadShardStorage.queryRect(level, minX, minZ, maxX, maxZ);
-            return RoadChunkPlanCompiler.compile(chunkPos, roads,
-                    !config.bridgeEnabled(), config.clearHeight(), revision);
-        } catch (RuntimeException failure) {
-            LOGGER.warn("编译道路区块计划失败: {}", chunkPos, failure);
-            return RoadChunkPlan.empty(chunkPos, config.clearHeight(), revision);
-        }
+        var roads = RoadShardStorage.queryRect(level, minX, minZ, maxX, maxZ);
+        return RoadChunkPlanCompiler.compile(chunkPos, roads,
+                !config.bridgeEnabled(), config.clearHeight(), revision);
     }
 
     private static final class Session {
@@ -99,16 +95,23 @@ public final class RoadWorldgenPlanCache {
                     return cached.plan();
                 }
 
-                CachedPlan published = plans.compute(key, (ignored, current) -> {
-                    long compileRevision = revision(key);
-                    if (current != null && current.matches(requested, compileRevision)) {
-                        return current;
-                    }
-                    RoadChunkPlan compiled = compile(level, chunkPos, requested, compileRevision);
-                    return revision(key) == compileRevision
-                            ? new CachedPlan(requested, compiled)
-                            : null;
-                });
+                CachedPlan published;
+                try {
+                    published = plans.compute(key, (ignored, current) -> {
+                        long compileRevision = revision(key);
+                        if (current != null && current.matches(requested, compileRevision)) {
+                            return current;
+                        }
+                        RoadChunkPlan compiled = compile(level, chunkPos, requested, compileRevision);
+                        return revision(key) == compileRevision
+                                ? new CachedPlan(requested, compiled)
+                                : null;
+                    });
+                } catch (RuntimeException failure) {
+                    // 本次生成保守退化为空计划，但不能将临时 IO 错误永久缓存为无路。
+                    LOGGER.warn("编译道路区块计划失败: {}", chunkPos, failure);
+                    return RoadChunkPlan.empty(chunkPos, requested.clearHeight(), revision(key));
+                }
                 long currentRevision = revision(key);
                 if (published != null && published.matches(requested, currentRevision)) {
                     trimIfNeeded();
@@ -119,19 +122,24 @@ public final class RoadWorldgenPlanCache {
                     CachedPlan best = plans.get(key);
                     // 只放宽 revision，不放宽 config：配置不符的计划会把道路生成在错误的 Y 层
                     if (best != null && best.config().equals(requested)) return best.plan();
-                    return compile(level, chunkPos, requested, currentRevision);
+                    try {
+                        return compile(level, chunkPos, requested, currentRevision);
+                    } catch (RuntimeException failure) {
+                        LOGGER.warn("编译道路区块计划失败: {}", chunkPos, failure);
+                        return RoadChunkPlan.empty(chunkPos, requested.clearHeight(), currentRevision);
+                    }
                 }
                 Thread.onSpinWait();
             }
         }
 
-        void invalidate() {
+        synchronized void invalidate() {
             globalRevision = revisionSequence.incrementAndGet();
             chunkRevisions.clear();
             plans.clear();
         }
 
-        void invalidate(Collection<Long> chunkKeys) {
+        synchronized void invalidate(Collection<Long> chunkKeys) {
             long revision = revisionSequence.incrementAndGet();
             for (long packed : chunkKeys) {
                 int chunkX = ChunkPos.getX(packed);
@@ -142,6 +150,14 @@ public final class RoadWorldgenPlanCache {
                         chunkRevisions.put(affected, revision);
                         plans.remove(affected);
                     }
+                }
+                // 修改过的区块不一定会再次查询。限制 tombstone 数量，超过预算时
+                // 用一次全局失效替代逐区块 revision，避免长时间运行后无限增长。
+                if (chunkRevisions.size() > MAX_CHUNK_REVISIONS_PER_LEVEL) {
+                    globalRevision = revision;
+                    chunkRevisions.clear();
+                    plans.clear();
+                    return;
                 }
             }
         }

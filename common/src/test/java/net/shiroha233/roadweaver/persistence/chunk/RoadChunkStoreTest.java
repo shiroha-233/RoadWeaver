@@ -15,6 +15,9 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -85,6 +88,41 @@ class RoadChunkStoreTest {
         RoadChunkStore reloaded = new RoadChunkStore(temporaryDirectory);
         assertEquals(firstReplacement, reloaded.loadByFingerprint(RoadFingerprint.compute(firstReplacement)));
         assertEquals(secondReplacement, reloaded.loadByFingerprint(RoadFingerprint.compute(secondReplacement)));
+    }
+
+    @Test
+    void concurrentIndexCommitsAndRoadWritesSurviveReload() throws Exception {
+        RoadChunkStore store = new RoadChunkStore(temporaryDirectory);
+        store.addRoad(crossingRoad());
+        var workers = Executors.newFixedThreadPool(2);
+        CountDownLatch start = new CountDownLatch(1);
+        try {
+            var writer = workers.submit(() -> {
+                start.await();
+                for (int i = 0; i < 20; i++) {
+                    store.addRoad(parallelRoad(32 + i * 16, 500L + i, 800L + i));
+                }
+                return null;
+            });
+            var committer = workers.submit(() -> {
+                start.await();
+                for (int i = 0; i < 20; i++) store.commitPendingIndex();
+                return null;
+            });
+            start.countDown();
+            writer.get(30, TimeUnit.SECONDS);
+            committer.get(30, TimeUnit.SECONDS);
+            store.flush();
+        } finally {
+            workers.shutdownNow();
+        }
+
+        RoadChunkStore reloaded = new RoadChunkStore(temporaryDirectory);
+        assertEquals(21, reloaded.loadAll().size());
+        for (int i = 0; i < 20; i++) {
+            assertNotNull(reloaded.loadByFingerprint(RoadFingerprint.compute(
+                    parallelRoad(32 + i * 16, 500L + i, 800L + i))));
+        }
     }
 
     private static String roadFileName(long fingerprint, long generation) {

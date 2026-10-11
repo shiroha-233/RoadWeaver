@@ -2,6 +2,7 @@ package net.shiroha233.roadweaver.pathfinding.terrain.region;
 
 import net.minecraft.core.Holder;
 import net.minecraft.world.level.biome.Biome;
+import net.shiroha233.roadweaver.core.constants.RoadConstants;
 import net.shiroha233.roadweaver.pathfinding.terrain.PathTerrainField;
 
 import java.util.Map;
@@ -21,6 +22,10 @@ public final class CoarseTerrainRegion implements PathTerrainField {
     private byte[] flags;
     private int[] terrainArgb;
     private Map<CoarseTerrainTileKey, CoarseTerrainTile> tiles;
+    private CoarseTerrainTile[] pathTiles;
+    private int pathTileMinX;
+    private int pathTileMinZ;
+    private int pathTileWidth;
 
     public CoarseTerrainRegion(CoarseRegionBounds bounds,
                                int seaLevel,
@@ -61,6 +66,53 @@ public final class CoarseTerrainRegion implements PathTerrainField {
         return bounds;
     }
 
+    public void preparePathfinding() {
+        if (tiles == null || heights != null) return;
+        if (pathTiles == null) {
+            int tileBlocks = CoarseTerrainTileKey.forBlock(bounds.dimensionId(), bounds.minX(), bounds.minZ(), bounds.step())
+                    .tileSizeBlocks();
+            pathTileMinX = Math.floorDiv(bounds.minX(), tileBlocks);
+            pathTileMinZ = Math.floorDiv(bounds.minZ(), tileBlocks);
+            pathTileWidth = Math.floorDiv(bounds.maxX(), tileBlocks) - pathTileMinX + 1;
+            int tileHeight = Math.floorDiv(bounds.maxZ(), tileBlocks) - pathTileMinZ + 1;
+            pathTiles = new CoarseTerrainTile[Math.multiplyExact(pathTileWidth, tileHeight)];
+            for (Map.Entry<CoarseTerrainTileKey, CoarseTerrainTile> entry : tiles.entrySet()) {
+                int ix = entry.getKey().tileX() - pathTileMinX;
+                int iz = entry.getKey().tileZ() - pathTileMinZ;
+                if (ix >= 0 && ix < pathTileWidth && iz >= 0 && iz < tileHeight) {
+                    pathTiles[iz * pathTileWidth + ix] = entry.getValue();
+                }
+            }
+        }
+        if (bounds.sampleCount() > RoadConstants.COARSE_REGION_MAX_SAMPLES) return;
+        int size = Math.toIntExact(bounds.sampleCount());
+        short[] regionHeights = new short[size];
+        short[] regionFloors = new short[size];
+        byte[] regionFlags = new byte[size];
+        for (int iz = 0; iz < bounds.height(); iz++) {
+            if (Thread.currentThread().isInterrupted()) throw new java.util.concurrent.CancellationException();
+            int z = bounds.blockZAt(iz);
+            int row = iz * bounds.width();
+            for (int ix = 0; ix < bounds.width(); ix++) {
+                int x = bounds.blockXAt(ix);
+                CoarseTerrainTile tile = tileAt(x, z);
+                if (tile == null) {
+                    regionHeights[row + ix] = (short) seaLevel;
+                    regionFloors[row + ix] = (short) seaLevel;
+                } else {
+                    SampleBundle bundle = tile.sampleBundle(x, z);
+                    regionHeights[row + ix] = (short) bundle.height();
+                    regionFloors[row + ix] = (short) bundle.oceanFloor();
+                    regionFlags[row + ix] = CoarseTerrainTile.flags(
+                            bundle.columnWater(), bundle.waterBiome(), tile.isNearWater(x, z));
+                }
+            }
+        }
+        heights = regionHeights;
+        oceanFloors = regionFloors;
+        flags = regionFlags;
+    }
+
     public int terrainArgbAtIndex(int index) {
         if (tiles == null) return terrainArgb[index];
         int ix = index % bounds.width();
@@ -79,7 +131,7 @@ public final class CoarseTerrainRegion implements PathTerrainField {
     @Override
     public int height(int x, int z) {
         if (!contains(x, z)) return seaLevel;
-        if (tiles != null) {
+        if (heights == null) {
             CoarseTerrainTile tile = tileAt(x, z);
             return tile != null ? tile.height(x, z) : seaLevel;
         }
@@ -89,7 +141,7 @@ public final class CoarseTerrainRegion implements PathTerrainField {
     @Override
     public int oceanFloor(int x, int z) {
         if (!contains(x, z)) return seaLevel;
-        if (tiles != null) {
+        if (oceanFloors == null) {
             CoarseTerrainTile tile = tileAt(x, z);
             return tile != null ? tile.oceanFloor(x, z) : seaLevel;
         }
@@ -99,7 +151,7 @@ public final class CoarseTerrainRegion implements PathTerrainField {
     @Override
     public boolean isColumnWater(int x, int z) {
         if (!contains(x, z)) return false;
-        if (tiles != null) {
+        if (flags == null) {
             CoarseTerrainTile tile = tileAt(x, z);
             return tile != null && tile.isColumnWater(x, z);
         }
@@ -109,7 +161,7 @@ public final class CoarseTerrainRegion implements PathTerrainField {
     @Override
     public boolean isNearWater(int x, int z, int neighborDistance) {
         if (!contains(x, z)) return false;
-        if (tiles != null) {
+        if (flags == null) {
             CoarseTerrainTile tile = tileAt(x, z);
             if (tile != null && tile.isNearWater(x, z)) return true;
         } else if (hasFlag(bounds.indexOfNearest(x, z), FLAG_NEAR_WATER)) {
@@ -154,12 +206,13 @@ public final class CoarseTerrainRegion implements PathTerrainField {
         flags = null;
         terrainArgb = null;
         tiles = null;
+        pathTiles = null;
     }
 
     @Override
     public boolean isWaterBiome(int x, int z) {
         if (!contains(x, z)) return false;
-        if (tiles != null) {
+        if (flags == null) {
             CoarseTerrainTile tile = tileAt(x, z);
             return tile != null && tile.isWaterBiome(x, z);
         }
@@ -171,7 +224,7 @@ public final class CoarseTerrainRegion implements PathTerrainField {
         if (!contains(x, z)) {
             return new SampleBundle(seaLevel, seaLevel, false, false, 0);
         }
-        if (tiles != null) {
+        if (heights == null) {
             CoarseTerrainTile tile = tileAt(x, z);
             return tile != null ? tile.sampleBundle(x, z) : new SampleBundle(seaLevel, seaLevel, false, false, 0);
         }
@@ -192,6 +245,14 @@ public final class CoarseTerrainRegion implements PathTerrainField {
     }
 
     private CoarseTerrainTile tileAt(int x, int z) {
+        if (pathTiles != null) {
+            int tileBlocks = RoadConstants.COARSE_TERRAIN_TILE_SIZE_CHUNKS * RoadConstants.CHUNK_SIZE_BLOCKS;
+            int ix = Math.floorDiv(x, tileBlocks) - pathTileMinX;
+            int iz = Math.floorDiv(z, tileBlocks) - pathTileMinZ;
+            int tileHeight = pathTiles.length / pathTileWidth;
+            return ix >= 0 && ix < pathTileWidth && iz >= 0 && iz < tileHeight
+                    ? pathTiles[iz * pathTileWidth + ix] : null;
+        }
         if (tiles == null) return null;
         CoarseTerrainTileKey key = CoarseTerrainTileKey.forBlock(bounds.dimensionId(), x, z, bounds.step());
         return tiles.get(key);

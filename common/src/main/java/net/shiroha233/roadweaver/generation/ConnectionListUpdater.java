@@ -2,8 +2,10 @@
 package net.shiroha233.roadweaver.generation;
 
 import net.minecraft.server.level.ServerLevel;
+import net.shiroha233.roadweaver.core.model.ConnectionStatus;
 import net.shiroha233.roadweaver.core.model.StructureConnection;
 import net.shiroha233.roadweaver.persistence.WorldDataProvider;
+import net.shiroha233.roadweaver.planning.PlanningUtils;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -50,6 +52,36 @@ public final class ConnectionListUpdater {
             provider.setStructureConnections(level, snapshot);
             return result.get();
         }
+    }
+
+    /** 仅在当前状态仍符合预期时更新，避免迟到的工作任务覆写已完成或已删除的连接。 */
+    public static StructureConnection transition(ServerLevel level, StructureConnection connection,
+                                                 ConnectionStatus target, ConnectionStatus... allowedFrom) {
+        if (level == null || connection == null || target == null) return null;
+        return update(level, connections -> transitionIn(connections, connection, target, allowedFrom));
+    }
+
+    static Optional<StructureConnection> transitionIn(List<StructureConnection> connections,
+                                                       StructureConnection connection,
+                                                       ConnectionStatus target,
+                                                       ConnectionStatus... allowedFrom) {
+        if (connections == null || connection == null || target == null || allowedFrom == null) {
+            return Optional.empty();
+        }
+        for (int i = 0; i < connections.size(); i++) {
+            StructureConnection current = connections.get(i);
+            if (current == null || !PlanningUtils.sameEdge(current, connection)) continue;
+            for (ConnectionStatus allowed : allowedFrom) {
+                if (current.status() == allowed) {
+                    // 重启后持久化的 GENERATING 连接需要重新入队；同状态的领取也算成功。
+                    if (current.status() == target) return Optional.of(current);
+                    StructureConnection updated = new StructureConnection(current.from(), current.to(), target);
+                    connections.set(i, updated);
+                    return Optional.of(updated);
+                }
+            }
+        }
+        return Optional.empty();
     }
 
     public static void clear(ServerLevel level) {
