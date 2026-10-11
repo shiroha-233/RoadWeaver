@@ -12,6 +12,7 @@ import net.shiroha233.roadweaver.pathfinding.cache.CoarseHeightBatchRequest;
 import net.shiroha233.roadweaver.pathfinding.cache.CoarseHeightBatchSampler;
 import net.shiroha233.roadweaver.pathfinding.cache.CoarseHeightBatchSamplers;
 import net.shiroha233.roadweaver.pathfinding.cache.TerrainSamplingCache;
+import net.shiroha233.roadweaver.planning.terrain.TerrainSamplingSessions;
 
 /**
  * 单个粗采样地形瓦片采样器。
@@ -48,6 +49,11 @@ public final class CoarseTerrainTileSampler {
         try (CoarseHeightBatchSampler heightSampler = CoarseHeightBatchSamplers.create(level, heightRequest)) {
             int[] expandedHeights = heightSampler.sampleHeights(heightRequest);
             if (expandedHeights == null) return null;
+            // 显示实际执行粗采样的后端，而不是走廊精修使用的精采样器后端。
+            boolean accelerated = heightSampler.isAccelerated();
+            TerrainSamplingSessions.forLevel(level).recordBackend(
+                    accelerated ? "OPENCL" : "CPU",
+                    heightSampler.deviceName());
 
             for (int ez = 0; ez < expandedHeight; ez++) {
                 if (Thread.currentThread().isInterrupted()) return null;

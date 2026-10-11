@@ -34,12 +34,13 @@ public final class RoadTerrainPlanningPipeline {
             return legacyDirect.plan(request);
         }
         AccurateHeightSampler sampler = AccurateHeightSampler.create(request.level());
-        session.recordBackend(sampler.backendName(), sampler.deviceName());
-        InitialGenerationProgressTracker.setBackend(sampler.backendName(), sampler.deviceName(), "");
 
         if (session.effectiveMode() != TerrainSamplingMode.FULL_REGION) {
             return planCorridor(request, session, sampler);
         }
+
+        session.recordBackend(sampler.backendName(), sampler.deviceName());
+        InitialGenerationProgressTracker.setBackend(sampler.backendName(), sampler.deviceName(), "");
 
         try {
             RoadTerrainPlanningPort.Result result = fullRegion.plan(request);
@@ -59,7 +60,6 @@ public final class RoadTerrainPlanningPipeline {
                                                         TerrainSamplingSession session,
                                                         AccurateHeightSampler sampler) {
         RoadTerrainPlanningPort.Result result = coarseCorridor.plan(request);
-        session.recordBackend(sampler.backendName(), sampler.deviceName());
         return result;
     }
 

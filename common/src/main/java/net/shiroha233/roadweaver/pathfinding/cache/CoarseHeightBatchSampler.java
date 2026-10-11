@@ -10,6 +10,10 @@ public interface CoarseHeightBatchSampler extends AutoCloseable {
         return false;
     }
 
+    default String deviceName() {
+        return "CPU";
+    }
+
     @Override
     default void close() {}
 }

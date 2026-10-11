@@ -220,6 +220,11 @@ public final class OpenCLCoarseHeightBatchSampler implements CoarseHeightBatchSa
     }
 
     @Override
+    public String deviceName() {
+        return isAccelerated() ? runtime.deviceName() : "CPU";
+    }
+
+    @Override
     public void close() {
         if (fallback != null) {
             fallback.close();
