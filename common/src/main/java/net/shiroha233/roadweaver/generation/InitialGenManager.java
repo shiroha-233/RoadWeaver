@@ -191,7 +191,8 @@ public final class InitialGenManager {
             for (int i = 0; i < all.size(); i++) {
                 StructureConnection original = all.get(i);
                 Boolean ok = results.get(PlannedPathKey.of(original));
-                if (ok == null) continue;
+                if (ok == null || (original.status() != ConnectionStatus.PLANNED
+                        && original.status() != ConnectionStatus.GENERATING)) continue;
                 ConnectionStatus newStatus = ok ? ConnectionStatus.COMPLETED : ConnectionStatus.FAILED;
                 StructureConnection changedConnection = new StructureConnection(original.from(), original.to(), newStatus);
                 all.set(i, changedConnection);

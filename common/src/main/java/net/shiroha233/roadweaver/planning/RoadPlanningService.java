@@ -46,6 +46,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.*;
+import java.util.concurrent.CancellationException;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicReference;
@@ -115,30 +116,34 @@ public final class RoadPlanningService {
             ensureTerrainMapTilesAsync(level, key, minX, minZ, maxX, maxZ);
             return;
         }
-        if (!markPlanningTile(level, key)) return;
-        AutomaticPlanningSamplingActivities.Activity samplingActivity = beginDynamicPlanningSampling(
-                level,
-                minX,
-                minZ,
-                maxX,
-                maxZ,
-                cfg.planning().terrainSamplingMode());
+        if (!markPlanningTile(level, key)) {
+            if (backfillPlan) unmarkRoadBackfillPlanTile(level, key);
+            return;
+        }
+        AutomaticPlanningSamplingActivities.Activity samplingActivity = null;
         try {
+            samplingActivity = beginDynamicPlanningSampling(level, minX, minZ, maxX, maxZ,
+                    cfg.planning().terrainSamplingMode());
+            AutomaticPlanningSamplingActivities.Activity activity = samplingActivity;
+            long epoch = ThreadPoolManager.currentEpoch();
             planRectAsync(level, minX, minZ, maxX, maxZ).whenComplete((ignored, error) -> {
                 try {
-                    unmarkPlanningTile(level, key);
+                    if (error != null || !ThreadPoolManager.isEpoch(epoch)) {
+                        if (backfillPlan) unmarkRoadBackfillPlanTile(level, key);
+                        if (error != null && !(error instanceof CancellationException)
+                                && !(error.getCause() instanceof CancellationException)) {
+                            LOGGER.warn("动态规划 tile 失败，保留重试机会 dimension={} tile=[{},{}]", level.dimension().location(), kx, kz, error);
+                        }
+                        return;
+                    }
                     if (hasExistingRoads) {
                         ensureTerrainMapTilesAsync(level, key, minX, minZ, maxX, maxZ);
-                    }
-                    if (error != null) {
-                        if (backfillPlan) unmarkRoadBackfillPlanTile(level, key);
-                        LOGGER.warn("动态规划 tile 失败，保留重试机会 dimension={} tile=[{},{}]", level.dimension().location(), kx, kz, error);
-                        return;
                     }
                     markPlannedTile(level, key, pcx, pcz);
                     prunePlannedIfTooLarge(level);
                 } finally {
-                    finishDynamicPlanningSampling(level, samplingActivity);
+                    unmarkPlanningTile(level, key);
+                    finishDynamicPlanningSampling(level, activity);
                 }
             });
         } catch (RuntimeException submissionFailure) {
@@ -378,8 +383,9 @@ public final class RoadPlanningService {
             existingSnapshot = ex != null ? new ArrayList<>(ex) : new ArrayList<>();
         }
         return ComputeService.supplyAsync(() -> {
-            if (Thread.currentThread().isInterrupted()) return new PlannedRegionResult(List.of());
-            if (!ThreadPoolManager.isEpoch(epoch)) return new PlannedRegionResult(List.of());
+            if (Thread.currentThread().isInterrupted() || !ThreadPoolManager.isEpoch(epoch)) {
+                throw new CancellationException("road planning session ended");
+            }
             ArrayList<BlockPos> points = new ArrayList<>();
             HashSet<Long> seenPos = new HashSet<>();
             collectStructurePointsInto(level, minBlockX, minBlockZ, maxBlockX, maxBlockZ, points, seenPos);
@@ -430,37 +436,57 @@ public final class RoadPlanningService {
             ArrayList<StructureConnection> incoming = new ArrayList<>(filteredPrimary);
             incoming.addAll(bridges);
             planRoadTerrain(level, minBlockX, minBlockZ, maxBlockX, maxBlockZ, incoming);
+            if (Thread.currentThread().isInterrupted() || !ThreadPoolManager.isEpoch(epoch)) {
+                throw new CancellationException("road planning session ended");
+            }
             return new PlannedRegionResult(incoming);
-        }).thenAccept((PlannedRegionResult result) -> {
-            if (result == null || result.incoming().isEmpty()) return;
-            publishIncomingConnections(level, epoch, result.incoming());
+        }).thenCompose((PlannedRegionResult result) -> {
+            if (!ThreadPoolManager.isEpoch(epoch)) {
+                return CompletableFuture.failedFuture(new CancellationException("road planning session ended"));
+            }
+            if (result == null || result.incoming().isEmpty()) return CompletableFuture.completedFuture(null);
+            return publishIncomingConnections(level, epoch, result.incoming());
         });
     }
 
-    private static void publishIncomingConnections(ServerLevel level, long epoch, List<StructureConnection> incoming) {
-        if (level == null || incoming == null || incoming.isEmpty()) return;
-        if (!ThreadPoolManager.isEpoch(epoch)) return;
+    private static CompletableFuture<Void> publishIncomingConnections(ServerLevel level, long epoch,
+                                                                       List<StructureConnection> incoming) {
+        if (!ThreadPoolManager.isEpoch(epoch)) {
+            return CompletableFuture.failedFuture(new CancellationException("road planning session ended"));
+        }
         var server = level.getServer();
-        if (server == null) return;
+        if (server == null) {
+            return CompletableFuture.failedFuture(new CancellationException("road planning server unavailable"));
+        }
         ArrayList<StructureConnection> snapshot = new ArrayList<>(incoming);
-        server.execute(() -> {
-            if (!ThreadPoolManager.isEpoch(epoch)) return;
-            // 合并前的列表：用于只向客户端广播真正新增的连接
-            AtomicReference<List<StructureConnection>> before = new AtomicReference<>();
-            boolean changed = ConnectionListUpdater.update(level, existing -> {
-                List<StructureConnection> merged = mergeConnections(existing, snapshot);
-                if (merged.size() == existing.size()) {
-                    return Optional.empty();
+        CompletableFuture<Void> committed = new CompletableFuture<>();
+        try {
+            server.execute(() -> {
+                if (!ThreadPoolManager.isEpoch(epoch)) {
+                    committed.completeExceptionally(new CancellationException("road planning session ended"));
+                    return;
                 }
-                before.set(new ArrayList<>(existing));
-                existing.clear();
-                existing.addAll(merged);
-                return Optional.of(Boolean.TRUE);
-            }) != null;
-            if (changed) {
-                publishNewConnections(level, before.get(), snapshot);
-            }
-        });
+                try {
+                    // 合并前的列表：用于只向客户端广播真正新增的连接
+                    AtomicReference<List<StructureConnection>> before = new AtomicReference<>();
+                    boolean changed = ConnectionListUpdater.update(level, existing -> {
+                        List<StructureConnection> merged = mergeConnections(existing, snapshot);
+                        if (merged.size() == existing.size()) return Optional.empty();
+                        before.set(new ArrayList<>(existing));
+                        existing.clear();
+                        existing.addAll(merged);
+                        return Optional.of(Boolean.TRUE);
+                    }) != null;
+                    if (changed) publishNewConnections(level, before.get(), snapshot);
+                    committed.complete(null);
+                } catch (Throwable failure) {
+                    committed.completeExceptionally(failure);
+                }
+            });
+        } catch (RuntimeException schedulingFailure) {
+            committed.completeExceptionally(schedulingFailure);
+        }
+        return committed;
     }
 
     private static List<StructureConnection> mergeConnections(List<StructureConnection> existing, List<StructureConnection> incoming) {

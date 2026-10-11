@@ -18,16 +18,16 @@ import net.shiroha233.roadweaver.features.path.pathlogic.core.Road;
 import net.shiroha233.roadweaver.map.MapPatchService;
 import net.shiroha233.roadweaver.pathfinding.terrain.region.CoarseTerrainTileCache;
 import net.shiroha233.roadweaver.persistence.WorldDataProvider;
-import net.shiroha233.roadweaver.planning.PlanningUtils;
 import net.shiroha233.roadweaver.planning.RoadPlanningService;
 import net.shiroha233.roadweaver.planning.path.PlannedPathCache;
 import net.shiroha233.roadweaver.planning.path.PlannedPathKey;
 import net.shiroha233.roadweaver.postprocess.RoadSnapService;
 import net.shiroha233.roadweaver.runtime.ThreadPoolManager;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -38,6 +38,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 public final class RoadGenerationService {
     private RoadGenerationService() {}
 
+    private static final Logger LOGGER = LoggerFactory.getLogger("roadweaver");
     private static final ConcurrentLinkedQueue<StructureConnection> QUEUE = new ConcurrentLinkedQueue<>();
     private static final ConcurrentHashMap<PlannedPathKey, Boolean> PROCESSED = new ConcurrentHashMap<>();
     private static final AtomicInteger RUNNING_COUNT = new AtomicInteger();
@@ -57,6 +58,7 @@ public final class RoadGenerationService {
         QUEUE.clear();
         PROCESSED.clear();
         RUNNING_COUNT.set(0);
+        CURRENT_TICK = 0L;
         PLAYER_LIST_CACHE.clear();
         PlannedPathCache.clearAll();
         CoarseTerrainTileCache.clearAll();
@@ -98,26 +100,43 @@ public final class RoadGenerationService {
             StructureConnection conn = pollNearest(q, players);
             if (conn == null) continue;
 
-            updateConnectionStatus(level, conn, ConnectionStatus.GENERATING);
+            if (updateConnectionStatus(level, conn, ConnectionStatus.GENERATING,
+                    ConnectionStatus.PLANNED, ConnectionStatus.GENERATING) == null) {
+                removeProcessed(level, conn);
+                continue;
+            }
 
             final StructureConnection task = conn;
             cnt.incrementAndGet();
             long epoch = ThreadPoolManager.currentEpoch();
 
-            Future<?> fut = ThreadPoolManager.submit(ThreadPoolManager.TaskRole.GENERATION, () -> {
-                try {
-                    if (Thread.currentThread().isInterrupted()) return;
-                    if (!ThreadPoolManager.isEpoch(epoch)) return;
-                    safeGenerate(level, task, epoch);
-                } finally {
+            try {
+                Future<?> fut = ThreadPoolManager.submit(ThreadPoolManager.TaskRole.GENERATION, () -> {
+                    try {
+                        if (Thread.currentThread().isInterrupted() || !ThreadPoolManager.isEpoch(epoch)) return;
+                        safeGenerate(level, task, epoch);
+                    } finally {
+                        if (ThreadPoolManager.isEpoch(epoch)) cnt.decrementAndGet();
+                    }
+                });
+                ALL_RUNNING.add(fut);
+                if (!ThreadPoolManager.isEpoch(epoch)) fut.cancel(true);
+            } catch (RejectedExecutionException submissionFailure) {
+                if (ThreadPoolManager.isEpoch(epoch)) {
                     cnt.decrementAndGet();
+                    try {
+                        updateConnectionStatus(level, task, ConnectionStatus.PLANNED, ConnectionStatus.GENERATING);
+                    } finally {
+                        removeProcessed(level, task);
+                    }
                 }
-            });
-            ALL_RUNNING.add(fut);
+                LOGGER.warn("道路生成任务提交失败: {} -> {}", task.from(), task.to(), submissionFailure);
+                break;
+            }
         }
     }
 
-    // ==================== 纯生成逻辑（无副作用） ====================
+    // ==================== 生成与道路持久化 ====================
 
     public static boolean generateTask(ServerLevel level, StructureConnection conn) {
         if (level == null || conn == null || !Level.OVERWORLD.equals(level.dimension())) return false;
@@ -141,6 +160,7 @@ public final class RoadGenerationService {
                     .generateRoad(modCfg.pathfindingCost().aStarMaxSteps());
             return generated != null;
         } catch (Throwable t) {
+            LOGGER.warn("道路生成失败: {} -> {}", conn.from(), conn.to(), t);
             return false;
         }
     }
@@ -153,19 +173,25 @@ public final class RoadGenerationService {
             if (!ThreadPoolManager.isEpoch(epoch)) return;
 
             boolean ok = generateTask(level, conn);
-            ConnectionStatus st = ok ? ConnectionStatus.COMPLETED : ConnectionStatus.FAILED;
+            if (!ThreadPoolManager.isEpoch(epoch)) return;
+            ConnectionStatus st = ok ? ConnectionStatus.COMPLETED
+                    : Thread.currentThread().isInterrupted() ? ConnectionStatus.PLANNED : ConnectionStatus.FAILED;
 
             // 状态存储已内存化、地图补丁广播内部自行回主线程发包，
             // 完成回调无需再调度到主线程，吸附后处理亦全程后台执行
-            updateConnectionStatus(level, conn, st);
+            StructureConnection updated = updateConnectionStatus(level, conn, st, ConnectionStatus.GENERATING);
             removeProcessed(level, conn);
-            if (st == ConnectionStatus.COMPLETED) {
+            if (updated != null && st == ConnectionStatus.COMPLETED) {
                 RoadSnapService.snapAroundConnectionAsync(level, conn.from(), conn.to());
             }
         } catch (Throwable t) {
+            LOGGER.warn("道路生成状态回写失败: {} -> {}", conn.from(), conn.to(), t);
             executeOnMainThread(level, epoch, () -> {
-                updateConnectionStatus(level, conn, ConnectionStatus.FAILED);
-                removeProcessed(level, conn);
+                try {
+                    updateConnectionStatus(level, conn, ConnectionStatus.FAILED, ConnectionStatus.GENERATING);
+                } finally {
+                    removeProcessed(level, conn);
+                }
             });
         }
     }
@@ -185,24 +211,16 @@ public final class RoadGenerationService {
 
     // ==================== 状态更新辅助 ====================
 
-    private static void updateConnectionStatus(ServerLevel level, StructureConnection conn, ConnectionStatus status) {
-        StructureConnection updated = ConnectionListUpdater.update(level, all -> {
-            for (int i = 0; i < all.size(); i++) {
-                StructureConnection c = all.get(i);
-                if (PlanningUtils.sameEdge(c, conn)) {
-                    StructureConnection next = new StructureConnection(c.from(), c.to(), status);
-                    all.set(i, next);
-                    return Optional.of(next);
-                }
-            }
-            return Optional.empty();
-        });
+    private static StructureConnection updateConnectionStatus(ServerLevel level, StructureConnection conn,
+                                                               ConnectionStatus status, ConnectionStatus... allowedFrom) {
+        StructureConnection updated = ConnectionListUpdater.transition(level, conn, status, allowedFrom);
         if (updated != null) {
             MapPatchService.publishConnection(level, updated);
             if (status == ConnectionStatus.COMPLETED) {
                 MapPatchService.publishRoadForConnectionAsync(level, updated);
             }
         }
+        return updated;
     }
 
     private static void removeProcessed(ServerLevel level, StructureConnection conn) {

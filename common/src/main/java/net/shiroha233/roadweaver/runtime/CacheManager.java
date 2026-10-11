@@ -131,6 +131,7 @@ public final class CacheManager {
         RawPathDebugService.clear(level);
         ConnectionListUpdater.clear(level);
         RoadWorldgenPlanCache.clear(level);
+        CoarseTerrainTileCache.clearAll();
         try {
             OpenCLAccurateProgramCache.clear(level.getChunkSource().getGeneratorState().randomState());
         } catch (Throwable failure) {

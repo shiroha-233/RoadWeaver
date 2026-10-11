@@ -82,9 +82,10 @@ public final class ServerPlanningHooks {
     }
 
     private static void onServerStopping(ServerStoppingEvent event) {
+        // 先使旧任务的 epoch 失效，再清理状态与持久化缓存。
+        ThreadPoolManager.onServerStopping();
         RoadGenerationService.onServerStopping();
         RoadPlanningService.resetAll();
-        ThreadPoolManager.onServerStopping();
         CacheManager.onServerStopping(event.getServer().getAllLevels());
         SignTextService.clearPending();
         tick = 0;

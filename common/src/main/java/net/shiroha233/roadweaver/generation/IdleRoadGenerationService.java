@@ -11,7 +11,6 @@ import net.shiroha233.roadweaver.core.model.ConnectionStatus;
 import net.shiroha233.roadweaver.core.model.StructureConnection;
 import net.shiroha233.roadweaver.map.MapPatchService;
 import net.shiroha233.roadweaver.persistence.WorldDataProvider;
-import net.shiroha233.roadweaver.planning.PlanningUtils;
 import net.shiroha233.roadweaver.planning.path.PlannedPathKey;
 import net.shiroha233.roadweaver.planning.RoadPlanningService;
 import net.shiroha233.roadweaver.postprocess.RoadSnapService;
@@ -23,7 +22,6 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
@@ -182,8 +180,23 @@ public final class IdleRoadGenerationService {
             running.incrementAndGet();
             long epoch = ThreadPoolManager.currentEpoch();
             final StructureConnection task = conn;
-            Future<?> future = ThreadPoolManager.submit(ThreadPoolManager.TaskRole.IDLE, () -> runIdleTask(level, task, key, duty, epoch));
-            ALL_RUNNING.add(future);
+            try {
+                Future<?> future = ThreadPoolManager.submit(ThreadPoolManager.TaskRole.IDLE,
+                        () -> runIdleTask(level, task, key, duty, epoch));
+                ALL_RUNNING.add(future);
+                if (!ThreadPoolManager.isEpoch(epoch)) future.cancel(true);
+            } catch (java.util.concurrent.RejectedExecutionException submissionFailure) {
+                if (ThreadPoolManager.isEpoch(epoch)) {
+                    running.decrementAndGet();
+                    try {
+                        updateStatus(level, task, ConnectionStatus.PLANNED, ConnectionStatus.GENERATING);
+                    } finally {
+                        IN_FLIGHT.remove(key);
+                    }
+                }
+                LOGGER.warn("IdleRoad: generation submission failed {} -> {}", task.from(), task.to(), submissionFailure);
+                break;
+            }
         }
     }
 
@@ -220,9 +233,9 @@ public final class IdleRoadGenerationService {
         ConcurrentHashMap<PlannedPathKey, Boolean> owned = IDLE_OWNED;
         ConcurrentHashMap<PlannedPathKey, Boolean> inFlight = IN_FLIGHT;
         if (owned.isEmpty() && inFlight.isEmpty()) return false;
-        if (!ConfigService.get().performance().idleGenerationEnabled()) return false;
         PlannedPathKey key = PlannedPathKey.of(conn);
         if (inFlight.containsKey(key)) return true;
+        if (!ConfigService.get().performance().idleGenerationEnabled()) return false;
         return owned.containsKey(key);
     }
 
@@ -231,9 +244,10 @@ public final class IdleRoadGenerationService {
                                                 boolean idleEnabled) {
         ConcurrentHashMap<PlannedPathKey, Boolean> owned = IDLE_OWNED;
         ConcurrentHashMap<PlannedPathKey, Boolean> inFlight = IN_FLIGHT;
+        if (inFlight.containsKey(key)) return true;
         if (!idleEnabled) return false;
         if (owned.isEmpty() && inFlight.isEmpty()) return false;
-        return inFlight.containsKey(key) || owned.containsKey(key);
+        return owned.containsKey(key);
     }
 
     private static void runIdleTask(ServerLevel level,
@@ -248,26 +262,33 @@ public final class IdleRoadGenerationService {
             if (!ThreadPoolManager.isEpoch(epoch)) return;
 
             boolean ok = RoadGenerationService.generateTask(level, task);
-            ConnectionStatus st = ok ? ConnectionStatus.COMPLETED : ConnectionStatus.FAILED;
+            ConnectionStatus st = ok ? ConnectionStatus.COMPLETED
+                    : Thread.currentThread().isInterrupted() ? ConnectionStatus.PLANNED : ConnectionStatus.FAILED;
             executeOnMain(level, epoch, () -> {
-                updateStatus(level, task, st, ConnectionStatus.GENERATING, ConnectionStatus.PLANNED);
-                removeOwnership(level, key);
-                if (st == ConnectionStatus.COMPLETED) {
-                    RoadSnapService.snapAroundConnectionAsync(level, task.from(), task.to());
+                try {
+                    boolean updated = updateStatus(level, task, st, ConnectionStatus.GENERATING);
+                    if (updated && st == ConnectionStatus.COMPLETED) {
+                        RoadSnapService.snapAroundConnectionAsync(level, task.from(), task.to());
+                    }
+                } finally {
+                    removeOwnership(level, key);
                 }
             });
         } catch (Throwable t) {
             LOGGER.warn("IdleRoad: generate failed {} -> {}", task.from(), task.to(), t);
             executeOnMain(level, epoch, () -> {
-                updateStatus(level, task, ConnectionStatus.FAILED, ConnectionStatus.GENERATING, ConnectionStatus.PLANNED);
-                removeOwnership(level, key);
+                try {
+                    updateStatus(level, task, ConnectionStatus.FAILED, ConnectionStatus.GENERATING);
+                } finally {
+                    removeOwnership(level, key);
+                }
             });
         } finally {
             try {
                 ThreadPoolManager.throttle(duty);
             } catch (Throwable ignored) {}
             ThreadPoolManager.clearThrottle();
-            running.decrementAndGet();
+            if (ThreadPoolManager.isEpoch(epoch)) running.decrementAndGet();
         }
     }
 
@@ -356,24 +377,7 @@ public final class IdleRoadGenerationService {
     }
 
     private static boolean updateStatus(ServerLevel level, StructureConnection conn, ConnectionStatus to, ConnectionStatus... allowedFrom) {
-        Set<ConnectionStatus> allowed = new HashSet<>();
-        if (allowedFrom != null) {
-            for (ConnectionStatus st : allowedFrom) {
-                if (st != null) allowed.add(st);
-            }
-        }
-
-        StructureConnection updated = ConnectionListUpdater.update(level, all -> {
-            for (int i = 0; i < all.size(); i++) {
-                StructureConnection c = all.get(i);
-                if (!PlanningUtils.sameEdge(c, conn)) continue;
-                if (!allowed.isEmpty() && !allowed.contains(c.status())) return Optional.empty();
-                StructureConnection next = new StructureConnection(c.from(), c.to(), to);
-                all.set(i, next);
-                return Optional.of(next);
-            }
-            return Optional.empty();
-        });
+        StructureConnection updated = ConnectionListUpdater.transition(level, conn, to, allowedFrom);
         if (updated == null) return false;
 
         MapPatchService.publishConnection(level, updated);
@@ -395,16 +399,13 @@ public final class IdleRoadGenerationService {
 
         if (perLevel.isEmpty()) {
             IDLE_OWNED.clear();
-            IN_FLIGHT.clear();
-            RUNNING.set(0);
+            // 已提交的任务仍可能运行；由完成回调释放 in-flight 和计数。
         }
     }
 
     private static void clearLevel(ServerLevel level) {
         WINDOWS.clear();
         IDLE_OWNED.clear();
-        IN_FLIGHT.clear();
-        RUNNING.set(0);
     }
 
     /**

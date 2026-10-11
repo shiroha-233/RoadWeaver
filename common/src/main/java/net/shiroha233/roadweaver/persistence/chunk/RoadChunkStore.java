@@ -45,7 +45,7 @@ import java.util.concurrent.locks.ReentrantLock;
  * 不持锁、不读取文件，也不解析 JSON/NBT。所有修改在写锁内先落盘新/变 NBT 与分片，
  * 立即发布新快照；index.json 提交点由后台线程按节流间隔批量提交，
  * 消除高频修改下按全部道路数重写索引的写放大。崩溃时 index 保持上一提交态，
- * 加载端一致性校验会触发元数据重建自愈。</p>
+ * 已提交道路的分片不一致可重建；尚未提交到 index 的变更不保证崩溃恢复。</p>
  */
 public final class RoadChunkStore implements AutoCloseable {
     public static final int SCHEMA_VERSION = 2;
@@ -435,7 +435,7 @@ public final class RoadChunkStore implements AutoCloseable {
         }
 
         // 新/变 NBT 与分片已先行落盘；index.json 提交点与旧文件清理合并到后台批量执行。
-        // 崩溃时 index 保持上一提交态，加载端一致性校验会触发元数据重建自愈。
+        // 崩溃时 index 保持上一提交态；未提交的道路变更可能丢失，关服必须 flush。
         if (targetGeneration > pendingIndexGeneration) pendingIndexGeneration = targetGeneration;
         for (RoadSnapshot.Entry old : previous.entries().values()) {
             RoadSnapshot.Entry current = next.entries().get(old.fingerprint());
@@ -448,26 +448,32 @@ public final class RoadChunkStore implements AutoCloseable {
     /** 由后台调度器周期调用：按节流间隔提交待落盘索引。 */
     public void commitPendingIndexIfDue() {
         if (!indexDirty) return;
-        long now = System.currentTimeMillis();
-        if (now - lastCommitAttemptMs < INDEX_COMMIT_INTERVAL_MS) return;
-        commitPendingIndex();
+        mutationLock.lock();
+        try {
+            if (indexDirty && System.currentTimeMillis() - lastCommitAttemptMs >= INDEX_COMMIT_INTERVAL_MS) {
+                commitPendingIndexLocked();
+            }
+        } finally {
+            mutationLock.unlock();
+        }
     }
 
     /** 立即同步提交待落盘索引，并在提交成功后清理被替换的旧道路文件。 */
     public void commitPendingIndex() {
-        lastCommitAttemptMs = System.currentTimeMillis();
-        Set<String> deletions;
-        long targetGeneration;
         mutationLock.lock();
         try {
-            if (!indexDirty) return;
-            deletions = Set.copyOf(pendingDeletions);
-            targetGeneration = Math.max(pendingIndexGeneration, generation);
+            commitPendingIndexLocked();
         } finally {
             mutationLock.unlock();
         }
+    }
 
+    /** 提交点必须与快照发布串行化，否则并发修改可能被旧索引覆盖并清除新的脏标记。 */
+    private void commitPendingIndexLocked() {
+        if (!indexDirty) return;
+        lastCommitAttemptMs = System.currentTimeMillis();
         RoadSnapshot current = snapshot.get();
+        long targetGeneration = Math.max(pendingIndexGeneration, generation);
         try {
             Files.createDirectories(root);
             writeIndex(current, targetGeneration);
@@ -476,23 +482,18 @@ public final class RoadChunkStore implements AutoCloseable {
             return;
         }
 
-        mutationLock.lock();
-        try {
-            indexDirty = false;
-            pendingIndexGeneration = -1L;
-            for (String fileName : deletions) {
-                Path oldPath = safeRoadPath(fileName);
-                if (oldPath == null) continue;
-                try {
-                    Files.deleteIfExists(oldPath);
-                } catch (IOException e) {
-                    LOGGER.warn("清理旧道路聚合文件失败: {}", oldPath, e);
-                }
+        indexDirty = false;
+        pendingIndexGeneration = -1L;
+        for (String fileName : pendingDeletions) {
+            Path oldPath = safeRoadPath(fileName);
+            if (oldPath == null) continue;
+            try {
+                Files.deleteIfExists(oldPath);
+            } catch (IOException e) {
+                LOGGER.warn("清理旧道路聚合文件失败: {}", oldPath, e);
             }
-            pendingDeletions.removeAll(deletions);
-        } finally {
-            mutationLock.unlock();
         }
+        pendingDeletions.clear();
     }
 
     private void writeSchema() throws IOException {

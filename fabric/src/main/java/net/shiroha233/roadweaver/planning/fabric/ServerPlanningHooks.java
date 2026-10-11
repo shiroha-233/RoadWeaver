@@ -78,9 +78,10 @@ public final class ServerPlanningHooks {
         });
 
         ServerLifecycleEvents.SERVER_STOPPING.register(server -> {
+            // 先递增 epoch 并停池，阻止旧任务的完成回调回写世界状态。
+            ThreadPoolManager.onServerStopping();
             RoadGenerationService.onServerStopping();
             RoadPlanningService.resetAll();
-            ThreadPoolManager.onServerStopping();
             CacheManager.onServerStopping(server.getAllLevels());
             SignTextService.clearPending();
         });
