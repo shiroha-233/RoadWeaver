@@ -6,18 +6,21 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.tags.BiomeTags;
 import net.minecraft.world.level.biome.Biome;
 
+import java.util.IdentityHashMap;
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * 地形采样缓存
  */
 public final class TerrainSamplingCache {
-    private ConcurrentHashMap<Long, Boolean> waterCache = new ConcurrentHashMap<>();
+    private static final int BIOME_CACHE_CAPACITY = 65_536;
+    private static final Map<ServerLevel, LevelBiomeCache> SHARED_BIOMES = new IdentityHashMap<>();
+
     private ConcurrentHashMap<Integer, ConcurrentHashMap<Long, Boolean>> nearWaterCacheByDistance = new ConcurrentHashMap<>();
     private ConcurrentHashMap<Long, Boolean> columnWaterCache = new ConcurrentHashMap<>();
     private ConcurrentHashMap<Long, Integer> heightCache = new ConcurrentHashMap<>();
     private ConcurrentHashMap<Long, Integer> oceanFloorCache = new ConcurrentHashMap<>();
-    private ConcurrentHashMap<Long, Holder<Biome>> biomeCache = new ConcurrentHashMap<>();
 
     private volatile FastHeightSampler fastSampler;
     private volatile AccurateHeightSampler accurateSampler;
@@ -41,20 +44,8 @@ public final class TerrainSamplingCache {
     }
 
     public boolean isWaterLike(ServerLevel level, int x, int z) {
-        long key = hashXZ(x, z);
-        Boolean cached = waterCache.get(key);
-        if (cached != null) {
-            TerrainSamplingStats.recordCacheHit();
-            return cached;
-        }
-        TerrainSamplingStats.recordCacheMiss();
-        var chunkSource = level.getChunkSource();
-        var randomState = chunkSource.getGeneratorState().randomState();
-        var biomeSource = chunkSource.getGenerator().getBiomeSource();
-        Holder<Biome> biome = biomeSource.getNoiseBiome(x >> 2, 16, z >> 2, randomState.sampler());
-        boolean res = biome.is(BiomeTags.IS_RIVER) || biome.is(BiomeTags.IS_OCEAN) || biome.is(BiomeTags.IS_DEEP_OCEAN);
-        waterCache.put(key, res);
-        return res;
+        Holder<Biome> biome = getBiome(level, x, z);
+        return biome.is(BiomeTags.IS_RIVER) || biome.is(BiomeTags.IS_OCEAN) || biome.is(BiomeTags.IS_DEEP_OCEAN);
     }
 
     public int oceanFloor(ServerLevel level, int x, int z) {
@@ -117,20 +108,26 @@ public final class TerrainSamplingCache {
         return res;
     }
 
+    /**
+     * 按 4x4 群系格缓存的群系噪声结果，由维度级共享缓存承接，
+     * 使粗采样、走廊精采样与后处理复用同一次采样。
+     */
     public Holder<Biome> getBiome(ServerLevel level, int x, int z) {
-        long key = hashXZ(x >> 2, z >> 2);
-        Holder<Biome> cached = biomeCache.get(key);
-        if (cached != null) {
-            TerrainSamplingStats.recordCacheHit();
-            return cached;
+        synchronized (SHARED_BIOMES) {
+            return SHARED_BIOMES.computeIfAbsent(level, LevelBiomeCache::new).get(x, z);
         }
-        TerrainSamplingStats.recordCacheMiss();
-        var chunkSource = level.getChunkSource();
-        var randomState = chunkSource.getGeneratorState().randomState();
-        var biomeSource = chunkSource.getGenerator().getBiomeSource();
-        Holder<Biome> biome = biomeSource.getNoiseBiome(x >> 2, 16, z >> 2, randomState.sampler());
-        biomeCache.put(key, biome);
-        return biome;
+    }
+
+    public static void clearBiomesForLevel(ServerLevel level) {
+        synchronized (SHARED_BIOMES) {
+            SHARED_BIOMES.remove(level);
+        }
+    }
+
+    public static void clearAllBiomes() {
+        synchronized (SHARED_BIOMES) {
+            SHARED_BIOMES.clear();
+        }
     }
 
     public void prewarmRegion(ServerLevel level, int minX, int minZ, int maxX, int maxZ, int step) {
@@ -144,15 +141,13 @@ public final class TerrainSamplingCache {
     }
 
     /**
-     * 释放所有缓存。用新实例替换而非 clear()，确保内部 table 数组被 GC 回收。
+     * 释放当前任务的缓存。维度级群系缓存由 CacheManager 在维度卸载时清理。
      */
     public void clear() {
-        waterCache = new ConcurrentHashMap<>();
         nearWaterCacheByDistance = new ConcurrentHashMap<>();
         columnWaterCache = new ConcurrentHashMap<>();
         heightCache = new ConcurrentHashMap<>();
         oceanFloorCache = new ConcurrentHashMap<>();
-        biomeCache = new ConcurrentHashMap<>();
         if (fastSampler != null) fastSampler.clearCache();
         // 精采 sampler 由维度生命周期持有，单条道路结束不能关闭共享 GPU 后端。
         accurateSampler = null;
@@ -175,6 +170,27 @@ public final class TerrainSamplingCache {
                     accurateSampler = AccurateHeightSampler.create(level);
                 }
             }
+        }
+    }
+
+    /**
+     * 绑定维度的群系缓存，噪声采样直接走该维度的生物群系源，
+     * 避免每次读取都重新构造查询闭包。
+     */
+    private static final class LevelBiomeCache extends BiomeLookupCache<Holder<Biome>> {
+        private final ServerLevel level;
+
+        LevelBiomeCache(ServerLevel level) {
+            super(BIOME_CACHE_CAPACITY);
+            this.level = level;
+        }
+
+        @Override
+        protected Holder<Biome> sample(int quartX, int quartZ) {
+            var chunkSource = level.getChunkSource();
+            var randomState = chunkSource.getGeneratorState().randomState();
+            var biomeSource = chunkSource.getGenerator().getBiomeSource();
+            return biomeSource.getNoiseBiome(quartX, 16, quartZ, randomState.sampler());
         }
     }
 }

@@ -7,6 +7,7 @@ import net.shiroha233.roadweaver.features.path.decoration.text.SignTextService;
 import net.shiroha233.roadweaver.pathfinding.cache.AccurateHeightSampler;
 import net.shiroha233.roadweaver.pathfinding.cache.AccurateSamplingStats;
 import net.shiroha233.roadweaver.pathfinding.cache.TerrainSamplingStats;
+import net.shiroha233.roadweaver.pathfinding.cache.TerrainSamplingCache;
 import net.shiroha233.roadweaver.pathfinding.cache.opencl.OpenCLAccurateProgramCache;
 import net.shiroha233.roadweaver.pathfinding.cache.opencl.OpenCLAvailability;
 import net.shiroha233.roadweaver.pathfinding.cache.opencl.OpenCLCoarseHeightBatchSampler;
@@ -54,6 +55,7 @@ public final class CacheManager {
         OpenCLCoarseHeightBatchSampler.clearProgramCache();
         OpenCLWorldSupport.clear();
         TerrainSamplingSessions.clearAll();
+        TerrainSamplingCache.clearAllBiomes();
         AutomaticPlanningSamplingActivities.clearAll();
         RoadWorldgenPlanCache.clearAll();
         LOGGER.debug("CacheManager: 缓存已初始化");
@@ -98,6 +100,7 @@ public final class CacheManager {
         TerrainSamplingStats.reset();
         TerrainSamplingSessions.clearAll();
         AccurateHeightSampler.clearAll();
+        TerrainSamplingCache.clearAllBiomes();
         PlannedPathCache.clearAll();
         RawPathDebugService.clearAll();
         CoarseTerrainTileCache.clearAll();
@@ -123,6 +126,7 @@ public final class CacheManager {
         TerrainSamplingSessions.clear(level);
         AutomaticPlanningSamplingActivities.clear(level);
         AccurateHeightSampler.clearForLevel(level);
+        TerrainSamplingCache.clearBiomesForLevel(level);
         PlannedPathCache.clear(level);
         RawPathDebugService.clear(level);
         ConnectionListUpdater.clear(level);
