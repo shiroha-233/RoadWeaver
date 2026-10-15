@@ -1,7 +1,7 @@
 {
   "type": "roadweaver:bridge",
   "template": "roadweaver:bridge/wood_bridge_hongshu",
-  "biomes": "#minecraft:is_mangrove",
+  "biomes": ["minecraft:mangrove_swamp"],
   "step": "surface_structures",
   "spawn_overrides": {},
   "height_offset": 0,
