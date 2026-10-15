@@ -392,7 +392,10 @@ public final class RoadsideVillagePrecomputer {
                 continue;
             }
 
-            BlockPos anchor = new BlockPos(probe.anchorX(), currentHeight, probe.anchorZ());
+            // Like vanilla JigsawPlacement: the house jigsaw goes to the first free height at the connection point
+            // itself, not to the footprint mean, which on a slope leaves houses sunk or raised.
+            int anchorY = cache.getAccurateSampler(level).surfaceHeight(probe.anchorX(), probe.anchorZ());
+            BlockPos anchor = new BlockPos(probe.anchorX(), anchorY, probe.anchorZ());
             BoundingBox footprint = slotBounds(anchor, footprintRadius);
             if (intersectsAny(footprint, occupied, 1)) {
                 idx++;
