@@ -5,7 +5,7 @@
   "spawn_overrides": {},
   "terrain_adaptation": "beard_thin",
   "template": "roadweaver:roadside/medium/sakura_coffee_house",
-  "size_hint": [12, 10, 12],
+  "size_hint": [19, 13, 17],
   "weight": 5,
   "face_road": true,
   "scale": "medium",
