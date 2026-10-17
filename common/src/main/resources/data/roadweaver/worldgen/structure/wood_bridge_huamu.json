@@ -1,7 +1,7 @@
 {
   "type": "roadweaver:bridge",
   "template": "roadweaver:bridge/wood_bridge_huamu",
-  "biomes": "#minecraft:is_birch_forest",
+  "biomes": ["minecraft:birch_forest", "minecraft:old_growth_birch_forest"],
   "step": "surface_structures",
   "spawn_overrides": {},
   "height_offset": 0,
