@@ -5,7 +5,7 @@
   "spawn_overrides": {},
   "terrain_adaptation": "beard_box",
   "template": "roadweaver:roadside/small/roadside_bench",
-  "size_hint": [3, 2, 2],
+  "size_hint": [5, 4, 2],
   "weight": 10,
   "face_road": true,
   "scale": "small",

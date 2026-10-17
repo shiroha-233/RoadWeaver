@@ -5,7 +5,7 @@
   "spawn_overrides": {},
   "terrain_adaptation": "beard_thin",
   "template": "roadweaver:roadside/medium/maid_house",
-  "size_hint": [10, 10, 12],
+  "size_hint": [12, 10, 11],
   "weight": 1,
   "face_road": true,
   "scale": "medium",
