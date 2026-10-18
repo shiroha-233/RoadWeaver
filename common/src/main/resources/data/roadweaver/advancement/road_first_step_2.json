@@ -1,0 +1,25 @@
+{
+  "parent": "minecraft:adventure/root",
+  "display": {
+    "icon": {
+      "id": "minecraft:polished_andesite"
+    },
+    "title": {
+      "translate": "adv.roadweaver.road_first_step_2.title",
+      "fallback": "Well-Trodden Path"
+    },
+    "description": {
+      "translate": "adv.roadweaver.road_first_step_2.desc",
+      "fallback": "Keep following the roads"
+    },
+    "frame": "task",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": true
+  },
+  "criteria": {
+    "entered_road": {
+      "trigger": "minecraft:impossible"
+    }
+  }
+}
