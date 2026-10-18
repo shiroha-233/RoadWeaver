@@ -8,6 +8,7 @@ import net.neoforged.bus.api.IEventBus;
 import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.event.server.ServerStartedEvent;
 import net.neoforged.neoforge.event.server.ServerStoppingEvent;
+import net.neoforged.neoforge.event.level.ChunkEvent;
 import net.neoforged.neoforge.event.level.LevelEvent;
 import net.neoforged.neoforge.event.tick.ServerTickEvent;
 import net.shiroha233.roadweaver.config.structure.StructureDiscoveryService;
@@ -30,13 +31,25 @@ public final class ServerPlanningHooks {
         NeoForge.EVENT_BUS.addListener(ServerPlanningHooks::onServerTick);
         NeoForge.EVENT_BUS.addListener(ServerPlanningHooks::onServerStopping);
         NeoForge.EVENT_BUS.addListener(ServerPlanningHooks::onLevelUnload);
+        NeoForge.EVENT_BUS.addListener(ServerPlanningHooks::onChunkLoad);
+    }
+
+    /**
+     * Marks every chunk that becomes a full chunk, so queued sign text is written even when no player stands in it,
+     * including chunks whose queue entries were saved to disk before a restart.
+     */
+    private static void onChunkLoad(ChunkEvent.Load event) {
+        if (event.getLevel() instanceof ServerLevel level) {
+            SignTextService.onChunkReady(level, event.getChunk().getPos());
+        }
     }
 
     private static void onServerStarted(ServerStartedEvent event) {
         tick = 0;
         CacheManager.onServerStarted();
         ThreadPoolManager.onServerStarted(event.getServer());
-        SignTextService.clearPending();
+        // Pending sign text is kept on start: the spawn chunks are generated before this event, and clearing here
+        // would delete the text of every sign near spawn. Stopping the server still clears it.
         IdleRoadGenerationService.onServerStarted();
 
         ServerLevel overworld = event.getServer().getLevel(Level.OVERWORLD);
