@@ -118,7 +118,10 @@ public class SpawnCabinStructure extends Structure {
         }
         
         BoundingBox boundingBox = start.getBoundingBox();
-        start.placeInChunk(level, structureManager, generator, random, boundingBox, chunkPos);
+        // Built outside world generation: extend the processing box downwards so the piece can add its foundation.
+        BoundingBox processBox = new BoundingBox(boundingBox.minX(), level.getMinBuildHeight(), boundingBox.minZ(),
+                boundingBox.maxX(), boundingBox.maxY(), boundingBox.maxZ());
+        start.placeInChunk(level, structureManager, generator, random, processBox, chunkPos);
         
         return start;
     }
