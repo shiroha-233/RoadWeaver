@@ -14,7 +14,7 @@ import net.shiroha233.roadweaver.structures.placement.SpawnCabinPlacer;
  * searches for a spawn point, and that runs before prepareLevels. Planning in prepareLevels left those chunks without
  * roads and without the spawn cabin. New worlds are therefore planned at the start of setInitialSpawn, around the
  * point where vanilla starts its search, and the cabin is built once setInitialSpawn returns. Existing worlds keep the
- * prepareLevels path.
+ * prepareLevels path and get no cabin: the area around their spawn has long been explored and may be built on.
  */
 public final class InitialSpawnPlanning {
     private static volatile boolean initialRunDone;
@@ -48,8 +48,6 @@ public final class InitialSpawnPlanning {
         if (InitialGenManager.shouldRunInitialGeneration(level)) {
             InitialGenManager.begin(level);
             InitialGenManager.blockUntilDone(level);
-            // Existing world: the spawn chunks were generated long ago, so build the cabin directly.
-            SpawnCabinPlacer.placePlannedCabin(level);
         } else {
             RoadGenerationService.onServerStarted();
         }
