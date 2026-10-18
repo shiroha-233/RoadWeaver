@@ -4,6 +4,7 @@ import com.mojang.serialization.DataResult;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Vec3i;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.tags.BlockTags;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.NbtOps;
 import net.minecraft.nbt.Tag;
@@ -19,10 +20,12 @@ import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.ServerLevelAccessor;
 import net.minecraft.world.level.StructureManager;
 import net.minecraft.world.level.WorldGenLevel;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.Mirror;
 import net.minecraft.world.level.block.Rotation;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.RandomizableContainerBlockEntity;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.chunk.ChunkGenerator;
 import net.minecraft.world.level.levelgen.structure.BoundingBox;
 import net.minecraft.world.level.levelgen.structure.TemplateStructurePiece;
@@ -119,6 +122,56 @@ public class SimpleTemplatePiece extends TemplateStructurePiece {
                                     RandomSource random, BoundingBox box) {
     }
     
+    /** Deepest foundation column; anything hanging higher above the ground is left as it is (cliff, water). */
+    private static final int MAX_FOUNDATION_DEPTH = 12;
+
+    /**
+     * Fills the air under the bottom layer of the placed template down to the ground, column by column, so a
+     * structure on a slope does not hang in the air. Structures with "beard_thin" or no terrain adaptation, and the
+     * directly built spawn cabin, get no other support. Only writes inside {@code box}.
+     */
+    private void placeFoundation(WorldGenLevel level, BoundingBox box) {
+        BoundingBox bb = this.getBoundingBox();
+        int baseY = bb.minY();
+        BlockPos.MutableBlockPos pos = new BlockPos.MutableBlockPos();
+        for (int x = Math.max(bb.minX(), box.minX()); x <= Math.min(bb.maxX(), box.maxX()); x++) {
+            for (int z = Math.max(bb.minZ(), box.minZ()); z <= Math.min(bb.maxZ(), box.maxZ()); z++) {
+                if (!isSolid(level.getBlockState(pos.set(x, baseY, z)))) {
+                    continue;
+                }
+                int groundY = Integer.MIN_VALUE;
+                BlockState ground = null;
+                for (int y = baseY - 1; y >= baseY - MAX_FOUNDATION_DEPTH && y >= level.getMinBuildHeight(); y--) {
+                    BlockState state = level.getBlockState(pos.set(x, y, z));
+                    if (isSolid(state)) {
+                        groundY = y;
+                        ground = state;
+                        break;
+                    }
+                }
+                if (ground == null || groundY == baseY - 1) {
+                    continue;
+                }
+                BlockState fill = foundationFor(ground);
+                for (int y = groundY + 1; y < baseY; y++) {
+                    if (box.isInside(x, y, z)) {
+                        level.setBlock(pos.set(x, y, z), fill, 2);
+                    }
+                }
+            }
+        }
+    }
+
+    private static boolean isSolid(BlockState state) {
+        return !state.isAir() && !state.canBeReplaced() && state.getFluidState().isEmpty();
+    }
+
+    private static BlockState foundationFor(BlockState ground) {
+        if (ground.is(BlockTags.BASE_STONE_OVERWORLD)) return ground.getBlock().defaultBlockState();
+        if (ground.is(BlockTags.SAND)) return Blocks.SANDSTONE.defaultBlockState();
+        return Blocks.DIRT.defaultBlockState();
+    }
+
     @Override
     public void postProcess(WorldGenLevel level, 
                            StructureManager structureManager,
@@ -128,6 +181,7 @@ public class SimpleTemplatePiece extends TemplateStructurePiece {
                            ChunkPos chunkPos,
                            BlockPos pivot) {
         super.postProcess(level, structureManager, generator, random, box, chunkPos, pivot);
+        placeFoundation(level, box);
         
         BlockPos anchorPos = this.templatePosition;
         Rotation rotation = this.placeSettings.getRotation();
