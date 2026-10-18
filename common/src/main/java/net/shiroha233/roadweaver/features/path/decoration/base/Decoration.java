@@ -12,6 +12,8 @@ import net.shiroha233.roadweaver.features.path.decoration.compat.RoadFeatureComp
  * 装饰基类
  */
 public abstract class Decoration {
+    private static final int MAX_PLANT_DEPTH = 4;
+
     private BlockPos placePos;
     private final WorldGenLevel world;
 
@@ -23,7 +25,16 @@ public abstract class Decoration {
     public abstract void place();
 
     public BlockPos computeSurfacePos() {
-        return new BlockPos(placePos.getX(), world.getHeight(Heightmap.Types.WORLD_SURFACE_WG, placePos.getX(), placePos.getZ()), placePos.getZ());
+        BlockPos pos = new BlockPos(placePos.getX(), world.getHeight(Heightmap.Types.WORLD_SURFACE_WG, placePos.getX(), placePos.getZ()), placePos.getZ());
+        // The worldgen heightmap counts grass, flowers and petals as surface; step down through them (but not into
+        // water) so posts stand on the ground instead of a block above it.
+        for (int d = 0; d < MAX_PLANT_DEPTH; d++) {
+            BlockState below = world.getBlockState(pos.below());
+            if (!below.getFluidState().isEmpty()) break;
+            if (!below.isAir() && !below.canBeReplaced()) break;
+            pos = pos.below();
+        }
+        return pos;
     }
 
     public boolean isPlaceAllowedAt(BlockPos surfacePos) {
