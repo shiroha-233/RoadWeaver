@@ -51,6 +51,10 @@ shadowJar {
     
     // 排除 module-info.class 避免 JPMS 冲突
     exclude 'module-info.class'
+
+    // binding 搬入 shaded 包：NeoForge 按 JPMS 模块层加载 mod，任何其他 mod 一旦
+    // 也导出 org.lwjgl.opencl（如 Worldgen Accelerator），重复包会直接导致启动失败。
+    relocate 'org.lwjgl.opencl', 'net.shiroha233.roadweaver.shaded.lwjgl.opencl'
 }
 
 remapJar {
@@ -59,7 +63,7 @@ remapJar {
 }
 
 tasks.register('verifyLwjglPackaging') {
-    description = 'Verifies that only the OpenCL binding is embedded and the LWJGL core remains external.'
+    description = 'Verifies the OpenCL binding is embedded only under the shaded package and no LWJGL packages leak through.'
     group = 'verification'
     dependsOn remapJar
 
@@ -70,16 +74,14 @@ tasks.register('verifyLwjglPackaging') {
             zip.entries().each { entryNames.add(it.name) }
         }
 
-        def embeddedOpenCl = entryNames.contains('org/lwjgl/opencl/CL.class')
-        def embeddedLwjglCore = entryNames.any {
-            it.startsWith('org/lwjgl/') &&
-                    !it.startsWith('org/lwjgl/opencl/') &&
-                    it.endsWith('.class')
+        def embeddedOpenCl = entryNames.contains('net/shiroha233/roadweaver/shaded/lwjgl/opencl/CL.class')
+        def leakedLwjglClasses = entryNames.any {
+            it.startsWith('org/lwjgl/') && it.endsWith('.class')
         }
         def bundledLwjglModule = entryNames.any {
             it.startsWith('META-INF/jars/lwjgl') && it.endsWith('.jar')
         }
-        if (!embeddedOpenCl || embeddedLwjglCore || bundledLwjglModule) {
+        if (!embeddedOpenCl || leakedLwjglClasses || bundledLwjglModule) {
             throw new GradleException('NeoForge artifact has an invalid LWJGL package layout')
         }
     }
@@ -192,7 +194,8 @@ dependencies {
     }
 
     // 仅合并 OpenCL binding；客户端复用 Minecraft 的 LWJGL，专服缺少 LWJGL 时自动回退 CPU。
-    // shadowJar 会移除 binding 的 module-info，避免专服启动时强制解析 org.lwjgl 模块。
+    // shadowJar 会移除 binding 的 module-info，避免专服启动时强制解析 org.lwjgl 模块，
+    // 并将 binding relocate 到 net.shiroha233.roadweaver.shaded.lwjgl.opencl（见 shadowJar 配置）。
     compileOnly("org.lwjgl:lwjgl-opencl:3.3.3") { transitive = false }
     shadowLwjglOpenCl("org.lwjgl:lwjgl-opencl:3.3.3") { transitive = false }
     forgeRuntimeLibrary("org.lwjgl:lwjgl-opencl:3.3.3") { transitive = false }
