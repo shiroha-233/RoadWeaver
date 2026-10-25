@@ -80,6 +80,10 @@ public final class SegmentPaver {
                     world.setBlock(pos, slabState, 3);
                 }
             }
+
+            if (!baseMats.isEmpty()) {
+                RoadSupports.support(world, pos.below(), RoadSupports.isStoneRoad(baseMats));
+            }
         }
     }
 
