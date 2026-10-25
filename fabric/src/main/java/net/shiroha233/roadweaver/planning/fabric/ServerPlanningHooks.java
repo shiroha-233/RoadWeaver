@@ -1,6 +1,7 @@
 /* 文件职责：注册 Fabric 服务端生命周期与 Tick 钩子。 */
 package net.shiroha233.roadweaver.planning.fabric;
 
+import net.fabricmc.fabric.api.event.lifecycle.v1.ServerChunkEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerWorldEvents;
@@ -32,7 +33,8 @@ public final class ServerPlanningHooks {
         ServerLifecycleEvents.SERVER_STARTED.register(server -> {
             CacheManager.onServerStarted();
             ThreadPoolManager.onServerStarted(server);
-            SignTextService.clearPending();
+            // Pending sign text is kept on start: the spawn chunks are generated before this event, and clearing
+            // here would delete the text of every sign near spawn. Stopping the server still clears it.
             IdleRoadGenerationService.onServerStarted();
             
             ServerLevel level = server.getLevel(net.minecraft.world.level.Level.OVERWORLD);
@@ -57,6 +59,10 @@ public final class ServerPlanningHooks {
                 RoadGenerationService.onServerStarted();
             }
         });
+
+        // Mark every chunk that becomes a full chunk, so queued sign text is written even when no player stands
+        // in it, including chunks whose queue entries were saved to disk before a restart.
+        ServerChunkEvents.CHUNK_LOAD.register((level, chunk) -> SignTextService.onChunkReady(level, chunk.getPos()));
 
         ServerTickEvents.END_SERVER_TICK.register(server -> {
             if ((tick++ % 20) == 0) {
