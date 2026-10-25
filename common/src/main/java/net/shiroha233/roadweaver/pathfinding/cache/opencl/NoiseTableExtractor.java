@@ -1,4 +1,3 @@
-/* 文件职责：从 Minecraft 噪声对象提取 OpenCL 所需的 Perlin 与 permutation 表。 */
 package net.shiroha233.roadweaver.pathfinding.cache.opencl;
 
 import it.unimi.dsi.fastutil.doubles.DoubleList;

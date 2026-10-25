@@ -1,4 +1,3 @@
-/* 文件职责：定义精确高度样本的持久化读写边界。 */
 package net.shiroha233.roadweaver.pathfinding.cache;
 
 import java.util.Collection;

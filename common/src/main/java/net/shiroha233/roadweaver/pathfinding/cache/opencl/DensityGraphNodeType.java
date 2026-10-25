@@ -1,4 +1,3 @@
-/* 文件职责：定义 Java density graph 与 OpenCL evaluator 共享的节点编号。 */
 package net.shiroha233.roadweaver.pathfinding.cache.opencl;
 
 /**

@@ -1,4 +1,3 @@
-/* 文件职责：绘制地图左上角的加载与地形采样状态浮层。 */
 package net.shiroha233.roadweaver.client.map.render;
 
 import net.minecraft.client.gui.Font;

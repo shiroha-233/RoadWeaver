@@ -1,4 +1,3 @@
-/* 文件职责：管理可复用的 OpenCL 设备会话、kernel 资源与串行提交边界。 */
 package net.shiroha233.roadweaver.pathfinding.cache.opencl;
 
 import net.shiroha233.roadweaver.pathfinding.cache.opencl.bridge.OpenCLBridge;

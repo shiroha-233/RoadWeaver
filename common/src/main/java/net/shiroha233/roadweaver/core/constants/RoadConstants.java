@@ -1,4 +1,3 @@
-/* 文件职责：集中定义全局常量。 */
 package net.shiroha233.roadweaver.core.constants;
 
 public final class RoadConstants {

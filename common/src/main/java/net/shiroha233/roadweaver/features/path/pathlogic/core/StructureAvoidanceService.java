@@ -1,4 +1,3 @@
-/* 文件职责：缓存已加载区块的结构边界，让路面铺设 worker 线程无需同步触发主线程 chunk 加载。 */
 package net.shiroha233.roadweaver.features.path.pathlogic.core;
 
 import it.unimi.dsi.fastutil.longs.LongSet;

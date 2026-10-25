@@ -1,4 +1,3 @@
-/* 文件职责：将粗粒度 terrain 采样结果写入 coarse terrain 瓦片目录。 */
 package net.shiroha233.roadweaver.pathfinding.terrain.region;
 
 import net.minecraft.server.level.ServerLevel;

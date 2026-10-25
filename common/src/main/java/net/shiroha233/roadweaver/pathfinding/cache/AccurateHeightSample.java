@@ -1,4 +1,3 @@
-/* 文件职责：保存单个世界列的三类精确高度图值。 */
 package net.shiroha233.roadweaver.pathfinding.cache;
 
 /**

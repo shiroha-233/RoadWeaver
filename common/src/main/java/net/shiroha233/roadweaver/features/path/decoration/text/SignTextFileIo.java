@@ -1,4 +1,3 @@
-/* 文件职责：把路牌待写文本的文件 IO 从主线程迁出，并提供有界的分片读取缓存。 */
 package net.shiroha233.roadweaver.features.path.decoration.text;
 
 import net.minecraft.server.level.ServerLevel;

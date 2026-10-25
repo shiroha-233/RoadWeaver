@@ -1,4 +1,3 @@
-/* 文件职责：按生成状态、设置与设备隔离精采 OpenCL 程序及校验状态。 */
 package net.shiroha233.roadweaver.pathfinding.cache.opencl;
 
 import net.minecraft.server.level.ServerLevel;

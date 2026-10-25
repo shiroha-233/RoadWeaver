@@ -1,4 +1,3 @@
-/* 文件职责：在道路地图上绘制自动规划期间的活动采样范围。 */
 package net.shiroha233.roadweaver.client.map.render;
 
 import net.minecraft.client.gui.Font;

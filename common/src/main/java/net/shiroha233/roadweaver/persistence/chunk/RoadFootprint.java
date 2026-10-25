@@ -1,4 +1,3 @@
-/* 文件职责：把道路实际占用的 XZ 方块编译为不可变的区块位图，供无磁盘查询使用。 */
 package net.shiroha233.roadweaver.persistence.chunk;
 
 import net.minecraft.core.BlockPos;

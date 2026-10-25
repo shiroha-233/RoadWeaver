@@ -1,4 +1,3 @@
-/* 文件职责：定义精确高度批量采样的实时进度回调边界。 */
 package net.shiroha233.roadweaver.pathfinding.cache;
 
 /**

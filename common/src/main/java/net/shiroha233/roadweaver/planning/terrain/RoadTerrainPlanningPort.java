@@ -1,4 +1,3 @@
-/* 文件职责：定义道路连接批次选择地形采样策略并产出原始路径的规划接口。 */
 package net.shiroha233.roadweaver.planning.terrain;
 
 import net.minecraft.server.level.ServerLevel;

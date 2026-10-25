@@ -1,4 +1,3 @@
-/* 文件职责：按世界路径路由道路 ChunkPos 存储，驱动索引延迟提交，并保留旧文件存储门面的对外语义。 */
 package net.shiroha233.roadweaver.persistence.files;
 
 import net.minecraft.world.level.ChunkPos;

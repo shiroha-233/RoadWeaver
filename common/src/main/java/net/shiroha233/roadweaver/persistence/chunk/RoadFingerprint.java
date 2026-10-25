@@ -1,4 +1,3 @@
-/* 文件职责：集中维护道路聚合根的稳定指纹算法，保证替换、删除与磁盘引用一致。 */
 package net.shiroha233.roadweaver.persistence.chunk;
 
 import net.minecraft.core.BlockPos;

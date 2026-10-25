@@ -1,4 +1,3 @@
-/* 文件职责：计算可复用的世界生成持久化指纹。 */
 package net.shiroha233.roadweaver.persistence;
 
 import com.google.common.hash.Hasher;

@@ -1,4 +1,3 @@
-/* 文件职责：表示一次主动地图采样的不可变世界坐标范围。 */
 package net.shiroha233.roadweaver.map.tile.sampling;
 
 /**

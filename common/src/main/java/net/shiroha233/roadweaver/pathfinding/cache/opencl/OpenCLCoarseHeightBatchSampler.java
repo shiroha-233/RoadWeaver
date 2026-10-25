@@ -1,4 +1,3 @@
-/* 文件职责：使用 OpenCL 执行粗高度批量采样并提供逐程序校验与 CPU 回退。 */
 package net.shiroha233.roadweaver.pathfinding.cache.opencl;
 
 import net.shiroha233.roadweaver.generation.progress.InitialGenerationProgressTracker;

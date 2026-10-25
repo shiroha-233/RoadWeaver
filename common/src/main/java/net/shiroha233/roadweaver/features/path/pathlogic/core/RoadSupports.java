@@ -1,4 +1,3 @@
-/* Keeps road surfaces off thin air: small gaps become embankment, deep ones a deck on posts. */
 package net.shiroha233.roadweaver.features.path.pathlogic.core;
 
 import net.minecraft.core.BlockPos;

@@ -21,7 +21,6 @@ public final class TerrainTilePalette {
     private static final int CAT_SWAMP = 4;
     private static final int CAT_JUNGLE = 5;
     private static final int CAT_TAIGA = 6;
-    /** 未匹配到生物群系专属色，交由高度分支决定。 */
     private static final int CAT_BY_HEIGHT = -1;
 
     private static final int[] BIOME_BASE_COLORS = {
@@ -34,7 +33,6 @@ public final class TerrainTilePalette {
             0xFF5B775F  // taiga / spruce
     };
 
-    /** 写时复制的不可变快照，使逐采样点读取无锁。 */
     private static volatile Map<Holder<Biome>, Integer> BIOME_CATEGORY_CACHE = Map.of();
     private static final Object BIOME_CATEGORY_MUTEX = new Object();
 
@@ -86,7 +84,6 @@ public final class TerrainTilePalette {
         return base;
     }
 
-    /** 返回该生物群系的颜色分类。 */
     private static int biomeCategory(Holder<Biome> biome) {
         if (biome == null) return CAT_BY_HEIGHT;
         Integer cached = BIOME_CATEGORY_CACHE.get(biome);
@@ -100,13 +97,11 @@ public final class TerrainTilePalette {
             IdentityHashMap<Holder<Biome>, Integer> next = new IdentityHashMap<>();
             next.putAll(BIOME_CATEGORY_CACHE);
             next.put(biome, resolved);
-            // 用 unmodifiableMap 包装而非 Map.copyOf，后者会丢失身份比较语义
             BIOME_CATEGORY_CACHE = Collections.unmodifiableMap(next);
         }
         return resolved;
     }
 
-    /** 冷路径：仅在某生物群系首次出现时执行。 */
     private static int resolveCategory(Holder<Biome> biome) {
         String biomePath = biomePath(biome);
         if (biomePath.isEmpty()) return CAT_BY_HEIGHT;

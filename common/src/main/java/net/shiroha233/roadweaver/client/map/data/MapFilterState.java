@@ -1,4 +1,3 @@
-/* 文件职责：保存地图筛选条件并生成当前可见快照。 */
 package net.shiroha233.roadweaver.client.map.data;
 
 import net.minecraft.core.BlockPos;

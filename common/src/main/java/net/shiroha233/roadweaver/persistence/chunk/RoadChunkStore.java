@@ -1,4 +1,3 @@
-/* 文件职责：按世界目录持久化道路聚合根和 ChunkPos 分片，并原子发布内存快照。 */
 package net.shiroha233.roadweaver.persistence.chunk;
 
 import com.google.gson.Gson;

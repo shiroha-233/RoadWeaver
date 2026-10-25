@@ -1,4 +1,3 @@
-/* 文件职责：在世界生成指纹变化时失效精确地形地图图层。 */
 package net.shiroha233.roadweaver.map.tile.storage;
 
 import net.minecraft.server.level.ServerLevel;

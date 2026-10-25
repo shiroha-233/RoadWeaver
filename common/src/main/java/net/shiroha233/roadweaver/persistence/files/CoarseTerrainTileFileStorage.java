@@ -1,4 +1,3 @@
-/* 文件职责：持久化粗采样地形瓦片，并保留既有瓦片路径读取能力。 */
 package net.shiroha233.roadweaver.persistence.files;
 
 import net.minecraft.server.level.ServerLevel;

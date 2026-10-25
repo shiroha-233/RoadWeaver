@@ -1,4 +1,3 @@
-/* 文件职责：描述区域级精确量化地形场的对齐网格边界。 */
 package net.shiroha233.roadweaver.pathfinding.terrain.region;
 
 /**

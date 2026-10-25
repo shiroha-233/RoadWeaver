@@ -1,4 +1,3 @@
-/* 文件职责：将旧版 terrain_v2 目录一次性迁移到新的 coarse terrain 图层目录。 */
 package net.shiroha233.roadweaver.map.tile.storage;
 
 import net.shiroha233.roadweaver.map.tile.core.MapTileLayer;

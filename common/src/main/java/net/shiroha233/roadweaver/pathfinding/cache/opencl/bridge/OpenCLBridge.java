@@ -1,4 +1,3 @@
-/* 文件职责：集中封装所有 LWJGL OpenCL native 调用与资源生命周期。 */
 package net.shiroha233.roadweaver.pathfinding.cache.opencl.bridge;
 
 import net.shiroha233.roadweaver.pathfinding.cache.opencl.OpenCLDevicePreference;

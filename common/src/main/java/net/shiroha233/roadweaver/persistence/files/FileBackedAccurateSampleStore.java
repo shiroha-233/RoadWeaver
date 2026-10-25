@@ -1,4 +1,3 @@
-/* 文件职责：以稀疏瓦片文件实现精确高度样本持久化。 */
 package net.shiroha233.roadweaver.persistence.files;
 
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;

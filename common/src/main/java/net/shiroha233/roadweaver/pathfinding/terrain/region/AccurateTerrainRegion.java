@@ -1,4 +1,3 @@
-/* 文件职责：保存一次规划生命周期内按步长量化的精确地形数据。 */
 package net.shiroha233.roadweaver.pathfinding.terrain.region;
 
 import net.minecraft.core.Holder;

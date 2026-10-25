@@ -29,9 +29,6 @@ import java.util.List;
 public final class StructureVerificationService {
     private StructureVerificationService() {}
 
-    /**
-     * 对一批预测结构点进行验证，返回通过验证的子集
-     */
     public static List<StructureInfo> verifyPredictedStructures(ServerLevel level,
                                                                         List<StructureInfo> predicted) {
         if (level == null || !Level.OVERWORLD.equals(level.dimension())

@@ -1,4 +1,3 @@
-/* 文件职责：统一管理服务端、维度与地形采样相关缓存的生命周期。 */
 package net.shiroha233.roadweaver.runtime;
 
 import net.minecraft.server.level.ServerLevel;
@@ -41,9 +40,6 @@ public final class CacheManager {
 
     private CacheManager() {}
 
-    /**
-     * 服务端启动时初始化缓存状态。
-     */
     public static void onServerStarted() {
         RoadsideStructureRegistry.clearCache();
         BridgeTemplateStructureRegistry.clearCache();
@@ -63,9 +59,6 @@ public final class CacheManager {
         LOGGER.debug("CacheManager: 缓存已初始化");
     }
 
-    /**
-     * 服务端停止时清理所有缓存。
-     */
     public static void onServerStopping(Iterable<ServerLevel> levels) {
         ServerLevel overworld = null;
         for (ServerLevel level : levels) {
@@ -113,9 +106,6 @@ public final class CacheManager {
         LOGGER.debug("CacheManager: 所有缓存已清理");
     }
 
-    /**
-     * 维度卸载时清理该维度关联缓存。
-     */
     public static void onDimensionUnload(ServerLevel level) {
         if (level == null) return;
 
@@ -167,9 +157,6 @@ public final class CacheManager {
         LOGGER.debug("CacheManager: 维度 {} 缓存已清理", level.dimension().location());
     }
 
-    /**
-     * 道路数据变更后使对应区块的空间索引缓存失效。
-     */
     public static void invalidateRoadCache(ServerLevel level, int chunkX, int chunkZ) {
         RoadSpatialIndex.invalidateChunk(level, chunkX, chunkZ);
     }

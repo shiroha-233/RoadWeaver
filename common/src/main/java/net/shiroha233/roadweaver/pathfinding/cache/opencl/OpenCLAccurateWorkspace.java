@@ -1,4 +1,3 @@
-/* 文件职责：复用精确采样批次的动态 OpenCL 缓冲区，降低批次编排开销。 */
 package net.shiroha233.roadweaver.pathfinding.cache.opencl;
 
 import net.shiroha233.roadweaver.pathfinding.cache.opencl.bridge.OpenCLBridge;

@@ -1,4 +1,3 @@
-/* 文件职责：缓存服务端同步到客户端的自动规划活动采样范围。 */
 package net.shiroha233.roadweaver.client.map.data;
 
 import net.minecraft.resources.ResourceLocation;

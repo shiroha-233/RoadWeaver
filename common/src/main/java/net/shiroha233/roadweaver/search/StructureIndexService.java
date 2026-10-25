@@ -17,9 +17,6 @@ import java.util.Collections;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 
-/**
- * 结构索引服务
- */
 public final class StructureIndexService {
 
     private static final Logger LOGGER = LoggerFactory.getLogger("roadweaver");
@@ -28,9 +25,6 @@ public final class StructureIndexService {
     private StructureIndexService() {
     }
 
-    /**
-     * 预测并验证围绕出生点的结构
-     */
     public static List<StructureInfo> predictAndVerifyAroundSpawn(ServerLevel level) {
         if (level == null || !Level.OVERWORLD.equals(level.dimension())) {
             return List.of();
@@ -48,12 +42,9 @@ public final class StructureIndexService {
         return predictAndVerifyInRect(level, minBlockX * 16, minBlockZ * 16, maxBlockX * 16, maxBlockZ * 16);
     }
 
-    /**
-     * 在给定矩形范围内做结构预测和验证
-     */
     public static List<StructureInfo> predictAndVerifyInRect(ServerLevel level,
-                                                                     int minBlockX, int minBlockZ,
-                                                                     int maxBlockX, int maxBlockZ) {
+                                                             int minBlockX, int minBlockZ,
+                                                             int maxBlockX, int maxBlockZ) {
         if (level == null || !Level.OVERWORLD.equals(level.dimension())) {
             return List.of();
         }

@@ -1,4 +1,3 @@
-/* 文件职责：在道路中心线局部窗口内插值路面高度，避免铺路热路径扫描整条道路。 */
 package net.shiroha233.roadweaver.features.path.pathlogic.pathfinding;
 
 import net.minecraft.core.BlockPos;

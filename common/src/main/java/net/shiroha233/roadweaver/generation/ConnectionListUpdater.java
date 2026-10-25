@@ -1,4 +1,3 @@
-/* 文件职责：把「读连接列表 -> 就地修改 -> 整体写回」收敛为按维度原子的操作。 */
 package net.shiroha233.roadweaver.generation;
 
 import net.minecraft.server.level.ServerLevel;

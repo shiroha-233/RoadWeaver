@@ -1,4 +1,3 @@
-/* 文件职责：封装主动地图采样任务的不可变进度快照。 */
 package net.shiroha233.roadweaver.map.tile.sampling;
 
 import java.util.Objects;

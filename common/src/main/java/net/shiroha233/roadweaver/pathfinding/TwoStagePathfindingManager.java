@@ -1,4 +1,3 @@
-/* 文件职责：协调粗路径搜索与精确高度修正的两阶段寻路流程。 */
 package net.shiroha233.roadweaver.pathfinding;
 
 import net.minecraft.core.BlockPos;

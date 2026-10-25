@@ -1,4 +1,3 @@
-/* 文件职责：提供普通道路寻路阶段的公共地形读取与网格工具。 */
 package net.shiroha233.roadweaver.pathfinding.impl;
 
 import net.minecraft.core.BlockPos;

@@ -1,4 +1,3 @@
-/* 文件职责：表示道路索引使用的区块坐标，并提供负坐标安全的稳定编码。 */
 package net.shiroha233.roadweaver.persistence.chunk;
 
 import net.minecraft.world.level.ChunkPos;

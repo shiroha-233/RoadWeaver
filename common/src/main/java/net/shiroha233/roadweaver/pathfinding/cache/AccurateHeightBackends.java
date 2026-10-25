@@ -1,4 +1,3 @@
-/* 文件职责：按配置与世界生成器选择精确高度采样后端。 */
 package net.shiroha233.roadweaver.pathfinding.cache;
 
 import net.minecraft.server.level.ServerLevel;

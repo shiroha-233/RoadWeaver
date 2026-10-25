@@ -1,4 +1,3 @@
-/* 文件职责：保存线程调度与 OpenCL 地形采样性能配置。 */
 package net.shiroha233.roadweaver.config.sub;
 
 import net.shiroha233.roadweaver.config.SubConfig;

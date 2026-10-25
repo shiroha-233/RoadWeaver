@@ -1,4 +1,3 @@
-/* 文件职责：保存单个世界会话的地形采样模式与降级状态。 */
 package net.shiroha233.roadweaver.planning.terrain;
 
 import net.shiroha233.roadweaver.config.sub.TerrainSamplingMode;

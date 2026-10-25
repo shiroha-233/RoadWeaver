@@ -1,4 +1,3 @@
-/* 文件职责：计算绑定世界生成、采样策略和寻路配置的路径指纹。 */
 package net.shiroha233.roadweaver.planning.path;
 
 import net.shiroha233.roadweaver.config.sub.PathfindingCostConfig;

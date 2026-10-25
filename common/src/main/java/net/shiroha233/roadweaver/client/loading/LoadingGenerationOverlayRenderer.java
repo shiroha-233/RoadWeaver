@@ -1,4 +1,3 @@
-/* 文件职责：渲染初始道路生成的单条总进度条与当前步骤文字。 */
 package net.shiroha233.roadweaver.client.loading;
 
 import net.minecraft.client.Minecraft;

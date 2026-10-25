@@ -1,4 +1,3 @@
-/* 文件职责：将 Minecraft density function DAG 编译为 OpenCL 可执行的紧凑多根图。 */
 package net.shiroha233.roadweaver.pathfinding.cache.opencl;
 
 import net.minecraft.core.registries.BuiltInRegistries;

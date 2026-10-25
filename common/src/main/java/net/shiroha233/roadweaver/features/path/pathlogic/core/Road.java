@@ -1,4 +1,3 @@
-/* 文件职责：生成单条道路并协调精确地形路径、跨度与附属结构。 */
 package net.shiroha233.roadweaver.features.path.pathlogic.core;
 
 import net.minecraft.core.BlockPos;

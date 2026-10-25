@@ -1,4 +1,3 @@
-/* 文件职责：统一编排精确高度采样的内存缓存、持久化命中与后端补采。 */
 package net.shiroha233.roadweaver.pathfinding.cache;
 
 import it.unimi.dsi.fastutil.ints.IntArrayList;

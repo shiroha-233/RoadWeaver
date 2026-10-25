@@ -1,4 +1,3 @@
-/* 文件职责：实现基于地形场读取的势场普通道路寻路。 */
 package net.shiroha233.roadweaver.pathfinding.impl;
 
 import net.minecraft.core.BlockPos;

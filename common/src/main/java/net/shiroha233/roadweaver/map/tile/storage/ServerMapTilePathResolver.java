@@ -1,4 +1,3 @@
-/* 文件职责：统一解析服务端地图瓦片目录、图层目录与旧版 terrain 迁移路径。 */
 package net.shiroha233.roadweaver.map.tile.storage;
 
 import net.minecraft.resources.ResourceLocation;

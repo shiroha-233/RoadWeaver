@@ -1,4 +1,3 @@
-/* 文件职责：集中绘制地图网格、结构、道路与玩家标记。 */
 package net.shiroha233.roadweaver.client.map.render;
 
 import net.minecraft.client.gui.Font;

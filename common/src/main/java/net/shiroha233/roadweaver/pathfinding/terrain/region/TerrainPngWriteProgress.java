@@ -1,4 +1,3 @@
-/* 文件职责：定义地形 PNG 瓦片写入过程的进度输出边界。 */
 package net.shiroha233.roadweaver.pathfinding.terrain.region;
 
 /**

@@ -1,4 +1,3 @@
-/* 文件职责：承载初始生成各阶段供客户端只读展示的进度快照。 */
 package net.shiroha233.roadweaver.generation.progress;
 
 /**

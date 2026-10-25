@@ -1,4 +1,3 @@
-/* 文件职责：保存单个区块内道路切填密度的不可变列数据。 */
 package net.shiroha233.roadweaver.worldgen.road;
 
 import net.minecraft.world.level.ChunkPos;

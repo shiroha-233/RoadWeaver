@@ -1,4 +1,3 @@
-/* 文件职责：对已持久化道路执行端点吸附与几何后处理。 */
 package net.shiroha233.roadweaver.postprocess;
 
 import net.minecraft.core.BlockPos;
@@ -33,7 +32,6 @@ public final class RoadSnapService {
     private static final int TRANSITION = RoadConstants.ROAD_SNAP_TRANSITION_SEGMENTS;
     private static final long SNAP_DIST2 = (long) SNAP_THRESHOLD * SNAP_THRESHOLD;
     private static final long SPLIT_DIST2 = (long) SPLIT_THRESHOLD * SPLIT_THRESHOLD;
-    /** Largest height difference at which a side road is still merged into the road next to it. */
     private static final int SNAP_MAX_HEIGHT_DIFF = 3;
 
     public static void snapAllRoads(ServerLevel level, int minX, int minZ, int maxX, int maxZ) {
@@ -68,8 +66,6 @@ public final class RoadSnapService {
         int maxZ = Math.max(from.getZ(), to.getZ());
         int margin = SPLIT_THRESHOLD * 2;
 
-        // 吸附计算与道路替换均为内存/持久层操作（mutationLock 保护），调度至后台池执行，
-        // 不再占用主线程；结果广播由 MapPatchService 自行回到主线程发包
         return RoadShardStorage.queryRectAsync(level,
                 minX - margin, minZ - margin, maxX + margin, maxZ + margin)
                 .thenAcceptAsync(roads -> {
@@ -209,11 +205,6 @@ public final class RoadSnapService {
         );
     }
 
-    /**
-     * Merged segments take the main road's heights, which can lie many blocks above or below the side road's own
-     * heights a few segments on. Spread that difference along the side road within the slope limit; segments on the
-     * main road and on bridges keep their heights.
-     */
     private static List<Integer> limitJunctionSlope(List<RoadSegmentPlacement> segs, List<Integer> targetY,
                                                     List<RoadSpan> spans, List<RoadSegmentPlacement> priSegs) {
         var cfg = ConfigService.get();
@@ -266,8 +257,6 @@ public final class RoadSnapService {
                 continue;
             }
 
-            // Two roads close together on the map can be far apart in height (one on a ridge, one in the valley);
-            // merging those would pull the side road up or down a cliff.
             boolean sameLevel = Math.abs(height(secTargetY, secSegs, i) - height(priTargetY, priSegs, nearest.index))
                     <= SNAP_MAX_HEIGHT_DIFF;
             if (!snapping) {

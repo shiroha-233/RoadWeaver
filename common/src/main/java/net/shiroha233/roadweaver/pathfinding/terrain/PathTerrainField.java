@@ -1,4 +1,3 @@
-/* 文件职责：定义普通道路搜索阶段使用的只读量化地形场接口。 */
 package net.shiroha233.roadweaver.pathfinding.terrain;
 
 import net.minecraft.core.Holder;

@@ -1,4 +1,3 @@
-/* 文件职责：保存可上传到 OpenCL 的紧凑多根 density graph 程序。 */
 package net.shiroha233.roadweaver.pathfinding.cache.opencl;
 
 import java.util.EnumMap;

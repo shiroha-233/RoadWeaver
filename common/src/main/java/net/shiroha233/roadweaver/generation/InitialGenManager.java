@@ -1,4 +1,3 @@
-/* 文件职责：协调首次世界加载时的道路规划、生成、进度与持久化。 */
 package net.shiroha233.roadweaver.generation;
 
 import net.minecraft.server.level.ServerLevel;

@@ -1,4 +1,3 @@
-/* 文件职责：描述一次规则区域精确高度采样的世界坐标网格。 */
 package net.shiroha233.roadweaver.pathfinding.cache;
 
 /**

@@ -1,4 +1,3 @@
-/* 文件职责：聚合并校验全局模组配置。 */
 package net.shiroha233.roadweaver.config;
 
 import net.shiroha233.roadweaver.config.sub.*;

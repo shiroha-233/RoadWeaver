@@ -1,4 +1,3 @@
-/* 文件职责：布局并绘制地图底部悬浮胶囊 Dock。 */
 package net.shiroha233.roadweaver.client.map.render;
 
 import net.minecraft.client.gui.Font;

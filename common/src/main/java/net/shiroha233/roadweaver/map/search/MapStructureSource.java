@@ -1,4 +1,3 @@
-/* 文件职责：统一表示地图结构的来源，供搜索结果和地图筛选使用。 */
 package net.shiroha233.roadweaver.map.search;
 
 public enum MapStructureSource {

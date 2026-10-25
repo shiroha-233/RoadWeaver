@@ -1,4 +1,3 @@
-/* 文件职责：管理单机地图界面的 terrain 瓦片读取，并允许在 coarse/accurate 图层间切换。 */
 package net.shiroha233.roadweaver.client.map.tile;
 
 import net.shiroha233.roadweaver.map.tile.core.MapTileLayer;

@@ -1,4 +1,3 @@
-/* 文件职责：将粗地形采样进度适配到初始道路生成进度。 */
 package net.shiroha233.roadweaver.generation.progress;
 
 import net.shiroha233.roadweaver.pathfinding.terrain.region.CoarseTerrainSamplingProgress;

@@ -1,4 +1,3 @@
-/* 文件职责：定义精确区块高度采样后端边界。 */
 package net.shiroha233.roadweaver.pathfinding.cache;
 
 import net.minecraft.core.BlockPos;
@@ -15,9 +14,6 @@ import java.util.Map;
 public interface AccurateHeightBackend extends AutoCloseable {
     Map<Long, AccurateHeightChunk> sampleChunks(Collection<Long> chunkKeys);
 
-    /**
-     * 默认通过完整区块高度图解析稀疏列；OpenCL 后端可覆写为专用稀疏 kernel。
-     */
     default Map<Long, AccurateHeightSample> samplePositions(Collection<BlockPos> positions) {
         if (positions == null || positions.isEmpty()) {
             return Map.of();

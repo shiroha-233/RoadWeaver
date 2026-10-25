@@ -1,4 +1,3 @@
-/* 文件职责：定义无碰撞的规范化道路端点对键。 */
 package net.shiroha233.roadweaver.planning.path;
 
 import net.minecraft.core.BlockPos;

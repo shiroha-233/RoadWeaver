@@ -1,4 +1,3 @@
-/* 文件职责：绘制并命中测试地图搜索、筛选与结构详情侧栏。 */
 package net.shiroha233.roadweaver.client.map.ui;
 
 import net.minecraft.client.gui.Font;

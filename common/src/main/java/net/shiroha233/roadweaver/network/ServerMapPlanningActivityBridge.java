@@ -1,4 +1,3 @@
-/* 文件职责：定义服务端向地图客户端同步自动规划采样范围的端口。 */
 package net.shiroha233.roadweaver.network;
 
 import dev.architectury.injectables.annotations.ExpectPlatform;

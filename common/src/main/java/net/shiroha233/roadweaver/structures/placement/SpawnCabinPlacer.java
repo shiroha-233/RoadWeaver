@@ -30,12 +30,6 @@ import java.util.Arrays;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicReference;
 
-/**
- * 初始小屋放置器。
- * Vanilla generates the chunks around spawn while it searches for a spawn point, so a cabin queued as a pending
- * structure could never be injected into them. ensurePlaced() only registers the anchor as a road endpoint (without
- * loading chunks); placePlannedCabin() builds the cabin into the world once the spawn chunks exist.
- */
 public final class SpawnCabinPlacer {
     private static final Logger LOGGER = LoggerFactory.getLogger("roadweaver");
 
@@ -46,18 +40,11 @@ public final class SpawnCabinPlacer {
     /** Anchor registered by ensurePlaced() and not built yet. */
     private static final AtomicReference<BlockPos> PLANNED_ANCHOR = new AtomicReference<>();
 
-    /** How far from the planned anchor the cabin may move to stay clear of other structures and the road. */
     private static final int SEARCH_RADIUS = 32;
     private static final int SEARCH_STEP = 4;
-    /** Gap kept between the cabin and other structure pieces. */
     private static final int CLEARANCE = 2;
-    /** Largest difference in ground height under the cabin that still counts as level. */
     private static final int MAX_GROUND_SPREAD = 1;
 
-    /**
-     * Where vanilla starts its spawn search (MinecraftServer.setInitialSpawn): the middle of the chunk at the climate
-     * sampler's spawn position. The height comes from the noise only, so no chunk is generated.
-     */
     public static BlockPos predictSpawn(ServerLevel level) {
         ChunkGenerator generator = level.getChunkSource().getGenerator();
         RandomState randomState = level.getChunkSource().randomState();
@@ -99,10 +86,6 @@ public final class SpawnCabinPlacer {
         return true;
     }
 
-    /**
-     * Builds the cabin registered by ensurePlaced() directly into the world. Call it after the initial roads are
-     * planned and the spawn chunks exist; the chunks under the cabin are loaded if needed.
-     */
     public static void placePlannedCabin(ServerLevel level) {
         BlockPos anchor = PLANNED_ANCHOR.getAndSet(null);
         if (level == null || anchor == null) return;
@@ -123,13 +106,6 @@ public final class SpawnCabinPlacer {
         }
     }
 
-    /**
-     * Spot near {@code anchor} (spiral in {@link #SEARCH_STEP} block steps) where the cabin footprint touches no
-     * structure piece and no road, preferring the nearest one whose ground is level within {@link #MAX_GROUND_SPREAD}
-     * blocks; on uneven ground the cabin is set into the slope and the template clears a pit around it. Without a
-     * level spot the flattest free one is used. The returned position has the cabin's foundation layer at the median
-     * ground height of its footprint.
-     */
     private static BlockPos findFreeSpot(ServerLevel level, BlockPos anchor, Vec3i size) {
         BlockPos flattest = null;
         int flattestSpread = Integer.MAX_VALUE;
@@ -155,7 +131,6 @@ public final class SpawnCabinPlacer {
         return flattest;
     }
 
-    /** Ground heights over the footprint, every second block, sorted. */
     private static int[] footprintHeights(ServerLevel level, int x, int z, Vec3i size) {
         int nx = (size.getX() + 1) / 2;
         int nz = (size.getZ() + 1) / 2;
@@ -170,10 +145,6 @@ public final class SpawnCabinPlacer {
         return heights;
     }
 
-    /**
-     * Top ground block at x/z. Level.getHeight answers the minimum height for chunks that are not loaded, so the chunk
-     * is loaded (generated if needed) first; this mirrors Level.getHeight without the "+ 1".
-     */
     private static int groundTop(ServerLevel level, int x, int z) {
         return level.getChunk(x >> 4, z >> 4).getHeight(Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, x & 15, z & 15);
     }

@@ -1,4 +1,3 @@
-/* 文件职责：组合一个区块的道路切片与密度 stamp。 */
 package net.shiroha233.roadweaver.worldgen.road;
 
 import net.minecraft.world.level.ChunkPos;

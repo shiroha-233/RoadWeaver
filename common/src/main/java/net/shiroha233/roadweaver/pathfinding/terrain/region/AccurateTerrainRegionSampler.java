@@ -1,4 +1,3 @@
-/* 文件职责：批量构建规划区域的精确量化地形场，不依赖粗地形瓦片。 */
 package net.shiroha233.roadweaver.pathfinding.terrain.region;
 
 import net.minecraft.core.Holder;

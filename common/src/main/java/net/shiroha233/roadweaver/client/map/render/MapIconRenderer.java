@@ -1,4 +1,3 @@
-/* 文件职责：绘制地图 Dock 使用的几何线性图标。 */
 package net.shiroha233.roadweaver.client.map.render;
 
 import net.minecraft.client.gui.GuiGraphics;

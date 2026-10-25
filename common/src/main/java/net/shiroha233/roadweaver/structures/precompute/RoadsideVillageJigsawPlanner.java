@@ -143,9 +143,6 @@ public final class RoadsideVillageJigsawPlanner {
                     continue;
                 }
 
-                // The beard shapes the terrain towards minY + groundLevelDelta. Like vanilla JigsawPlacement does
-                // for a rigid child, derive the delta from the entrance jigsaw so the ground ends up at the anchor
-                // (first free height); the template default (1) sank houses with a front step.
                 return Optional.of(new PoolElementStructurePiece(
                     templateManager,
                     element,
@@ -165,8 +162,6 @@ public final class RoadsideVillageJigsawPlanner {
             }
 
             BoundingBox zeroBox = templateBounds.get();
-            // Same height rule as the jigsaw path above: the entrance jigsaw (the horizontal one; "bottom" jigsaws
-            // point up) sits at the anchor. Templates without an entrance jigsaw keep their bottom layer there.
             int baseOffset = safeJigsawBlocks(templateManager, element, rotation, random).stream()
                 .filter(jigsaw -> JigsawBlock.getFrontFacing(jigsaw.state()).getAxis().isHorizontal())
                 .mapToInt(jigsaw -> jigsaw.pos().getY())

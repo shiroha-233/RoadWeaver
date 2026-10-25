@@ -1,4 +1,3 @@
-/* 文件职责：使用 FP64 GPU 全区域精采地形计算道路原始路径。 */
 package net.shiroha233.roadweaver.planning.terrain;
 
 import net.minecraft.core.BlockPos;

@@ -1,4 +1,3 @@
-/* 文件职责：保存规则区域精确采样返回的三张原版高度图数组。 */
 package net.shiroha233.roadweaver.pathfinding.cache;
 
 import java.util.Objects;

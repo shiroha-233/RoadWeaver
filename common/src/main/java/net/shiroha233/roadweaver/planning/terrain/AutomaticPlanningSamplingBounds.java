@@ -1,4 +1,3 @@
-/* 文件职责：表示自动规划期间正在采样的世界坐标范围。 */
 package net.shiroha233.roadweaver.planning.terrain;
 
 /**

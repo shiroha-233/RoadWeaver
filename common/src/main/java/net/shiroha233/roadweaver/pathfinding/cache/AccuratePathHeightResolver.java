@@ -1,4 +1,3 @@
-/* 文件职责：为最终道路路径选择可复用的精采地形高度或批量精采后端高度。 */
 package net.shiroha233.roadweaver.pathfinding.cache;
 
 import net.minecraft.core.BlockPos;

@@ -1,4 +1,3 @@
-/* 文件职责：结构状态内存权威副本、单写者延迟落盘与扫描租约管理。 */
 package net.shiroha233.roadweaver.persistence.files;
 
 import com.google.gson.Gson;

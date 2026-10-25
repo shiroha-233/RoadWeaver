@@ -1,4 +1,3 @@
-/* 文件职责：对道路路径执行精确高度修正、平滑与桥梁后处理。 */
 package net.shiroha233.roadweaver.pathfinding.impl;
 
 import net.minecraft.core.BlockPos;

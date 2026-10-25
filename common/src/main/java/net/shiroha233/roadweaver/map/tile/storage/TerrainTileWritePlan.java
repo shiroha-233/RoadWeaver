@@ -1,4 +1,3 @@
-/* 文件职责：识别指定地形图层在给定世界范围内仍缺失的 PNG 瓦片。 */
 package net.shiroha233.roadweaver.map.tile.storage;
 
 import net.minecraft.server.level.ServerLevel;

@@ -1,4 +1,3 @@
-/* 文件职责：定义普通道路寻路器的统一调用接口。 */
 package net.shiroha233.roadweaver.pathfinding;
 
 import net.minecraft.core.BlockPos;

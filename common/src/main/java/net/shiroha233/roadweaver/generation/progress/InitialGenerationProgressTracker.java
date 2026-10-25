@@ -1,4 +1,3 @@
-/* 文件职责：汇总初始道路生成期间的阶段、采样与路径进度。 */
 package net.shiroha233.roadweaver.generation.progress;
 
 import net.shiroha233.roadweaver.config.ConfigService;

@@ -1,4 +1,3 @@
-/* 文件职责：编译并执行单个世界生成设置对应的 OpenCL 精确高度程序。 */
 package net.shiroha233.roadweaver.pathfinding.cache.opencl;
 
 import net.minecraft.core.BlockPos;

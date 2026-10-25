@@ -1,4 +1,3 @@
-/* 文件职责：承载与世界生成身份绑定的稳定持久化指纹。 */
 package net.shiroha233.roadweaver.persistence;
 
 /**

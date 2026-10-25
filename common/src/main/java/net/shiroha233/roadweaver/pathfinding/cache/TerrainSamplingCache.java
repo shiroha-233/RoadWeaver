@@ -1,4 +1,3 @@
-/* 文件职责：缓存道路寻路期间的高度、水体与生物群系采样结果。 */
 package net.shiroha233.roadweaver.pathfinding.cache;
 
 import net.minecraft.core.Holder;

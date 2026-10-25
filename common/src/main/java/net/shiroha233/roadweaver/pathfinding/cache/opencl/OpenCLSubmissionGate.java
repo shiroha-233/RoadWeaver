@@ -1,4 +1,3 @@
-/* 文件职责：串行化共享 OpenCL 会话，并在精采等待时抑制粗采抢占。 */
 package net.shiroha233.roadweaver.pathfinding.cache.opencl;
 
 import net.shiroha233.roadweaver.pathfinding.cache.AccurateSamplingStats;

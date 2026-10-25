@@ -1,4 +1,3 @@
-/* 文件职责：把超出单包限额的地图 patch 拆分为客户端可解码的多个分片。 */
 package net.shiroha233.roadweaver.map;
 
 import net.minecraft.core.BlockPos;
@@ -28,7 +27,6 @@ public final class MapPatchChunker {
     static final int MAX_ROADS = 2048;
     static final int MAX_ROAD_POINTS = 32768;
     static final int MAX_LOADED_RECTS = 1024;
-    /** 单条折线的传输上限，与 readPatch 的总点数预算一致。 */
     static final int MAX_POINTS_PER_POLYLINE = 262144;
 
     private MapPatchChunker() {}

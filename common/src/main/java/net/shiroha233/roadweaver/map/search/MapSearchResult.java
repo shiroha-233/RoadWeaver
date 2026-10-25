@@ -1,4 +1,3 @@
-/* 文件职责：定义地图结构搜索返回的最小结果。 */
 package net.shiroha233.roadweaver.map.search;
 
 import net.minecraft.core.BlockPos;

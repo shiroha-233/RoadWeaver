@@ -1,4 +1,3 @@
-/* 文件职责：将道路聚合数据一次性编译为区块局部世界生成计划。 */
 package net.shiroha233.roadweaver.worldgen.road;
 
 import net.minecraft.core.BlockPos;

@@ -1,4 +1,3 @@
-/* 文件职责：按存档隔离缓存地图快照，并统一清理地图运行态缓存。 */
 package net.shiroha233.roadweaver.client.map.data;
 
 import net.minecraft.resources.ResourceLocation;

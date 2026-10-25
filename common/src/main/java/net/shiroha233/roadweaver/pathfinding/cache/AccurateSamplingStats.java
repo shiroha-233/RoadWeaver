@@ -1,4 +1,3 @@
-/* 文件职责：汇总精确高度采样的缓存、后端吞吐、校验与回退统计。 */
 package net.shiroha233.roadweaver.pathfinding.cache;
 
 import java.util.concurrent.atomic.AtomicLong;

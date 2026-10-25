@@ -1,4 +1,3 @@
-/* 文件职责：铺设道路段的基础路面。 */
 package net.shiroha233.roadweaver.features.path.pathlogic.core;
 
 import net.minecraft.core.BlockPos;

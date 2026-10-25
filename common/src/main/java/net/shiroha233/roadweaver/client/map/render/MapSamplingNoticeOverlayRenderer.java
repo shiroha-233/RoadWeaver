@@ -1,4 +1,3 @@
-/* 文件职责：在道路地图内部显示短暂的主动采样反馈文本。 */
 package net.shiroha233.roadweaver.client.map.render;
 
 import net.minecraft.client.gui.Font;

@@ -1,4 +1,3 @@
-/* 文件职责：定义路边结构的编解码协议与放置行为。 */
 package net.shiroha233.roadweaver.structures.types;
 
 import com.mojang.serialization.Codec;

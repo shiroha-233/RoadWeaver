@@ -1,4 +1,3 @@
-/* 文件职责：使用粗地形高度场规划道路，避免在线阶段重复构造原版 NoiseChunk。 */
 package net.shiroha233.roadweaver.planning.terrain;
 
 import net.minecraft.core.BlockPos;

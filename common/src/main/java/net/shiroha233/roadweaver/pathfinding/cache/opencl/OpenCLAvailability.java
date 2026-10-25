@@ -1,4 +1,3 @@
-/* 文件职责：维护当前服务器会话内 OpenCL 粗采样的可用性与回退原因。 */
 package net.shiroha233.roadweaver.pathfinding.cache.opencl;
 
 import org.slf4j.Logger;

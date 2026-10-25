@@ -1,4 +1,3 @@
-/* 文件职责：复用区块道路 stamp 为植被生成提供常数时间的道路占用查询。 */
 package net.shiroha233.roadweaver.persistence;
 
 import net.minecraft.core.BlockPos;

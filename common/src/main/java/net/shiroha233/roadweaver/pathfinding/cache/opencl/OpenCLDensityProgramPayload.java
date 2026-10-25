@@ -1,4 +1,3 @@
-/* 文件职责：将 density graph 编译产物压平为稳定的 OpenCL 静态数组布局。 */
 package net.shiroha233.roadweaver.pathfinding.cache.opencl;
 
 import java.util.ArrayList;

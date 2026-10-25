@@ -1,4 +1,3 @@
-/* 文件职责：呈现道路地图并同步单机世界的有效地形图层。 */
 package net.shiroha233.roadweaver.client.map;
 
 import net.minecraft.client.Minecraft;
@@ -67,19 +66,16 @@ public class RoadMapScreen extends Screen implements MapInputHandler.Callbacks {
     private static final long MAP_SAMPLING_NOTICE_DURATION_MS = 4_000L;
     private static final int WORKSPACE_DOCK_GAP = 8;
     
-    // 翻译键
     private static final Component MENU_TELEPORT = Component.translatable("gui.roadweaver.map.menu.teleport");
     private static final Component MENU_SET_ALIAS = Component.translatable("gui.roadweaver.map.menu.set_alias");
     private static final Component MENU_EDIT_NOTE = Component.translatable("gui.roadweaver.map.menu.edit_note");
     private static final Component DIALOG_ALIAS_TITLE = Component.translatable("gui.roadweaver.map.dialog.alias_title");
 
-    // 数据
     private MapSnapshot snapshot = MapSnapshot.empty();
     private ResourceLocation currentDimensionId;
     private MapSnapshotStore snapshotStore = new MapSnapshotStore();
     private MapLoadSession loadSession;
     
-    // 组件
     private final MapState state = new MapState();
     private final MapView view = new MapView();
     private final MapInputHandler inputHandler;
@@ -107,7 +103,6 @@ public class RoadMapScreen extends Screen implements MapInputHandler.Callbacks {
     private int filteredSnapshotRevision = -1;
     private MapSnapshot filteredSnapshotSource;
     
-    // 布局
     private int mapX, mapY, mapW, mapH;
 
     public RoadMapScreen() {

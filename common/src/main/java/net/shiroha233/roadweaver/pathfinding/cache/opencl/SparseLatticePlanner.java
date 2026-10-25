@@ -1,4 +1,3 @@
-/* 文件职责：从精采列引用中提取实际需要计算的插值 lattice 点。 */
 package net.shiroha233.roadweaver.pathfinding.cache.opencl;
 
 /**

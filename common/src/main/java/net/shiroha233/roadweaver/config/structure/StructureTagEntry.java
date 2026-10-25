@@ -27,10 +27,8 @@ public final class StructureTagEntry implements Comparable<StructureTagEntry> {
     public boolean isVanilla() { return isVanilla; }
     public String namespace() { return tagId.getNamespace(); }
 
-    /** 获取标签形式的字符串（带 # 前缀） */
     public String tagString() { return "#" + tagId.toString(); }
 
-    /** 获取此标签下所有结构的 ID 集合 */
     public Set<String> getAllStructureIds() {
         Set<String> ids = new HashSet<>();
         for (StructureEntry entry : structures) {

@@ -1,4 +1,3 @@
-/* 文件职责：绘制地图右上角的紧凑状态图例浮层。 */
 package net.shiroha233.roadweaver.client.map.render;
 
 import net.minecraft.client.gui.Font;

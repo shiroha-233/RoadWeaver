@@ -1,4 +1,3 @@
-/* 文件职责：定义规划阶段可选的地形采样模式。 */
 package net.shiroha233.roadweaver.config.sub;
 
 /**

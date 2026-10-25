@@ -1,4 +1,3 @@
-/* 文件职责：执行 OpenCL 精确高度批次、逐程序校验与可选的严格 GPU-only 调用。 */
 package net.shiroha233.roadweaver.pathfinding.cache.opencl;
 
 import net.minecraft.core.BlockPos;

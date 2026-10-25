@@ -1,4 +1,3 @@
-/* 文件职责：定义精采 OpenCL lattice 的稳定索引与三线性插值契约。 */
 package net.shiroha233.roadweaver.pathfinding.cache.opencl;
 
 /**

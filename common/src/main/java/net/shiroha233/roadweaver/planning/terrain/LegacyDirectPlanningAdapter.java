@@ -1,4 +1,3 @@
-/* 文件职责：按旧版行为逐条连接读取缓存地形并直接执行道路原始寻路。 */
 package net.shiroha233.roadweaver.planning.terrain;
 
 import net.minecraft.core.Holder;

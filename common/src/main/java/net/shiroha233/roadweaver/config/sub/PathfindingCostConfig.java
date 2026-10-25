@@ -1,4 +1,3 @@
-/* 文件职责：保存精确道路寻路的步长、代价权重与搜索预算配置。 */
 package net.shiroha233.roadweaver.config.sub;
 
 import net.shiroha233.roadweaver.config.SubConfig;

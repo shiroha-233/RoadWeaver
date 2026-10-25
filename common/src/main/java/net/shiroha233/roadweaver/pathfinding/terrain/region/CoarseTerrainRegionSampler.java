@@ -1,4 +1,3 @@
-/* 文件职责：按固定地形瓦片并行构建规划区域的粗采样视图。 */
 package net.shiroha233.roadweaver.pathfinding.terrain.region;
 
 import net.minecraft.server.level.ServerLevel;

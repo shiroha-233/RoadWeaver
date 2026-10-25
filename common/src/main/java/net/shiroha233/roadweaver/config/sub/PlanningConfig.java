@@ -1,4 +1,3 @@
-/* 文件职责：保存路网规划半径、算法与地形采样模式配置。 */
 package net.shiroha233.roadweaver.config.sub;
 
 import net.shiroha233.roadweaver.config.SubConfig;

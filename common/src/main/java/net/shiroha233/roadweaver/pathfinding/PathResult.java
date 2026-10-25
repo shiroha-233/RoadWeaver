@@ -1,4 +1,3 @@
-/* 文件职责：封装普通道路寻路的原始节点路径与最终分段结果。 */
 package net.shiroha233.roadweaver.pathfinding;
 
 import net.minecraft.core.BlockPos;

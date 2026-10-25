@@ -1,4 +1,3 @@
-/* 文件职责：描述单条道路在一个区块内需要处理的局部段。 */
 package net.shiroha233.roadweaver.worldgen.road;
 
 import net.minecraft.world.level.ChunkPos;

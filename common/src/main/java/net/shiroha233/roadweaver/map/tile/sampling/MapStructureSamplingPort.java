@@ -1,4 +1,3 @@
-/* 文件职责：定义主动地图采样完成后查询区域结构点的端口。 */
 package net.shiroha233.roadweaver.map.tile.sampling;
 
 import net.minecraft.server.level.ServerLevel;

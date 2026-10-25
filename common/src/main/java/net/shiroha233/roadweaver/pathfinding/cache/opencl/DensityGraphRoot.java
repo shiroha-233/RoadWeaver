@@ -1,4 +1,3 @@
-/* 文件职责：标识精确地形采样所需的 density graph 输出根。 */
 package net.shiroha233.roadweaver.pathfinding.cache.opencl;
 
 /**

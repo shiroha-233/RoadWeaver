@@ -1,4 +1,3 @@
-/* 文件职责：调度道路生成任务并维护规划路径缓存生命周期。 */
 package net.shiroha233.roadweaver.generation;
 
 import net.minecraft.core.BlockPos;

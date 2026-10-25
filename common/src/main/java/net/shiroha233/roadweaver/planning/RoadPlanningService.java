@@ -1,4 +1,3 @@
-/* 文件职责：协调结构发现、连接拓扑规划与道路地形规划用例。 */
 package net.shiroha233.roadweaver.planning;
 
 import net.minecraft.core.BlockPos;

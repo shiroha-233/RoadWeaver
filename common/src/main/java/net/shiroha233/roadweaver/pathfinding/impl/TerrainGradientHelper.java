@@ -1,4 +1,3 @@
-/* 文件职责：提供基于地形场的梯度与等高线方向计算。 */
 package net.shiroha233.roadweaver.pathfinding.impl;
 
 import net.minecraft.core.BlockPos;

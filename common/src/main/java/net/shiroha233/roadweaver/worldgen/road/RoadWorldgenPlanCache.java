@@ -1,4 +1,3 @@
-/* 文件职责：按世界会话缓存不可变道路区块计划，隔离持久化与世界生成热路径。 */
 package net.shiroha233.roadweaver.worldgen.road;
 
 import net.minecraft.server.level.ServerLevel;
@@ -21,7 +20,6 @@ public final class RoadWorldgenPlanCache {
     private static final int QUERY_MARGIN_BLOCKS = 32;
     private static final int MAX_PLANS_PER_LEVEL = 4096;
     private static final int MAX_CHUNK_REVISIONS_PER_LEVEL = 8192;
-    /** 编译重试上限；耗尽后接受当前最佳结果，避免工作线程空转。 */
     private static final int MAX_COMPILE_ATTEMPTS = 8;
     private static final Logger LOGGER = LoggerFactory.getLogger("roadweaver");
     private static final ConcurrentHashMap<ServerLevel, Session> SESSIONS = new ConcurrentHashMap<>();
@@ -86,8 +84,6 @@ public final class RoadWorldgenPlanCache {
 
         RoadChunkPlan get(ServerLevel level, ChunkPos chunkPos, PlanConfig requested) {
             long key = chunkPos.toLong();
-            // 有界重试：持续失效下 while(true) 会让工作线程空转吃满一个核。
-            // 该计划只是密度戳缓存，略微陈旧远优于持续占用 CPU。
             for (int attempt = 1; ; attempt++) {
                 CachedPlan cached = plans.get(key);
                 long expectedRevision = revision(key);
@@ -108,7 +104,6 @@ public final class RoadWorldgenPlanCache {
                                 : null;
                     });
                 } catch (RuntimeException failure) {
-                    // 本次生成保守退化为空计划，但不能将临时 IO 错误永久缓存为无路。
                     LOGGER.warn("编译道路区块计划失败: {}", chunkPos, failure);
                     return RoadChunkPlan.empty(chunkPos, requested.clearHeight(), revision(key));
                 }
@@ -120,7 +115,6 @@ public final class RoadWorldgenPlanCache {
                 if (attempt >= MAX_COMPILE_ATTEMPTS) {
                     trimIfNeeded();
                     CachedPlan best = plans.get(key);
-                    // 只放宽 revision，不放宽 config：配置不符的计划会把道路生成在错误的 Y 层
                     if (best != null && best.config().equals(requested)) return best.plan();
                     try {
                         return compile(level, chunkPos, requested, currentRevision);
@@ -151,8 +145,6 @@ public final class RoadWorldgenPlanCache {
                         plans.remove(affected);
                     }
                 }
-                // 修改过的区块不一定会再次查询。限制 tombstone 数量，超过预算时
-                // 用一次全局失效替代逐区块 revision，避免长时间运行后无限增长。
                 if (chunkRevisions.size() > MAX_CHUNK_REVISIONS_PER_LEVEL) {
                     globalRevision = revision;
                     chunkRevisions.clear();

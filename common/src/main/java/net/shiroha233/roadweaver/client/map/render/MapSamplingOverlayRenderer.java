@@ -1,4 +1,3 @@
-/* 文件职责：在道路地图上绘制主动地形采样范围与百分比。 */
 package net.shiroha233.roadweaver.client.map.render;
 
 import net.minecraft.client.gui.Font;

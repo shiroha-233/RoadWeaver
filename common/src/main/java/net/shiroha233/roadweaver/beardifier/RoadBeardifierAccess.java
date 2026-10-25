@@ -1,4 +1,3 @@
-/* 文件职责：定义平台 Mixin 向原版 Beardifier 挂载区块道路密度计划的边界。 */
 package net.shiroha233.roadweaver.beardifier;
 
 import net.shiroha233.roadweaver.worldgen.road.RoadChunkPlan;

@@ -1,4 +1,3 @@
-/* 文件职责：表达全区域精采网格超过安全样本上限。 */
 package net.shiroha233.roadweaver.pathfinding.terrain.region;
 
 /**

@@ -1,4 +1,3 @@
-/* 文件职责：按区块持久化道路标牌待写文本。 */
 package net.shiroha233.roadweaver.persistence.files;
 
 import net.minecraft.core.BlockPos;

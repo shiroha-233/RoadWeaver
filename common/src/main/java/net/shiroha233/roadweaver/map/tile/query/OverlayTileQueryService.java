@@ -1,4 +1,3 @@
-/* 文件职责：查询地图覆盖层中的结构与道路几何数据。 */
 package net.shiroha233.roadweaver.map.tile.query;
 
 import net.minecraft.core.BlockPos;

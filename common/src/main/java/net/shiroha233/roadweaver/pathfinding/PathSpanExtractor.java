@@ -1,4 +1,3 @@
-/* 文件职责：从道路段中心线中提取桥梁与隧道跨度。 */
 package net.shiroha233.roadweaver.pathfinding;
 
 import net.minecraft.core.BlockPos;

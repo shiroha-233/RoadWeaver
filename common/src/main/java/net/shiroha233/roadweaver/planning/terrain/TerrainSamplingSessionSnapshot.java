@@ -1,4 +1,3 @@
-/* 文件职责：封装地形采样会话的不可变状态快照。 */
 package net.shiroha233.roadweaver.planning.terrain;
 
 import net.shiroha233.roadweaver.config.sub.TerrainSamplingMode;

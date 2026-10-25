@@ -1,4 +1,3 @@
-/* 文件职责：按当前生效的寻路模式异步执行增量地图地形采样。 */
 package net.shiroha233.roadweaver.map.tile.sampling;
 
 import net.minecraft.server.level.ServerLevel;

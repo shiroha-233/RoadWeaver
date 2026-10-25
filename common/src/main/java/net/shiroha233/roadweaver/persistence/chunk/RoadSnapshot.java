@@ -1,4 +1,3 @@
-/* 文件职责：保存道路聚合根及其区块倒排索引的不可变、线程安全快照。 */
 package net.shiroha233.roadweaver.persistence.chunk;
 
 import net.shiroha233.roadweaver.core.model.RoadData;

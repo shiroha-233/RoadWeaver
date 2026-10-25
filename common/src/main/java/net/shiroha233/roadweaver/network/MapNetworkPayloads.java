@@ -1,4 +1,3 @@
-/* 文件职责：定义道路地图客户端与服务端之间的网络载荷。 */
 package net.shiroha233.roadweaver.network;
 
 import io.netty.handler.codec.DecoderException;

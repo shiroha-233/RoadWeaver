@@ -60,8 +60,6 @@ public final class ThreadPoolManager {
 
     private static final ThreadLocal<Long> WORK_START = ThreadLocal.withInitial(System::currentTimeMillis);
 
-    // ==================== 生命周期 ====================
-
     public static synchronized void onServerStarted(MinecraftServer server) {
         EPOCH.incrementAndGet();
         rebuildInitialPool(resolveInitialGenerationThreads());
@@ -86,8 +84,6 @@ public final class ThreadPoolManager {
         LOGGER.debug("ThreadPoolManager: 工作池已关闭 (epoch={})", EPOCH.get());
     }
 
-    // ==================== 运行时重建 ====================
-
     public static synchronized void resizeInitialPool(int threads) {
         int resolved = threads <= 0 ? resolveInitialGenerationThreads() : Math.max(1, threads);
         rebuildInitialPool(resolved);
@@ -106,8 +102,6 @@ public final class ThreadPoolManager {
     public static synchronized void resizeComputePool(int threads) {
         resizeSharedPool(threads);
     }
-
-    // ==================== Executor 访问 ====================
 
     public static ExecutorService computeExecutor() {
         return roleExecutor(TaskRole.PLANNING);
@@ -149,8 +143,6 @@ public final class ThreadPoolManager {
         return CompletableFuture.supplyAsync(supplier, roleExecutor(role));
     }
 
-    // ==================== Epoch ====================
-
     public static long currentEpoch() {
         return EPOCH.get();
     }
@@ -158,8 +150,6 @@ public final class ThreadPoolManager {
     public static boolean isEpoch(long epoch) {
         return EPOCH.get() == epoch;
     }
-
-    // ==================== 占空比节流 ====================
 
     public static void throttle(int duty) {
         if (duty >= RoadConstants.DUTY_CYCLE_MAX) return;
@@ -193,8 +183,6 @@ public final class ThreadPoolManager {
         WORK_START.remove();
     }
 
-    // ==================== 内部方法 ====================
-
     private static ThreadPoolExecutor executorFor(TaskRole role) {
         return switch (role == null ? TaskRole.PLANNING : role) {
             case INITIAL -> initialExecutor();
@@ -204,9 +192,6 @@ public final class ThreadPoolManager {
         };
     }
 
-    /**
-     * 共享池当前积压任务数，供提交端做背压判断。
-     */
     public static int sharedBacklog() {
         ThreadPoolExecutor e = SHARED_EXEC.get();
         return e == null ? 0 : e.getQueue().size();
@@ -348,10 +333,6 @@ public final class ThreadPoolManager {
         return Math.max(1, Math.min(4, available - 1));
     }
 
-    /**
-     * 生成池独立于共享池，线程数跟随最大并发生成配置，
-     * 避免道路生成与规划/地图任务争抢同一组工作线程。
-     */
     private static int resolveGenerationThreads() {
         try {
             int concurrent = ConfigService.get().performance().maxConcurrentGenerations();

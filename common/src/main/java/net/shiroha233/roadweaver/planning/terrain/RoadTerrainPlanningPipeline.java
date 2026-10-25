@@ -1,4 +1,3 @@
-/* 文件职责：按世界采样会话选择道路地形规划适配器，并收口全区域模式的安全降级。 */
 package net.shiroha233.roadweaver.planning.terrain;
 
 import net.shiroha233.roadweaver.config.sub.TerrainSamplingMode;

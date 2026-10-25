@@ -1,4 +1,3 @@
-/* 文件职责：定义地图瓦片图层及其物理目录名称。 */
 package net.shiroha233.roadweaver.map.tile.core;
 
 /**

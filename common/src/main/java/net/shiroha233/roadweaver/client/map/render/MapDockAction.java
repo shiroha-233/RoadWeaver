@@ -1,4 +1,3 @@
-/* 文件职责：定义地图底部 Dock 的固定主操作。 */
 package net.shiroha233.roadweaver.client.map.render;
 
 public enum MapDockAction {

@@ -1,4 +1,3 @@
-/* 文件职责：汇总结构、连接与道路数据，生成地图快照。 */
 package net.shiroha233.roadweaver.client.map.data;
 
 import net.minecraft.core.BlockPos;

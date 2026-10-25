@@ -1,4 +1,3 @@
-/* 文件职责：仅从持久化精采列恢复缺失的 accurate terrain 地图瓦片。 */
 package net.shiroha233.roadweaver.map.tile.backfill;
 
 import net.minecraft.server.level.ServerLevel;

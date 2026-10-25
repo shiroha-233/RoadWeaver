@@ -1,4 +1,3 @@
-/* 文件职责：保存单个区块三类精确高度图并提供无分配只读查询。 */
 package net.shiroha233.roadweaver.pathfinding.cache;
 
 import net.minecraft.world.level.ChunkPos;

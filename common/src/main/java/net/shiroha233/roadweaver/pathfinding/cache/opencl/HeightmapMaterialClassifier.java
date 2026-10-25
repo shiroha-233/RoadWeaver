@@ -1,4 +1,3 @@
-/* 文件职责：将生成阶段方块状态归约为精采 kernel 使用的高度图分类位。 */
 package net.shiroha233.roadweaver.pathfinding.cache.opencl;
 
 import net.minecraft.world.level.block.Blocks;

@@ -1,4 +1,3 @@
-/* 文件职责：根据精采程序规模与设备显存限制确定安全的 chunk 子批大小。 */
 package net.shiroha233.roadweaver.pathfinding.cache.opencl;
 
 import net.minecraft.world.level.ChunkPos;

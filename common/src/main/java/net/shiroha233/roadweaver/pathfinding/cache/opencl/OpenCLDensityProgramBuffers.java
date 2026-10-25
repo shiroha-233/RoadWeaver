@@ -1,4 +1,3 @@
-/* 文件职责：持有 density graph 静态设备缓冲区并按 kernel 参数顺序提供访问。 */
 package net.shiroha233.roadweaver.pathfinding.cache.opencl;
 
 import net.shiroha233.roadweaver.pathfinding.cache.opencl.bridge.OpenCLBridge;

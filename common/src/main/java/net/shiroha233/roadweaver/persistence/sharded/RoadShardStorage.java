@@ -1,4 +1,3 @@
-/* 文件职责：提供道路 ChunkPos 分片存储的稳定门面，隔离调用方与具体文件实现。 */
 package net.shiroha233.roadweaver.persistence.sharded;
 
 import net.minecraft.world.level.ChunkPos;

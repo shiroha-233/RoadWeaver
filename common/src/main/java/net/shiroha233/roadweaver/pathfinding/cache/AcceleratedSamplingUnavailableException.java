@@ -1,4 +1,3 @@
-/* 文件职责：表达强制加速采样无法继续且不得回退 CPU 的失败。 */
 package net.shiroha233.roadweaver.pathfinding.cache;
 
 /**

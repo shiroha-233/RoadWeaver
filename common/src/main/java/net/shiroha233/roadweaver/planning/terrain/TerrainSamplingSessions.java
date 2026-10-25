@@ -1,4 +1,3 @@
-/* 文件职责：维护按世界隔离的地形采样会话注册表。 */
 package net.shiroha233.roadweaver.planning.terrain;
 
 import net.minecraft.server.level.ServerLevel;

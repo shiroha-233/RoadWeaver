@@ -1,4 +1,3 @@
-/* 文件职责：定义初始道路生成流程的进度阶段与显示标签。 */
 package net.shiroha233.roadweaver.generation.progress;
 
 /**

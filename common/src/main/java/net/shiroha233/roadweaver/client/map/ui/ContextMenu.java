@@ -1,4 +1,3 @@
-/* 文件职责：布局、绘制并处理地图右键菜单交互。 */
 package net.shiroha233.roadweaver.client.map.ui;
 
 import net.minecraft.client.gui.Font;

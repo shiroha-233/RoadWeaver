@@ -1,4 +1,3 @@
-/* 文件职责：定义待生成道路路径的持久化端口。 */
 package net.shiroha233.roadweaver.planning.path;
 
 import net.minecraft.core.BlockPos;

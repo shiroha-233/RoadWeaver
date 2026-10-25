@@ -1,4 +1,3 @@
-/* 文件职责：在服务端结构索引上执行受限的地图搜索。 */
 package net.shiroha233.roadweaver.map.search;
 
 import net.minecraft.core.BlockPos;

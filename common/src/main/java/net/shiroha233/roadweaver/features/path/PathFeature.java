@@ -1,4 +1,3 @@
-/* 文件职责：实现普通道路的世界生成入口。 */
 package net.shiroha233.roadweaver.features.path;
 
 import com.mojang.serialization.Codec;

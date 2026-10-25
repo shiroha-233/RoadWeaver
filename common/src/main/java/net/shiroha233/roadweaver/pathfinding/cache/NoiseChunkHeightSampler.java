@@ -1,4 +1,3 @@
-/* 文件职责：按原版 NoiseChunk 语义在 CPU 烘焙单个区块的三类高度图。 */
 package net.shiroha233.roadweaver.pathfinding.cache;
 
 import net.minecraft.server.level.ServerLevel;
