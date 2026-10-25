@@ -32,6 +32,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -149,12 +150,16 @@ public final class RoadsideStructurePrecomputer {
             int startHeight = structure.startHeight().sample(random, worldGenContext);
 
             Heightmap.Types heightmap = structure.projectStartToHeightmap();
-            boolean useBaseHeight = structure.useAccurateHeight();
+            // Always the generator's own surface height: the fast sampler reads the preliminary surface, which is several
+            // blocks off on slopes and in cherry groves, and a structure set that low ends up in a pit.
+            boolean useBaseHeight = true;
 
-            // Calculate baseHeight based on structure definition
-            int baseHeight = (targetY != null && i < targetY.size()) ?
-                targetY.get(i) :
-                getHeight(placeX, placeZ, level, cache, terrain, heightmap, useBaseHeight);
+            // Ground under the structure itself. The road's target height for this segment belongs to the road;
+            // the structure sits beside it, and on a slope the ground there can be several blocks lower or higher.
+            // The median over the footprint, so one low or high corner on a slope neither buries nor lifts the whole
+            // structure.
+            int[] ground = footprintHeights(placeX, placeZ, sizeHint, level, cache, terrain, heightmap, useBaseHeight);
+            int baseHeight = ground[ground.length / 2];
 
             int placeY = baseHeight + startHeight;
 
@@ -265,11 +270,8 @@ public final class RoadsideStructurePrecomputer {
      *
      * <ul>
      *     <li>The center's column does NOT have water body (river, ocean, etc.) on the surface.</li>
-     *     <li>The height change from the center to the edge on 4 directions (-X, +X, -Z, +Z) does NOT exceed
-     *     {@link RoadConstants#MAX_STRUCTURE_SLOPE}. Note that the height change is NOT slope, as this method only
-     *     calculates the absolute value of the height of the center minus the height of the center of the edge and
-     *     comparing this value to {@link RoadConstants#MAX_STRUCTURE_SLOPE}, but not dividing it by the distance on
-     *     XZ-plane.</li>
+     *     <li>The highest and lowest ground under the footprint (centre, edge middles and corners) differ by no more
+     *     than {@link RoadConstants#MAX_STRUCTURE_SLOPE} blocks.</li>
      * </ul>
      *
      * @param center The center of the structure.
@@ -294,8 +296,6 @@ public final class RoadsideStructurePrecomputer {
         int x = center.getX();
         int z = center.getZ();
 
-        int y = getHeight(x, z, level, cache, terrain, heightmap, useBaseHeight);
-
         // Check if the center's column has water body on the surface
         if (hasAlignedTerrainSample(terrain, x, z)
                 ? terrain.isColumnWater(x, z)
@@ -303,24 +303,29 @@ public final class RoadsideStructurePrecomputer {
             return false;
         }
 
-        int halfX = size.getX() / 2;
-        int halfZ = size.getZ() / 2;
-
-        // Calculate the slope from the center to 4 directions (-X, +X, -Z, +Z)
-        int maxSlope = RoadConstants.MAX_STRUCTURE_SLOPE;
-        int y1 = getHeight(x - halfX, z, level, cache, terrain, heightmap, useBaseHeight);
-        int y2 = getHeight(x + halfX, z, level, cache, terrain, heightmap, useBaseHeight);
-        int y3 = getHeight(x, z - halfZ, level, cache, terrain, heightmap, useBaseHeight);
-        int y4 = getHeight(x, z + halfZ, level, cache, terrain, heightmap, useBaseHeight);
-
-        //LOGGER.debug("y={} y1={} y2={} y3={} y4={}", y, y1, y2, y3, y4);
-        
-        return Math.abs(y1 - y) <= maxSlope &&
-               Math.abs(y2 - y) <= maxSlope &&
-               Math.abs(y3 - y) <= maxSlope &&
-               Math.abs(y4 - y) <= maxSlope;
+        // The ground under the whole footprint, corners included, may differ by at most MAX_STRUCTURE_SLOPE blocks.
+        int[] ground = footprintHeights(x, z, size, level, cache, terrain, heightmap, useBaseHeight);
+        return ground[ground.length - 1] - ground[0] <= RoadConstants.MAX_STRUCTURE_SLOPE;
     }
     
+    /**
+     * Ground heights at the centre, edge middles and corners of a footprint, sorted. The footprint is taken as a square
+     * of the larger side, so it covers the structure in any rotation.
+     */
+    private static int[] footprintHeights(int x, int z, Vec3i size, ServerLevel level, TerrainSamplingCache cache,
+                                          PathTerrainField terrain, Heightmap.Types heightmap, boolean useBaseHeight) {
+        int half = Math.max(size.getX(), size.getZ()) / 2;
+        int[] heights = new int[9];
+        int i = 0;
+        for (int dx = -1; dx <= 1; dx++) {
+            for (int dz = -1; dz <= 1; dz++) {
+                heights[i++] = getHeight(x + dx * half, z + dz * half, level, cache, terrain, heightmap, useBaseHeight);
+            }
+        }
+        Arrays.sort(heights);
+        return heights;
+    }
+
     private static int getOffsetForScale(StructureScale scale, ModConfig cfg) {
         return switch (scale) {
             case SMALL -> cfg.roadsideStructure().smallStructureOffset();
@@ -358,11 +363,8 @@ public final class RoadsideStructurePrecomputer {
                                  PathTerrainField terrain,
                                  Heightmap.Types heightmap,
                                  boolean useBaseHeight) {
-        if (hasAlignedTerrainSample(terrain, x, z)) {
-            return terrain.height(x, z);
-        }
         if (!useBaseHeight) {
-            return cache.height(level, x, z);
+            return hasAlignedTerrainSample(terrain, x, z) ? terrain.height(x, z) : cache.height(level, x, z);
         }
 
         ServerChunkCache chunkSource = level.getChunkSource();
