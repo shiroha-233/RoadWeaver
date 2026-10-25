@@ -62,11 +62,18 @@ public final class MapPatchService {
 
     private static void broadcast(ServerLevel level, MapSnapshotPatch patch) {
         if (level == null || patch == null || patch.isEmpty()) return;
+        List<MapSnapshotPatch> chunks = MapPatchChunker.chunk(patch);
         var server = level.getServer();
         if (server != null) {
-            server.execute(() -> ServerMapPatchBridge.broadcast(level, level.dimension().location(), patch));
+            server.execute(() -> {
+                for (MapSnapshotPatch chunk : chunks) {
+                    ServerMapPatchBridge.broadcast(level, level.dimension().location(), chunk);
+                }
+            });
         } else {
-            ServerMapPatchBridge.broadcast(level, level.dimension().location(), patch);
+            for (MapSnapshotPatch chunk : chunks) {
+                ServerMapPatchBridge.broadcast(level, level.dimension().location(), chunk);
+            }
         }
     }
 
