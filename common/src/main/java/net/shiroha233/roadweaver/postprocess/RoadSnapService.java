@@ -3,10 +3,12 @@ package net.shiroha233.roadweaver.postprocess;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
+import net.shiroha233.roadweaver.config.ConfigService;
 import net.shiroha233.roadweaver.core.constants.RoadConstants;
 import net.shiroha233.roadweaver.core.model.RoadData;
 import net.shiroha233.roadweaver.core.model.RoadSegmentPlacement;
 import net.shiroha233.roadweaver.core.model.RoadSpan;
+import net.shiroha233.roadweaver.core.model.SpanType;
 import net.shiroha233.roadweaver.persistence.RoadReplacement;
 import net.shiroha233.roadweaver.persistence.sharded.RoadShardStorage;
 import net.shiroha233.roadweaver.runtime.ThreadPoolManager;
@@ -31,6 +33,8 @@ public final class RoadSnapService {
     private static final int TRANSITION = RoadConstants.ROAD_SNAP_TRANSITION_SEGMENTS;
     private static final long SNAP_DIST2 = (long) SNAP_THRESHOLD * SNAP_THRESHOLD;
     private static final long SPLIT_DIST2 = (long) SPLIT_THRESHOLD * SPLIT_THRESHOLD;
+    /** Largest height difference at which a side road is still merged into the road next to it. */
+    private static final int SNAP_MAX_HEIGHT_DIFF = 3;
 
     public static void snapAllRoads(ServerLevel level, int minX, int minZ, int maxX, int maxZ) {
         if (level == null) return;
@@ -132,7 +136,7 @@ public final class RoadSnapService {
         List<RoadSegmentPlacement> priSegs = primary.roadSegmentList();
         int n = secSegs.size();
 
-        int[] snapTarget = markSnapTargets(secSegs, priSegs, primaryGrid);
+        int[] snapTarget = markSnapTargets(secSegs, secondary.targetY(), priSegs, primary.targetY(), primaryGrid);
         int snappedCount = 0;
         for (int t : snapTarget) if (t >= 0) snappedCount++;
         if (snappedCount < MIN_RUN) return null;
@@ -195,6 +199,8 @@ public final class RoadSnapService {
             finalSpans = filterSpansByRetainedSegments(secondary.spans(), finalSegs);
         }
 
+        finalTargetY = limitJunctionSlope(finalSegs, finalTargetY, finalSpans, priSegs);
+
         return new RoadData(
                 secondary.width(), secondary.roadType(),
                 secondary.materials(), secondary.slabMaterials(),
@@ -203,8 +209,48 @@ public final class RoadSnapService {
         );
     }
 
+    /**
+     * Merged segments take the main road's heights, which can lie many blocks above or below the side road's own
+     * heights a few segments on. Spread that difference along the side road within the slope limit; segments on the
+     * main road and on bridges keep their heights.
+     */
+    private static List<Integer> limitJunctionSlope(List<RoadSegmentPlacement> segs, List<Integer> targetY,
+                                                    List<RoadSpan> spans, List<RoadSegmentPlacement> priSegs) {
+        var cfg = ConfigService.get();
+        if (!cfg.slopeLimitEnabled() || segs == null || targetY == null || targetY.size() != segs.size()) return targetY;
+        int n = segs.size();
+        Set<Long> onPrimary = new HashSet<>();
+        for (RoadSegmentPlacement p : priSegs) {
+            if (p != null && p.middlePos() != null) onPrimary.add(posKey(p.middlePos().getX(), p.middlePos().getZ()));
+        }
+        boolean[] fixed = new boolean[n];
+        int[] heights = new int[n];
+        Map<Long, Integer> indexByMiddle = new HashMap<>();
+        for (int i = 0; i < n; i++) {
+            BlockPos m = segs.get(i).middlePos();
+            fixed[i] = onPrimary.contains(posKey(m.getX(), m.getZ()));
+            heights[i] = targetY.get(i);
+            indexByMiddle.putIfAbsent(m.asLong(), i);
+        }
+        if (spans != null) {
+            for (RoadSpan span : spans) {
+                if (span.type() != SpanType.BRIDGE) continue;
+                Integer a = indexByMiddle.get(span.start().asLong());
+                Integer b = indexByMiddle.get(span.end().asLong());
+                if (a == null || b == null) continue;
+                for (int i = Math.min(a, b); i <= Math.max(a, b); i++) fixed[i] = true;
+            }
+        }
+        JunctionSlopeLimiter.limit(heights, fixed, cfg.maxSlopeStepPerTwoSegments());
+        List<Integer> out = new ArrayList<>(n);
+        for (int h : heights) out.add(h);
+        return out;
+    }
+
     private static int[] markSnapTargets(List<RoadSegmentPlacement> secSegs,
+                                         List<Integer> secTargetY,
                                          List<RoadSegmentPlacement> priSegs,
+                                         List<Integer> priTargetY,
                                          SegmentGrid primaryGrid) {
         int n = secSegs.size();
         int[] snapTarget = new int[n];
@@ -220,13 +266,17 @@ public final class RoadSnapService {
                 continue;
             }
 
+            // Two roads close together on the map can be far apart in height (one on a ridge, one in the valley);
+            // merging those would pull the side road up or down a cliff.
+            boolean sameLevel = Math.abs(height(secTargetY, secSegs, i) - height(priTargetY, priSegs, nearest.index))
+                    <= SNAP_MAX_HEIGHT_DIFF;
             if (!snapping) {
-                if (nearest.dist2 <= SNAP_DIST2 && directionCompatible(secSegs, i, priSegs, nearest.index)) {
+                if (nearest.dist2 <= SNAP_DIST2 && sameLevel && directionCompatible(secSegs, i, priSegs, nearest.index)) {
                     snapping = true;
                     snapTarget[i] = nearest.index;
                 }
             } else {
-                if (nearest.dist2 > SPLIT_DIST2) {
+                if (nearest.dist2 > SPLIT_DIST2 || !sameLevel) {
                     snapping = false;
                 } else {
                     snapTarget[i] = nearest.index;
@@ -234,6 +284,10 @@ public final class RoadSnapService {
             }
         }
         return snapTarget;
+    }
+
+    private static int height(List<Integer> targetY, List<RoadSegmentPlacement> segs, int i) {
+        return targetY != null && i < targetY.size() && targetY.get(i) != null ? targetY.get(i) : segs.get(i).middlePos().getY();
     }
 
     private static double computeRatio(int fromStart, int fromEnd, int trans) {
