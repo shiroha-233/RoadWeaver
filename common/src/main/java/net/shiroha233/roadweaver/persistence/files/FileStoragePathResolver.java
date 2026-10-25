@@ -2,7 +2,7 @@ package net.shiroha233.roadweaver.persistence.files;
 
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.world.level.storage.LevelResource;
+import net.shiroha233.roadweaver.util.WorldRootPaths;
 
 import java.nio.file.Path;
 
@@ -15,7 +15,7 @@ public final class FileStoragePathResolver {
     private static final String ROOT_DIR = "data/roadweaver/persistence";
 
     public static Path root(ServerLevel level) {
-        return level.getServer().getWorldPath(LevelResource.ROOT).resolve(ROOT_DIR);
+        return WorldRootPaths.root(level).resolve(ROOT_DIR);
     }
 
     public static Path categoryRoot(ServerLevel level, String category) {

@@ -3,9 +3,9 @@ package net.shiroha233.roadweaver.map.tile.storage;
 
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.world.level.storage.LevelResource;
 import net.shiroha233.roadweaver.map.tile.core.MapTileCoord;
 import net.shiroha233.roadweaver.map.tile.core.MapTileLayer;
+import net.shiroha233.roadweaver.util.WorldRootPaths;
 
 import java.nio.file.Path;
 import java.util.Objects;
@@ -22,7 +22,7 @@ public final class ServerMapTilePathResolver {
     private ServerMapTilePathResolver() {}
 
     public static Path mapRoot(ServerLevel level) {
-        return level.getServer().getWorldPath(LevelResource.ROOT).resolve(ROOT_DIR);
+        return WorldRootPaths.root(level).resolve(ROOT_DIR);
     }
 
     public static Path dimensionRoot(ServerLevel level) {
