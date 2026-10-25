@@ -122,19 +122,19 @@ public final class StructureDiscoveryService {
         }
     }
 
-    /** 从 RegistryAccess 收集结构和标签（兼容客户端创建世界界面） */
+    /** 从 RegistryAccess 收集结构和标签；注册表未就绪（如重新创建世界流程）时跳过 */
     public static void discoverFromRegistryAccess(RegistryAccess registryAccess) {
         if (registryAccess == null) {
             LOGGER.warn("无法发现结构: registryAccess 为 null");
             return;
         }
-        try {
-            Registry<Structure> structureRegistry = registryAccess.registryOrThrow(Registries.STRUCTURE);
-            Registry<LevelStem> levelStemRegistry = registryAccess.registryOrThrow(Registries.LEVEL_STEM);
-            discoverFromRegistries(structureRegistry, levelStemRegistry);
-        } catch (Exception e) {
-            LOGGER.error("结构发现失败", e);
+        Registry<Structure> structureRegistry = registryAccess.registry(Registries.STRUCTURE).orElse(null);
+        Registry<LevelStem> levelStemRegistry = registryAccess.registry(Registries.LEVEL_STEM).orElse(null);
+        if (structureRegistry == null || levelStemRegistry == null) {
+            LOGGER.debug("注册表未就绪，跳过结构发现");
+            return;
         }
+        discoverFromRegistries(structureRegistry, levelStemRegistry);
     }
 
     /** 获取缓存的发现结果，必要时从文件加载 */
