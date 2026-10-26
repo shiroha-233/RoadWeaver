@@ -15,11 +15,8 @@ import net.shiroha233.roadweaver.worldgen.road.RoadWorldgenPlanCache;
 
 import java.util.List;
 
-/**
- * 道路空间查询入口。
- *
- * <p>道路 footprint 已在 RoadChunkPlan 编译为 16x16 列 stamp。植被阶段发生在道路
- * TOP_LAYER Feature 之前，因此它与 Beardifier 共享同一个会话计划，不需要第二套 LRU。</p>
+/*
+   道路空间查询入口。
  */
 public final class RoadSpatialIndex {
     private RoadSpatialIndex() {

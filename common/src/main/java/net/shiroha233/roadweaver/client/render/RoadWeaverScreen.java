@@ -5,7 +5,7 @@ import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 
 /**
- * Shared screen base that keeps RoadWeaver UI backgrounds deterministic and non-blurred on 1.21.
+ * RoadWeaver UI 屏幕基类，保持背景确定且不模糊。
  */
 public abstract class RoadWeaverScreen extends Screen {
     protected RoadWeaverScreen(Component title) {

@@ -64,7 +64,6 @@ public final class RoadFootprint {
                 }
             }
         }
-        // 跨度端点有时来自桥梁后处理，补入端点可以避免桥头跨区块时漏索引。
         List<RoadSpan> spans = road.spans();
         if (spans != null) {
             for (RoadSpan span : spans) {
@@ -133,7 +132,6 @@ public final class RoadFootprint {
         return chunks.get(packedChunk);
     }
 
-    /** 区块内 16x16 列位图，公开为只读值对象以便未来 stamp 编译复用。 */
     public static final class ChunkMask {
         private final long[] words;
 

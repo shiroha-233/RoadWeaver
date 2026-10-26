@@ -34,7 +34,6 @@ public abstract class WorldDataProvider {
     public abstract Map<Long, Long> getPlannedTileCenters(ServerLevel level);
     public abstract void setPlannedTileCenters(ServerLevel level, Map<Long, Long> centers);
 
-    /** 放在公共层以免平台模块重复实现：两个平台的 provider 共用同一后端。 */
     public boolean isPlannedTile(ServerLevel level, long tileKey) {
         return StructureFileStorage.isPlannedTile(level, tileKey);
     }
@@ -48,9 +47,6 @@ public abstract class WorldDataProvider {
     }
 
 
-    /**
-     * 添加单个结构位置（幂等）
-     */
     public void addStructureLocation(ServerLevel level, BlockPos pos) {
         StructureLocationData data = getStructureLocations(level);
         List<BlockPos> locations = new ArrayList<>(data != null ? data.structureLocations() : new ArrayList<>());

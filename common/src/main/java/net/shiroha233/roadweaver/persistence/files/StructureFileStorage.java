@@ -127,7 +127,6 @@ public final class StructureFileStorage {
         }
     }
 
-    /** 单键成员查询：供「每玩家每秒一次」的热路径避免深拷贝整个键集合。 */
     public static boolean isPlannedTile(ServerLevel level, long tileKey) {
         Entry entry = entry(level);
         synchronized (entry.lock) {
@@ -135,7 +134,6 @@ public final class StructureFileStorage {
         }
     }
 
-    /** 原子登记，避免「拷贝整个键集合 -> 加一条 -> 整体写回」。 */
     public static void markPlannedTile(ServerLevel level, long tileKey, int centerChunkX, int centerChunkZ) {
         Entry entry = entry(level);
         synchronized (entry.lock) {
@@ -151,7 +149,6 @@ public final class StructureFileStorage {
         }
     }
 
-    /** 就地裁剪，不做全量拷贝。 */
     public static void prunePlannedTilesIfTooLarge(ServerLevel level, int maxKeys) {
         if (maxKeys <= 0) return;
         Entry entry = entry(level);
@@ -367,14 +364,12 @@ public final class StructureFileStorage {
 
     // ==================== 生命周期 API ====================
 
-    /** 同步落盘指定维度的脏状态。 */
     public static void flush(ServerLevel level) {
         if (level == null) return;
         Entry entry = ENTRIES.get(FileStoragePathResolver.dimensionKey(level.dimension().location()));
         if (entry != null) flushEntry(entry);
     }
 
-    /** 同步落盘全部维度脏状态。 */
     public static void flushAll() {
         for (Entry entry : ENTRIES.values()) {
             try {
@@ -385,7 +380,6 @@ public final class StructureFileStorage {
         }
     }
 
-    /** 同步落盘并清空全部缓存条目（服务器停止时调用）。 */
     public static void shutdown() {
         flushAll();
         ENTRIES.clear();
@@ -573,7 +567,6 @@ public final class StructureFileStorage {
 
     private static StructureLocationData normalizeStructureLocations(StructureLocationData data) {
         StructureLocationData normalized = new StructureLocationData(data.structureLocations(), data.structureInfos());
-        // 先建索引再单遍补齐，替代 O(位置数 × info 数) 的双重扫描
         HashSet<Long> knownKeys = new HashSet<>(Math.max(16, normalized.structureInfos().size() * 2));
         for (StructureInfo info : normalized.structureInfos()) {
             if (info != null && info.pos() != null) {
@@ -606,20 +599,12 @@ public final class StructureFileStorage {
         return out;
     }
 
-    /**
-     * 批量写入结构，复杂度 O(已有结构数 + 本批数量)。
-     * 逐条调用 {@link #putStructure} 会对两个列表各做一次全量 removeIf
-     * 线性扫描，批量写入时退化为 O(已有总数 × 本批数量)。
-     * 此处先按 posKey 定位本批槽位、在内存中复现单条写入的决策后统一落盘，
-     * 语义与逐条调用一致（含同一位置重复写入时后写覆盖并排到队尾）。
-     */
     private static void putStructures(StateData state, List<StructureInfo> infos, int defaultSource) {
         StructureLocationData locations = state.structureLocations;
         List<StructureInfo> existingInfos = locations.structureInfos();
         List<BlockPos> existingPositions = locations.structureLocations();
 
         HashMap<Long, Slot> slots = new HashMap<>(Math.max(16, infos.size() * 2));
-        // 保持逐条调用时的追加顺序：同一 key 重复写入需移动到队尾
         LinkedHashSet<Long> appendOrder = new LinkedHashSet<>();
 
         for (StructureInfo incoming : infos) {
@@ -649,7 +634,6 @@ public final class StructureFileStorage {
 
             slot.info = incoming;
             slot.source = normalizeSource(source);
-            // remove + add 即为「移动到队尾」，与逐条调用时的语义一致
             appendOrder.remove(key);
             appendOrder.add(key);
         }
@@ -669,7 +653,6 @@ public final class StructureFileStorage {
         }
     }
 
-    /** 批量写入过程中单个位置的临时状态。 */
     private static final class Slot {
         StructureInfo info;
         Integer source;

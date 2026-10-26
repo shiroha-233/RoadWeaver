@@ -3,7 +3,7 @@ package net.shiroha233.roadweaver.client.render;
 import net.minecraft.client.gui.GuiGraphics;
 
 /**
- * Shared non-blur screen background used by custom UI screens.
+ * 屏幕背景渲染工具类
  */
 public final class ScreenBackgrounds {
     private static final int TOP_COLOR = 0xC0101010;
