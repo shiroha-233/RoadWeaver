@@ -4,7 +4,7 @@ import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
 import net.shiroha233.roadweaver.client.map.MapTheme;
-import net.shiroha233.roadweaver.client.map.data.MapSnapshot;
+import net.shiroha233.roadweaver.map.data.MapSnapshot;
 
 public final class MapLegendRenderer {
     private static final int SCREEN_MARGIN = MapTheme.HUD_TOP_MARGIN;

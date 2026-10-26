@@ -10,8 +10,8 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.phys.Vec3;
-import net.shiroha233.roadweaver.network.ClientNetBridge;
-import net.shiroha233.roadweaver.network.RawPathDebugPayloads;
+import net.shiroha233.roadweaver.network.bridge.ClientNetBridge;
+import net.shiroha233.roadweaver.network.payload.RawPathDebugPayloads;
 import net.shiroha233.roadweaver.planning.path.DebugRawPath;
 
 import java.util.List;

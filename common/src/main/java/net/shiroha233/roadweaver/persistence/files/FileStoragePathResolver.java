@@ -2,7 +2,7 @@ package net.shiroha233.roadweaver.persistence.files;
 
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
-import net.shiroha233.roadweaver.util.WorldRootPaths;
+import net.shiroha233.roadweaver.persistence.files.WorldRootPaths;
 
 import java.nio.file.Path;
 

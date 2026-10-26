@@ -3,7 +3,7 @@ package net.shiroha233.roadweaver.client.map;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
-import net.shiroha233.roadweaver.client.map.data.MapSnapshot;
+import net.shiroha233.roadweaver.map.data.MapSnapshot;
 import org.lwjgl.glfw.GLFW;
 
 import java.util.List;

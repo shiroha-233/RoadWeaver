@@ -1,7 +1,7 @@
 package net.shiroha233.roadweaver.pathfinding.impl;
 
 import net.minecraft.core.BlockPos;
-import net.shiroha233.roadweaver.pathfinding.terrain.PathTerrainField;
+import net.shiroha233.roadweaver.terrain.PathTerrainField;
 
 import static net.shiroha233.roadweaver.pathfinding.impl.PathfindingHelper.heightSampler;
 

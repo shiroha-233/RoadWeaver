@@ -26,9 +26,6 @@ tasks.withType(Test).configureEach {
  
 sourceSets {
     main {
-        java {
-            exclude 'net/shiroha233/roadweaver/client/gui/**'
-        }
         resources {
             exclude 'pack.mcmeta'
         }

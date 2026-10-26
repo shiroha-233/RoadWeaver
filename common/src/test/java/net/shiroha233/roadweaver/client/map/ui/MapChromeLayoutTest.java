@@ -3,6 +3,7 @@ package net.shiroha233.roadweaver.client.map.ui;
 
 import net.shiroha233.roadweaver.client.map.render.MapDockAction;
 import net.shiroha233.roadweaver.client.map.render.MapDockRenderer;
+import net.shiroha233.roadweaver.client.ui.Rect;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;

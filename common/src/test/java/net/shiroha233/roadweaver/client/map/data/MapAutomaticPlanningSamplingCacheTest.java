@@ -2,7 +2,7 @@
 package net.shiroha233.roadweaver.client.map.data;
 
 import net.minecraft.resources.ResourceLocation;
-import net.shiroha233.roadweaver.planning.terrain.AutomaticPlanningSamplingBounds;
+import net.shiroha233.roadweaver.planning.pipeline.AutomaticPlanningSamplingBounds;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 

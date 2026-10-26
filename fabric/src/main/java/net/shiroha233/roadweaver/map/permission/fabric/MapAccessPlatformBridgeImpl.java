@@ -7,7 +7,7 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.level.Level;
 import net.shiroha233.roadweaver.map.permission.MapAccessPolicy;
 import net.shiroha233.roadweaver.network.fabric.MapNetworkFabric;
-import net.shiroha233.roadweaver.persistence.attachments.WorldDataAttachment;
+import net.shiroha233.roadweaver.persistence.fabric.WorldDataAttachment;
 
 public final class MapAccessPlatformBridgeImpl {
     private MapAccessPlatformBridgeImpl() {

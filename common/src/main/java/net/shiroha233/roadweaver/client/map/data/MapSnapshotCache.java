@@ -7,6 +7,8 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
+import net.shiroha233.roadweaver.map.data.MapSnapshot;
+import net.shiroha233.roadweaver.map.data.MapSnapshotPatch;
 
 /**
  * 地图快照缓存 - 按存档隔离的线程安全缓存管理

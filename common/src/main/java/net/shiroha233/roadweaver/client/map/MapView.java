@@ -1,7 +1,7 @@
 package net.shiroha233.roadweaver.client.map;
 
 import net.minecraft.client.Minecraft;
-import net.shiroha233.roadweaver.client.map.data.MapSnapshot;
+import net.shiroha233.roadweaver.map.data.MapSnapshot;
 
 /**
  * 地图视图管理

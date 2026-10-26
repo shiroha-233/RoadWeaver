@@ -1,8 +1,8 @@
 /* 文件职责：验证精确样本文件存储的稀疏回写、合并恢复、损坏隔离与命名空间清理。 */
 package net.shiroha233.roadweaver.persistence.files;
 
-import net.shiroha233.roadweaver.pathfinding.cache.AccurateHeightChunk;
-import net.shiroha233.roadweaver.pathfinding.cache.AccurateHeightSample;
+import net.shiroha233.roadweaver.terrain.accurate.AccurateHeightChunk;
+import net.shiroha233.roadweaver.terrain.accurate.AccurateHeightSample;
 import net.shiroha233.roadweaver.persistence.WorldgenFingerprint;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;

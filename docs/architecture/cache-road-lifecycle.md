@@ -1,5 +1,12 @@
 # 缓存与道路生命周期约定
 
+## 包职责
+
+`terrain/` 是地形采样的唯一边界：`terrain` 放采样契约与顶层缓存，`terrain/accurate` 和
+`terrain/coarse` 放两档采样实现与区域视图，`terrain/opencl` 只放 GPU 后端。`planning/pipeline`
+负责选择采样模式并驱动这些实现；`pathfinding` 只消费 `PathTerrainField`，不接触采样实现。
+地图瓦片的服务端写盘在 `map/tile/writer`，坐标与存储在 `map/tile/core`、`map/tile/storage`。
+
 ## 数据所有权
 
 | 数据 | 权威来源 | 内存作用域 | 释放 / 失效入口 |

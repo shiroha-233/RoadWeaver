@@ -4,7 +4,7 @@ import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
 import net.shiroha233.roadweaver.client.map.MapTheme;
-import net.shiroha233.roadweaver.client.map.ui.Rect;
+import net.shiroha233.roadweaver.client.ui.Rect;
 
 import java.util.EnumMap;
 import java.util.EnumSet;

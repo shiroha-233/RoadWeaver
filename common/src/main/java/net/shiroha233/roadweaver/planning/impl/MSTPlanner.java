@@ -3,7 +3,7 @@ package net.shiroha233.roadweaver.planning.impl;
 import net.minecraft.core.BlockPos;
 import net.shiroha233.roadweaver.core.model.StructureConnection;
 import net.shiroha233.roadweaver.planning.NetworkPlanner;
-import net.shiroha233.roadweaver.planning.PlanningUtils;
+import net.shiroha233.roadweaver.util.PlanningUtils;
 
 import java.util.ArrayList;
 import java.util.HashSet;

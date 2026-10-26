@@ -3,7 +3,7 @@ package net.shiroha233.roadweaver.mixin.neoforge;
 import net.minecraft.world.level.levelgen.feature.BambooFeature;
 import net.minecraft.world.level.levelgen.feature.FeaturePlaceContext;
 import net.minecraft.world.level.levelgen.feature.configurations.ProbabilityFeatureConfiguration;
-import net.shiroha233.roadweaver.persistence.RoadPositionQuery;
+import net.shiroha233.roadweaver.worldgen.road.RoadPositionQuery;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;

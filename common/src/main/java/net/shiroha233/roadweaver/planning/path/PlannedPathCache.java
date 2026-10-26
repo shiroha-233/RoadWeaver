@@ -18,6 +18,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import net.shiroha233.roadweaver.core.model.PlannedPathKey;
 
 /**
  * 持久路径仓库的进程内前台。

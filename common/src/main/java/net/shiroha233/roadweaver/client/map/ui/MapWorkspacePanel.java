@@ -7,12 +7,13 @@ import net.minecraft.network.chat.Component;
 import net.shiroha233.roadweaver.client.map.MapTheme;
 import net.shiroha233.roadweaver.client.map.data.ClientMapNotes;
 import net.shiroha233.roadweaver.client.map.data.MapFilterState;
-import net.shiroha233.roadweaver.client.map.data.MapSnapshot;
+import net.shiroha233.roadweaver.map.data.MapSnapshot;
 import net.shiroha233.roadweaver.client.map.render.MapDockAction;
 import net.shiroha233.roadweaver.client.map.render.MapDockRenderer;
+import net.shiroha233.roadweaver.client.ui.Rect;
 import net.shiroha233.roadweaver.core.model.ConnectionStatus;
-import net.shiroha233.roadweaver.map.search.MapSearchResult;
-import net.shiroha233.roadweaver.map.search.MapStructureSource;
+import net.shiroha233.roadweaver.structure.MapSearchResult;
+import net.shiroha233.roadweaver.structure.MapStructureSource;
 
 import java.util.ArrayList;
 import java.util.EnumMap;

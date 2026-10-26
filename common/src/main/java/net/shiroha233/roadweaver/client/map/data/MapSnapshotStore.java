@@ -1,18 +1,21 @@
 package net.shiroha233.roadweaver.client.map.data;
 
 import net.minecraft.core.BlockPos;
-import net.shiroha233.roadweaver.client.map.MapLoadPhase;
+import net.shiroha233.roadweaver.map.data.MapLoadPhase;
 import net.shiroha233.roadweaver.client.map.MapViewportController;
 import net.shiroha233.roadweaver.core.model.ConnectionStatus;
 import net.shiroha233.roadweaver.core.model.StructureConnection;
 import net.shiroha233.roadweaver.core.model.StructureInfo;
-import net.shiroha233.roadweaver.map.search.MapStructureSource;
+import net.shiroha233.roadweaver.structure.MapStructureSource;
 
 import java.util.ArrayList;
 import java.util.EnumMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import net.shiroha233.roadweaver.map.data.MapSnapshot;
+import net.shiroha233.roadweaver.map.data.MapSnapshotPatch;
+import net.shiroha233.roadweaver.map.data.RequestRect;
 
 /**
  * 客户端地图数据仓库。
@@ -25,7 +28,7 @@ public final class MapSnapshotStore {
     private final LinkedHashMap<Long, Integer> structureSourcesByPos = new LinkedHashMap<>();
     private final LinkedHashMap<ConnectionKey, StructureConnection> connectionsByKey = new LinkedHashMap<>();
     private final LinkedHashMap<Long, List<BlockPos>> roadsByKey = new LinkedHashMap<>();
-    private final EnumMap<MapLoadPhase, List<MapViewportController.RequestRect>> loadedRects = new EnumMap<>(MapLoadPhase.class);
+    private final EnumMap<MapLoadPhase, List<RequestRect>> loadedRects = new EnumMap<>(MapLoadPhase.class);
 
     public MapSnapshotStore() {
         for (MapLoadPhase phase : MapLoadPhase.values()) {
@@ -40,7 +43,7 @@ public final class MapSnapshotStore {
     }
 
     public synchronized void merge(MapLoadPhase phase,
-                                   MapViewportController.RequestRect loadedRect,
+                                   RequestRect loadedRect,
                                    MapSnapshot snapshot) {
         mergeData(snapshot);
         markLoaded(phase, loadedRect);
@@ -84,24 +87,24 @@ public final class MapSnapshotStore {
         return new MapSnapshot(structures, connections, infos, roads, sources);
     }
 
-    public synchronized List<MapViewportController.RequestRect> loadedRects(MapLoadPhase phase) {
-        List<MapViewportController.RequestRect> rects = loadedRects.get(phase);
+    public synchronized List<RequestRect> loadedRects(MapLoadPhase phase) {
+        List<RequestRect> rects = loadedRects.get(phase);
         if (rects == null || rects.isEmpty()) return List.of();
         return new ArrayList<>(rects);
     }
 
-    public synchronized void invalidate(MapLoadPhase phase, MapViewportController.RequestRect dirtyRect) {
+    public synchronized void invalidate(MapLoadPhase phase, RequestRect dirtyRect) {
         if (phase == null || dirtyRect == null) return;
-        List<MapViewportController.RequestRect> rects = loadedRects.get(phase);
+        List<RequestRect> rects = loadedRects.get(phase);
         if (rects == null || rects.isEmpty()) return;
-        ArrayList<MapViewportController.RequestRect> next = new ArrayList<>();
-        for (MapViewportController.RequestRect rect : rects) {
+        ArrayList<RequestRect> next = new ArrayList<>();
+        for (RequestRect rect : rects) {
             next.addAll(MapViewportController.subtract(rect, dirtyRect));
         }
         loadedRects.put(phase, next);
     }
 
-    public synchronized void clearRect(MapLoadPhase phase, MapViewportController.RequestRect rect) {
+    public synchronized void clearRect(MapLoadPhase phase, RequestRect rect) {
         if (phase == null || rect == null) return;
         invalidate(phase, rect);
         switch (phase) {
@@ -127,9 +130,9 @@ public final class MapSnapshotStore {
         }
     }
 
-    private void markLoaded(MapLoadPhase phase, MapViewportController.RequestRect loadedRect) {
+    private void markLoaded(MapLoadPhase phase, RequestRect loadedRect) {
         if (phase == null || loadedRect == null) return;
-        List<MapViewportController.RequestRect> rects = loadedRects.computeIfAbsent(phase, ignored -> new ArrayList<>());
+        List<RequestRect> rects = loadedRects.computeIfAbsent(phase, ignored -> new ArrayList<>());
         rects.add(loadedRect);
     }
 
@@ -271,13 +274,13 @@ public final class MapSnapshotStore {
         };
     }
 
-    private static boolean inside(BlockPos pos, MapViewportController.RequestRect rect) {
+    private static boolean inside(BlockPos pos, RequestRect rect) {
         return pos != null
                 && pos.getX() >= rect.minX() && pos.getX() <= rect.maxX()
                 && pos.getZ() >= rect.minZ() && pos.getZ() <= rect.maxZ();
     }
 
-    private static boolean intersects(StructureConnection connection, MapViewportController.RequestRect rect) {
+    private static boolean intersects(StructureConnection connection, RequestRect rect) {
         if (connection == null || connection.from() == null || connection.to() == null) return false;
         int minX = Math.min(connection.from().getX(), connection.to().getX());
         int maxX = Math.max(connection.from().getX(), connection.to().getX());
@@ -287,7 +290,7 @@ public final class MapSnapshotStore {
                 && maxZ >= rect.minZ() && minZ <= rect.maxZ();
     }
 
-    private static boolean intersects(List<BlockPos> road, MapViewportController.RequestRect rect) {
+    private static boolean intersects(List<BlockPos> road, RequestRect rect) {
         if (road == null || road.isEmpty()) return false;
         for (BlockPos pos : road) {
             if (inside(pos, rect)) return true;

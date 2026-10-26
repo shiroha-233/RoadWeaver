@@ -4,7 +4,7 @@ import net.minecraft.core.BlockPos;
 import net.shiroha233.roadweaver.core.model.ConnectionStatus;
 import net.shiroha233.roadweaver.core.model.StructureConnection;
 import net.shiroha233.roadweaver.core.model.StructureInfo;
-import net.shiroha233.roadweaver.map.search.MapStructureSource;
+import net.shiroha233.roadweaver.structure.MapStructureSource;
 
 import java.util.ArrayList;
 import java.util.EnumSet;
@@ -12,6 +12,7 @@ import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
+import net.shiroha233.roadweaver.map.data.MapSnapshot;
 
 public final class MapFilterState {
     private final EnumSet<ConnectionStatus> statuses = EnumSet.allOf(ConnectionStatus.class);

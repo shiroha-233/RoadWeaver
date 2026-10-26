@@ -3,7 +3,7 @@ package net.shiroha233.roadweaver;
 import net.shiroha233.roadweaver.config.ConfigService;
 import net.shiroha233.roadweaver.command.MapAccessCommand;
 import net.shiroha233.roadweaver.datagen.RoadWeaverDataGenerator;
-import net.shiroha233.roadweaver.features.neoforge.RoadFeaturesNeoForge;
+import net.shiroha233.roadweaver.worldgen.road.neoforge.RoadFeaturesNeoForge;
 import net.shiroha233.roadweaver.network.neoforge.MapNetworkNeoForge;
 import net.shiroha233.roadweaver.planning.neoforge.ServerPlanningHooks;
 import net.shiroha233.roadweaver.structures.neoforge.StructureRegistryNeoForge;

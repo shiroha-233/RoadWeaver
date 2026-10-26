@@ -13,10 +13,10 @@ import net.shiroha233.roadweaver.config.ConfigService;
 import net.shiroha233.roadweaver.config.ModConfig;
 import net.shiroha233.roadweaver.config.sub.TerrainSamplingMode;
 import net.shiroha233.roadweaver.generation.InitialGenManager;
-import net.shiroha233.roadweaver.generation.progress.InitialGenerationProgressSnapshot;
-import net.shiroha233.roadweaver.generation.progress.InitialGenerationStage;
-import net.shiroha233.roadweaver.planning.terrain.TerrainSamplingSessionSnapshot;
-import net.shiroha233.roadweaver.planning.terrain.TerrainSamplingSessions;
+import net.shiroha233.roadweaver.progress.InitialGenerationProgressSnapshot;
+import net.shiroha233.roadweaver.progress.InitialGenerationStage;
+import net.shiroha233.roadweaver.planning.pipeline.TerrainSamplingSessionSnapshot;
+import net.shiroha233.roadweaver.planning.pipeline.TerrainSamplingSessions;
 
 import java.util.ArrayList;
 import java.util.List;

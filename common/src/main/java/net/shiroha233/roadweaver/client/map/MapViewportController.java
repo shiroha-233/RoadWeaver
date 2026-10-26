@@ -4,9 +4,10 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
-import net.shiroha233.roadweaver.client.map.data.MapSnapshot;
+import net.shiroha233.roadweaver.map.data.MapSnapshot;
 import net.shiroha233.roadweaver.client.map.data.MapSnapshotCache;
 import net.shiroha233.roadweaver.client.map.tile.SingleplayerTerrainTileManager;
+import net.shiroha233.roadweaver.map.data.RequestRect;
 import net.shiroha233.roadweaver.map.tile.core.MapTileAoi;
 import net.shiroha233.roadweaver.map.tile.core.MapTileAoiLocator;
 
@@ -21,30 +22,6 @@ public final class MapViewportController {
     private static final int SNAPSHOT_PADDING_BLOCKS = 0;
 
     private MapViewportController() {}
-
-    public record RequestRect(int minX, int minZ, int maxX, int maxZ) {
-        public RequestRect {
-            if (maxX < minX || maxZ < minZ) {
-                throw new IllegalArgumentException("invalid request rect");
-            }
-        }
-
-        public boolean contains(RequestRect other) {
-            return other != null
-                    && other.minX >= minX
-                    && other.maxX <= maxX
-                    && other.minZ >= minZ
-                    && other.maxZ <= maxZ;
-        }
-
-        public boolean intersects(RequestRect other) {
-            return other != null
-                    && maxX >= other.minX
-                    && minX <= other.maxX
-                    && maxZ >= other.minZ
-                    && minZ <= other.maxZ;
-        }
-    }
 
     public static RequestRect currentRequestRect(MapView view) {
         return new RequestRect(

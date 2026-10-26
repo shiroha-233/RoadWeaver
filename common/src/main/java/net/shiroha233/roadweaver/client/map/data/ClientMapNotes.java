@@ -3,8 +3,8 @@ package net.shiroha233.roadweaver.client.map.data;
 import net.minecraft.core.BlockPos;
 import net.minecraft.client.Minecraft;
 import net.minecraft.resources.ResourceLocation;
-import net.shiroha233.roadweaver.map.search.MapSearchResult;
-import net.shiroha233.roadweaver.map.search.MapStructureSource;
+import net.shiroha233.roadweaver.structure.MapSearchResult;
+import net.shiroha233.roadweaver.structure.MapStructureSource;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;

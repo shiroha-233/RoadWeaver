@@ -6,14 +6,14 @@ import net.shiroha233.roadweaver.config.ConfigService;
 import net.shiroha233.roadweaver.config.ModConfig;
 import net.shiroha233.roadweaver.core.model.ConnectionStatus;
 import net.shiroha233.roadweaver.core.model.StructureConnection;
-import net.shiroha233.roadweaver.generation.progress.InitialGenerationProgressSnapshot;
-import net.shiroha233.roadweaver.generation.progress.InitialGenerationProgressTracker;
-import net.shiroha233.roadweaver.generation.progress.InitialGenerationStage;
+import net.shiroha233.roadweaver.progress.InitialGenerationProgressSnapshot;
+import net.shiroha233.roadweaver.progress.InitialGenerationProgressTracker;
+import net.shiroha233.roadweaver.progress.InitialGenerationStage;
 import net.shiroha233.roadweaver.map.MapPatchService;
-import net.shiroha233.roadweaver.persistence.RoadPositionQuery;
+import net.shiroha233.roadweaver.worldgen.road.RoadPositionQuery;
 import net.shiroha233.roadweaver.persistence.WorldDataProvider;
 import net.shiroha233.roadweaver.persistence.sharded.RoadShardStorage;
-import net.shiroha233.roadweaver.planning.path.PlannedPathKey;
+import net.shiroha233.roadweaver.core.model.PlannedPathKey;
 import net.shiroha233.roadweaver.planning.RoadPlanningService;
 import net.shiroha233.roadweaver.postprocess.RoadSnapService;
 import net.shiroha233.roadweaver.runtime.ThreadPoolManager;
@@ -28,6 +28,7 @@ import java.util.concurrent.CancellationException;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 import java.util.concurrent.atomic.AtomicInteger;
+import net.shiroha233.roadweaver.persistence.ConnectionListUpdater;
 
 /**
  * 初始道路生成管理器，服务器启动时阻塞生成初始规划范围内的道路并提供进度统计
@@ -62,8 +63,8 @@ public final class InitialGenManager {
         InitialGenerationProgressTracker.reset();
         InitialGenerationProgressTracker.updateConnections(0, 0, 0, 0);
 
-        net.shiroha233.roadweaver.pathfinding.cache.TerrainSamplingStats.reset();
-        net.shiroha233.roadweaver.pathfinding.cache.AccurateSamplingStats.reset();
+        net.shiroha233.roadweaver.terrain.TerrainSamplingStats.reset();
+        net.shiroha233.roadweaver.terrain.accurate.AccurateSamplingStats.reset();
 
         RoadGenerationService.onServerStarted();
 

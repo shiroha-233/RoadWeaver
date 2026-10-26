@@ -7,9 +7,9 @@ import net.shiroha233.roadweaver.core.constants.RoadConstants;
 import net.shiroha233.roadweaver.core.model.RoadSegmentPlacement;
 import net.shiroha233.roadweaver.pathfinding.PathResult;
 import net.shiroha233.roadweaver.pathfinding.Pathfinder;
-import net.shiroha233.roadweaver.pathfinding.cache.AccurateHeightSampler;
-import net.shiroha233.roadweaver.pathfinding.cache.TerrainSamplingCache;
-import net.shiroha233.roadweaver.pathfinding.terrain.PathTerrainField;
+import net.shiroha233.roadweaver.terrain.PathTerrainField;
+import net.shiroha233.roadweaver.terrain.TerrainSamplingCache;
+import net.shiroha233.roadweaver.terrain.accurate.AccurateHeightSampler;
 
 import java.util.*;
 

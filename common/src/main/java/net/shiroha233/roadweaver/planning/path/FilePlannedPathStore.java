@@ -24,6 +24,7 @@ import java.util.Optional;
 import java.util.zip.CRC32;
 import java.util.zip.DeflaterOutputStream;
 import java.util.zip.InflaterInputStream;
+import net.shiroha233.roadweaver.core.model.PlannedPathKey;
 
 /**
  * 每个规范化端点对对应一个原子替换文件。

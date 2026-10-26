@@ -6,10 +6,10 @@ import net.shiroha233.roadweaver.map.tile.core.MapTileLayer;
 import net.shiroha233.roadweaver.map.tile.core.MapTileRect;
 import net.shiroha233.roadweaver.map.tile.core.MapTileScheme;
 import net.shiroha233.roadweaver.map.tile.storage.ServerMapTileStorage;
-import net.shiroha233.roadweaver.pathfinding.cache.TerrainSamplingCache;
-import net.shiroha233.roadweaver.pathfinding.terrain.region.AccurateTerrainPngWriter;
-import net.shiroha233.roadweaver.pathfinding.terrain.region.AccurateTerrainRegion;
-import net.shiroha233.roadweaver.pathfinding.terrain.region.AccurateTerrainRegionSampler;
+import net.shiroha233.roadweaver.terrain.TerrainSamplingCache;
+import net.shiroha233.roadweaver.map.tile.writer.AccurateTerrainPngWriter;
+import net.shiroha233.roadweaver.terrain.accurate.AccurateTerrainRegion;
+import net.shiroha233.roadweaver.terrain.accurate.AccurateTerrainRegionSampler;
 
 import java.util.Optional;
 

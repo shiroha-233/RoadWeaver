@@ -14,6 +14,7 @@ import java.util.Collections;
 import java.util.IdentityHashMap;
 import java.util.List;
 import java.util.Map;
+import net.shiroha233.roadweaver.core.model.PlannedPathKey;
 
 /** World-scoped, opt-in capture of actual pathfinding nodes, including paths already converted to roads. */
 public final class RawPathDebugService {

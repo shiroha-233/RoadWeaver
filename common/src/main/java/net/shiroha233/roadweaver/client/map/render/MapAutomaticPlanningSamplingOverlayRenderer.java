@@ -4,7 +4,7 @@ import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
 import net.shiroha233.roadweaver.client.map.MapView;
-import net.shiroha233.roadweaver.planning.terrain.AutomaticPlanningSamplingBounds;
+import net.shiroha233.roadweaver.planning.pipeline.AutomaticPlanningSamplingBounds;
 
 import java.util.List;
 

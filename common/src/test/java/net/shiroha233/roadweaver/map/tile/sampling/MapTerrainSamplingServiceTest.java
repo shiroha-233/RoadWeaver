@@ -3,9 +3,9 @@ package net.shiroha233.roadweaver.map.tile.sampling;
 
 import net.minecraft.resources.ResourceLocation;
 import net.shiroha233.roadweaver.config.sub.TerrainSamplingMode;
-import net.shiroha233.roadweaver.pathfinding.terrain.region.AccurateRegionBounds;
-import net.shiroha233.roadweaver.pathfinding.terrain.region.CoarseRegionBounds;
-import net.shiroha233.roadweaver.planning.terrain.TerrainSamplingSessionSnapshot;
+import net.shiroha233.roadweaver.terrain.accurate.AccurateRegionBounds;
+import net.shiroha233.roadweaver.terrain.coarse.CoarseRegionBounds;
+import net.shiroha233.roadweaver.planning.pipeline.TerrainSamplingSessionSnapshot;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;

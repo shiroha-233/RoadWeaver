@@ -1,8 +1,8 @@
 package net.shiroha233.roadweaver.persistence.files;
 
 import net.minecraft.server.level.ServerLevel;
-import net.shiroha233.roadweaver.pathfinding.terrain.region.CoarseTerrainTile;
-import net.shiroha233.roadweaver.pathfinding.terrain.region.CoarseTerrainTileKey;
+import net.shiroha233.roadweaver.terrain.coarse.CoarseTerrainTile;
+import net.shiroha233.roadweaver.terrain.coarse.CoarseTerrainTileKey;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

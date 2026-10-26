@@ -12,10 +12,10 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.level.Level;
 import net.shiroha233.roadweaver.client.map.data.ClientMapNotes;
-import net.shiroha233.roadweaver.client.map.data.MapDataCollector;
-import net.shiroha233.roadweaver.client.map.data.MapSnapshot;
+import net.shiroha233.roadweaver.map.data.MapDataCollector;
+import net.shiroha233.roadweaver.map.data.MapSnapshot;
 import net.shiroha233.roadweaver.client.map.data.MapSnapshotCache;
-import net.shiroha233.roadweaver.client.map.data.MapSnapshotPatch;
+import net.shiroha233.roadweaver.map.data.MapSnapshotPatch;
 import net.shiroha233.roadweaver.client.map.data.MapSnapshotStore;
 import net.shiroha233.roadweaver.client.map.data.MapAutomaticPlanningSamplingCache;
 import net.shiroha233.roadweaver.client.map.interaction.MapInteraction;
@@ -33,7 +33,7 @@ import net.shiroha233.roadweaver.client.map.tile.SingleplayerTerrainTileManager;
 import net.shiroha233.roadweaver.client.map.ui.ContextMenu;
 import net.shiroha233.roadweaver.client.map.ui.MapWorkspacePanel;
 import net.shiroha233.roadweaver.client.map.ui.NoteEditScreen;
-import net.shiroha233.roadweaver.client.map.ui.SimpleTextInputScreen;
+import net.shiroha233.roadweaver.client.ui.SimpleTextInputScreen;
 import net.shiroha233.roadweaver.core.model.ConnectionStatus;
 import net.shiroha233.roadweaver.core.model.StructureConnection;
 import net.shiroha233.roadweaver.map.permission.MapAccessService;
@@ -41,15 +41,15 @@ import net.shiroha233.roadweaver.map.tile.core.MapTileLayer;
 import net.shiroha233.roadweaver.map.tile.sampling.MapSamplingBounds;
 import net.shiroha233.roadweaver.map.tile.sampling.MapSamplingSnapshot;
 import net.shiroha233.roadweaver.map.tile.sampling.MapTerrainSamplingService;
-import net.shiroha233.roadweaver.network.ClientNetBridge;
-import net.shiroha233.roadweaver.map.search.MapSearchResult;
-import net.shiroha233.roadweaver.map.search.MapStructureSearchService;
+import net.shiroha233.roadweaver.network.bridge.ClientNetBridge;
+import net.shiroha233.roadweaver.structure.MapSearchResult;
+import net.shiroha233.roadweaver.structure.MapStructureSearchService;
 import net.shiroha233.roadweaver.config.sub.TerrainSamplingMode;
-import net.shiroha233.roadweaver.planning.terrain.TerrainSamplingSessionSnapshot;
-import net.shiroha233.roadweaver.planning.terrain.TerrainSamplingSessions;
-import net.shiroha233.roadweaver.planning.terrain.AutomaticPlanningSamplingActivities;
-import net.shiroha233.roadweaver.planning.terrain.AutomaticPlanningSamplingBounds;
-import net.shiroha233.roadweaver.util.ComputeService;
+import net.shiroha233.roadweaver.planning.pipeline.TerrainSamplingSessionSnapshot;
+import net.shiroha233.roadweaver.planning.pipeline.TerrainSamplingSessions;
+import net.shiroha233.roadweaver.planning.pipeline.AutomaticPlanningSamplingActivities;
+import net.shiroha233.roadweaver.planning.pipeline.AutomaticPlanningSamplingBounds;
+import net.shiroha233.roadweaver.runtime.ComputeService;
 
 import java.util.ArrayList;
 import java.util.EnumSet;
@@ -58,6 +58,8 @@ import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 
 import org.lwjgl.glfw.GLFW;
+import net.shiroha233.roadweaver.map.data.MapLoadPhase;
+import net.shiroha233.roadweaver.map.data.RequestRect;
 
 /**
  * 道路地图界面
@@ -481,7 +483,7 @@ public class RoadMapScreen extends Screen implements MapInputHandler.Callbacks {
                 invalidateFilteredSnapshot();
             }
             case SOURCE_FILTER -> {
-                filterState.toggleSource((net.shiroha233.roadweaver.map.search.MapStructureSource) hit.value());
+                filterState.toggleSource((net.shiroha233.roadweaver.structure.MapStructureSource) hit.value());
                 invalidateFilteredSnapshot();
             }
             case TYPE_FILTER -> {
@@ -570,7 +572,7 @@ public class RoadMapScreen extends Screen implements MapInputHandler.Callbacks {
     }
 
     private void refreshCurrentView() {
-        MapViewportController.RequestRect rect = MapViewportController.currentRequestRect(view);
+        RequestRect rect = MapViewportController.currentRequestRect(view);
         for (MapLoadPhase phase : MapLoadPhase.values()) {
             snapshotStore.clearRect(phase, rect);
         }
@@ -634,7 +636,7 @@ public class RoadMapScreen extends Screen implements MapInputHandler.Callbacks {
         Minecraft mc = this.minecraft;
         if (mc == null) return;
 
-        MapViewportController.RequestRect requestRect = MapViewportController.currentRequestRect(view);
+        RequestRect requestRect = MapViewportController.currentRequestRect(view);
         currentDimensionId = MapViewportController.syncDimensionAndRestoreCache(mc, currentDimensionId, cached -> {
             snapshotStore = MapSnapshotCache.store(mc.level.dimension().location());
             this.snapshot = snapshotStore.snapshot();
@@ -650,11 +652,11 @@ public class RoadMapScreen extends Screen implements MapInputHandler.Callbacks {
         }
         currentDimensionId = did;
 
-        List<MapViewportController.RequestRect> structureRects = MapViewportController.prioritizeMissingRects(
+        List<RequestRect> structureRects = MapViewportController.prioritizeMissingRects(
                 requestRect, snapshotStore.loadedRects(MapLoadPhase.STRUCTURES));
-        List<MapViewportController.RequestRect> roadRects = MapViewportController.prioritizeMissingRects(
+        List<RequestRect> roadRects = MapViewportController.prioritizeMissingRects(
                 requestRect, snapshotStore.loadedRects(MapLoadPhase.ROADS));
-        List<MapViewportController.RequestRect> connectionRects = MapViewportController.prioritizeMissingRects(
+        List<RequestRect> connectionRects = MapViewportController.prioritizeMissingRects(
                 requestRect, snapshotStore.loadedRects(MapLoadPhase.CONNECTIONS));
         List<MapLoadSession.ResponseRequest> requests;
         if (!structureRects.isEmpty()) {
@@ -719,7 +721,7 @@ public class RoadMapScreen extends Screen implements MapInputHandler.Callbacks {
     }
 
     private void startMapSampling(ServerLevel level) {
-        MapViewportController.RequestRect rect = MapViewportController.currentRequestRect(view);
+        RequestRect rect = MapViewportController.currentRequestRect(view);
         MapTerrainSamplingService.StartResult result = mapSampling.start(
                 level,
                 new MapSamplingBounds(rect.minX(), rect.minZ(), rect.maxX(), rect.maxZ()));
@@ -748,7 +750,7 @@ public class RoadMapScreen extends Screen implements MapInputHandler.Callbacks {
 
     private void refreshStructuresAfterSampling(MapSamplingBounds bounds) {
         if (bounds == null || currentDimensionId == null) return;
-        MapViewportController.RequestRect sampledRect = new MapViewportController.RequestRect(
+        RequestRect sampledRect = new RequestRect(
                 bounds.minX(), bounds.minZ(), bounds.maxX(), bounds.maxZ());
         snapshotStore.clearRect(MapLoadPhase.STRUCTURES, sampledRect);
         snapshot = snapshotStore.snapshot();
@@ -824,7 +826,7 @@ public class RoadMapScreen extends Screen implements MapInputHandler.Callbacks {
         if (loadSession == null || !loadSession.accepts(requestSeq, dimensionId)) return;
 
         MapLoadSession.ResponseRequest request = loadSession.requestAt(responseIndex);
-        MapViewportController.RequestRect loadedRect = request != null ? request.rect() : null;
+        RequestRect loadedRect = request != null ? request.rect() : null;
         MapLoadPhase loadedPhase = request != null ? request.phase() : phase;
 
         snapshotStore.merge(loadedPhase, loadedRect, snapshot);
@@ -844,7 +846,7 @@ public class RoadMapScreen extends Screen implements MapInputHandler.Callbacks {
         ResourceLocation dimensionId = level.dimension().location();
         for (int responseIndex = 0; responseIndex < requests.size(); responseIndex++) {
             MapLoadSession.ResponseRequest request = requests.get(responseIndex);
-            MapViewportController.RequestRect rect = request.rect();
+            RequestRect rect = request.rect();
             scheduleSingleplayerPhase(mc, requestSeq, dimensionId, request.phase(), responseIndex,
                     () -> buildSnapshotForPhase(level, request.phase(), rect));
         }
@@ -852,7 +854,7 @@ public class RoadMapScreen extends Screen implements MapInputHandler.Callbacks {
 
     private MapSnapshot buildSnapshotForPhase(ServerLevel level,
                                              MapLoadPhase phase,
-                                             MapViewportController.RequestRect rect) {
+                                             RequestRect rect) {
         return switch (phase) {
             case STRUCTURES -> MapDataCollector.buildStructuresSnapshot(level, rect.minX(), rect.minZ(), rect.maxX(), rect.maxZ());
             case ROADS -> MapDataCollector.buildRoadsSnapshot(level, rect.minX(), rect.minZ(), rect.maxX(), rect.maxZ());
@@ -878,7 +880,7 @@ public class RoadMapScreen extends Screen implements MapInputHandler.Callbacks {
                                             List<MapLoadSession.ResponseRequest> requests) {
         for (int responseIndex = 0; responseIndex < requests.size(); responseIndex++) {
             MapLoadSession.ResponseRequest request = requests.get(responseIndex);
-            MapViewportController.RequestRect rect = request.rect();
+            RequestRect rect = request.rect();
             ClientNetBridge.requestSnapshot(requestSeq, dimensionId, request.phase(), responseIndex,
                     rect.minX(), rect.minZ(), rect.maxX(), rect.maxZ());
         }

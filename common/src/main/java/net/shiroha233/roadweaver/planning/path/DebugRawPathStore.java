@@ -24,6 +24,7 @@ import java.util.UUID;
 import java.util.zip.CRC32;
 import java.util.zip.DeflaterOutputStream;
 import java.util.zip.InflaterInputStream;
+import net.shiroha233.roadweaver.core.model.PlannedPathKey;
 
 /** Optional, per-connection debug data. Headers contain bounds so viewport queries need not decompress distant paths. */
 final class DebugRawPathStore {

@@ -3,10 +3,10 @@ package net.shiroha233.roadweaver.client.map.render;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
-import net.shiroha233.roadweaver.client.map.MapLoadPhase;
+import net.shiroha233.roadweaver.map.data.MapLoadPhase;
 import net.shiroha233.roadweaver.client.map.MapLoadSession;
 import net.shiroha233.roadweaver.client.map.MapTheme;
-import net.shiroha233.roadweaver.planning.terrain.TerrainSamplingSessionSnapshot;
+import net.shiroha233.roadweaver.planning.pipeline.TerrainSamplingSessionSnapshot;
 import net.shiroha233.roadweaver.config.sub.TerrainSamplingMode;
 
 import java.util.Locale;

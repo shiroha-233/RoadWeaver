@@ -5,6 +5,7 @@ import net.minecraft.core.BlockPos;
 import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
+import net.shiroha233.roadweaver.core.model.PlannedPathKey;
 
 /**
  * 待生成路径存储边界。

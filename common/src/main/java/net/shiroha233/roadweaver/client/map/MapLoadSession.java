@@ -1,13 +1,15 @@
 package net.shiroha233.roadweaver.client.map;
 
 import net.minecraft.resources.ResourceLocation;
-import net.shiroha233.roadweaver.client.map.data.MapSnapshot;
+import net.shiroha233.roadweaver.map.data.MapSnapshot;
 
 import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
+import net.shiroha233.roadweaver.map.data.MapLoadPhase;
+import net.shiroha233.roadweaver.map.data.RequestRect;
 
 /**
  * 地图加载会话。
@@ -90,10 +92,10 @@ public final class MapLoadSession {
 
     private record ResponseMarker(MapLoadPhase phase, int responseIndex) {}
 
-    public record ResponseRequest(MapLoadPhase phase, MapViewportController.RequestRect rect) {
-        public static List<ResponseRequest> fromRects(List<MapViewportController.RequestRect> structures,
-                                                      List<MapViewportController.RequestRect> roads,
-                                                      List<MapViewportController.RequestRect> connections) {
+    public record ResponseRequest(MapLoadPhase phase, RequestRect rect) {
+        public static List<ResponseRequest> fromRects(List<RequestRect> structures,
+                                                      List<RequestRect> roads,
+                                                      List<RequestRect> connections) {
             ArrayList<ResponseRequest> out = new ArrayList<>();
             append(out, MapLoadPhase.STRUCTURES, structures);
             append(out, MapLoadPhase.ROADS, roads);
@@ -103,9 +105,9 @@ public final class MapLoadSession {
 
         private static void append(ArrayList<ResponseRequest> out,
                                    MapLoadPhase phase,
-                                   List<MapViewportController.RequestRect> rects) {
+                                   List<RequestRect> rects) {
             if (rects == null || rects.isEmpty()) return;
-            for (MapViewportController.RequestRect rect : rects) {
+            for (RequestRect rect : rects) {
                 if (rect != null) out.add(new ResponseRequest(phase, rect));
             }
         }

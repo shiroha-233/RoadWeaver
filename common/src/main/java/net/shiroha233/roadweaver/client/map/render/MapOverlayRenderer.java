@@ -7,7 +7,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.shiroha233.roadweaver.client.map.MapInputHandler;
 import net.shiroha233.roadweaver.client.map.MapTheme;
 import net.shiroha233.roadweaver.client.map.MapView;
-import net.shiroha233.roadweaver.client.map.data.MapSnapshot;
+import net.shiroha233.roadweaver.map.data.MapSnapshot;
 
 /**
  * 地图前景叠加层绘制。

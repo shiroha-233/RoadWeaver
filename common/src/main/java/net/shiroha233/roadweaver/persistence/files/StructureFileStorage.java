@@ -7,7 +7,7 @@ import net.minecraft.server.level.ServerLevel;
 import net.shiroha233.roadweaver.core.model.ConnectionStatus;
 import net.shiroha233.roadweaver.core.model.StructureConnection;
 import net.shiroha233.roadweaver.core.model.StructureInfo;
-import net.shiroha233.roadweaver.planning.path.PlannedPathKey;
+import net.shiroha233.roadweaver.core.model.PlannedPathKey;
 import net.shiroha233.roadweaver.core.model.StructureLocationData;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

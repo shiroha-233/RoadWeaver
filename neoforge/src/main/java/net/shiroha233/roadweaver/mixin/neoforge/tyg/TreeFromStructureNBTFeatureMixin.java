@@ -1,7 +1,7 @@
 package net.shiroha233.roadweaver.mixin.neoforge.tyg;
 
 import net.minecraft.world.level.levelgen.feature.FeaturePlaceContext;
-import net.shiroha233.roadweaver.persistence.RoadPositionQuery;
+import net.shiroha233.roadweaver.worldgen.road.RoadPositionQuery;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Pseudo;
 import org.spongepowered.asm.mixin.injection.At;

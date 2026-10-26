@@ -11,7 +11,7 @@ import net.shiroha233.roadweaver.config.ModConfig;
 import net.shiroha233.roadweaver.config.PresetService;
 import net.shiroha233.roadweaver.config.sub.*;
 import net.shiroha233.roadweaver.core.constants.RoadConstants;
-import net.shiroha233.roadweaver.pathfinding.cache.opencl.OpenCLDevicePreference;
+import net.shiroha233.roadweaver.terrain.opencl.OpenCLDevicePreference;
 
 import java.util.Locale;
 

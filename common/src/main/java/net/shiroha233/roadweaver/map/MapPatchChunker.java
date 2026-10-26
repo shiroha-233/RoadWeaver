@@ -1,7 +1,7 @@
 package net.shiroha233.roadweaver.map;
 
 import net.minecraft.core.BlockPos;
-import net.shiroha233.roadweaver.client.map.data.MapSnapshotPatch;
+import net.shiroha233.roadweaver.map.data.MapSnapshotPatch;
 import net.shiroha233.roadweaver.core.model.StructureConnection;
 import net.shiroha233.roadweaver.core.model.StructureInfo;
 import org.slf4j.Logger;
@@ -15,7 +15,7 @@ import java.util.Map;
 /**
  * 地图 patch 分片器。
  *
- * <p>分片限额必须落在 {@link net.shiroha233.roadweaver.network.MapSnapshotCodec}#readPatch
+ * <p>分片限额必须落在 {@link net.shiroha233.roadweaver.network.payload.MapSnapshotCodec}#readPatch
  * 的解码限额内，并给原版 1MB 客户端自定义包体积留出余量；超限的包会被客户端解码器直接
  * 拒绝并断开连接。分片按序发送，客户端按序增量合并，最终结果与单包一致。</p>
  */
