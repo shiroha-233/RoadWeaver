@@ -3,8 +3,8 @@ package net.shiroha233.roadweaver.structures.precompute;
 
 import net.minecraft.core.Holder;
 import net.minecraft.world.level.biome.Biome;
-import net.shiroha233.roadweaver.pathfinding.terrain.region.AccurateRegionBounds;
-import net.shiroha233.roadweaver.pathfinding.terrain.region.AccurateTerrainRegion;
+import net.shiroha233.roadweaver.terrain.accurate.AccurateRegionBounds;
+import net.shiroha233.roadweaver.terrain.accurate.AccurateTerrainRegion;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;

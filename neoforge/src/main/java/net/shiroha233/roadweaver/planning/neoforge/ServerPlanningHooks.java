@@ -12,7 +12,7 @@ import net.neoforged.neoforge.event.level.ChunkEvent;
 import net.neoforged.neoforge.event.level.LevelEvent;
 import net.neoforged.neoforge.event.tick.ServerTickEvent;
 import net.shiroha233.roadweaver.config.structure.StructureDiscoveryService;
-import net.shiroha233.roadweaver.features.path.decoration.text.SignTextService;
+import net.shiroha233.roadweaver.worldgen.road.decoration.text.SignTextService;
 import net.shiroha233.roadweaver.generation.IdleRoadGenerationService;
 import net.shiroha233.roadweaver.generation.InitialGenManager;
 import net.shiroha233.roadweaver.generation.RoadGenerationService;

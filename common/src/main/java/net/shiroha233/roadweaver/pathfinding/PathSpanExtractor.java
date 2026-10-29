@@ -5,10 +5,10 @@ import net.minecraft.server.level.ServerLevel;
 import net.shiroha233.roadweaver.core.model.RoadSegmentPlacement;
 import net.shiroha233.roadweaver.core.model.RoadSpan;
 import net.shiroha233.roadweaver.core.model.SpanType;
-import net.shiroha233.roadweaver.pathfinding.cache.AccurateHeightSampler;
-import net.shiroha233.roadweaver.pathfinding.cache.AccurateHeightSample;
-import net.shiroha233.roadweaver.pathfinding.cache.TerrainSamplingCache;
-import net.shiroha233.roadweaver.pathfinding.terrain.PathTerrainField;
+import net.shiroha233.roadweaver.terrain.accurate.AccurateHeightSampler;
+import net.shiroha233.roadweaver.terrain.accurate.AccurateHeightSample;
+import net.shiroha233.roadweaver.terrain.TerrainSamplingCache;
+import net.shiroha233.roadweaver.terrain.PathTerrainField;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -4,13 +4,13 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.shiroha233.roadweaver.core.constants.RoadConstants;
 import net.shiroha233.roadweaver.core.model.RoadSegmentPlacement;
-import net.shiroha233.roadweaver.pathfinding.cache.AccurateHeightSampler;
-import net.shiroha233.roadweaver.pathfinding.cache.AccurateHeightSample;
-import net.shiroha233.roadweaver.pathfinding.cache.AccuratePathHeightResolver;
-import net.shiroha233.roadweaver.pathfinding.cache.TerrainSamplingCache;
+import net.shiroha233.roadweaver.terrain.accurate.AccurateHeightSampler;
+import net.shiroha233.roadweaver.terrain.accurate.AccurateHeightSample;
+import net.shiroha233.roadweaver.terrain.AccuratePathHeightResolver;
+import net.shiroha233.roadweaver.terrain.TerrainSamplingCache;
 import net.shiroha233.roadweaver.pathfinding.impl.SplineHelper.CurveMode;
 import net.shiroha233.roadweaver.pathfinding.impl.SplineHelper.Vec2d;
-import net.shiroha233.roadweaver.pathfinding.terrain.PathTerrainField;
+import net.shiroha233.roadweaver.terrain.PathTerrainField;
 
 import java.util.*;
 

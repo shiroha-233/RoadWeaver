@@ -3,7 +3,7 @@ package net.shiroha233.roadweaver.pathfinding;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.shiroha233.roadweaver.core.model.RoadSegmentPlacement;
-import net.shiroha233.roadweaver.pathfinding.cache.AccurateHeightSampler;
+import net.shiroha233.roadweaver.terrain.accurate.AccurateHeightSampler;
 
 import java.util.ArrayList;
 import java.util.List;
