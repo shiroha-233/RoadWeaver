@@ -9,17 +9,13 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.level.Level;
 import net.shiroha233.roadweaver.config.structure.StructureDiscoveryService;
-import net.shiroha233.roadweaver.core.model.StructureConnection;
 import net.shiroha233.roadweaver.worldgen.road.decoration.text.SignTextService;
 import net.shiroha233.roadweaver.generation.IdleRoadGenerationService;
 import net.shiroha233.roadweaver.generation.InitialGenManager;
 import net.shiroha233.roadweaver.generation.RoadGenerationService;
-import net.shiroha233.roadweaver.persistence.WorldDataProvider;
 import net.shiroha233.roadweaver.planning.RoadPlanningService;
 import net.shiroha233.roadweaver.runtime.CacheManager;
 import net.shiroha233.roadweaver.runtime.ThreadPoolManager;
-
-import java.util.List;
 
 /**
  * Fabric 服务端规划钩子

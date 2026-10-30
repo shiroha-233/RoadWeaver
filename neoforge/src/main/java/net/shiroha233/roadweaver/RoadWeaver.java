@@ -3,10 +3,10 @@ package net.shiroha233.roadweaver;
 import net.shiroha233.roadweaver.config.ConfigService;
 import net.shiroha233.roadweaver.command.MapAccessCommand;
 import net.shiroha233.roadweaver.datagen.RoadWeaverDataGenerator;
-import net.shiroha233.roadweaver.worldgen.road.neoforge.RoadFeaturesNeoForge;
-import net.shiroha233.roadweaver.network.neoforge.MapNetworkNeoForge;
+import net.shiroha233.roadweaver.worldgen.road.neoforge.RoadFeatureRegistry;
+import net.shiroha233.roadweaver.network.neoforge.MapNetwork;
 import net.shiroha233.roadweaver.planning.neoforge.ServerPlanningHooks;
-import net.shiroha233.roadweaver.structures.neoforge.StructureRegistryNeoForge;
+import net.shiroha233.roadweaver.structures.neoforge.StructureRegistry;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.neoforge.common.NeoForge;
@@ -36,13 +36,13 @@ public class RoadWeaver {
         modEventBus.addListener(RoadWeaverDataGenerator::gatherData);
 
         // 注册结构类型（需要在特性注册之前）
-        StructureRegistryNeoForge.register(modEventBus);
+        StructureRegistry.register(modEventBus);
         
         // 注册 Feature
-        RoadFeaturesNeoForge.register(modEventBus);
+        RoadFeatureRegistry.register(modEventBus);
         
         // 注册网络通道
-        MapNetworkNeoForge.register(modEventBus);
+        MapNetwork.register(modEventBus);
 
         NeoForge.EVENT_BUS.addListener(this::onRegisterCommands);
         NeoForge.EVENT_BUS.addListener(this::onPlayerLoggedIn);
@@ -66,11 +66,11 @@ public class RoadWeaver {
     }
     
     private static void onClientLoggingIn(ClientPlayerNetworkEvent.LoggingIn e) {
-        net.shiroha233.roadweaver.client.map.data.MapSnapshotCache.clearNow();
+        net.shiroha233.roadweaver.client.map.cache.MapSnapshotCache.clearNow();
     }
     
     private static void onClientLoggingOut(ClientPlayerNetworkEvent.LoggingOut e) {
-        net.shiroha233.roadweaver.client.map.data.MapSnapshotCache.clearNow();
+        net.shiroha233.roadweaver.client.map.cache.MapSnapshotCache.clearNow();
     }
     
     public static Logger getLogger() {
@@ -83,13 +83,13 @@ public class RoadWeaver {
 
     private void onPlayerLoggedIn(PlayerEvent.PlayerLoggedInEvent event) {
         if (event.getEntity() instanceof net.minecraft.server.level.ServerPlayer player) {
-            MapNetworkNeoForge.syncMapAccess(player);
+            MapNetwork.syncMapAccess(player);
         }
     }
 
     private void onPermissionsChanged(PermissionsChangedEvent event) {
         if (event.getEntity() instanceof net.minecraft.server.level.ServerPlayer player) {
-            MapNetworkNeoForge.syncMapAccess(player);
+            MapNetwork.syncMapAccess(player);
         }
     }
 }

@@ -1,5 +1,5 @@
 /* 文件职责：验证客户端自动规划采样范围缓存的替换与清理行为。 */
-package net.shiroha233.roadweaver.client.map.data;
+package net.shiroha233.roadweaver.client.map.cache;
 
 import net.minecraft.resources.ResourceLocation;
 import net.shiroha233.roadweaver.planning.pipeline.AutomaticPlanningSamplingBounds;

@@ -5,10 +5,7 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.Level;
 import net.shiroha233.roadweaver.core.model.StructureConnection;
 import net.shiroha233.roadweaver.persistence.WorldDataProvider;
-import net.shiroha233.roadweaver.util.PlanningUtils;
-
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 
 /**

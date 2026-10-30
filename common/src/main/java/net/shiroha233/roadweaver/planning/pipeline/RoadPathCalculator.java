@@ -10,8 +10,6 @@ import net.shiroha233.roadweaver.core.model.ConnectionStatus;
 import net.shiroha233.roadweaver.core.model.StructureConnection;
 import net.shiroha233.roadweaver.config.sub.TerrainSamplingMode;
 import net.shiroha233.roadweaver.pathfinding.impl.PathPostProcessor;
-import net.shiroha233.roadweaver.planning.pipeline.RoadTerrainPlanningPipeline;
-import net.shiroha233.roadweaver.planning.pipeline.RoadTerrainPlanningPort;
 import net.shiroha233.roadweaver.planning.path.RawPathDebugService;
 import net.shiroha233.roadweaver.terrain.PathTerrainField;
 import net.shiroha233.roadweaver.terrain.TerrainSamplingCache;

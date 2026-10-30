@@ -1,7 +1,6 @@
 package net.shiroha233.roadweaver.map.data;
 
 import net.minecraft.core.BlockPos;
-import net.shiroha233.roadweaver.map.data.MapLoadPhase;
 import net.shiroha233.roadweaver.core.model.StructureConnection;
 import net.shiroha233.roadweaver.core.model.StructureInfo;
 

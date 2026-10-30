@@ -3,7 +3,6 @@ package net.shiroha233.roadweaver.persistence;
 import net.minecraft.server.level.ServerLevel;
 import net.shiroha233.roadweaver.core.model.ConnectionStatus;
 import net.shiroha233.roadweaver.core.model.StructureConnection;
-import net.shiroha233.roadweaver.persistence.WorldDataProvider;
 import net.shiroha233.roadweaver.util.PlanningUtils;
 
 import java.util.ArrayList;

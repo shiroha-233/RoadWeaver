@@ -17,9 +17,9 @@ import net.shiroha233.roadweaver.map.data.MapLoadPhase;
 import net.shiroha233.roadweaver.client.map.RoadMapScreen;
 import net.shiroha233.roadweaver.map.data.MapDataCollector;
 import net.shiroha233.roadweaver.map.data.MapSnapshot;
-import net.shiroha233.roadweaver.client.map.data.MapSnapshotCache;
+import net.shiroha233.roadweaver.client.map.cache.MapSnapshotCache;
 import net.shiroha233.roadweaver.map.data.MapSnapshotPatch;
-import net.shiroha233.roadweaver.client.map.data.MapAutomaticPlanningSamplingCache;
+import net.shiroha233.roadweaver.client.map.cache.MapAutomaticPlanningSamplingCache;
 import net.shiroha233.roadweaver.map.permission.MapAccessService;
 import net.shiroha233.roadweaver.network.payload.MapNetworkPayloads;
 import net.shiroha233.roadweaver.network.payload.RawPathDebugPayloads;
@@ -34,10 +34,10 @@ import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
 /** Fabric 平台网络通信实现。 */
-public final class MapNetworkFabric {
+public final class MapNetwork {
     private static boolean payloadTypesRegistered;
 
-    private MapNetworkFabric() {}
+    private MapNetwork() {}
 
     private static synchronized void registerPayloadTypes() {
         if (payloadTypesRegistered) return;

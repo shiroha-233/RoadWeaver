@@ -14,8 +14,8 @@ import net.shiroha233.roadweaver.RoadWeaver;
 import net.shiroha233.roadweaver.client.map.ClientMapAccessGuard;
 import net.shiroha233.roadweaver.client.debug.RawPathDebugOverlay;
 import net.shiroha233.roadweaver.client.map.RoadMapScreen;
-import net.shiroha233.roadweaver.client.map.data.ClientMapNotes;
-import net.shiroha233.roadweaver.client.map.data.MapSnapshotCache;
+import net.shiroha233.roadweaver.client.map.cache.ClientMapNotes;
+import net.shiroha233.roadweaver.client.map.cache.MapSnapshotCache;
 import org.lwjgl.glfw.GLFW;
 
 @EventBusSubscriber(modid = RoadWeaver.MOD_ID, value = Dist.CLIENT, bus = EventBusSubscriber.Bus.MOD)

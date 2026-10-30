@@ -1,7 +1,5 @@
 package net.shiroha233.roadweaver.runtime;
 
-import net.shiroha233.roadweaver.runtime.ThreadPoolManager;
-
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
 import java.util.function.Supplier;

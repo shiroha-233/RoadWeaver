@@ -5,7 +5,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.shiroha233.roadweaver.map.data.MapSnapshot;
-import net.shiroha233.roadweaver.client.map.data.MapSnapshotCache;
+import net.shiroha233.roadweaver.client.map.cache.MapSnapshotCache;
 import net.shiroha233.roadweaver.client.map.tile.SingleplayerTerrainTileManager;
 import net.shiroha233.roadweaver.map.data.RequestRect;
 import net.shiroha233.roadweaver.map.tile.core.MapTileAoi;

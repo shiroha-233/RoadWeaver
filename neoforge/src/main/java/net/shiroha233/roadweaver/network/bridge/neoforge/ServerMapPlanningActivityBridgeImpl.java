@@ -8,7 +8,7 @@ import net.shiroha233.roadweaver.planning.pipeline.AutomaticPlanningSamplingActi
 import net.shiroha233.roadweaver.planning.pipeline.AutomaticPlanningSamplingBounds;
 
 import java.util.List;
-import net.shiroha233.roadweaver.network.neoforge.MapNetworkNeoForge;
+import net.shiroha233.roadweaver.network.neoforge.MapNetwork;
 
 /**
  * NeoForge 自动规划采样范围同步实现。
@@ -31,7 +31,7 @@ public final class ServerMapPlanningActivityBridgeImpl {
             List<AutomaticPlanningSamplingBounds> snapshot = AutomaticPlanningSamplingActivities.snapshot(level);
             for (ServerPlayer player : server.getPlayerList().getPlayers()) {
                 if (player != null && player.serverLevel() == level) {
-                    MapNetworkNeoForge.broadcastAutomaticPlanningSampling(
+                    MapNetwork.broadcastAutomaticPlanningSampling(
                             player,
                             level.dimension().location(),
                             snapshot);

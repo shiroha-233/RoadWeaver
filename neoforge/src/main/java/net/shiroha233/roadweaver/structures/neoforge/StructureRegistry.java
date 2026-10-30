@@ -17,8 +17,8 @@ import net.shiroha233.roadweaver.structures.types.RoadsideVillageStructure;
 import net.shiroha233.roadweaver.structures.types.SpawnCabinStructure;
 
 /** NeoForge 平台结构注册。 */
-public final class StructureRegistryNeoForge {
-    private StructureRegistryNeoForge() {}
+public final class StructureRegistry {
+    private StructureRegistry() {}
     
     // 结构片段类型注册器。
     public static final DeferredRegister<StructurePieceType> STRUCTURE_PIECE_TYPES =

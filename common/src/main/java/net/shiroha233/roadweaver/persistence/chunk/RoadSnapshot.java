@@ -12,8 +12,6 @@ import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
-
 /** 查询线程只读此对象；写入时构造全新实例并通过 AtomicReference 发布。 */
 public final class RoadSnapshot {
     private static final RoadSnapshot EMPTY = new RoadSnapshot(new LinkedHashMap<>());

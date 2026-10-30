@@ -9,10 +9,6 @@ import net.minecraft.world.level.LevelSimulatedReader;
 import net.minecraft.world.level.WorldGenLevel;
 import net.shiroha233.roadweaver.config.ConfigService;
 import net.shiroha233.roadweaver.config.ModConfig;
-import net.shiroha233.roadweaver.worldgen.road.RoadChunkPlan;
-import net.shiroha233.roadweaver.worldgen.road.RoadDensityStamp;
-import net.shiroha233.roadweaver.worldgen.road.RoadWorldgenPlanCache;
-
 import java.util.List;
 
 /*

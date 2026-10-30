@@ -1,9 +1,8 @@
 /* 文件职责：验证地图快照仓库可以重新加载主动采样区域的结构数据。 */
-package net.shiroha233.roadweaver.client.map.data;
+package net.shiroha233.roadweaver.client.map.cache;
 
 import net.minecraft.core.BlockPos;
 import net.shiroha233.roadweaver.map.data.MapLoadPhase;
-import net.shiroha233.roadweaver.client.map.MapViewportController;
 import net.shiroha233.roadweaver.core.model.StructureInfo;
 import org.junit.jupiter.api.Test;
 

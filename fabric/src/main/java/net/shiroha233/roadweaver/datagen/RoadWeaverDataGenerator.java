@@ -1,8 +1,7 @@
-package net.shiroha233.roadweaver;
+package net.shiroha233.roadweaver.datagen;
 
 import net.fabricmc.fabric.api.datagen.v1.DataGeneratorEntrypoint;
 import net.fabricmc.fabric.api.datagen.v1.FabricDataGenerator;
-import net.shiroha233.roadweaver.datagen.ModWorldGenerator;
 
 /**
  * Fabric 数据生成器入口

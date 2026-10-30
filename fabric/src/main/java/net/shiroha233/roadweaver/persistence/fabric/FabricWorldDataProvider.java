@@ -5,7 +5,6 @@ import net.minecraft.server.level.ServerLevel;
 import net.shiroha233.roadweaver.core.model.StructureConnection;
 import net.shiroha233.roadweaver.core.model.StructureLocationData;
 import net.shiroha233.roadweaver.persistence.WorldDataProvider;
-import net.shiroha233.roadweaver.persistence.fabric.WorldDataAttachment;
 import net.shiroha233.roadweaver.persistence.files.StructureFileStorage;
 
 import java.util.List;

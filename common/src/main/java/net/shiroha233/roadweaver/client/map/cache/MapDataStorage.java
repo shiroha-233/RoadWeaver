@@ -1,4 +1,4 @@
-package net.shiroha233.roadweaver.client.map.data;
+package net.shiroha233.roadweaver.client.map.cache;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;

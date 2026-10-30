@@ -5,7 +5,7 @@ import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.shiroha233.roadweaver.client.map.MapView;
-import net.shiroha233.roadweaver.client.map.data.ClientMapNotes;
+import net.shiroha233.roadweaver.client.map.cache.ClientMapNotes;
 import net.shiroha233.roadweaver.map.data.MapSnapshot;
 import net.shiroha233.roadweaver.client.map.render.StructureIconRenderer;
 

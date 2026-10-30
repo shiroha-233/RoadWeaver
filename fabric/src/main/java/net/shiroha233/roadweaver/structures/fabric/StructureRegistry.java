@@ -17,8 +17,8 @@ import net.shiroha233.roadweaver.structures.types.SpawnCabinStructure;
 /**
  * Fabric 结构注册
  */
-public final class StructureRegistryFabric {
-    private StructureRegistryFabric() {}
+public final class StructureRegistry {
+    private StructureRegistry() {}
     
     public static void register() {
         registerStructurePieceTypes();

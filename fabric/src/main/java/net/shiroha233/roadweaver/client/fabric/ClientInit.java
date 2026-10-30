@@ -5,16 +5,15 @@ import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayConnectionEvents;
 import net.minecraft.client.KeyMapping;
-import net.minecraft.client.Minecraft;
 import net.shiroha233.roadweaver.client.map.ClientMapAccessGuard;
 import net.shiroha233.roadweaver.client.debug.RawPathDebugOverlay;
 import net.fabricmc.fabric.api.client.rendering.v1.WorldRenderEvents;
 import net.shiroha233.roadweaver.client.map.RoadMapScreen;
-import net.shiroha233.roadweaver.client.map.data.ClientMapNotes;
-import net.shiroha233.roadweaver.client.map.data.MapDataStorage;
-import net.shiroha233.roadweaver.client.map.data.MapSnapshotCache;
+import net.shiroha233.roadweaver.client.map.cache.ClientMapNotes;
+import net.shiroha233.roadweaver.client.map.cache.MapDataStorage;
+import net.shiroha233.roadweaver.client.map.cache.MapSnapshotCache;
 import net.shiroha233.roadweaver.client.map.tile.ClientMapTileTextureCache;
-import net.shiroha233.roadweaver.network.fabric.MapNetworkFabric;
+import net.shiroha233.roadweaver.network.fabric.MapNetwork;
 import org.lwjgl.glfw.GLFW;
 
 /**
@@ -26,7 +25,7 @@ public class ClientInit implements ClientModInitializer {
 
     @Override
     public void onInitializeClient() {
-        MapNetworkFabric.registerClientReceivers();
+        MapNetwork.registerClientReceivers();
 
         ClientPlayConnectionEvents.JOIN.register((handler, sender, client) -> {
             RawPathDebugOverlay.reset();

@@ -16,24 +16,17 @@ import net.shiroha233.roadweaver.config.ModConfig;
 import net.shiroha233.roadweaver.core.model.RoadData;
 import net.shiroha233.roadweaver.core.model.RoadSegmentPlacement;
 import net.shiroha233.roadweaver.worldgen.road.bridge.BridgeSegment;
-import net.shiroha233.roadweaver.worldgen.road.PathFeatureConfig;
 import net.shiroha233.roadweaver.worldgen.road.decoration.base.Decoration;
 import net.shiroha233.roadweaver.worldgen.road.decoration.system.DecorationExecutor;
 import net.shiroha233.roadweaver.worldgen.road.decoration.system.DecorationPlanner;
 import net.shiroha233.roadweaver.worldgen.road.bridge.BridgeRangeCalculator;
 import net.shiroha233.roadweaver.worldgen.road.bridge.BridgeSegmentPlanner;
 import net.shiroha233.roadweaver.worldgen.road.bridge.BridgeSegmentPlannerNew;
-import net.shiroha233.roadweaver.worldgen.road.SegmentPaver;
-import net.shiroha233.roadweaver.worldgen.road.StructureAvoidanceService;
 import net.shiroha233.roadweaver.planning.pipeline.BridgeTransitionAdjuster;
 import net.shiroha233.roadweaver.planning.pipeline.HeightProfileService;
 import net.shiroha233.roadweaver.worldgen.road.bridge.BuoyBuilder;
 import net.shiroha233.roadweaver.worldgen.road.bridge.BuoyMarkerPlanner;
 import net.shiroha233.roadweaver.worldgen.road.decoration.system.SkippedBridgeBankSignPlanner;
-import net.shiroha233.roadweaver.worldgen.road.RoadChunkPlan;
-import net.shiroha233.roadweaver.worldgen.road.RoadChunkSlice;
-import net.shiroha233.roadweaver.worldgen.road.RoadWorldgenPlanCache;
-
 import java.util.*;
 
 /**

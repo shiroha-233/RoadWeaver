@@ -6,7 +6,7 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.level.Level;
 import net.shiroha233.roadweaver.map.permission.MapAccessPolicy;
-import net.shiroha233.roadweaver.network.fabric.MapNetworkFabric;
+import net.shiroha233.roadweaver.network.fabric.MapNetwork;
 import net.shiroha233.roadweaver.persistence.fabric.WorldDataAttachment;
 
 public final class MapAccessPlatformBridgeImpl {
@@ -32,7 +32,7 @@ public final class MapAccessPlatformBridgeImpl {
 
     public static void syncPlayer(ServerPlayer player) {
         if (player != null) {
-            MapNetworkFabric.syncMapAccess(player);
+            MapNetwork.syncMapAccess(player);
         }
     }
 
@@ -41,7 +41,7 @@ public final class MapAccessPlatformBridgeImpl {
             return;
         }
         for (ServerPlayer player : server.getPlayerList().getPlayers()) {
-            MapNetworkFabric.syncMapAccess(player);
+            MapNetwork.syncMapAccess(player);
         }
     }
 

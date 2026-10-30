@@ -1,4 +1,4 @@
-package net.shiroha233.roadweaver.client.map.data;
+package net.shiroha233.roadweaver.client.map.cache;
 
 import net.minecraft.core.BlockPos;
 import net.shiroha233.roadweaver.map.data.MapLoadPhase;

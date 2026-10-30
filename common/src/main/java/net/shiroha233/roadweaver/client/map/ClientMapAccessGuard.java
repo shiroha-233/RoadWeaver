@@ -2,7 +2,7 @@ package net.shiroha233.roadweaver.client.map;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.chat.Component;
-import net.shiroha233.roadweaver.client.map.data.MapSnapshotCache;
+import net.shiroha233.roadweaver.client.map.cache.MapSnapshotCache;
 
 public final class ClientMapAccessGuard {
     private static volatile boolean known;

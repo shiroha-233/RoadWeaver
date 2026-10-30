@@ -1,4 +1,4 @@
-package net.shiroha233.roadweaver.client.map.data;
+package net.shiroha233.roadweaver.client.map.cache;
 
 import net.minecraft.resources.ResourceLocation;
 import net.shiroha233.roadweaver.planning.pipeline.AutomaticPlanningSamplingBounds;

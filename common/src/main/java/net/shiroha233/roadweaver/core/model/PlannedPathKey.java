@@ -1,8 +1,6 @@
 package net.shiroha233.roadweaver.core.model;
 
 import net.minecraft.core.BlockPos;
-import net.shiroha233.roadweaver.core.model.StructureConnection;
-
 import java.util.Objects;
 
 /**

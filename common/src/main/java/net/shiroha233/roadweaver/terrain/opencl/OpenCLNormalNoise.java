@@ -1,7 +1,5 @@
 package net.shiroha233.roadweaver.terrain.opencl;
 
-import java.util.List;
-
 /**
  * OpenCL 侧 NormalNoise 描述。
  */

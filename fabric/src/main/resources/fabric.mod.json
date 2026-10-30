@@ -23,6 +23,9 @@
 		],
 		"client": [
 			"net.shiroha233.roadweaver.client.fabric.ClientInit"
+		],
+		"fabric-datagen": [
+			"net.shiroha233.roadweaver.datagen.RoadWeaverDataGenerator"
 		]
 	},
 	"mixins": [

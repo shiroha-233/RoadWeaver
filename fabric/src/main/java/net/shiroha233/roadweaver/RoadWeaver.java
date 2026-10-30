@@ -6,10 +6,10 @@ import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents;
 import net.shiroha233.roadweaver.command.MapAccessCommand;
 import net.shiroha233.roadweaver.config.ConfigService;
 import net.shiroha233.roadweaver.worldgen.road.fabric.RoadFeatureRegistry;
-import net.shiroha233.roadweaver.network.fabric.MapNetworkFabric;
+import net.shiroha233.roadweaver.network.fabric.MapNetwork;
 import net.shiroha233.roadweaver.persistence.fabric.WorldDataAttachment;
 import net.shiroha233.roadweaver.planning.fabric.ServerPlanningHooks;
-import net.shiroha233.roadweaver.structures.fabric.StructureRegistryFabric;
+import net.shiroha233.roadweaver.structures.fabric.StructureRegistry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -29,7 +29,7 @@ public class RoadWeaver implements ModInitializer {
         ConfigService.load();
         LOGGER.info("Configuration loaded");
         
-        StructureRegistryFabric.register();
+        StructureRegistry.register();
         LOGGER.info("Structure types registered");
         
         RoadFeatureRegistry.register();
@@ -37,10 +37,10 @@ public class RoadWeaver implements ModInitializer {
         CommandRegistrationCallback.EVENT.register((dispatcher, registryAccess, environment) ->
                 MapAccessCommand.register(dispatcher));
         
-        MapNetworkFabric.registerServerReceivers();
+        MapNetwork.registerServerReceivers();
 
         ServerPlayConnectionEvents.JOIN.register((handler, sender, server) ->
-                MapNetworkFabric.syncMapAccess(handler.player));
+                MapNetwork.syncMapAccess(handler.player));
         
         ServerPlanningHooks.register();
     }

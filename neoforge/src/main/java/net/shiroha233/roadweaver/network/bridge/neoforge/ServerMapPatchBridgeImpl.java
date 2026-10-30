@@ -4,7 +4,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.shiroha233.roadweaver.map.data.MapSnapshotPatch;
-import net.shiroha233.roadweaver.network.neoforge.MapNetworkNeoForge;
+import net.shiroha233.roadweaver.network.neoforge.MapNetwork;
 
 /**
  * NeoForge 服务端地图 patch 推送桥接实现。
@@ -18,7 +18,7 @@ public final class ServerMapPatchBridgeImpl {
         if (server == null) return;
         for (ServerPlayer player : server.getPlayerList().getPlayers()) {
             if (player != null && player.serverLevel() == level) {
-                MapNetworkNeoForge.broadcastPatch(player, dimensionId, patch);
+                MapNetwork.broadcastPatch(player, dimensionId, patch);
             }
         }
     }

@@ -3,7 +3,7 @@ package net.shiroha233.roadweaver.map.permission.neoforge;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
 import net.shiroha233.roadweaver.map.permission.MapAccessPolicy;
-import net.shiroha233.roadweaver.network.neoforge.MapNetworkNeoForge;
+import net.shiroha233.roadweaver.network.neoforge.MapNetwork;
 
 public final class MapAccessPlatformBridgeImpl {
     private MapAccessPlatformBridgeImpl() {
@@ -19,7 +19,7 @@ public final class MapAccessPlatformBridgeImpl {
 
     public static void syncPlayer(ServerPlayer player) {
         if (player != null) {
-            MapNetworkNeoForge.syncMapAccess(player);
+            MapNetwork.syncMapAccess(player);
         }
     }
 
@@ -28,7 +28,7 @@ public final class MapAccessPlatformBridgeImpl {
             return;
         }
         for (ServerPlayer player : server.getPlayerList().getPlayers()) {
-            MapNetworkNeoForge.syncMapAccess(player);
+            MapNetwork.syncMapAccess(player);
         }
     }
 }

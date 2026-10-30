@@ -22,9 +22,9 @@ import net.shiroha233.roadweaver.map.data.MapLoadPhase;
 import net.shiroha233.roadweaver.client.map.RoadMapScreen;
 import net.shiroha233.roadweaver.map.data.MapDataCollector;
 import net.shiroha233.roadweaver.map.data.MapSnapshot;
-import net.shiroha233.roadweaver.client.map.data.MapSnapshotCache;
+import net.shiroha233.roadweaver.client.map.cache.MapSnapshotCache;
 import net.shiroha233.roadweaver.map.data.MapSnapshotPatch;
-import net.shiroha233.roadweaver.client.map.data.MapAutomaticPlanningSamplingCache;
+import net.shiroha233.roadweaver.client.map.cache.MapAutomaticPlanningSamplingCache;
 import net.shiroha233.roadweaver.map.permission.MapAccessService;
 import net.shiroha233.roadweaver.network.payload.MapNetworkPayloads;
 import net.shiroha233.roadweaver.network.payload.RawPathDebugPayloads;
@@ -39,29 +39,29 @@ import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
 /** NeoForge 平台网络通信实现。 */
-public final class MapNetworkNeoForge {
-    private MapNetworkNeoForge() {}
+public final class MapNetwork {
+    private MapNetwork() {}
 
     public static void register(IEventBus modBus) {
-        modBus.addListener(MapNetworkNeoForge::registerPayloads);
+        modBus.addListener(MapNetwork::registerPayloads);
     }
 
     private static void registerPayloads(RegisterPayloadHandlersEvent event) {
         PayloadRegistrar registrar = event.registrar(RoadWeaver.MOD_ID);
 
-        registrar.playToServer(MapNetworkPayloads.REQ_RECT, MapNetworkPayloads.MapRequestRectPayload.CODEC, MapNetworkNeoForge::handleRequestRect);
-        registrar.playToServer(MapNetworkPayloads.TP_REQ, MapNetworkPayloads.MapTeleportPayload.CODEC, MapNetworkNeoForge::handleTeleportRequest);
-        registrar.playToServer(MapNetworkPayloads.MAN_REQ, MapNetworkPayloads.MapManualConnectPayload.CODEC, MapNetworkNeoForge::handleManualConnect);
-        registrar.playToServer(MapNetworkPayloads.SEARCH_REQ, MapNetworkPayloads.MapSearchRequestPayload.CODEC, MapNetworkNeoForge::handleSearchRequest);
-        registrar.playToServer(RawPathDebugPayloads.REQUEST, RawPathDebugPayloads.Request.CODEC, MapNetworkNeoForge::handleRawPathRequest);
+        registrar.playToServer(MapNetworkPayloads.REQ_RECT, MapNetworkPayloads.MapRequestRectPayload.CODEC, MapNetwork::handleRequestRect);
+        registrar.playToServer(MapNetworkPayloads.TP_REQ, MapNetworkPayloads.MapTeleportPayload.CODEC, MapNetwork::handleTeleportRequest);
+        registrar.playToServer(MapNetworkPayloads.MAN_REQ, MapNetworkPayloads.MapManualConnectPayload.CODEC, MapNetwork::handleManualConnect);
+        registrar.playToServer(MapNetworkPayloads.SEARCH_REQ, MapNetworkPayloads.MapSearchRequestPayload.CODEC, MapNetwork::handleSearchRequest);
+        registrar.playToServer(RawPathDebugPayloads.REQUEST, RawPathDebugPayloads.Request.CODEC, MapNetwork::handleRawPathRequest);
 
-        registrar.playToClient(MapNetworkPayloads.SNAP, MapNetworkPayloads.MapSnapshotPayload.CODEC, MapNetworkNeoForge::handleSnapshot);
-        registrar.playToClient(MapNetworkPayloads.PATCH, MapNetworkPayloads.MapPatchPayload.CODEC, MapNetworkNeoForge::handlePatch);
-        registrar.playToClient(MapNetworkPayloads.AUTO_PLANNING_SAMPLING, MapNetworkPayloads.MapAutomaticPlanningSamplingPayload.CODEC, MapNetworkNeoForge::handleAutomaticPlanningSampling);
-        registrar.playToClient(MapNetworkPayloads.TP_ACK, MapNetworkPayloads.MapTeleportAckPayload.CODEC, MapNetworkNeoForge::handleTeleportAck);
-        registrar.playToClient(MapNetworkPayloads.ACCESS_SYNC, MapNetworkPayloads.MapAccessSyncPayload.CODEC, MapNetworkNeoForge::handleAccessSync);
-        registrar.playToClient(MapNetworkPayloads.SEARCH_RESP, MapNetworkPayloads.MapSearchResponsePayload.CODEC, MapNetworkNeoForge::handleSearchResponse);
-        registrar.playToClient(RawPathDebugPayloads.RESPONSE, RawPathDebugPayloads.Response.CODEC, MapNetworkNeoForge::handleRawPathResponse);
+        registrar.playToClient(MapNetworkPayloads.SNAP, MapNetworkPayloads.MapSnapshotPayload.CODEC, MapNetwork::handleSnapshot);
+        registrar.playToClient(MapNetworkPayloads.PATCH, MapNetworkPayloads.MapPatchPayload.CODEC, MapNetwork::handlePatch);
+        registrar.playToClient(MapNetworkPayloads.AUTO_PLANNING_SAMPLING, MapNetworkPayloads.MapAutomaticPlanningSamplingPayload.CODEC, MapNetwork::handleAutomaticPlanningSampling);
+        registrar.playToClient(MapNetworkPayloads.TP_ACK, MapNetworkPayloads.MapTeleportAckPayload.CODEC, MapNetwork::handleTeleportAck);
+        registrar.playToClient(MapNetworkPayloads.ACCESS_SYNC, MapNetworkPayloads.MapAccessSyncPayload.CODEC, MapNetwork::handleAccessSync);
+        registrar.playToClient(MapNetworkPayloads.SEARCH_RESP, MapNetworkPayloads.MapSearchResponsePayload.CODEC, MapNetwork::handleSearchResponse);
+        registrar.playToClient(RawPathDebugPayloads.RESPONSE, RawPathDebugPayloads.Response.CODEC, MapNetwork::handleRawPathResponse);
     }
 
     private static void handleRequestRect(MapNetworkPayloads.MapRequestRectPayload payload, IPayloadContext context) {

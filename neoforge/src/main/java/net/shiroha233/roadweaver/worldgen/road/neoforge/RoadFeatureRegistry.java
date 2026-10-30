@@ -11,8 +11,8 @@ import net.shiroha233.roadweaver.worldgen.road.PathFeatureConfig;
 /**
  * NeoForge Feature 注册：把道路收尾 Feature 挂到 oad_feature。
  */
-public final class RoadFeaturesNeoForge {
-    private RoadFeaturesNeoForge() {
+public final class RoadFeatureRegistry {
+    private RoadFeatureRegistry() {
     }
 
     public static void register(IEventBus modBus) {
