@@ -8,7 +8,6 @@ import net.minecraft.world.level.levelgen.NoiseSettings;
 import net.shiroha233.roadweaver.config.ConfigService;
 import net.shiroha233.roadweaver.terrain.api.CoarseHeightBatchRequest;
 import net.shiroha233.roadweaver.terrain.api.CoarseHeightBatchSampler;
-import net.shiroha233.roadweaver.terrain.opencl.OpenCLBridge;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -33,7 +32,6 @@ public final class OpenCLCoarseHeightBatchSampler implements CoarseHeightBatchSa
     private static boolean sessionValidationStarted;
     private static boolean sessionValidationFinished;
 
-    private final ServerLevel level;
     private final OpenCLRuntime runtime;
     private final CachedDensityProgram cachedProgram;
     private final DensityGraphProgram program;
@@ -42,12 +40,10 @@ public final class OpenCLCoarseHeightBatchSampler implements CoarseHeightBatchSa
     private final int cellHeight;
     private final CoarseHeightBatchSampler fallback;
 
-    private OpenCLCoarseHeightBatchSampler(ServerLevel level,
-                                            OpenCLRuntime runtime,
+    private OpenCLCoarseHeightBatchSampler(OpenCLRuntime runtime,
                                             CachedDensityProgram cachedProgram,
                                             NoiseSettings settings,
                                             CoarseHeightBatchSampler fallback) {
-        this.level = level;
         this.runtime = runtime;
         this.cachedProgram = cachedProgram;
         this.program = cachedProgram.program();
@@ -80,7 +76,6 @@ public final class OpenCLCoarseHeightBatchSampler implements CoarseHeightBatchSa
         }
         try {
             OpenCLCoarseHeightBatchSampler sampler = new OpenCLCoarseHeightBatchSampler(
-                    level,
                     runtime,
                     graph.cachedProgram(),
                     getNoiseSettings(level),

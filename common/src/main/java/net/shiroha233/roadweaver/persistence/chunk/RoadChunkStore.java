@@ -594,6 +594,7 @@ public final class RoadChunkStore implements AutoCloseable {
 
     private record LoadedSnapshot(RoadSnapshot snapshot, long generation, boolean rewriteMetadata) {}
 
+    @SuppressWarnings("unused")
     private static final class SchemaDocument {
         String schema;
         int version;
@@ -609,6 +610,7 @@ public final class RoadChunkStore implements AutoCloseable {
         List<IndexEntry> roads = new ArrayList<>();
     }
 
+    @SuppressWarnings("unused")
     private static final class IndexEntry {
         long fingerprint;
         int width;
@@ -620,6 +622,7 @@ public final class RoadChunkStore implements AutoCloseable {
         String file;
     }
 
+    @SuppressWarnings("unused")
     private static final class ChunkDocument {
         String schema;
         int version;

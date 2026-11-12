@@ -21,7 +21,6 @@ import net.minecraft.world.level.levelgen.structure.pieces.PiecesContainer;
 import net.minecraft.world.level.levelgen.structure.pieces.StructurePiecesBuilder;
 import net.minecraft.world.level.levelgen.structure.templatesystem.StructureTemplateManager;
 import net.shiroha233.roadweaver.worldgen.structure.pieces.SimpleTemplatePiece;
-import net.shiroha233.roadweaver.worldgen.structure.types.ModStructureTypes;
 
 import java.util.Optional;
 

@@ -38,26 +38,26 @@ class RoadChunkStoreTest {
     void persistsNegativeAndPositiveChunkShardsAndReloadsSnapshot() {
         RoadData road = crossingRoad();
         long fingerprint = RoadFingerprint.compute(road);
-        RoadChunkStore first = new RoadChunkStore(temporaryDirectory);
+        try (RoadChunkStore first = new RoadChunkStore(temporaryDirectory)) {
+            first.addRoad(road);
 
-        first.addRoad(road);
+            assertEquals(1, first.queryChunk(-1, 0).size());
+            assertEquals(1, first.queryChunk(0, 0).size());
+            assertTrue(Files.isRegularFile(temporaryDirectory.resolve("chunks/-1_0.json")));
+            assertTrue(Files.isRegularFile(temporaryDirectory.resolve("chunks/0_0.json")));
 
-        assertEquals(1, first.queryChunk(-1, 0).size());
-        assertEquals(1, first.queryChunk(0, 0).size());
-        assertTrue(Files.isRegularFile(temporaryDirectory.resolve("chunks/-1_0.json")));
-        assertTrue(Files.isRegularFile(temporaryDirectory.resolve("chunks/0_0.json")));
+            first.flush();
+            try (RoadChunkStore reloaded = new RoadChunkStore(temporaryDirectory)) {
+                assertNotNull(reloaded.loadByFingerprint(fingerprint));
+                assertEquals(1, reloaded.queryRect(-4, 8, 4, 8).size());
 
-        RoadChunkStore reloaded;
-        first.flush();
-        reloaded = new RoadChunkStore(temporaryDirectory);
-        assertNotNull(reloaded.loadByFingerprint(fingerprint));
-        assertEquals(1, reloaded.queryRect(-4, 8, 4, 8).size());
-
-        reloaded.deleteRoad(fingerprint);
-        assertFalse(reloaded.hasAnyRoad());
-        reloaded.flush();
-        assertFalse(Files.exists(temporaryDirectory.resolve("chunks/-1_0.json")));
-        assertFalse(Files.exists(temporaryDirectory.resolve("chunks/0_0.json")));
+                reloaded.deleteRoad(fingerprint);
+                assertFalse(reloaded.hasAnyRoad());
+                reloaded.flush();
+            }
+            assertFalse(Files.exists(temporaryDirectory.resolve("chunks/-1_0.json")));
+            assertFalse(Files.exists(temporaryDirectory.resolve("chunks/0_0.json")));
+        }
     }
 
     @Test
@@ -66,62 +66,66 @@ class RoadChunkStoreTest {
         RoadData secondRoad = parallelRoad(24, 303L, 404L);
         long firstFingerprint = RoadFingerprint.compute(firstRoad);
         long secondFingerprint = RoadFingerprint.compute(secondRoad);
-        RoadChunkStore store = new RoadChunkStore(temporaryDirectory);
-        store.addRoad(firstRoad);
-        store.addRoad(secondRoad);
+        try (RoadChunkStore store = new RoadChunkStore(temporaryDirectory)) {
+            store.addRoad(firstRoad);
+            store.addRoad(secondRoad);
 
-        RoadData firstReplacement = parallelRoad(16, 101L, 202L);
-        RoadData secondReplacement = parallelRoad(32, 303L, 404L);
-        store.replaceRoads(List.of(
-                new RoadReplacement(firstFingerprint, firstReplacement),
-                new RoadReplacement(secondFingerprint, secondReplacement)));
+            RoadData firstReplacement = parallelRoad(16, 101L, 202L);
+            RoadData secondReplacement = parallelRoad(32, 303L, 404L);
+            store.replaceRoads(List.of(
+                    new RoadReplacement(firstFingerprint, firstReplacement),
+                    new RoadReplacement(secondFingerprint, secondReplacement)));
 
-        assertEquals(firstReplacement, store.loadByFingerprint(RoadFingerprint.compute(firstReplacement)));
-        assertEquals(secondReplacement, store.loadByFingerprint(RoadFingerprint.compute(secondReplacement)));
-        store.flush();
-        Path roadDirectory = temporaryDirectory.resolve("roads");
-        assertTrue(Files.isRegularFile(roadDirectory.resolve(roadFileName(firstFingerprint, 3L))));
-        assertTrue(Files.isRegularFile(roadDirectory.resolve(roadFileName(secondFingerprint, 3L))));
-        assertFalse(Files.exists(roadDirectory.resolve(roadFileName(firstFingerprint, 1L))));
-        assertFalse(Files.exists(roadDirectory.resolve(roadFileName(secondFingerprint, 2L))));
+            assertEquals(firstReplacement, store.loadByFingerprint(RoadFingerprint.compute(firstReplacement)));
+            assertEquals(secondReplacement, store.loadByFingerprint(RoadFingerprint.compute(secondReplacement)));
+            store.flush();
+            Path roadDirectory = temporaryDirectory.resolve("roads");
+            assertTrue(Files.isRegularFile(roadDirectory.resolve(roadFileName(firstFingerprint, 3L))));
+            assertTrue(Files.isRegularFile(roadDirectory.resolve(roadFileName(secondFingerprint, 3L))));
+            assertFalse(Files.exists(roadDirectory.resolve(roadFileName(firstFingerprint, 1L))));
+            assertFalse(Files.exists(roadDirectory.resolve(roadFileName(secondFingerprint, 2L))));
 
-        RoadChunkStore reloaded = new RoadChunkStore(temporaryDirectory);
-        assertEquals(firstReplacement, reloaded.loadByFingerprint(RoadFingerprint.compute(firstReplacement)));
-        assertEquals(secondReplacement, reloaded.loadByFingerprint(RoadFingerprint.compute(secondReplacement)));
+            try (RoadChunkStore reloaded = new RoadChunkStore(temporaryDirectory)) {
+                assertEquals(firstReplacement, reloaded.loadByFingerprint(RoadFingerprint.compute(firstReplacement)));
+                assertEquals(secondReplacement, reloaded.loadByFingerprint(RoadFingerprint.compute(secondReplacement)));
+            }
+        }
     }
 
     @Test
     void concurrentIndexCommitsAndRoadWritesSurviveReload() throws Exception {
-        RoadChunkStore store = new RoadChunkStore(temporaryDirectory);
-        store.addRoad(crossingRoad());
-        var workers = Executors.newFixedThreadPool(2);
-        CountDownLatch start = new CountDownLatch(1);
-        try {
-            var writer = workers.submit(() -> {
-                start.await();
-                for (int i = 0; i < 20; i++) {
-                    store.addRoad(parallelRoad(32 + i * 16, 500L + i, 800L + i));
-                }
-                return null;
-            });
-            var committer = workers.submit(() -> {
-                start.await();
-                for (int i = 0; i < 20; i++) store.commitPendingIndex();
-                return null;
-            });
-            start.countDown();
-            writer.get(30, TimeUnit.SECONDS);
-            committer.get(30, TimeUnit.SECONDS);
-            store.flush();
-        } finally {
-            workers.shutdownNow();
-        }
+        try (RoadChunkStore store = new RoadChunkStore(temporaryDirectory)) {
+            store.addRoad(crossingRoad());
+            var workers = Executors.newFixedThreadPool(2);
+            CountDownLatch start = new CountDownLatch(1);
+            try {
+                var writer = workers.submit(() -> {
+                    start.await();
+                    for (int i = 0; i < 20; i++) {
+                        store.addRoad(parallelRoad(32 + i * 16, 500L + i, 800L + i));
+                    }
+                    return null;
+                });
+                var committer = workers.submit(() -> {
+                    start.await();
+                    for (int i = 0; i < 20; i++) store.commitPendingIndex();
+                    return null;
+                });
+                start.countDown();
+                writer.get(30, TimeUnit.SECONDS);
+                committer.get(30, TimeUnit.SECONDS);
+                store.flush();
+            } finally {
+                workers.shutdownNow();
+            }
 
-        RoadChunkStore reloaded = new RoadChunkStore(temporaryDirectory);
-        assertEquals(21, reloaded.loadAll().size());
-        for (int i = 0; i < 20; i++) {
-            assertNotNull(reloaded.loadByFingerprint(RoadFingerprint.compute(
-                    parallelRoad(32 + i * 16, 500L + i, 800L + i))));
+            try (RoadChunkStore reloaded = new RoadChunkStore(temporaryDirectory)) {
+                assertEquals(21, reloaded.loadAll().size());
+                for (int i = 0; i < 20; i++) {
+                    assertNotNull(reloaded.loadByFingerprint(RoadFingerprint.compute(
+                            parallelRoad(32 + i * 16, 500L + i, 800L + i))));
+                }
+            }
         }
     }
 

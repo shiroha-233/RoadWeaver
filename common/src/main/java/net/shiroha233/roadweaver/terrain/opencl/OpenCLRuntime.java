@@ -1,6 +1,5 @@
 package net.shiroha233.roadweaver.terrain.opencl;
 
-import net.shiroha233.roadweaver.terrain.opencl.OpenCLBridge;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

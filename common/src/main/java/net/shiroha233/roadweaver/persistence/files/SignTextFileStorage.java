@@ -119,6 +119,7 @@ public final class SignTextFileStorage {
     private static final class SignChunkData {
         List<PendingSignText> items = new ArrayList<>();
 
+        @SuppressWarnings("unused")
         SignChunkData() {}
         SignChunkData(List<PendingSignText> items) { this.items = items == null ? new ArrayList<>() : new ArrayList<>(items); }
     }

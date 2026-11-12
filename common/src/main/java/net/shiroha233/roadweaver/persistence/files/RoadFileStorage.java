@@ -32,6 +32,7 @@ public final class RoadFileStorage {
     private static final String CATEGORY = "roads";
     private static final ConcurrentMap<Path, RoadChunkStore> STORES = new ConcurrentHashMap<>();
 
+    @SuppressWarnings("unused")
     private static final ScheduledExecutorService INDEX_COMMITTER = initIndexCommitter();
 
     private RoadFileStorage() {}

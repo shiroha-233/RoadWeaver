@@ -17,7 +17,6 @@ import net.shiroha233.roadweaver.terrain.accurate.AccurateHeightChunk;
 import net.shiroha233.roadweaver.terrain.accurate.AccurateHeightGrid;
 import net.shiroha233.roadweaver.terrain.accurate.AccurateHeightGridRequest;
 import net.shiroha233.roadweaver.terrain.accurate.AccurateHeightSample;
-import net.shiroha233.roadweaver.terrain.opencl.OpenCLBridge;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -60,6 +59,7 @@ class OpenCLAccurateGpuIntegrationTest {
     }
 
     @Test
+    @SuppressWarnings("deprecation")
     void overworldDensityAndInterpolationMatchWithoutAquifers() throws Exception {
         NoiseGeneratorSettings source = overworldSettings();
         NoiseGeneratorSettings withoutAquifers = new NoiseGeneratorSettings(

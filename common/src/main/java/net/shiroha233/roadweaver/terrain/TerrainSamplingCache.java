@@ -8,7 +8,6 @@ import net.minecraft.world.level.biome.Biome;
 import java.util.IdentityHashMap;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
-import net.shiroha233.roadweaver.terrain.AccurateHeightSampler;
 import net.shiroha233.roadweaver.core.metrics.TerrainSamplingStats;
 
 /**

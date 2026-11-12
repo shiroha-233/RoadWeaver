@@ -5,7 +5,6 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.ChunkPos;
 import net.shiroha233.roadweaver.persistence.WorldgenFingerprint;
 import net.shiroha233.roadweaver.persistence.files.FileBackedAccurateSampleStore;
-import net.shiroha233.roadweaver.terrain.AccurateHeightSampler;
 import net.shiroha233.roadweaver.terrain.accurate.AccurateHeightBackend;
 import net.shiroha233.roadweaver.terrain.accurate.AccurateHeightChunk;
 import net.shiroha233.roadweaver.terrain.accurate.AccurateHeightGrid;

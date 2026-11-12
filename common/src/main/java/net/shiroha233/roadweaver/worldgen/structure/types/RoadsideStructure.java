@@ -28,7 +28,6 @@ import net.shiroha233.roadweaver.worldgen.structure.data.MobSpawnRule;
 import net.shiroha233.roadweaver.worldgen.structure.data.RoadsidePlacementRule;
 import net.shiroha233.roadweaver.worldgen.structure.data.StructureScale;
 import net.shiroha233.roadweaver.worldgen.structure.pieces.SimpleTemplatePiece;
-import net.shiroha233.roadweaver.worldgen.structure.types.ModStructureTypes;
 
 import java.util.List;
 import java.util.Optional;

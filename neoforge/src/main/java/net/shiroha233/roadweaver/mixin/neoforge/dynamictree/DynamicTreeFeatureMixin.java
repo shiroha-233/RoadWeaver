@@ -12,7 +12,6 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 @Pseudo
 @Mixin(targets = "com.dtteam.dynamictrees.worldgen.feature.DynamicTreeFeature")
 public class DynamicTreeFeatureMixin {
-    @SuppressWarnings("deprecation")
     @Inject(remap = false, method = "validTreePos",
             at = @At("HEAD"), cancellable = true, require = 0)
     private static void roadweaver$validTreePosWithRoad(LevelSimulatedReader pLevel, BlockPos pPos, CallbackInfoReturnable<Boolean> cir) {

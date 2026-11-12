@@ -1,7 +1,6 @@
 /* 文件职责：验证精采 OpenCL 批次按显存与单次分配上限切分。 */
 package net.shiroha233.roadweaver.terrain.opencl;
 
-import net.shiroha233.roadweaver.terrain.opencl.OpenCLBridge;
 import net.minecraft.world.level.ChunkPos;
 import org.junit.jupiter.api.Test;
 

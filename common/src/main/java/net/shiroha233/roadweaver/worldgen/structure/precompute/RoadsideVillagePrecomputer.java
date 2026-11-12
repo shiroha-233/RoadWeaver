@@ -425,13 +425,6 @@ public final class RoadsideVillagePrecomputer {
         return Math.abs(currentHeight - lastHeight) <= maxStepHeight;
     }
 
-    private static int footprintRadius(PendingRoadsideVillageSlot.SlotKind kind) {
-        return switch (kind) {
-            case HOUSE -> 12;
-            case DECOR, VILLAGER -> 6;
-        };
-    }
-
     private static BoundingBox slotBounds(BlockPos anchor, int radius) {
         return new BoundingBox(
             anchor.getX() - radius,

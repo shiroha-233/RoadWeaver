@@ -75,6 +75,7 @@ public class BeardifierMixin implements RoadBeardifierAccess {
     }
 
     @Unique
+    @SuppressWarnings("deprecation")
     private static ServerLevel roadweaver$resolveServerLevel(LevelAccessor accessor) {
         if (accessor instanceof ServerLevel sl) return sl;
         if (accessor instanceof WorldGenRegion wgr) return wgr.getLevel();

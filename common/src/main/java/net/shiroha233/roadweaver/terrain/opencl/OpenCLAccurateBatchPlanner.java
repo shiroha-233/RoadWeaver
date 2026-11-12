@@ -1,7 +1,6 @@
 package net.shiroha233.roadweaver.terrain.opencl;
 
 import net.minecraft.world.level.ChunkPos;
-import net.shiroha233.roadweaver.terrain.opencl.OpenCLBridge;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;

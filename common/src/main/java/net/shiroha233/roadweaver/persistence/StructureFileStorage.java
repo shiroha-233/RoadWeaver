@@ -74,6 +74,7 @@ public final class StructureFileStorage {
         Entry(Path path) { this.path = path; }
     }
 
+    @SuppressWarnings("unused")
     private static final ScheduledExecutorService FLUSHER = initFlusher();
 
     private static ScheduledExecutorService initFlusher() {

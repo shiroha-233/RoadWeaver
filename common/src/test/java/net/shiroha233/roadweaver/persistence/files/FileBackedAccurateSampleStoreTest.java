@@ -22,39 +22,41 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 class FileBackedAccurateSampleStoreTest {
     @Test
     void sparseSamplesRoundTripAcrossTiles(@TempDir Path tempDir) {
-        FileBackedAccurateSampleStore store = new FileBackedAccurateSampleStore(
+        try (FileBackedAccurateSampleStore store = new FileBackedAccurateSampleStore(
                 tempDir.resolve("accurate"),
-                new WorldgenFingerprint("sparse-roundtrip", 1, 1));
-        Map<Long, AccurateHeightSample> samples = new LinkedHashMap<>();
-        samples.put(AccurateHeightSample.key(-1, 2), new AccurateHeightSample(80, 64, 90));
-        samples.put(AccurateHeightSample.key(260, 513), new AccurateHeightSample(120, 118, 124));
+                new WorldgenFingerprint("sparse-roundtrip", 1, 1))) {
+            Map<Long, AccurateHeightSample> samples = new LinkedHashMap<>();
+            samples.put(AccurateHeightSample.key(-1, 2), new AccurateHeightSample(80, 64, 90));
+            samples.put(AccurateHeightSample.key(260, 513), new AccurateHeightSample(120, 118, 124));
 
-        store.saveSamples(samples);
+            store.saveSamples(samples);
 
-        assertEquals(samples, store.loadSamples(samples.keySet()));
-        assertTrue(Files.exists(store.tilePath(-1, 0)));
-        assertTrue(Files.exists(store.tilePath(1, 2)));
+            assertEquals(samples, store.loadSamples(samples.keySet()));
+            assertTrue(Files.exists(store.tilePath(-1, 0)));
+            assertTrue(Files.exists(store.tilePath(1, 2)));
+        }
     }
 
     @Test
     void mergedSparseWritesRecoverCompleteChunk(@TempDir Path tempDir) {
-        FileBackedAccurateSampleStore store = new FileBackedAccurateSampleStore(
+        try (FileBackedAccurateSampleStore store = new FileBackedAccurateSampleStore(
                 tempDir.resolve("accurate"),
-                new WorldgenFingerprint("sparse-merge", 1, 1));
-        AccurateHeightChunk expected = chunk(2, -3);
-        long chunkKey = expected.chunkKey();
+                new WorldgenFingerprint("sparse-merge", 1, 1))) {
+            AccurateHeightChunk expected = chunk(2, -3);
+            long chunkKey = expected.chunkKey();
 
-        store.saveSamples(samplesFromChunk(expected, 0, 128));
-        assertTrue(store.loadChunks(List.of(chunkKey)).isEmpty());
+            store.saveSamples(samplesFromChunk(expected, 0, 128));
+            assertTrue(store.loadChunks(List.of(chunkKey)).isEmpty());
 
-        store.saveSamples(samplesFromChunk(expected, 128, AccurateHeightChunk.COLUMN_COUNT));
-        AccurateHeightChunk recovered = store.loadChunks(List.of(chunkKey)).get(chunkKey);
+            store.saveSamples(samplesFromChunk(expected, 128, AccurateHeightChunk.COLUMN_COUNT));
+            AccurateHeightChunk recovered = store.loadChunks(List.of(chunkKey)).get(chunkKey);
 
-        assertNotNull(recovered);
-        for (int index = 0; index < AccurateHeightChunk.COLUMN_COUNT; index++) {
-            assertEquals(expected.worldSurfaceWgAt(index), recovered.worldSurfaceWgAt(index));
-            assertEquals(expected.oceanFloorWgAt(index), recovered.oceanFloorWgAt(index));
-            assertEquals(expected.motionBlockingNoLeavesAt(index), recovered.motionBlockingNoLeavesAt(index));
+            assertNotNull(recovered);
+            for (int index = 0; index < AccurateHeightChunk.COLUMN_COUNT; index++) {
+                assertEquals(expected.worldSurfaceWgAt(index), recovered.worldSurfaceWgAt(index));
+                assertEquals(expected.oceanFloorWgAt(index), recovered.oceanFloorWgAt(index));
+                assertEquals(expected.motionBlockingNoLeavesAt(index), recovered.motionBlockingNoLeavesAt(index));
+            }
         }
     }
 
@@ -70,10 +72,11 @@ class FileBackedAccurateSampleStoreTest {
 
         Files.write(tilePath, new byte[] {1, 2, 3, 4});
 
-        FileBackedAccurateSampleStore reloaded = new FileBackedAccurateSampleStore(root, fingerprint);
-        assertTrue(reloaded.loadSamples(List.of(sampleKey)).isEmpty());
-        assertFalse(Files.exists(tilePath));
-        assertTrue(hasCorruptSibling(tilePath));
+        try (FileBackedAccurateSampleStore reloaded = new FileBackedAccurateSampleStore(root, fingerprint)) {
+            assertTrue(reloaded.loadSamples(List.of(sampleKey)).isEmpty());
+            assertFalse(Files.exists(tilePath));
+            assertTrue(hasCorruptSibling(tilePath));
+        }
     }
 
     @Test
@@ -83,13 +86,13 @@ class FileBackedAccurateSampleStoreTest {
         Files.createDirectories(root.resolve("stale-b"));
         Files.writeString(root.resolve("stale-a").resolve("nested").resolve("marker.txt"), "stale");
 
-        FileBackedAccurateSampleStore store = new FileBackedAccurateSampleStore(
+        try (FileBackedAccurateSampleStore store = new FileBackedAccurateSampleStore(
                 root,
-                new WorldgenFingerprint("active-fingerprint", 1, 1));
-
-        assertTrue(Files.isDirectory(store.namespaceRoot()));
-        assertFalse(Files.exists(root.resolve("stale-a")));
-        assertFalse(Files.exists(root.resolve("stale-b")));
+                new WorldgenFingerprint("active-fingerprint", 1, 1))) {
+            assertTrue(Files.isDirectory(store.namespaceRoot()));
+            assertFalse(Files.exists(root.resolve("stale-a")));
+            assertFalse(Files.exists(root.resolve("stale-b")));
+        }
     }
 
     private static boolean hasCorruptSibling(Path tilePath) throws IOException {

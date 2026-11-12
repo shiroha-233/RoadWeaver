@@ -28,7 +28,6 @@ public final class AccurateTerrainRegionSampler {
 
     private AccurateTerrainRegionSampler() {}
 
-    @SuppressWarnings("unchecked")
     public static AccurateTerrainRegion sample(ServerLevel level,
                                                TerrainSamplingCache cache,
                                                int minBlockX,
@@ -81,7 +80,6 @@ public final class AccurateTerrainRegionSampler {
                 .map(grid -> buildRegion(level, cache, bounds, grid));
     }
 
-    @SuppressWarnings("unchecked")
     private static AccurateTerrainRegion sampleInternal(ServerLevel level,
                                                         TerrainSamplingCache cache,
                                                         int minBlockX,
