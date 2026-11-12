@@ -5,7 +5,7 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.storage.ServerLevelData;
 import net.shiroha233.roadweaver.persistence.sharded.RoadShardStorage;
-import net.shiroha233.roadweaver.structures.placement.SpawnCabinPlacer;
+import net.shiroha233.roadweaver.worldgen.structure.placement.SpawnCabinPlacer;
 
 /**
  * When the initial road network is planned, called from the MinecraftServer mixins of both loaders.
@@ -25,7 +25,6 @@ public final class InitialSpawnPlanning {
         if (level == null || !Level.OVERWORLD.equals(level.dimension())) return;
         RoadShardStorage.preload(level);
         if (!InitialGenManager.shouldRunInitialGeneration(level)) return;
-        // Plan around the point where vanilla starts its spawn search; setInitialSpawn overwrites this right after.
         levelData.setSpawn(SpawnCabinPlacer.predictSpawn(level), 0.0F);
         InitialGenManager.begin(level);
         InitialGenManager.blockUntilDone(level);

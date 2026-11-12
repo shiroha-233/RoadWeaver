@@ -5,11 +5,13 @@ import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents;
 import net.shiroha233.roadweaver.command.MapAccessCommand;
 import net.shiroha233.roadweaver.config.ConfigService;
-import net.shiroha233.roadweaver.worldgen.road.fabric.RoadFeatureRegistry;
 import net.shiroha233.roadweaver.network.fabric.MapNetwork;
 import net.shiroha233.roadweaver.persistence.fabric.WorldDataAttachment;
+import net.shiroha233.roadweaver.persistence.files.FileBackedAccurateSampleStore;
 import net.shiroha233.roadweaver.planning.fabric.ServerPlanningHooks;
-import net.shiroha233.roadweaver.structures.fabric.StructureRegistry;
+import net.shiroha233.roadweaver.terrain.accurate.AccurateSampleStoreProviders;
+import net.shiroha233.roadweaver.worldgen.road.fabric.RoadFeatureRegistry;
+import net.shiroha233.roadweaver.worldgen.structure.fabric.StructureRegistry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -23,25 +25,23 @@ public class RoadWeaver implements ModInitializer {
     @Override
     public void onInitialize() {
         LOGGER.info("Initializing RoadWeaver (Fabric)...");
-        
+
         WorldDataAttachment.registerWorldDataAttachment();
-        
+
         ConfigService.load();
-        LOGGER.info("Configuration loaded");
-        
+        AccurateSampleStoreProviders.install(level -> FileBackedAccurateSampleStore.create(level));
+
         StructureRegistry.register();
-        LOGGER.info("Structure types registered");
-        
         RoadFeatureRegistry.register();
 
         CommandRegistrationCallback.EVENT.register((dispatcher, registryAccess, environment) ->
                 MapAccessCommand.register(dispatcher));
-        
+
         MapNetwork.registerServerReceivers();
 
         ServerPlayConnectionEvents.JOIN.register((handler, sender, server) ->
                 MapNetwork.syncMapAccess(handler.player));
-        
+
         ServerPlanningHooks.register();
     }
 }

@@ -1,7 +1,7 @@
 package net.shiroha233.roadweaver.terrain.opencl;
 
 import net.minecraft.world.level.ChunkPos;
-import net.shiroha233.roadweaver.terrain.opencl.bridge.OpenCLBridge;
+import net.shiroha233.roadweaver.terrain.opencl.OpenCLBridge;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -43,7 +43,6 @@ public final class OpenCLAccurateBatchPlanner {
         if (result <= 0L) {
             return 0;
         }
-        // 保持在桌面 GPU 看门狗和大分配拐点内；整个区域仍由一次高优先级设备任务连续提交。
         return (int) Math.min(WATCHDOG_SAFE_MAX_CHUNKS, result);
     }
 

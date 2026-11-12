@@ -1,6 +1,10 @@
 package net.shiroha233.roadweaver.client.map.tile;
 
+import net.minecraft.server.level.ServerLevel;
+import net.shiroha233.roadweaver.config.sub.TerrainSamplingMode;
 import net.shiroha233.roadweaver.map.tile.core.MapTileLayer;
+import net.shiroha233.roadweaver.planning.pipeline.TerrainSamplingSessionSnapshot;
+import net.shiroha233.roadweaver.planning.pipeline.TerrainSamplingSessions;
 
 import java.util.Objects;
 
@@ -19,6 +23,17 @@ public final class SingleplayerTerrainTileManager extends AbstractSingleplayerTi
             terrainLayer = nextLayer;
             clear();
         }
+    }
+
+    public TerrainSamplingSessionSnapshot syncSamplingLayer(ServerLevel level) {
+        if (level == null) {
+            return null;
+        }
+        TerrainSamplingSessionSnapshot session = TerrainSamplingSessions.forLevel(level).snapshot();
+        selectTerrainLayer(session.effectiveMode() == TerrainSamplingMode.FULL_REGION
+                ? MapTileLayer.TERRAIN_ACCURATE
+                : MapTileLayer.TERRAIN_COARSE);
+        return session;
     }
 
     public MapTileLayer selectedTerrainLayer() {

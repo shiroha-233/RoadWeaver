@@ -34,13 +34,6 @@ public abstract class CreateWorldScreenMixin extends GridLayoutTab {
                 })
                 .width(210)
                 .build();
-        // 行索引说明（参考原版 GameTab 构造函数）：
-        // 0: 世界名称输入
-        // 1: 游戏模式
-        // 2: 难度
-        // 3: 允许作弊
-        // 4: 实验性特性按钮（仅快照版本存在）
-        // 因此：稳定版放在第 4 行（紧跟允许作弊），快照版放在第 5 行（紧跟实验性特性）。
         int row = net.minecraft.SharedConstants.getCurrentVersion().isStable() ? 4 : 5;
         this.layout.addChild(configButton, row, 0, this.layout.newCellSettings().alignHorizontallyCenter());
     }

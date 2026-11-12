@@ -9,7 +9,7 @@ import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
-import net.shiroha233.roadweaver.persistence.files.FileStorageIO;
+import net.shiroha233.roadweaver.util.FileStorageIO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

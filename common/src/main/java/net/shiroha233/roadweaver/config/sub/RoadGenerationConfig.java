@@ -1,7 +1,5 @@
 package net.shiroha233.roadweaver.config.sub;
 
-import net.shiroha233.roadweaver.config.ModConfig;
-import net.shiroha233.roadweaver.config.SubConfig;
 import net.shiroha233.roadweaver.core.constants.RoadConstants;
 
 /**
@@ -18,26 +16,29 @@ public final class RoadGenerationConfig implements SubConfig {
     private PathfindingCostConfig pathfinding = new PathfindingCostConfig();
     private int bridgeMinWaterDepth = RoadConstants.DEFAULT_BRIDGE_MIN_WATER_DEPTH;
 
-    public static RoadGenerationConfig from(ModConfig config) {
+    public static RoadGenerationConfig from(RoadGenerationInputs inputs) {
         RoadGenerationConfig cfg = new RoadGenerationConfig();
-        if (config == null) {
+        if (inputs == null) {
             cfg.sanitize();
             return cfg;
         }
-
-        cfg.effectiveRoadWidth = config.roadAppearance().roadWidth();
-        cfg.allowArtificial = config.roadAppearance().allowArtificial();
-        cfg.allowNatural = config.roadAppearance().allowNatural();
-        cfg.averagingRadius = config.averagingRadius();
-        cfg.slopeLimitEnabled = config.slopeLimitEnabled();
-        cfg.maxSlopeStepPerTwoSegments = config.roadAppearance().maxSlopeStepPerTwoSegments();
-
-        PathfindingCostConfig pf = config.pathfindingCost();
-        if (pf != null) {
-            cfg.pathfinding = pf.snapshot();
+        RoadAppearanceConfig appearance = inputs.appearance();
+        if (appearance != null) {
+            cfg.effectiveRoadWidth = appearance.roadWidth();
+            cfg.allowArtificial = appearance.allowArtificial();
+            cfg.allowNatural = appearance.allowNatural();
+            cfg.maxSlopeStepPerTwoSegments = appearance.maxSlopeStepPerTwoSegments();
         }
-        cfg.bridgeMinWaterDepth = config.bridge().minWaterDepth();
-
+        cfg.averagingRadius = inputs.averagingRadius();
+        cfg.slopeLimitEnabled = inputs.slopeLimitEnabled();
+        PathfindingCostConfig pathfindingCost = inputs.pathfinding();
+        if (pathfindingCost != null) {
+            cfg.pathfinding = pathfindingCost.snapshot();
+        }
+        BridgeConfig bridge = inputs.bridge();
+        if (bridge != null) {
+            cfg.bridgeMinWaterDepth = bridge.minWaterDepth();
+        }
         cfg.sanitize();
         return cfg;
     }

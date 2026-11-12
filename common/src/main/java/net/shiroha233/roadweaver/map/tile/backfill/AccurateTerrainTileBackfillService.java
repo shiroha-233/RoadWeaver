@@ -9,7 +9,7 @@ import net.shiroha233.roadweaver.map.tile.storage.ServerMapTileStorage;
 import net.shiroha233.roadweaver.terrain.TerrainSamplingCache;
 import net.shiroha233.roadweaver.map.tile.writer.AccurateTerrainPngWriter;
 import net.shiroha233.roadweaver.terrain.accurate.AccurateTerrainRegion;
-import net.shiroha233.roadweaver.terrain.accurate.AccurateTerrainRegionSampler;
+import net.shiroha233.roadweaver.terrain.AccurateTerrainRegionSampler;
 
 import java.util.Optional;
 

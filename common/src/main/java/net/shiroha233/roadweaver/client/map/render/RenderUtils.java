@@ -82,12 +82,6 @@ public final class RenderUtils {
         }
     }
 
-    public static void drawPoint(GuiGraphics g, int x, int y, int size, int color, int left, int top, int right, int bottom) {
-        int half = Math.max(0, size / 2);
-        if (x < left || x > right || y < top || y > bottom) return;
-        g.fill(x - half, y - half, x - half + size, y - half + size, color);
-    }
-
     public static void fillTriangle(GuiGraphics g, int x1, int y1, int x2, int y2, int x3, int y3, int color, int left, int top, int right, int bottom) {
         if (y2 < y1) { int tx = x1, ty = y1; x1 = x2; y1 = y2; x2 = tx; y2 = ty; }
         if (y3 < y1) { int tx = x1, ty = y1; x1 = x3; y1 = y3; x3 = tx; y3 = ty; }

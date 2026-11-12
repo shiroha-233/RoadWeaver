@@ -2,7 +2,7 @@
 package net.shiroha233.roadweaver.client.map.cache;
 
 import net.minecraft.core.BlockPos;
-import net.shiroha233.roadweaver.map.data.MapLoadPhase;
+import net.shiroha233.roadweaver.core.model.MapLoadPhase;
 import net.shiroha233.roadweaver.core.model.StructureInfo;
 import org.junit.jupiter.api.Test;
 
@@ -11,7 +11,7 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import net.shiroha233.roadweaver.map.data.MapSnapshot;
-import net.shiroha233.roadweaver.map.data.RequestRect;
+import net.shiroha233.roadweaver.core.model.RequestRect;
 
 class MapSnapshotStoreTest {
     @Test

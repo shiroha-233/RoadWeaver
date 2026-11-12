@@ -5,7 +5,7 @@ import net.minecraft.core.Vec3i;
 import net.minecraft.world.level.WorldGenLevel;
 import net.shiroha233.roadweaver.worldgen.road.decoration.base.Decoration;
 import net.shiroha233.roadweaver.worldgen.road.decoration.types.SeaQuestionSignDecoration;
-import net.shiroha233.roadweaver.worldgen.road.StructureAvoidanceService;
+import java.util.function.Predicate;
 
 import java.util.Set;
 
@@ -24,7 +24,8 @@ public final class SkippedBridgeBankSignPlanner {
                                              BlockPos prevPos,
                                              int roadWidth,
                                              boolean[] skipSegments,
-                                             int i) {
+                                             int i,
+                                             Predicate<BlockPos> avoidChecker) {
         if (skipSegments == null || i < 0 || i >= skipSegments.length) return;
         if (skipSegments[i]) return;
 
@@ -48,7 +49,7 @@ public final class SkippedBridgeBankSignPlanner {
                 ? placePos.offset(ortho.getX() * sideOffset, 0, ortho.getZ() * sideOffset)
                 : placePos.offset(-ortho.getX() * sideOffset, 0, -ortho.getZ() * sideOffset);
 
-        if (StructureAvoidanceService.shouldAvoid(world, shifted)) return;
+        if (avoidChecker != null && avoidChecker.test(shifted)) return;
         out.add(new SeaQuestionSignDecoration(shifted, ortho, world, isStart));
     }
 }

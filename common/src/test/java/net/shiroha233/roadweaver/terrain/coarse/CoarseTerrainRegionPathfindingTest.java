@@ -63,7 +63,7 @@ class CoarseTerrainRegionPathfindingTest {
     }
 
     private record PathSnapshot(int height, int floor, boolean water, boolean waterBiome,
-                                boolean nearWater, net.shiroha233.roadweaver.terrain.PathTerrainField.SampleBundle bundle) {}
+                                boolean nearWater, net.shiroha233.roadweaver.terrain.api.PathTerrainField.SampleBundle bundle) {}
 
     private static CoarseTerrainTileKey key(int tileX, int tileZ) {
         return new CoarseTerrainTileKey(DIMENSION, tileX, tileZ, 16, 8, RoadConstants.COARSE_TERRAIN_TILE_SCHEMA_VERSION);

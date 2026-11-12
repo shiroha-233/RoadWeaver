@@ -19,7 +19,6 @@ class CorridorStageSplitProgressTest {
         int halfway = InitialGenerationProgressTracker.snapshot(true).stagePercent();
         assertEquals(50, halfway);
 
-        // 粗寻路全部结束，此时尚未开始任何走廊精采或精寻路。
         InitialGenerationProgressTracker.recordCoarsePathDone();
         InitialGenerationProgressSnapshot afterCoarse = InitialGenerationProgressTracker.snapshot(true);
         assertEquals(100, afterCoarse.stagePercent());
@@ -47,7 +46,6 @@ class CorridorStageSplitProgressTest {
         assertEquals(50, duringCorridor.stagePercent());
         assertEquals(1, duringCorridor.exactPathsDone());
         assertEquals(2, duringCorridor.exactPathsTotal());
-        // 切换阶段不得让总进度倒退。
         assertTrue(duringCorridor.overallPercent() >= afterCoarseOverall);
     }
 }

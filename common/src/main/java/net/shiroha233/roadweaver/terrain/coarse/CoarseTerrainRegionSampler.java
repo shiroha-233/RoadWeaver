@@ -19,6 +19,7 @@ import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.atomic.AtomicReference;
+import net.shiroha233.roadweaver.core.metrics.CoarseTerrainSamplingProgress;
 
 
 /**

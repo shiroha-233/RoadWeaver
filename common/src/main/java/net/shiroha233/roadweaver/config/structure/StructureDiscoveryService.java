@@ -22,7 +22,13 @@ import java.io.BufferedWriter;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
@@ -39,7 +45,6 @@ public final class StructureDiscoveryService {
 
     private StructureDiscoveryService() {}
 
-    /** 发现结果 */
     public static final class DiscoveryResult {
         private final List<StructureTagEntry> tags;
         private final List<StructureEntry> allStructures;
@@ -69,7 +74,6 @@ public final class StructureDiscoveryService {
         }
     }
 
-    /** 从服务端世界收集结构和标签 */
     public static void discoverFromLevel(ServerLevel level) {
         if (level == null || !Level.OVERWORLD.equals(level.dimension())) {
             LOGGER.warn("无法发现结构: 仅支持主世界");
@@ -81,7 +85,6 @@ public final class StructureDiscoveryService {
                 access.registryOrThrow(Registries.LEVEL_STEM));
     }
 
-    /** 从注册表收集结构和标签 */
     public static void discoverFromRegistries(Registry<Structure> structureRegistry, Registry<LevelStem> levelStemRegistry) {
         if (structureRegistry == null || levelStemRegistry == null) return;
         try {
@@ -122,7 +125,6 @@ public final class StructureDiscoveryService {
         }
     }
 
-    /** 从 RegistryAccess 收集结构和标签；注册表未就绪（如重新创建世界流程）时跳过 */
     public static void discoverFromRegistryAccess(RegistryAccess registryAccess) {
         if (registryAccess == null) {
             LOGGER.warn("无法发现结构: registryAccess 为 null");
@@ -137,7 +139,6 @@ public final class StructureDiscoveryService {
         discoverFromRegistries(structureRegistry, levelStemRegistry);
     }
 
-    /** 获取缓存的发现结果，必要时从文件加载 */
     public static DiscoveryResult getResult() {
         if (cachedResult == null && !hasDiscovered) {
             tryDiscoverFromCurrentContext();
@@ -220,7 +221,6 @@ public final class StructureDiscoveryService {
         }
     }
 
-    // ==================== 内部工具方法 ====================
 
     private static List<StructureTagEntry> collectTags(Registry<Structure> registry, Map<ResourceLocation, StructureEntry> structureMap) {
         List<StructureTagEntry> tagEntries = new ArrayList<>();
@@ -263,7 +263,6 @@ public final class StructureDiscoveryService {
         return "#" + formatDisplayName(tagId);
     }
 
-    // ==================== 缓存文件操作 ====================
 
     private static Path getCacheFilePath() {
         return Platform.getConfigFolder().resolve("roadweaver").resolve(CACHE_FILE);
@@ -329,7 +328,6 @@ public final class StructureDiscoveryService {
         }
     }
 
-    /** 缓存数据格式 */
     private static class CacheData {
         List<StructureData> structures;
         List<TagData> tags;

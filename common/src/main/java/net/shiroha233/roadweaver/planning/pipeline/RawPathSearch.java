@@ -6,9 +6,9 @@ import net.shiroha233.roadweaver.config.sub.PathfindingCostConfig;
 import net.shiroha233.roadweaver.core.model.StructureConnection;
 import net.shiroha233.roadweaver.pathfinding.PathResult;
 import net.shiroha233.roadweaver.pathfinding.Pathfinder;
-import net.shiroha233.roadweaver.pathfinding.PathfinderFactory;
+import net.shiroha233.roadweaver.pathfinding.impl.PathfinderFactory;
 import net.shiroha233.roadweaver.terrain.TerrainSamplingCache;
-import net.shiroha233.roadweaver.terrain.PathTerrainField;
+import net.shiroha233.roadweaver.terrain.api.PathTerrainField;
 
 import java.util.List;
 

@@ -1,6 +1,6 @@
 package net.shiroha233.roadweaver.progress;
 
-import net.shiroha233.roadweaver.terrain.coarse.CoarseTerrainSamplingProgress;
+import net.shiroha233.roadweaver.core.metrics.CoarseTerrainSamplingProgress;
 
 /**
  * 初始道路生成阶段使用的粗采样进度适配器。

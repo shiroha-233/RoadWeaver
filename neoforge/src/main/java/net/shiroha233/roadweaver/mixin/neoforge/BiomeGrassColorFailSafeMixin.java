@@ -20,8 +20,6 @@ public abstract class BiomeGrassColorFailSafeMixin {
 
     @Inject(method = "getGrassColor", at = @At("HEAD"), cancellable = true)
     private void roadweaver$failsafeGrassColor(double x, double z, CallbackInfoReturnable<Integer> cir) {
-        // 兼容性兜底：部分第三方模组会动态扩展 GrassColorModifier 枚举，若实现/变换异常可能触发 AbstractMethodError。
-        // 我们在渲染线程上兜底，避免直接崩溃（退化为基础草色）。
         BiomeSpecialEffects effects = this.getSpecialEffects();
         int base = effects.getGrassColorOverride().orElseGet(this::roadweaver$invokeGetGrassColorFromTexture);
         try {

@@ -3,7 +3,7 @@ package net.shiroha233.roadweaver.config;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import dev.architectury.platform.Platform;
-import net.shiroha233.roadweaver.persistence.files.FileStorageIO;
+import net.shiroha233.roadweaver.util.FileStorageIO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -64,17 +64,10 @@ public final class ConfigService {
         }
     }
 
-    /**
-     * 无锁读取配置。世界生成最内层循环（Beardifier/Feature mixin）高频调用，
-     * 写入侧由 synchronized 保护，读取侧依赖 volatile 保证可见性。
-     */
     public static ModConfig get() {
         return INSTANCE;
     }
 
-    /**
-     * 修改配置后自动保存
-     */
     public static synchronized void markDirty() {
         save();
     }

@@ -14,7 +14,7 @@ import net.minecraft.world.level.saveddata.SavedData;
 import net.shiroha233.roadweaver.core.model.StructureConnection;
 import net.shiroha233.roadweaver.core.model.StructureLocationData;
 import net.shiroha233.roadweaver.persistence.WorldDataProvider;
-import net.shiroha233.roadweaver.persistence.files.StructureFileStorage;
+import net.shiroha233.roadweaver.persistence.StructureFileStorage;
 
 import java.util.ArrayList;
 import java.util.HashMap;

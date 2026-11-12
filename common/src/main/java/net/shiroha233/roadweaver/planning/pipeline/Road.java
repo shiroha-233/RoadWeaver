@@ -11,18 +11,22 @@ import net.shiroha233.roadweaver.core.model.RoadSegmentPlacement;
 import net.shiroha233.roadweaver.core.model.RoadSpan;
 import net.shiroha233.roadweaver.core.model.SpanType;
 import net.shiroha233.roadweaver.core.model.StructureConnection;
-import net.shiroha233.roadweaver.worldgen.road.PathFeatureConfig;
+import net.shiroha233.roadweaver.worldgen.PathFeatureConfig;
 import net.shiroha233.roadweaver.planning.pipeline.RoadPathCalculator.PathCalculationResult;
 import net.shiroha233.roadweaver.pathfinding.PathSpanExtractor;
 import net.shiroha233.roadweaver.terrain.TerrainSamplingCache;
-import net.shiroha233.roadweaver.terrain.PathTerrainField;
+import net.shiroha233.roadweaver.terrain.api.PathTerrainField;
 import net.shiroha233.roadweaver.persistence.sharded.RoadShardStorage;
 import net.shiroha233.roadweaver.util.PlanningUtils;
 import net.shiroha233.roadweaver.planning.path.PlannedPathCache;
-import net.shiroha233.roadweaver.structures.precompute.RoadsideStructurePrecomputer;
-import net.shiroha233.roadweaver.structures.precompute.RoadsideVillagePrecomputer;
+import net.shiroha233.roadweaver.worldgen.structure.precompute.RoadsideStructurePrecomputer;
+import net.shiroha233.roadweaver.worldgen.structure.precompute.RoadsideVillagePrecomputer;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 
 /**
  * 道路生成器

@@ -7,6 +7,7 @@ import net.shiroha233.roadweaver.core.model.RoadData;
 import net.shiroha233.roadweaver.persistence.RoadReplacement;
 import net.shiroha233.roadweaver.persistence.chunk.RoadChunkStore;
 import net.shiroha233.roadweaver.persistence.chunk.RoadFingerprint;
+import net.shiroha233.roadweaver.util.FileStoragePathResolver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

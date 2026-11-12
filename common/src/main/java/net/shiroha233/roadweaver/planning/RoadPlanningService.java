@@ -25,10 +25,9 @@ import net.shiroha233.roadweaver.map.tile.writer.CoarseTerrainPngWriter;
 import net.shiroha233.roadweaver.terrain.coarse.CoarseTerrainRegion;
 import net.shiroha233.roadweaver.terrain.coarse.CoarseTerrainRegionSampler;
 import net.shiroha233.roadweaver.persistence.WorldDataProvider;
-import net.shiroha233.roadweaver.persistence.files.StructureFileStorage;
+import net.shiroha233.roadweaver.persistence.StructureFileStorage;
 import net.shiroha233.roadweaver.persistence.sharded.RoadShardStorage;
 import net.shiroha233.roadweaver.config.sub.TerrainSamplingMode;
-import net.shiroha233.roadweaver.planning.impl.KNNPlanner;
 import net.shiroha233.roadweaver.planning.path.PlannedPathCache;
 import net.shiroha233.roadweaver.core.model.PlannedPathKey;
 import net.shiroha233.roadweaver.planning.path.RawPathDebugService;
@@ -37,14 +36,19 @@ import net.shiroha233.roadweaver.planning.pipeline.RoadTerrainPlanningPort;
 import net.shiroha233.roadweaver.planning.pipeline.AutomaticPlanningSamplingActivities;
 import net.shiroha233.roadweaver.planning.pipeline.AutomaticPlanningSamplingBounds;
 import net.shiroha233.roadweaver.planning.pipeline.TerrainSamplingSessions;
-import net.shiroha233.roadweaver.network.bridge.ServerMapPlanningActivityBridge;
+import net.shiroha233.roadweaver.network.platform.ServerMapPlanningActivityBridge;
 import net.shiroha233.roadweaver.runtime.ThreadPoolManager;
-import net.shiroha233.roadweaver.structure.StructureIndexService;
+import net.shiroha233.roadweaver.map.StructureIndexService;
 import net.shiroha233.roadweaver.runtime.ComputeService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
 import java.util.concurrent.CancellationException;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
@@ -324,7 +328,6 @@ public final class RoadPlanningService {
 
         ArrayList<StructureConnection> incoming = new ArrayList<>(primaryEdges);
         incoming.addAll(bridges);
-        // 与生成侧走同一把锁，避免规划收尾的合并结果被并发的状态回写覆盖
         AtomicReference<List<StructureConnection>> before = new AtomicReference<>();
         boolean merged = ConnectionListUpdater.update(level, current -> {
             List<StructureConnection> next = mergeConnections(current, incoming);
@@ -467,7 +470,6 @@ public final class RoadPlanningService {
                     return;
                 }
                 try {
-                    // 合并前的列表：用于只向客户端广播真正新增的连接
                     AtomicReference<List<StructureConnection>> before = new AtomicReference<>();
                     boolean changed = ConnectionListUpdater.update(level, existing -> {
                         List<StructureConnection> merged = mergeConnections(existing, snapshot);

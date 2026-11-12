@@ -113,7 +113,6 @@ final class SignTextFileIo {
             try {
                 if (epoch != EPOCH.get()) return;
                 SignTextFileStorage.upsertBatch(level, List.of(write));
-                // 磁盘已最新，丢弃可能过期的缓存副本
                 synchronized (LOCK) {
                     CACHE.remove(chunkKey);
                 }
@@ -133,11 +132,9 @@ final class SignTextFileIo {
                 synchronized (LOCK) {
                     CACHE.put(chunkKey, new ArrayList<>(rows));
                 }
-                // 加载完成后重新标记，主线程无需轮询等待
                 requeueIfLive(epoch, level, chunkKey);
             } catch (Throwable t) {
                 LOGGER.warn("加载路牌文本分片失败 chunk=({}, {})", chunkX, chunkZ, t);
-                // 主线程已因 pending == null 而提前返回，不唤醒就会永久丢掉这一分片
                 requeueIfLive(epoch, level, chunkKey);
             } finally {
                 synchronized (LOCK) {
@@ -170,7 +167,6 @@ final class SignTextFileIo {
     }
 
     static void clearMemory() {
-        // 先作废在途任务再清缓存：顺序反了会让已入队的旧任务把结果写回新缓存
         EPOCH.incrementAndGet();
         synchronized (LOCK) {
             CACHE.clear();

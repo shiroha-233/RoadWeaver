@@ -15,7 +15,6 @@ class JunctionSlopeLimiterTest {
 
     @Test
     void spreadsADropAfterAMergedStretch() {
-        // The case from the test world: merged at 108, the side road's own heights drop to 94 within four segments.
         int[] heights = {108, 108, 108, 105, 101, 98, 94, 94, 94, 94, 94, 94, 94, 94, 94, 94, 94, 94, 94, 94,
                 94, 94, 94, 94, 94, 94, 94, 94, 94, 94, 94, 94, 94, 94, 94, 94};
         JunctionSlopeLimiter.limit(heights, fixedPrefix(heights.length, 3), 1);
@@ -43,7 +42,6 @@ class JunctionSlopeLimiterTest {
         assertEquals(60, heights[0]);
         assertEquals(60, heights[2]);
         assertEquals(60, heights[4]);
-        // One segment from a fixed one may still differ by one block, as on any road.
         assertTrue(heights[1] >= 60 && heights[1] <= 61, "segment 1: " + heights[1]);
         assertTrue(heights[3] >= 60 && heights[3] <= 61, "segment 3: " + heights[3]);
     }

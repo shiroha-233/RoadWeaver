@@ -11,7 +11,7 @@ import net.shiroha233.roadweaver.persistence.ConnectionListUpdater;
 import net.shiroha233.roadweaver.generation.RoadGenerationService;
 import net.shiroha233.roadweaver.map.MapPatchService;
 import net.shiroha233.roadweaver.persistence.WorldDataProvider;
-import net.shiroha233.roadweaver.persistence.files.StructureFileStorage;
+import net.shiroha233.roadweaver.persistence.StructureFileStorage;
 import net.shiroha233.roadweaver.planning.RoadPlanningService;
 import net.shiroha233.roadweaver.runtime.ThreadPoolManager;
 

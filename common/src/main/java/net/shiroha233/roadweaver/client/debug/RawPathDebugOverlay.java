@@ -10,7 +10,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.phys.Vec3;
-import net.shiroha233.roadweaver.network.bridge.ClientNetBridge;
+import net.shiroha233.roadweaver.network.platform.ClientNetBridge;
 import net.shiroha233.roadweaver.network.payload.RawPathDebugPayloads;
 import net.shiroha233.roadweaver.planning.path.DebugRawPath;
 
@@ -60,7 +60,7 @@ public final class RawPathDebugOverlay {
             warnedCaptureDisabled = false;
         }
         if (--ticksUntilRefresh > 0) return;
-        ticksUntilRefresh = REFRESH_TICKS * 3; // Retry an unanswered request without rejecting a slow valid reply.
+        ticksUntilRefresh = REFRESH_TICKS * 3;
         expectedSequence = ++nextSequence;
         ClientNetBridge.requestRawPathDebug(expectedSequence, dimension);
     }
@@ -98,7 +98,6 @@ public final class RawPathDebugOverlay {
             double x = node.getX() + 0.5 + offset - camera.x;
             double y = node.getY() + 1.25 - camera.y;
             double z = node.getZ() + 0.5 + offset - camera.z;
-            // A small cross makes each unsmoothed search node visible independently of the segments.
             line(pose, vertices, x - 0.18, y, z, x + 0.18, y, z, color);
             line(pose, vertices, x, y, z - 0.18, x, y, z + 0.18, color);
             if (i + 1 < nodes.size()) {

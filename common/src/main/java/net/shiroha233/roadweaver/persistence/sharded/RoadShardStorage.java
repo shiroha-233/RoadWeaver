@@ -7,7 +7,7 @@ import net.shiroha233.roadweaver.core.model.RoadData;
 import net.shiroha233.roadweaver.persistence.RoadReplacement;
 import net.shiroha233.roadweaver.persistence.chunk.RoadFootprint;
 import net.shiroha233.roadweaver.persistence.files.RoadFileStorage;
-import net.shiroha233.roadweaver.worldgen.road.RoadWorldgenPlanCache;
+import net.shiroha233.roadweaver.persistence.api.RoadChangeNotifier;
 
 import java.util.Collection;
 import java.util.List;
@@ -27,7 +27,7 @@ public final class RoadShardStorage {
         RoadFileStorage.addRoad(level, road);
         LinkedHashSet<Long> affected = new LinkedHashSet<>(affectedChunks(previous));
         affected.addAll(affectedChunks(road));
-        RoadWorldgenPlanCache.invalidate(level, affected);
+        RoadChangeNotifier.chunksChanged(level, affected);
     }
 
     public static void preload(ServerLevel level) {
@@ -69,7 +69,7 @@ public final class RoadShardStorage {
         if (!isOverworld(level)) return;
         RoadData previous = RoadFileStorage.loadByFingerprint(level, fingerprint);
         RoadFileStorage.deleteRoad(level, fingerprint);
-        RoadWorldgenPlanCache.invalidate(level, affectedChunks(previous));
+        RoadChangeNotifier.chunksChanged(level, affectedChunks(previous));
     }
 
     public static void replaceRoad(ServerLevel level, long oldFingerprint, RoadData newRoad) {
@@ -86,7 +86,7 @@ public final class RoadShardStorage {
             affected.addAll(affectedChunks(replacement.newRoad()));
         }
         RoadFileStorage.replaceRoads(level, replacements);
-        RoadWorldgenPlanCache.invalidate(level, affected);
+        RoadChangeNotifier.chunksChanged(level, affected);
     }
 
     public static long computeFingerprint(RoadData road) {
@@ -111,17 +111,17 @@ public final class RoadShardStorage {
     public static void clearAll(ServerLevel level) {
         if (!isOverworld(level)) return;
         RoadFileStorage.clearAll(level);
-        RoadWorldgenPlanCache.invalidate(level);
+        RoadChangeNotifier.plansInvalidated(level);
     }
 
     public static void shutdown() {
         RoadFileStorage.shutdown();
-        RoadWorldgenPlanCache.clearAll();
+        RoadChangeNotifier.allCleared();
     }
 
     public static void closeConnection(ServerLevel level) {
         if (!isOverworld(level)) return;
-        RoadWorldgenPlanCache.clear(level);
+        RoadChangeNotifier.levelCleared(level);
         RoadFileStorage.close(level);
     }
 

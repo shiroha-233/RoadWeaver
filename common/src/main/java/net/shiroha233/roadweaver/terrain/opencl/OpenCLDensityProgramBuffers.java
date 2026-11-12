@@ -1,6 +1,6 @@
 package net.shiroha233.roadweaver.terrain.opencl;
 
-import net.shiroha233.roadweaver.terrain.opencl.bridge.OpenCLBridge;
+import net.shiroha233.roadweaver.terrain.opencl.OpenCLBridge;
 
 import java.util.ArrayList;
 import java.util.List;

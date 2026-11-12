@@ -161,7 +161,6 @@ public final class IdleRoadGenerationService {
 
         int limit = cfg.performance().idleMaxConcurrentGenerations();
 
-        // 连接列表每 tick 只取一次
         List<StructureConnection> conns = WorldDataProvider.getInstance().getStructureConnections(level);
         reservePlannedEdges(level, conns);
 
@@ -204,7 +203,6 @@ public final class IdleRoadGenerationService {
         if (level == null || conn == null || !Level.OVERWORLD.equals(level.dimension())) return false;
 
         ConcurrentHashMap<PlannedPathKey, Boolean> owned = IDLE_OWNED;
-        // 主线程每 tick 逐条调用，先判最廉价条件以短路配置读取与窗口判定
         if (owned.isEmpty()) return false;
         if (!ConfigService.get().performance().idleGenerationEnabled()) return false;
 
@@ -323,7 +321,6 @@ public final class IdleRoadGenerationService {
         ConcurrentHashMap<UUID, IdleWindow> windows = WINDOWS;
         ConcurrentHashMap<PlannedPathKey, Boolean> inFlight = IN_FLIGHT;
 
-        // 窗口摊平成数组，避免逐条连接遍历 UUID 哈希表
         int windowCount = 0;
         int[] centersX = new int[windows.size()];
         int[] centersZ = new int[windows.size()];
@@ -337,7 +334,6 @@ public final class IdleRoadGenerationService {
         }
         if (windowCount == 0) return List.of();
 
-        // 配对记录以避免 Map<Integer, ...> 装箱
         List<Candidate> candidates = new ArrayList<>();
         for (StructureConnection c : conns) {
             if (c == null || c.status() != ConnectionStatus.PLANNED) continue;
@@ -399,7 +395,6 @@ public final class IdleRoadGenerationService {
 
         if (perLevel.isEmpty()) {
             IDLE_OWNED.clear();
-            // 已提交的任务仍可能运行；由完成回调释放 in-flight 和计数。
         }
     }
 

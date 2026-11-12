@@ -6,7 +6,7 @@ import net.minecraft.world.level.Level;
 import net.shiroha233.roadweaver.config.ConfigService;
 import net.shiroha233.roadweaver.core.model.RoadSegmentPlacement;
 import net.shiroha233.roadweaver.core.model.StructureInfo;
-import net.shiroha233.roadweaver.structure.StructurePredictor;
+import net.shiroha233.roadweaver.map.search.StructurePredictor;
 
 import java.util.ArrayList;
 import java.util.List;

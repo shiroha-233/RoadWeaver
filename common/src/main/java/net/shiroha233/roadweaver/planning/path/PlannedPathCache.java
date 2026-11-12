@@ -6,7 +6,7 @@ import net.shiroha233.roadweaver.config.sub.PathfindingCostConfig;
 import net.shiroha233.roadweaver.config.sub.TerrainSamplingMode;
 import net.shiroha233.roadweaver.core.model.StructureConnection;
 import net.shiroha233.roadweaver.persistence.WorldgenFingerprintService;
-import net.shiroha233.roadweaver.persistence.files.FileStoragePathResolver;
+import net.shiroha233.roadweaver.util.FileStoragePathResolver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -60,7 +60,6 @@ public final class PlannedPathCache {
             List<BlockPos> immutablePath = List.copyOf(path);
             memoryPut(level, key, new Entry(fingerprint, immutablePath));
             if (store != null) {
-                // 锁外写盘：避免长时间持有前台缓存监视器
                 try {
                     store.save(key, fingerprint, immutablePath);
                 } catch (IOException failure) {
@@ -125,7 +124,6 @@ public final class PlannedPathCache {
         }
     }
 
-    // ==================== 线程安全的前台缓存访问 ====================
 
     private static void memoryPut(ServerLevel level, PlannedPathKey key, Entry entry) {
         synchronized (BY_LEVEL) {
@@ -141,8 +139,6 @@ public final class PlannedPathCache {
 
     private static void memoryRemove(ServerLevel level, PlannedPathKey key) {
         synchronized (BY_LEVEL) {
-            // 用 get 而非 levelMemory：discard 常用于从未缓存过的维度，
-            // computeIfAbsent 会凭空留下一个空桶，只能靠 clear(level) 回收
             LinkedHashMap<PlannedPathKey, Entry> memory = BY_LEVEL.get(level);
             if (memory != null) memory.remove(key);
         }
@@ -191,7 +187,6 @@ public final class PlannedPathCache {
         @Override
         protected boolean removeEldestEntry(Map.Entry<PlannedPathKey, Entry> eldest) {
             if (points <= MAX_PATH_POINTS_PER_LEVEL) return false;
-            // 逐出最旧条目直到回到预算内
             Iterator<Map.Entry<PlannedPathKey, Entry>> it = entrySet().iterator();
             while (points > MAX_PATH_POINTS_PER_LEVEL && it.hasNext()) {
                 Map.Entry<PlannedPathKey, Entry> oldest = it.next();
@@ -203,10 +198,6 @@ public final class PlannedPathCache {
 
         @Override
         public Entry put(PlannedPathKey key, Entry value) {
-            // 必须先更新 points 再交给 super.put：后者插入完成后会同步调用
-            // removeEldestEntry，那一刻需要看到已包含本次新增的预算。
-            // 注意 super.get 会触发 access-order 的链表重排；此处无害——
-            // 该条目紧接着就要被覆写并移到队尾，与我们想要的结果一致。
             Entry previous = super.get(key);
             if (previous != null) {
                 points -= cost(previous);

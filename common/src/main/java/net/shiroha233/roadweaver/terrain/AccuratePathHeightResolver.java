@@ -2,7 +2,7 @@ package net.shiroha233.roadweaver.terrain;
 
 import net.minecraft.core.BlockPos;
 import net.shiroha233.roadweaver.terrain.accurate.AccurateHeightSample;
-import net.shiroha233.roadweaver.terrain.accurate.AccurateHeightSampler;
+import net.shiroha233.roadweaver.terrain.api.PathTerrainField;
 
 import java.util.ArrayList;
 import java.util.List;

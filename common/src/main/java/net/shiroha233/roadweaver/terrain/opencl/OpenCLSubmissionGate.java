@@ -1,6 +1,6 @@
 package net.shiroha233.roadweaver.terrain.opencl;
 
-import net.shiroha233.roadweaver.terrain.accurate.AccurateSamplingStats;
+import net.shiroha233.roadweaver.core.metrics.AccurateSamplingStats;
 
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.ReentrantLock;

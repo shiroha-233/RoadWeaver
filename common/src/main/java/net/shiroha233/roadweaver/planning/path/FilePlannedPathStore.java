@@ -2,7 +2,7 @@
 package net.shiroha233.roadweaver.planning.path;
 
 import net.minecraft.core.BlockPos;
-import net.shiroha233.roadweaver.persistence.files.FileStorageIO;
+import net.shiroha233.roadweaver.util.FileStorageIO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -159,8 +159,6 @@ public final class FilePlannedPathStore implements PlannedPathStore {
     private static String fileName(PlannedPathKey key) {
         String value = key.first().x() + ":" + key.first().y() + ":" + key.first().z() + "|"
                 + key.second().x() + ":" + key.second().y() + ":" + key.second().z();
-        // 按线程复用：getInstance 每次都做 JCA provider 查找并分配新实例；
-        // MessageDigest 非线程安全，故不能用单一静态实例
         MessageDigest digest = DIGEST.get();
         digest.reset();
         return HEX_FORMAT.formatHex(digest.digest(value.getBytes(StandardCharsets.UTF_8)));

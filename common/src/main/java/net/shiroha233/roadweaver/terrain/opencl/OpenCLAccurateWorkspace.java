@@ -1,7 +1,5 @@
 package net.shiroha233.roadweaver.terrain.opencl;
 
-import net.shiroha233.roadweaver.terrain.opencl.bridge.OpenCLBridge;
-
 final class OpenCLAccurateWorkspace implements AutoCloseable {
     private final ReusableBuffer params = new ReusableBuffer(OpenCLBridge.BufferAccess.READ_ONLY);
     private final ReusableBuffer chunks = new ReusableBuffer(OpenCLBridge.BufferAccess.READ_ONLY);

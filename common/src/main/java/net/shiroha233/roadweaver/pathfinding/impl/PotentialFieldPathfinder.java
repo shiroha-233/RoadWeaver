@@ -7,14 +7,28 @@ import net.shiroha233.roadweaver.core.constants.RoadConstants;
 import net.shiroha233.roadweaver.core.model.RoadSegmentPlacement;
 import net.shiroha233.roadweaver.pathfinding.PathResult;
 import net.shiroha233.roadweaver.pathfinding.Pathfinder;
-import net.shiroha233.roadweaver.terrain.PathTerrainField;
+import net.shiroha233.roadweaver.terrain.api.PathTerrainField;
 import net.shiroha233.roadweaver.terrain.TerrainSamplingCache;
-import net.shiroha233.roadweaver.terrain.accurate.AccurateHeightSampler;
+import net.shiroha233.roadweaver.terrain.AccurateHeightSampler;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.PriorityQueue;
+import java.util.Set;
 
-import static net.shiroha233.roadweaver.pathfinding.impl.PathfindingHelper.*;
-import static net.shiroha233.roadweaver.pathfinding.impl.TerrainGradientHelper.*;
+import static net.shiroha233.roadweaver.pathfinding.impl.PathfindingHelper.calculateTerrainStability;
+import static net.shiroha233.roadweaver.pathfinding.impl.PathfindingHelper.heightSampler;
+import static net.shiroha233.roadweaver.pathfinding.impl.PathfindingHelper.isNearWaterLike;
+import static net.shiroha233.roadweaver.pathfinding.impl.TerrainGradientHelper.computeGrade;
+import static net.shiroha233.roadweaver.pathfinding.impl.TerrainGradientHelper.contourAlignment;
+import static net.shiroha233.roadweaver.pathfinding.impl.TerrainGradientHelper.contourDirection;
+import static net.shiroha233.roadweaver.pathfinding.impl.TerrainGradientHelper.gradientMagnitude;
+import static net.shiroha233.roadweaver.pathfinding.impl.TerrainGradientHelper.terrainGradient;
 
 /**
  * 势场法 + 梯度流寻路器

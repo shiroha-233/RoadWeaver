@@ -4,7 +4,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;
-import net.shiroha233.roadweaver.client.map.MapInputHandler;
+import net.shiroha233.roadweaver.client.map.view.MapInputHandler;
 import net.shiroha233.roadweaver.client.map.MapTheme;
 import net.shiroha233.roadweaver.client.map.MapView;
 import net.shiroha233.roadweaver.map.data.MapSnapshot;

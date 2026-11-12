@@ -4,6 +4,8 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.Level;
 import net.shiroha233.roadweaver.config.ModConfig;
+import net.shiroha233.roadweaver.persistence.api.RoadChangeListener;
+import net.shiroha233.roadweaver.persistence.api.RoadChangeNotifier;
 import net.shiroha233.roadweaver.persistence.sharded.RoadShardStorage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,6 +25,10 @@ public final class RoadWorldgenPlanCache {
     private static final int MAX_COMPILE_ATTEMPTS = 8;
     private static final Logger LOGGER = LoggerFactory.getLogger("roadweaver");
     private static final ConcurrentHashMap<ServerLevel, Session> SESSIONS = new ConcurrentHashMap<>();
+
+    static {
+        RoadChangeNotifier.addListener(new InvalidationListener());
+    }
 
     private RoadWorldgenPlanCache() {
     }
@@ -74,6 +80,28 @@ public final class RoadWorldgenPlanCache {
         var roads = RoadShardStorage.queryRect(level, minX, minZ, maxX, maxZ);
         return RoadChunkPlanCompiler.compile(chunkPos, roads,
                 !config.bridgeEnabled(), config.clearHeight(), revision);
+    }
+
+    private static final class InvalidationListener implements RoadChangeListener {
+        @Override
+        public void onChunksChanged(ServerLevel level, Collection<Long> chunkKeys) {
+            invalidate(level, chunkKeys);
+        }
+
+        @Override
+        public void onPlansInvalidated(ServerLevel level) {
+            invalidate(level);
+        }
+
+        @Override
+        public void onLevelCleared(ServerLevel level) {
+            clear(level);
+        }
+
+        @Override
+        public void onAllCleared() {
+            clearAll();
+        }
     }
 
     private static final class Session {

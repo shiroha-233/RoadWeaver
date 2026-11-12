@@ -39,7 +39,6 @@ public abstract class CreateWorldScreenInitMixin extends Screen {
             if (registryAccess == null) return;
             StructureDiscoveryService.discoverFromRegistryAccess(registryAccess);
         } catch (Exception e) {
-            // 忽略错误，不影响正常流程
         }
     }
 }

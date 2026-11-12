@@ -1,6 +1,6 @@
 package net.shiroha233.roadweaver.terrain.opencl;
 
-import net.shiroha233.roadweaver.terrain.opencl.bridge.OpenCLBridge;
+import net.shiroha233.roadweaver.terrain.opencl.OpenCLBridge;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -230,7 +230,6 @@ public final class OpenCLRuntime implements AutoCloseable {
 
     @Override
     public void close() {
-        // 会话由服务器级生命周期统一释放，单个 sampler 不拥有它。
     }
 
     public static void closeSharedRuntimeForTests() {

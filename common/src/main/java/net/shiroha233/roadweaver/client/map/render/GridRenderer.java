@@ -60,19 +60,6 @@ public final class GridRenderer {
         g.drawString(font, labelComp, tx, ty, colorText, false);
     }
 
-    public static int computeGridStep(int mapX, int mapY, int mapW, int mapH,
-                                      int innerPad,
-                                      double viewMinX, double viewMaxX,
-                                      double viewMinZ, double viewMaxZ,
-                                      int gridTargetPx) {
-        int contentW = mapW - innerPad * 2;
-        int contentH = mapH - innerPad * 2;
-        double ppbX = contentW / Math.max(1.0, (viewMaxX - viewMinX));
-        double ppbZ = contentH / Math.max(1.0, (viewMaxZ - viewMinZ));
-        double ppb = (ppbX + ppbZ) * 0.5;
-        int approx = (int) Math.round(gridTargetPx / Math.max(0.001, ppb));
-        return snapStep(approx);
-    }
 
     private static int toScreenX(int blockX, int mapX, int mapW, int innerPad, double viewMinX, double viewMaxX) {
         int contentW = mapW - innerPad * 2;

@@ -5,7 +5,7 @@ import net.minecraft.server.level.ServerLevel;
 import net.shiroha233.roadweaver.config.ConfigService;
 import net.shiroha233.roadweaver.config.sub.TerrainSamplingMode;
 import net.shiroha233.roadweaver.core.model.StructureConnection;
-import net.shiroha233.roadweaver.persistence.files.FileStoragePathResolver;
+import net.shiroha233.roadweaver.util.FileStoragePathResolver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

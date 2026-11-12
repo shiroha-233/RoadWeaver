@@ -7,7 +7,7 @@ import net.minecraft.world.level.biome.Biome;
 import net.shiroha233.roadweaver.config.sub.TerrainSamplingMode;
 import net.shiroha233.roadweaver.core.model.StructureConnection;
 import net.shiroha233.roadweaver.terrain.TerrainSamplingCache;
-import net.shiroha233.roadweaver.terrain.PathTerrainField;
+import net.shiroha233.roadweaver.terrain.api.PathTerrainField;
 
 import java.util.LinkedHashMap;
 import java.util.List;

@@ -4,7 +4,7 @@ import net.minecraft.server.level.ServerLevel;
 import net.shiroha233.roadweaver.map.tile.core.MapTileCoord;
 import net.shiroha233.roadweaver.map.tile.core.MapTileLayer;
 import net.shiroha233.roadweaver.map.tile.core.MapTileScheme;
-import net.shiroha233.roadweaver.persistence.files.FileStorageIO;
+import net.shiroha233.roadweaver.util.FileStorageIO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

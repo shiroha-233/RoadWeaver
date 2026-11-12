@@ -1,6 +1,16 @@
 package net.shiroha233.roadweaver.config;
 
-import net.shiroha233.roadweaver.config.sub.*;
+import net.shiroha233.roadweaver.config.sub.BridgeConfig;
+import net.shiroha233.roadweaver.config.sub.ClientConfig;
+import net.shiroha233.roadweaver.config.sub.PathfindingCostConfig;
+import net.shiroha233.roadweaver.config.sub.PerformanceConfig;
+import net.shiroha233.roadweaver.config.sub.PlanningConfig;
+import net.shiroha233.roadweaver.config.sub.RoadAppearanceConfig;
+import net.shiroha233.roadweaver.config.sub.RoadGenerationConfig;
+import net.shiroha233.roadweaver.config.sub.RoadGenerationInputs;
+import net.shiroha233.roadweaver.config.sub.RoadsideStructureConfig;
+import net.shiroha233.roadweaver.config.sub.RoadsideVillageConfig;
+import net.shiroha233.roadweaver.config.sub.StructurePredictionConfig;
 
 import java.util.List;
 
@@ -149,6 +159,11 @@ public final class ModConfig {
 
     public boolean slopeLimitEnabled() {
         return roadAppearance.slopeLimitEnabled();
+    }
+
+    public RoadGenerationConfig resolvedRoadGeneration() {
+        return RoadGenerationConfig.from(new RoadGenerationInputs(roadAppearance, pathfindingCost, bridge,
+                averagingRadius(), slopeLimitEnabled()));
     }
 
     public int lampInterval() {

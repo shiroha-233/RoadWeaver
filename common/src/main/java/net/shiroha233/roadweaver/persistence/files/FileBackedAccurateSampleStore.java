@@ -11,6 +11,8 @@ import net.shiroha233.roadweaver.terrain.accurate.AccurateSampleStore;
 import net.shiroha233.roadweaver.persistence.WorldgenFingerprint;
 import net.shiroha233.roadweaver.persistence.WorldgenFingerprintService;
 import net.shiroha233.roadweaver.util.StripedLocks;
+import net.shiroha233.roadweaver.util.FileStorageIO;
+import net.shiroha233.roadweaver.util.FileStoragePathResolver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

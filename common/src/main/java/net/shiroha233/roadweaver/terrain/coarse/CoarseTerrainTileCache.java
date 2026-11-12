@@ -3,7 +3,6 @@ package net.shiroha233.roadweaver.terrain.coarse;
 import net.minecraft.server.level.ServerLevel;
 import net.shiroha233.roadweaver.core.constants.RoadConstants;
 import net.shiroha233.roadweaver.progress.InitialGenerationProgressTracker;
-import net.shiroha233.roadweaver.persistence.files.CoarseTerrainTileFileStorage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

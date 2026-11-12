@@ -7,7 +7,7 @@ import net.shiroha233.roadweaver.progress.InitialGenerationCoarseSamplingProgres
 import net.shiroha233.roadweaver.progress.InitialGenerationProgressTracker;
 import net.shiroha233.roadweaver.progress.InitialGenerationStage;
 import net.shiroha233.roadweaver.terrain.TerrainSamplingCache;
-import net.shiroha233.roadweaver.terrain.accurate.AccurateHeightSampler;
+import net.shiroha233.roadweaver.terrain.AccurateHeightSampler;
 import net.shiroha233.roadweaver.map.tile.writer.CoarseTerrainPngWriter;
 import net.shiroha233.roadweaver.terrain.coarse.CoarseTerrainRegion;
 import net.shiroha233.roadweaver.terrain.coarse.CoarseTerrainRegionSampler;
@@ -108,7 +108,6 @@ final class CoarseCorridorPlanningAdapter implements RoadTerrainPlanningPort {
                 try {
                     List<BlockPos> refined = RawPathSearch.find(request.level(), connection,
                             request.pathfinding(), cache, entry.getValue());
-                    // Do not silently pave the coarse route when the accurate search fails.
                     if (refined != null && refined.size() >= 2) {
                         RawPathDebugService.captureResolved(request.level(), connection,
                                 TerrainSamplingMode.COARSE_CORRIDOR, coarsePath, refined);
@@ -129,7 +128,6 @@ final class CoarseCorridorPlanningAdapter implements RoadTerrainPlanningPort {
         try {
             CoarseTerrainPngWriter.writeTerrainTiles(request.level(), terrain);
         } catch (RuntimeException ignored) {
-            // 地图输出是旁路能力，不能阻断道路规划。
         }
     }
 }

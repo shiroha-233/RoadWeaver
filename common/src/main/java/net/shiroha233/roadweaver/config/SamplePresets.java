@@ -11,7 +11,6 @@ final class SamplePresets {
 
     static {
         List<SamplePresetTemplate> list = new ArrayList<>();
-        // ===== 人工道路 =====
         list.add(new SamplePresetTemplate(
                 "stone_street",
                 "Stone Street",
@@ -31,7 +30,6 @@ final class SamplePresets {
                 List.of("minecraft:stone_bricks", "minecraft:mossy_stone_bricks", "minecraft:cracked_stone_bricks"),
                 List.of("minecraft:stone_brick_slab", "minecraft:mossy_stone_brick_slab")));
 
-        // ===== 自然道路（按生物群系划分）=====
         list.add(naturalPreset("plains", "Plains Trail",
                 List.of("minecraft:dirt_path", "minecraft:gravel", "minecraft:coarse_dirt"),
                 List.of("minecraft:oak_slab")));

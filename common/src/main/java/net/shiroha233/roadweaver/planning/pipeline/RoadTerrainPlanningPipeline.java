@@ -1,7 +1,7 @@
 package net.shiroha233.roadweaver.planning.pipeline;
 
 import net.shiroha233.roadweaver.config.sub.TerrainSamplingMode;
-import net.shiroha233.roadweaver.terrain.accurate.AccurateHeightSampler;
+import net.shiroha233.roadweaver.terrain.AccurateHeightSampler;
 import net.shiroha233.roadweaver.progress.InitialGenerationProgressTracker;
 
 import java.util.Objects;

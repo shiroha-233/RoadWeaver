@@ -14,7 +14,7 @@ import net.shiroha233.roadweaver.generation.IdleRoadGenerationService;
 import net.shiroha233.roadweaver.generation.InitialGenManager;
 import net.shiroha233.roadweaver.generation.RoadGenerationService;
 import net.shiroha233.roadweaver.planning.RoadPlanningService;
-import net.shiroha233.roadweaver.runtime.CacheManager;
+import net.shiroha233.roadweaver.lifecycle.CacheManager;
 import net.shiroha233.roadweaver.runtime.ThreadPoolManager;
 
 /**
@@ -29,8 +29,6 @@ public final class ServerPlanningHooks {
         ServerLifecycleEvents.SERVER_STARTED.register(server -> {
             CacheManager.onServerStarted();
             ThreadPoolManager.onServerStarted(server);
-            // Pending sign text is kept on start: the spawn chunks are generated before this event, and clearing
-            // here would delete the text of every sign near spawn. Stopping the server still clears it.
             IdleRoadGenerationService.onServerStarted();
             
             ServerLevel level = server.getLevel(net.minecraft.world.level.Level.OVERWORLD);
@@ -56,8 +54,6 @@ public final class ServerPlanningHooks {
             }
         });
 
-        // Mark every chunk that becomes a full chunk, so queued sign text is written even when no player stands
-        // in it, including chunks whose queue entries were saved to disk before a restart.
         ServerChunkEvents.CHUNK_LOAD.register((level, chunk) -> SignTextService.onChunkReady(level, chunk.getPos()));
 
         ServerTickEvents.END_SERVER_TICK.register(server -> {
@@ -80,7 +76,6 @@ public final class ServerPlanningHooks {
         });
 
         ServerLifecycleEvents.SERVER_STOPPING.register(server -> {
-            // 先递增 epoch 并停池，阻止旧任务的完成回调回写世界状态。
             ThreadPoolManager.onServerStopping();
             RoadGenerationService.onServerStopping();
             RoadPlanningService.resetAll();

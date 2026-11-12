@@ -2,8 +2,8 @@ package net.shiroha233.roadweaver.progress;
 
 import net.shiroha233.roadweaver.config.ConfigService;
 import net.shiroha233.roadweaver.config.ModConfig;
-import net.shiroha233.roadweaver.terrain.accurate.AccurateSamplingStats;
-import net.shiroha233.roadweaver.terrain.TerrainSamplingStats;
+import net.shiroha233.roadweaver.core.metrics.AccurateSamplingStats;
+import net.shiroha233.roadweaver.core.metrics.TerrainSamplingStats;
 
 import java.util.Locale;
 import java.util.concurrent.atomic.AtomicInteger;

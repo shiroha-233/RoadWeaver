@@ -8,21 +8,17 @@ import net.shiroha233.roadweaver.map.data.MapSnapshot;
  */
 public final class MapView {
     private double minX, maxX, minZ, maxZ;
-    private boolean initialized;
 
-    boolean isInitialized() { return initialized; }
-
-    void resetFromSnapshot(MapSnapshot snapshot) {
+    public void resetFromSnapshot(MapSnapshot snapshot) {
         this.minX = snapshot.minX();
         this.maxX = snapshot.maxX();
         this.minZ = snapshot.minZ();
         this.maxZ = snapshot.maxZ();
         if (maxX - minX < 1) maxX = minX + 1;
         if (maxZ - minZ < 1) maxZ = minZ + 1;
-        initialized = false;
     }
 
-    void calibrateInitialToPlayer(Minecraft mc, int contentW, int contentH, int gridTargetPx) {
+    public void calibrateInitialToPlayer(Minecraft mc, int contentW, int contentH, int gridTargetPx) {
         if (mc == null || mc.player == null) return;
         double px = mc.player.getX();
         double pz = mc.player.getZ();
@@ -37,7 +33,6 @@ public final class MapView {
         this.maxZ = pz + rangeZ * 0.5;
         lockAspect(contentW, contentH);
         clampZoom(contentW, contentH, gridTargetPx);
-        initialized = true;
     }
 
     public int toScreenX(int blockX, int mapX, int innerPad, int contentW) {
@@ -66,7 +61,7 @@ public final class MapView {
         return x >= minX && x <= maxX && z >= minZ && z <= maxZ;
     }
 
-    boolean segmentInViewWorld(int x1, int z1, int x2, int z2) {
+    public boolean segmentInViewWorld(int x1, int z1, int x2, int z2) {
         int minX = Math.min(x1, x2);
         int maxX = Math.max(x1, x2);
         int minZ = Math.min(z1, z2);
@@ -86,7 +81,7 @@ public final class MapView {
         return contentH / Math.max(1.0, (maxZ - minZ));
     }
 
-    void lockAspect(int contentW, int contentH) {
+    public void lockAspect(int contentW, int contentH) {
         if (contentW <= 0 || contentH <= 0) return;
         double aspect = contentW / (double) contentH;
         double rx = Math.max(1.0, maxX - minX);
@@ -106,7 +101,7 @@ public final class MapView {
         }
     }
 
-    void clampZoom(int contentW, int contentH, int gridTargetPx) {
+    public void clampZoom(int contentW, int contentH, int gridTargetPx) {
         if (contentW <= 0 || contentH <= 0) return;
         double minPpb = gridTargetPx / (512.0 * 16.0);
         double maxPpb = gridTargetPx / 2.0;
@@ -128,7 +123,7 @@ public final class MapView {
         }
     }
 
-    void applyZoomAround(double cx, double cz, double factor, int contentW, int contentH, int gridTargetPx) {
+    public void applyZoomAround(double cx, double cz, double factor, int contentW, int contentH, int gridTargetPx) {
         double rx = maxX - minX;
         double rz = maxZ - minZ;
         double nrx = Math.max(1.0, rx * factor);
@@ -143,7 +138,7 @@ public final class MapView {
         clampZoom(contentW, contentH, gridTargetPx);
     }
 
-    void panByScreenDelta(double dx, double dy, int contentW, int contentH) {
+    public void panByScreenDelta(double dx, double dy, int contentW, int contentH) {
         double rx = maxX - minX;
         double rz = maxZ - minZ;
         double wx = -dx / Math.max(1.0, contentW) * rx;
@@ -152,7 +147,7 @@ public final class MapView {
         minZ += wz; maxZ += wz;
     }
 
-    void centerOn(double worldX, double worldZ, int contentW, int contentH) {
+    public void centerOn(double worldX, double worldZ, int contentW, int contentH) {
         double rx = maxX - minX;
         double rz = maxZ - minZ;
         minX = worldX - rx * 0.5;

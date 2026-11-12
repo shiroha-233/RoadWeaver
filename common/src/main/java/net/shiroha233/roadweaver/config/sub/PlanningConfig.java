@@ -1,6 +1,5 @@
 package net.shiroha233.roadweaver.config.sub;
 
-import net.shiroha233.roadweaver.config.SubConfig;
 import net.shiroha233.roadweaver.core.constants.RoadConstants;
 
 /**
@@ -8,9 +7,6 @@ import net.shiroha233.roadweaver.core.constants.RoadConstants;
  */
 public final class PlanningConfig implements SubConfig {
 
-    /**
-     * 规划算法枚举。
-     */
     public enum PlanningAlgorithm { KNN, DELAUNAY, RNG, MST, SNAP_BRANCH }
 
     private int initialPlanRadiusChunks = RoadConstants.DEFAULT_INITIAL_PLAN_RADIUS_CHUNKS;

@@ -24,8 +24,8 @@ import net.minecraft.world.item.CreativeModeTabs;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
-import net.shiroha233.roadweaver.client.render.RoadWeaverUi;
-import net.shiroha233.roadweaver.client.render.SafeGuiItemRenderer;
+import net.shiroha233.roadweaver.client.ui.RoadWeaverUi;
+import net.shiroha233.roadweaver.client.ui.SafeGuiItemRenderer;
 
 import java.util.ArrayList;
 import java.util.LinkedHashSet;

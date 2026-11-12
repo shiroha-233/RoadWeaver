@@ -3,11 +3,15 @@ package net.shiroha233.roadweaver.client.map.cache;
 import net.minecraft.core.BlockPos;
 import net.minecraft.client.Minecraft;
 import net.minecraft.resources.ResourceLocation;
-import net.shiroha233.roadweaver.structure.MapSearchResult;
-import net.shiroha233.roadweaver.structure.MapStructureSource;
+import net.shiroha233.roadweaver.map.search.MapSearchResult;
+import net.shiroha233.roadweaver.map.search.MapStructureSource;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
 
 /**
  * 客户端地图笔记存储 - 按存档隔离并持久化
@@ -91,11 +95,6 @@ public final class ClientMapNotes {
         }
     }
 
-    public static boolean hasAlias(BlockPos pos) {
-        MapDataStorage.DimensionPos key = currentKey(pos);
-        return key != null && aliases.containsKey(key);
-    }
-
     public static List<MapSearchResult> searchAliases(String query, int limit) {
         if (query == null || query.isBlank() || limit <= 0) return List.of();
         String normalized = query.trim().toLowerCase(Locale.ROOT);
@@ -131,27 +130,6 @@ public final class ClientMapNotes {
             dirty = true;
             saveToFile();
         }
-    }
-
-    public static void setNotes(BlockPos pos, List<String> noteList) {
-        MapDataStorage.DimensionPos key = currentKey(pos);
-        if (key == null) return;
-        if (noteList == null || noteList.isEmpty()) {
-            if (notes.remove(key) != null) {
-                dirty = true;
-                saveToFile();
-            }
-        } else {
-            notes.put(key, new ArrayList<>(noteList));
-            dirty = true;
-            saveToFile();
-        }
-    }
-
-    public static boolean hasNotes(BlockPos pos) {
-        MapDataStorage.DimensionPos key = currentKey(pos);
-        List<String> n = key == null ? null : notes.get(key);
-        return n != null && !n.isEmpty();
     }
 
     private static MapDataStorage.DimensionPos currentKey(BlockPos pos) {

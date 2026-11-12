@@ -3,7 +3,7 @@ package net.shiroha233.roadweaver.mixin.fabric;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.chunk.ChunkAccess;
 import net.shiroha233.roadweaver.worldgen.road.decoration.text.SignTextService;
-import net.shiroha233.roadweaver.structures.precompute.StructureInjector;
+import net.shiroha233.roadweaver.worldgen.structure.precompute.StructureInjector;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;

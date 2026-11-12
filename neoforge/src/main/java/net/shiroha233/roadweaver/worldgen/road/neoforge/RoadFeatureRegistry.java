@@ -6,7 +6,7 @@ import net.neoforged.bus.api.IEventBus;
 import net.neoforged.neoforge.registries.RegisterEvent;
 import net.shiroha233.roadweaver.RoadWeaver;
 import net.shiroha233.roadweaver.worldgen.road.PathFeature;
-import net.shiroha233.roadweaver.worldgen.road.PathFeatureConfig;
+import net.shiroha233.roadweaver.worldgen.PathFeatureConfig;
 
 /**
  * NeoForge Feature 注册：把道路收尾 Feature 挂到 oad_feature。

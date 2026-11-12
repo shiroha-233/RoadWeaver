@@ -3,19 +3,19 @@ package net.shiroha233.roadweaver.network.payload;
 import io.netty.handler.codec.DecoderException;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
-import net.shiroha233.roadweaver.map.data.MapLoadPhase;
+import net.shiroha233.roadweaver.core.model.MapLoadPhase;
 import net.shiroha233.roadweaver.map.data.MapSnapshot;
-import net.shiroha233.roadweaver.map.data.MapSnapshotPatch;
+import net.shiroha233.roadweaver.core.model.MapSnapshotPatch;
 import net.shiroha233.roadweaver.core.model.ConnectionStatus;
 import net.shiroha233.roadweaver.core.model.StructureConnection;
 import net.shiroha233.roadweaver.core.model.StructureInfo;
-import net.shiroha233.roadweaver.structure.MapStructureSource;
+import net.shiroha233.roadweaver.map.search.MapStructureSource;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import net.shiroha233.roadweaver.map.data.RequestRect;
+import net.shiroha233.roadweaver.core.model.RequestRect;
 
 /**
  * 地图快照编解码器

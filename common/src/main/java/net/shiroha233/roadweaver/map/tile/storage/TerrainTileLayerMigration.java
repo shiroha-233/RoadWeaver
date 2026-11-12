@@ -1,7 +1,7 @@
 package net.shiroha233.roadweaver.map.tile.storage;
 
 import net.shiroha233.roadweaver.map.tile.core.MapTileLayer;
-import net.shiroha233.roadweaver.persistence.files.FileStorageIO;
+import net.shiroha233.roadweaver.util.FileStorageIO;
 import org.slf4j.Logger;
 
 import java.io.IOException;

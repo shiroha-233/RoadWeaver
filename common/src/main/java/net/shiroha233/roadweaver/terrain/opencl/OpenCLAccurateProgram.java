@@ -17,8 +17,7 @@ import net.shiroha233.roadweaver.terrain.accurate.AccurateHeightGrid;
 import net.shiroha233.roadweaver.terrain.accurate.AccurateHeightGridRequest;
 import net.shiroha233.roadweaver.terrain.accurate.AccurateHeightSample;
 import net.shiroha233.roadweaver.terrain.accurate.AccurateSamplingProgress;
-import net.shiroha233.roadweaver.terrain.accurate.AccurateSamplingStats;
-import net.shiroha233.roadweaver.terrain.opencl.bridge.OpenCLBridge;
+import net.shiroha233.roadweaver.core.metrics.AccurateSamplingStats;
 
 import java.util.ArrayList;
 import java.util.Arrays;

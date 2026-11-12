@@ -3,6 +3,8 @@ package net.shiroha233.roadweaver.terrain.coarse;
 import net.minecraft.server.level.ServerLevel;
 import net.shiroha233.roadweaver.progress.InitialGenerationProgressTracker;
 import net.shiroha233.roadweaver.terrain.FastHeightSampler;
+import net.shiroha233.roadweaver.terrain.api.CoarseHeightBatchRequest;
+import net.shiroha233.roadweaver.terrain.api.CoarseHeightBatchSampler;
 
 /**
  * CPU 粗高度批量采样器。

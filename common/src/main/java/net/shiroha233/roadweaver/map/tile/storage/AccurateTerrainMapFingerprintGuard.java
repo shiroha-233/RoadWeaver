@@ -2,7 +2,7 @@ package net.shiroha233.roadweaver.map.tile.storage;
 
 import net.minecraft.server.level.ServerLevel;
 import net.shiroha233.roadweaver.map.tile.core.MapTileLayer;
-import net.shiroha233.roadweaver.persistence.files.FileStorageIO;
+import net.shiroha233.roadweaver.util.FileStorageIO;
 import net.shiroha233.roadweaver.persistence.WorldgenFingerprintService;
 import net.shiroha233.roadweaver.util.StripedLocks;
 import org.slf4j.Logger;

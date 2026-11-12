@@ -1,12 +1,11 @@
 package net.shiroha233.roadweaver.client.map.cache;
 
 import net.minecraft.core.BlockPos;
-import net.shiroha233.roadweaver.map.data.MapLoadPhase;
-import net.shiroha233.roadweaver.client.map.MapViewportController;
+import net.shiroha233.roadweaver.core.model.MapLoadPhase;
 import net.shiroha233.roadweaver.core.model.ConnectionStatus;
 import net.shiroha233.roadweaver.core.model.StructureConnection;
 import net.shiroha233.roadweaver.core.model.StructureInfo;
-import net.shiroha233.roadweaver.structure.MapStructureSource;
+import net.shiroha233.roadweaver.map.search.MapStructureSource;
 
 import java.util.ArrayList;
 import java.util.EnumMap;
@@ -14,8 +13,8 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import net.shiroha233.roadweaver.map.data.MapSnapshot;
-import net.shiroha233.roadweaver.map.data.MapSnapshotPatch;
-import net.shiroha233.roadweaver.map.data.RequestRect;
+import net.shiroha233.roadweaver.core.model.MapSnapshotPatch;
+import net.shiroha233.roadweaver.core.model.RequestRect;
 
 /**
  * 客户端地图数据仓库。
@@ -99,7 +98,7 @@ public final class MapSnapshotStore {
         if (rects == null || rects.isEmpty()) return;
         ArrayList<RequestRect> next = new ArrayList<>();
         for (RequestRect rect : rects) {
-            next.addAll(MapViewportController.subtract(rect, dirtyRect));
+            next.addAll(rect.subtract(dirtyRect));
         }
         loadedRects.put(phase, next);
     }
@@ -121,12 +120,6 @@ public final class MapSnapshotStore {
             }
             case CONNECTIONS -> connectionsByKey.entrySet().removeIf(entry -> intersects(entry.getValue(), rect));
             case ROADS -> roadsByKey.entrySet().removeIf(entry -> intersects(entry.getValue(), rect));
-        }
-    }
-
-    public synchronized void invalidateAllLoadedRects() {
-        for (MapLoadPhase phase : MapLoadPhase.values()) {
-            loadedRects.get(phase).clear();
         }
     }
 

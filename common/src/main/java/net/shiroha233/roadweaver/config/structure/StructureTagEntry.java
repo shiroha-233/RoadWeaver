@@ -2,7 +2,12 @@ package net.shiroha233.roadweaver.config.structure;
 
 import net.minecraft.resources.ResourceLocation;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Objects;
+import java.util.Set;
 
 /**
  * 结构标签条目，表示一个标签及其包含的所有结构

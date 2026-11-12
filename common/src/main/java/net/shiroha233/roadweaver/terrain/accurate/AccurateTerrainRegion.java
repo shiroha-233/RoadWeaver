@@ -2,7 +2,7 @@ package net.shiroha233.roadweaver.terrain.accurate;
 
 import net.minecraft.core.Holder;
 import net.minecraft.world.level.biome.Biome;
-import net.shiroha233.roadweaver.terrain.PathTerrainField;
+import net.shiroha233.roadweaver.terrain.api.PathTerrainField;
 
 import java.util.Objects;
 
@@ -130,7 +130,7 @@ public final class AccurateTerrainRegion implements PathTerrainField {
         return heights == null;
     }
 
-    static byte flags(boolean columnWater, boolean waterBiome) {
+    public static byte flags(boolean columnWater, boolean waterBiome) {
         int value = 0;
         if (columnWater) {
             value |= FLAG_COLUMN_WATER;

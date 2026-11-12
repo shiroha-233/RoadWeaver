@@ -1,6 +1,5 @@
 package net.shiroha233.roadweaver.config.sub;
 
-import net.shiroha233.roadweaver.config.SubConfig;
 import net.shiroha233.roadweaver.core.constants.RoadConstants;
 
 /**

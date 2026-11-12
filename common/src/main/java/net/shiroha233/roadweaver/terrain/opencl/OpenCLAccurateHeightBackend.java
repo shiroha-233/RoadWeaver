@@ -11,7 +11,7 @@ import net.shiroha233.roadweaver.terrain.accurate.AccurateHeightChunk;
 import net.shiroha233.roadweaver.terrain.accurate.AccurateHeightGrid;
 import net.shiroha233.roadweaver.terrain.accurate.AccurateHeightGridRequest;
 import net.shiroha233.roadweaver.terrain.accurate.AccurateHeightSample;
-import net.shiroha233.roadweaver.terrain.accurate.AccurateSamplingStats;
+import net.shiroha233.roadweaver.core.metrics.AccurateSamplingStats;
 import net.shiroha233.roadweaver.terrain.accurate.AccurateSamplingProgress;
 import net.shiroha233.roadweaver.terrain.accurate.AcceleratedSamplingUnavailableException;
 import net.shiroha233.roadweaver.terrain.accurate.CpuAccurateHeightBackend;

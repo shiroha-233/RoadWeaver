@@ -8,7 +8,7 @@ import net.minecraft.client.KeyMapping;
 import net.shiroha233.roadweaver.client.map.ClientMapAccessGuard;
 import net.shiroha233.roadweaver.client.debug.RawPathDebugOverlay;
 import net.fabricmc.fabric.api.client.rendering.v1.WorldRenderEvents;
-import net.shiroha233.roadweaver.client.map.RoadMapScreen;
+import net.shiroha233.roadweaver.client.map.screen.RoadMapScreen;
 import net.shiroha233.roadweaver.client.map.cache.ClientMapNotes;
 import net.shiroha233.roadweaver.client.map.cache.MapDataStorage;
 import net.shiroha233.roadweaver.client.map.cache.MapSnapshotCache;

@@ -6,12 +6,12 @@ import net.shiroha233.roadweaver.core.model.StructureConnection;
 import net.shiroha233.roadweaver.progress.InitialGenerationProgressTracker;
 import net.shiroha233.roadweaver.progress.InitialGenerationStage;
 import net.shiroha233.roadweaver.map.tile.storage.AccurateTerrainMapFingerprintGuard;
-import net.shiroha233.roadweaver.terrain.accurate.AccurateHeightSampler;
+import net.shiroha233.roadweaver.terrain.AccurateHeightSampler;
 import net.shiroha233.roadweaver.terrain.accurate.AcceleratedSamplingUnavailableException;
 import net.shiroha233.roadweaver.terrain.TerrainSamplingCache;
 import net.shiroha233.roadweaver.map.tile.writer.AccurateTerrainPngWriter;
 import net.shiroha233.roadweaver.terrain.accurate.AccurateTerrainRegion;
-import net.shiroha233.roadweaver.terrain.accurate.AccurateTerrainRegionSampler;
+import net.shiroha233.roadweaver.terrain.AccurateTerrainRegionSampler;
 import net.shiroha233.roadweaver.terrain.accurate.AccurateRegionLimitExceededException;
 
 import java.util.LinkedHashMap;
@@ -59,7 +59,6 @@ final class FullRegionPlanningAdapter implements RoadTerrainPlanningPort {
             try {
                 AccurateTerrainPngWriter.writeTerrainTiles(request.level(), region);
             } catch (RuntimeException ignored) {
-                // 地图是派生产物，写入失败不应使采样策略降级。
             }
             return new Result(TerrainSamplingMode.FULL_REGION, paths);
         } catch (java.util.concurrent.CancellationException interrupted) {

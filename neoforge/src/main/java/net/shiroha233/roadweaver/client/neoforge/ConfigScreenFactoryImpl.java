@@ -9,7 +9,16 @@ import net.minecraft.network.chat.Component;
 import net.shiroha233.roadweaver.config.ConfigService;
 import net.shiroha233.roadweaver.config.ModConfig;
 import net.shiroha233.roadweaver.config.PresetService;
-import net.shiroha233.roadweaver.config.sub.*;
+import net.shiroha233.roadweaver.config.sub.BridgeConfig;
+import net.shiroha233.roadweaver.config.sub.ClientConfig;
+import net.shiroha233.roadweaver.config.sub.PathfindingCostConfig;
+import net.shiroha233.roadweaver.config.sub.PerformanceConfig;
+import net.shiroha233.roadweaver.config.sub.PlanningConfig;
+import net.shiroha233.roadweaver.config.sub.RoadAppearanceConfig;
+import net.shiroha233.roadweaver.config.sub.RoadsideStructureConfig;
+import net.shiroha233.roadweaver.config.sub.RoadsideVillageConfig;
+import net.shiroha233.roadweaver.config.sub.StructurePredictionConfig;
+import net.shiroha233.roadweaver.config.sub.TerrainSamplingMode;
 import net.shiroha233.roadweaver.core.constants.RoadConstants;
 import net.shiroha233.roadweaver.terrain.opencl.OpenCLDevicePreference;
 

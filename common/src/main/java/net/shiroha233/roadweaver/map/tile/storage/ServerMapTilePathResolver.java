@@ -4,7 +4,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.shiroha233.roadweaver.map.tile.core.MapTileCoord;
 import net.shiroha233.roadweaver.map.tile.core.MapTileLayer;
-import net.shiroha233.roadweaver.persistence.files.WorldRootPaths;
+import net.shiroha233.roadweaver.util.WorldRootPaths;
 
 import java.nio.file.Path;
 import java.util.Objects;

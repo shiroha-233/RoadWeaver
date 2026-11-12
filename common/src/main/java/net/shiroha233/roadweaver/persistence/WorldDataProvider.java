@@ -4,7 +4,6 @@ import dev.architectury.injectables.annotations.ExpectPlatform;
 import net.shiroha233.roadweaver.core.model.StructureConnection;
 import net.shiroha233.roadweaver.core.model.StructureInfo;
 import net.shiroha233.roadweaver.core.model.StructureLocationData;
-import net.shiroha233.roadweaver.persistence.files.StructureFileStorage;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 

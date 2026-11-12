@@ -1,6 +1,6 @@
 package net.shiroha233.roadweaver.terrain.coarse;
 
-import net.shiroha233.roadweaver.terrain.PathTerrainField;
+import net.shiroha233.roadweaver.terrain.api.PathTerrainField;
 
 /**
  * 单个持久化粗采样地形瓦片。

@@ -7,11 +7,11 @@ import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.core.BlockPos;
-import net.shiroha233.roadweaver.map.data.MapLoadPhase;
+import net.shiroha233.roadweaver.core.model.MapLoadPhase;
 import net.shiroha233.roadweaver.map.data.MapSnapshot;
-import net.shiroha233.roadweaver.map.data.MapSnapshotPatch;
-import net.shiroha233.roadweaver.structure.MapSearchResult;
-import net.shiroha233.roadweaver.structure.MapStructureSearchService;
+import net.shiroha233.roadweaver.core.model.MapSnapshotPatch;
+import net.shiroha233.roadweaver.map.search.MapSearchResult;
+import net.shiroha233.roadweaver.map.search.MapStructureSearchService;
 import net.shiroha233.roadweaver.planning.pipeline.AutomaticPlanningSamplingBounds;
 
 import java.util.ArrayList;

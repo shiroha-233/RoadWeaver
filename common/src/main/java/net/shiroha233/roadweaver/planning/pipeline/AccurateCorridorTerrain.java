@@ -6,10 +6,10 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.tags.BiomeTags;
 import net.minecraft.world.level.biome.Biome;
 import net.shiroha233.roadweaver.terrain.accurate.AccurateHeightSample;
-import net.shiroha233.roadweaver.terrain.accurate.AccurateHeightSampler;
+import net.shiroha233.roadweaver.terrain.AccurateHeightSampler;
 import net.shiroha233.roadweaver.terrain.accurate.AccurateSamplingProgress;
 import net.shiroha233.roadweaver.terrain.TerrainSamplingCache;
-import net.shiroha233.roadweaver.terrain.PathTerrainField;
+import net.shiroha233.roadweaver.terrain.api.PathTerrainField;
 
 import java.util.LinkedHashMap;
 import java.util.List;

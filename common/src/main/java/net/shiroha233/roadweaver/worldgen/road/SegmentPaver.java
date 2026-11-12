@@ -11,7 +11,7 @@ import net.shiroha233.roadweaver.config.ModConfig;
 import net.shiroha233.roadweaver.config.PresetService;
 import net.shiroha233.roadweaver.core.model.RoadSegmentPlacement;
 import net.shiroha233.roadweaver.worldgen.road.decoration.system.SurfacePlacementUtil;
-import net.shiroha233.roadweaver.planning.pipeline.RoadHeightInterpolator;
+import net.shiroha233.roadweaver.worldgen.road.geometry.RoadHeightInterpolator;
 
 import java.util.HashMap;
 import java.util.List;

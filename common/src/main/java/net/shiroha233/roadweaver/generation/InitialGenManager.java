@@ -17,7 +17,7 @@ import net.shiroha233.roadweaver.core.model.PlannedPathKey;
 import net.shiroha233.roadweaver.planning.RoadPlanningService;
 import net.shiroha233.roadweaver.postprocess.RoadSnapService;
 import net.shiroha233.roadweaver.runtime.ThreadPoolManager;
-import net.shiroha233.roadweaver.structures.placement.SpawnCabinPlacer;
+import net.shiroha233.roadweaver.worldgen.structure.placement.SpawnCabinPlacer;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -29,6 +29,8 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 import java.util.concurrent.atomic.AtomicInteger;
 import net.shiroha233.roadweaver.persistence.ConnectionListUpdater;
+import net.shiroha233.roadweaver.core.metrics.TerrainSamplingStats;
+import net.shiroha233.roadweaver.core.metrics.AccurateSamplingStats;
 
 /**
  * 初始道路生成管理器，服务器启动时阻塞生成初始规划范围内的道路并提供进度统计
@@ -63,8 +65,8 @@ public final class InitialGenManager {
         InitialGenerationProgressTracker.reset();
         InitialGenerationProgressTracker.updateConnections(0, 0, 0, 0);
 
-        net.shiroha233.roadweaver.terrain.TerrainSamplingStats.reset();
-        net.shiroha233.roadweaver.terrain.accurate.AccurateSamplingStats.reset();
+        TerrainSamplingStats.reset();
+        AccurateSamplingStats.reset();
 
         RoadGenerationService.onServerStarted();
 
@@ -128,7 +130,6 @@ public final class InitialGenManager {
         RoadSnapService.snapAllRoads(level, minX, minZ, maxX, maxZ);
     }
 
-    // ==================== 提取的通用辅助方法 ====================
 
     private static List<StructureConnection> filterPlanned(List<StructureConnection> list) {
         List<StructureConnection> out = new ArrayList<>();
@@ -213,7 +214,7 @@ public final class InitialGenManager {
     private static void flushAndFinish(ServerLevel level) {
         InitialGenerationProgressTracker.enterStage(InitialGenerationStage.POST_PROCESSING, "flushing_road_data");
         RoadShardStorage.flushAll(level);
-        net.shiroha233.roadweaver.persistence.files.StructureFileStorage.flush(level);
+        net.shiroha233.roadweaver.persistence.StructureFileStorage.flush(level);
         RoadPositionQuery.clearCache(level);
         active = false;
         InitialGenerationProgressTracker.updateConnections(total.get(), generating.get(), done.get(), failed.get());

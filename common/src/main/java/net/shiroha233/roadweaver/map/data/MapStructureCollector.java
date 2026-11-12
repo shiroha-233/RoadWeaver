@@ -7,7 +7,7 @@ import net.shiroha233.roadweaver.config.ConfigService;
 import net.shiroha233.roadweaver.config.ModConfig;
 import net.shiroha233.roadweaver.core.model.StructureConnection;
 import net.shiroha233.roadweaver.core.model.StructureInfo;
-import net.shiroha233.roadweaver.persistence.files.StructureFileStorage;
+import net.shiroha233.roadweaver.persistence.StructureFileStorage;
 
 import java.util.ArrayList;
 import java.util.HashMap;

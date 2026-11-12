@@ -7,6 +7,8 @@ import net.shiroha233.roadweaver.progress.InitialGenerationProgressTracker;
 import net.shiroha233.roadweaver.terrain.opencl.OpenCLAvailability;
 import net.shiroha233.roadweaver.terrain.opencl.OpenCLCoarseHeightBatchSampler;
 import net.shiroha233.roadweaver.terrain.opencl.OpenCLDevicePreference;
+import net.shiroha233.roadweaver.terrain.api.CoarseHeightBatchRequest;
+import net.shiroha233.roadweaver.terrain.api.CoarseHeightBatchSampler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -74,7 +76,8 @@ public final class CoarseHeightBatchSamplers {
             }
             return OpenCLCoarseHeightBatchSampler.tryCreate(
                     level,
-                    OpenCLDevicePreference.valueOf(performance.openclDevicePreference()));
+                    OpenCLDevicePreference.valueOf(performance.openclDevicePreference()),
+                    CpuCoarseHeightBatchSampler.create(level));
         } catch (Throwable t) {
             LOGGER.info("OpenCL 粗采样入口失败，使用 CPU: {}", t.getMessage(), t);
             return null;

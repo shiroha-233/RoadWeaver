@@ -33,21 +33,18 @@ public final class ClientMapTileTextureCache {
 
     private static final Logger LOGGER = LoggerFactory.getLogger("roadweaver");
 
-    // 全精度模式下视口内可能需要几百个 chunk 纹理，增大容量
     private static final int MAX_VIEWPORT_TEXTURES = 256;
     private static final int MAX_BACKGROUND_TEXTURES = 512;
 
     private static final LinkedHashMap<String, TextureEntry> VIEWPORT_CACHE = new LinkedHashMap<>(512, 0.75f, true);
     private static final LinkedHashMap<String, TextureEntry> BACKGROUND_CACHE = new LinkedHashMap<>(1024, 0.75f, true);
 
-    // 异步加载线程池
     private static final ExecutorService LOAD_EXECUTOR = Executors.newFixedThreadPool(2, r -> {
         Thread t = new Thread(r, "RW-TileLoader");
         t.setDaemon(true);
         return t;
     });
 
-    // 正在加载的纹理（防止重复加载）
     private static final ConcurrentHashMap<String, CompletableFuture<ResourceLocation>> PENDING_LOADS = new ConcurrentHashMap<>();
 
     public static synchronized ResourceLocation getOrLoad(Minecraft mc, Path path, boolean inViewport) {
@@ -57,18 +54,15 @@ public final class ClientMapTileTextureCache {
         String key = path.toAbsolutePath().normalize().toString();
         long currentLastMod = lastModified(path);
 
-        // 1. 检查视口缓存（命中时检查 lastModified，规划可能更新PNG）
         TextureEntry vpEntry = VIEWPORT_CACHE.get(key);
         if (vpEntry != null) {
             if (inViewport && vpEntry.lastModified == currentLastMod) {
                 return vpEntry.location;
             }
-            // 文件已更新或不在视口，移除旧缓存重新加载
             VIEWPORT_CACHE.remove(key);
             release(mc, vpEntry.location);
         }
 
-        // 2. 检查后台缓存（命中时也检查 lastModified）
         TextureEntry bgEntry = BACKGROUND_CACHE.get(key);
         if (bgEntry != null) {
             if (bgEntry.lastModified == currentLastMod) {
@@ -79,12 +73,10 @@ public final class ClientMapTileTextureCache {
                 }
                 return bgEntry.location;
             }
-            // 文件已更新，移除旧缓存重新加载
             BACKGROUND_CACHE.remove(key);
             release(mc, bgEntry.location);
         }
 
-        // 3. 检查是否有正在异步加载的
         CompletableFuture<ResourceLocation> pending = PENDING_LOADS.get(key);
         if (pending != null) {
             if (pending.isDone()) {
@@ -94,7 +86,6 @@ public final class ClientMapTileTextureCache {
                     if (loc != null) return loc;
                 } catch (Exception ignored) {}
             }
-            // 还在加载中，本帧跳过
             return null;
         }
 
@@ -116,7 +107,7 @@ public final class ClientMapTileTextureCache {
 
         synchronized (ClientMapTileTextureCache.class) {
             if (VIEWPORT_CACHE.containsKey(key) || BACKGROUND_CACHE.containsKey(key) || PENDING_LOADS.containsKey(key)) {
-                return; // 已缓存或正在加载
+                return;
             }
         }
 

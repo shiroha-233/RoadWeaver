@@ -184,45 +184,4 @@ public final class MapRenderers {
         PlayerFaceRenderer.draw(g, skinTexture, drawX, drawY, size);
     }
 
-    public static void drawPlayerArrow(GuiGraphics g,
-                                       int sx, int sy,
-                                       float yawDeg,
-                                       int tipLen,
-                                       int baseLen,
-                                       int baseHalfWidth,
-                                       int color,
-                                       int left, int top, int right, int bottom,
-                                       double pxPerBlockX,
-                                       double pxPerBlockZ) {
-        double rx = Math.toRadians(yawDeg);
-        double vx = -Math.sin(rx);
-        double vz = Math.cos(rx);
-        double dirX = vx * pxPerBlockX;
-        double dirY = vz * pxPerBlockZ;
-        double mag = Math.hypot(dirX, dirY);
-        if (mag < 1e-6) { dirX = 1; dirY = 0; mag = 1; }
-        dirX /= mag; dirY /= mag;
-        double px = sx + dirX * tipLen;
-        double py = sy + dirY * tipLen;
-        double bx = sx - dirX * baseLen;
-        double by = sy - dirY * baseLen;
-        double perpX = -dirY;
-        double perpY = dirX;
-        double bx1 = bx + perpX * baseHalfWidth;
-        double by1 = by + perpY * baseHalfWidth;
-        double bx2 = bx - perpX * baseHalfWidth;
-        double by2 = by - perpY * baseHalfWidth;
-        int ipx = (int)Math.round(px);
-        int ipy = (int)Math.round(py);
-        int ibx1 = (int)Math.round(bx1);
-        int iby1 = (int)Math.round(by1);
-        int ibx2 = (int)Math.round(bx2);
-        int iby2 = (int)Math.round(by2);
-        int outline = 0xFFFFFFFF;
-        RenderUtils.fillTriangle(g, ipx - 1, ipy,     ibx1 - 1, iby1,     ibx2 - 1, iby2,     outline, left, top, right, bottom);
-        RenderUtils.fillTriangle(g, ipx + 1, ipy,     ibx1 + 1, iby1,     ibx2 + 1, iby2,     outline, left, top, right, bottom);
-        RenderUtils.fillTriangle(g, ipx,     ipy - 1, ibx1,     iby1 - 1, ibx2,     iby2 - 1, outline, left, top, right, bottom);
-        RenderUtils.fillTriangle(g, ipx,     ipy + 1, ibx1,     iby1 + 1, ibx2,     iby2 + 1, outline, left, top, right, bottom);
-        RenderUtils.fillTriangle(g, ipx,     ipy,     ibx1,     iby1,     ibx2,     iby2,     color,   left, top, right, bottom);
-    }
 }

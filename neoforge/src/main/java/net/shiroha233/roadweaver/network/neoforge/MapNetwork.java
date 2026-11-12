@@ -18,19 +18,19 @@ import net.neoforged.neoforge.network.registration.PayloadRegistrar;
 import net.shiroha233.roadweaver.RoadWeaver;
 import net.shiroha233.roadweaver.api.RoadNetworkApi;
 import net.shiroha233.roadweaver.client.map.ClientMapAccessGuard;
-import net.shiroha233.roadweaver.map.data.MapLoadPhase;
-import net.shiroha233.roadweaver.client.map.RoadMapScreen;
+import net.shiroha233.roadweaver.core.model.MapLoadPhase;
+import net.shiroha233.roadweaver.client.map.screen.RoadMapScreen;
 import net.shiroha233.roadweaver.map.data.MapDataCollector;
 import net.shiroha233.roadweaver.map.data.MapSnapshot;
 import net.shiroha233.roadweaver.client.map.cache.MapSnapshotCache;
-import net.shiroha233.roadweaver.map.data.MapSnapshotPatch;
+import net.shiroha233.roadweaver.core.model.MapSnapshotPatch;
 import net.shiroha233.roadweaver.client.map.cache.MapAutomaticPlanningSamplingCache;
 import net.shiroha233.roadweaver.map.permission.MapAccessService;
 import net.shiroha233.roadweaver.network.payload.MapNetworkPayloads;
 import net.shiroha233.roadweaver.network.payload.RawPathDebugPayloads;
 import net.shiroha233.roadweaver.planning.path.RawPathDebugService;
 import net.shiroha233.roadweaver.client.debug.RawPathDebugOverlay;
-import net.shiroha233.roadweaver.structure.MapStructureSearchService;
+import net.shiroha233.roadweaver.map.search.MapStructureSearchService;
 import net.shiroha233.roadweaver.runtime.ThreadPoolManager;
 import net.shiroha233.roadweaver.planning.pipeline.AutomaticPlanningSamplingActivities;
 import net.shiroha233.roadweaver.planning.pipeline.AutomaticPlanningSamplingBounds;
@@ -150,7 +150,7 @@ public final class MapNetwork {
     }
 
     private static void handleAccessSync(MapNetworkPayloads.MapAccessSyncPayload payload, IPayloadContext context) {
-        context.enqueueWork(() -> ClientMapAccessGuard.applyServerState(Minecraft.getInstance(), payload.allowed()));
+        context.enqueueWork(() -> ClientMapAccessGuard.applyServerState(payload.allowed()));
     }
 
     private static void handleAutomaticPlanningSampling(

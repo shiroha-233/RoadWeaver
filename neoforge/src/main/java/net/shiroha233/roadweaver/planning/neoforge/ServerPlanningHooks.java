@@ -17,7 +17,7 @@ import net.shiroha233.roadweaver.generation.IdleRoadGenerationService;
 import net.shiroha233.roadweaver.generation.InitialGenManager;
 import net.shiroha233.roadweaver.generation.RoadGenerationService;
 import net.shiroha233.roadweaver.planning.RoadPlanningService;
-import net.shiroha233.roadweaver.runtime.CacheManager;
+import net.shiroha233.roadweaver.lifecycle.CacheManager;
 import net.shiroha233.roadweaver.runtime.ThreadPoolManager;
 
 public final class ServerPlanningHooks {
@@ -48,8 +48,6 @@ public final class ServerPlanningHooks {
         tick = 0;
         CacheManager.onServerStarted();
         ThreadPoolManager.onServerStarted(event.getServer());
-        // Pending sign text is kept on start: the spawn chunks are generated before this event, and clearing here
-        // would delete the text of every sign near spawn. Stopping the server still clears it.
         IdleRoadGenerationService.onServerStarted();
 
         ServerLevel overworld = event.getServer().getLevel(Level.OVERWORLD);
@@ -95,7 +93,6 @@ public final class ServerPlanningHooks {
     }
 
     private static void onServerStopping(ServerStoppingEvent event) {
-        // 先使旧任务的 epoch 失效，再清理状态与持久化缓存。
         ThreadPoolManager.onServerStopping();
         RoadGenerationService.onServerStopping();
         RoadPlanningService.resetAll();

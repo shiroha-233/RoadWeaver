@@ -4,7 +4,6 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.levelgen.NoiseBasedChunkGenerator;
 import net.minecraft.world.level.levelgen.NoiseGeneratorSettings;
 import net.minecraft.world.level.levelgen.RandomState;
-import net.shiroha233.roadweaver.terrain.opencl.bridge.OpenCLBridge;
 
 import java.util.HashMap;
 import java.util.Iterator;

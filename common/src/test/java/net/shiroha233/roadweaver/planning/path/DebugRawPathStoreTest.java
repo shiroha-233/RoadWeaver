@@ -10,7 +10,8 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import net.shiroha233.roadweaver.core.model.PlannedPathKey;
 
 class DebugRawPathStoreTest {
@@ -28,7 +29,6 @@ class DebugRawPathStoreTest {
         initial.recordSearch(key, TerrainSamplingMode.COARSE_CORRIDOR, raw);
         assertEquals(raw, collect(initial.query(-1, -1, 33, 1, 100), true));
         initial.recordResolved(key, TerrainSamplingMode.COARSE_CORRIDOR, raw, accurate);
-        // Replanning the same edge cannot erase the refined track.
         initial.recordSearch(key, TerrainSamplingMode.COARSE_CORRIDOR, raw);
 
         List<DebugRawPath> restored = new DebugRawPathStore(temp).query(-1, -1, 33, 1, 100);

@@ -10,7 +10,7 @@ import net.minecraft.nbt.Tag;
 import net.minecraft.world.level.ChunkPos;
 import net.shiroha233.roadweaver.core.model.RoadData;
 import net.shiroha233.roadweaver.persistence.RoadReplacement;
-import net.shiroha233.roadweaver.persistence.files.FileStorageIO;
+import net.shiroha233.roadweaver.util.FileStorageIO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -213,7 +213,6 @@ public final class RoadChunkStore implements AutoCloseable {
 
     @Override
     public void close() {
-        // 无后台长驻资源；索引由后台调度器或 flush 提交，实例由世界路径注册表负责释放。
     }
 
     Path chunkPath(int chunkX, int chunkZ) {
@@ -249,7 +248,6 @@ public final class RoadChunkStore implements AutoCloseable {
                 persistSnapshot(RoadSnapshot.empty(), loadedSnapshot.snapshot(), repairGeneration, true);
                 generation = repairGeneration;
             } catch (IOException e) {
-                // 查询仍使用已完成的一次性内存快照；下次实际修改会重新写完整元数据。
                 LOGGER.warn("修复道路 ChunkPos 分片元数据失败: {}", root, e);
             }
             commitPendingIndex();
@@ -432,8 +430,6 @@ public final class RoadChunkStore implements AutoCloseable {
             }
         }
 
-        // 新/变 NBT 与分片已先行落盘；index.json 提交点与旧文件清理合并到后台批量执行。
-        // 崩溃时 index 保持上一提交态；未提交的道路变更可能丢失，关服必须 flush。
         if (targetGeneration > pendingIndexGeneration) pendingIndexGeneration = targetGeneration;
         for (RoadSnapshot.Entry old : previous.entries().values()) {
             RoadSnapshot.Entry current = next.entries().get(old.fingerprint());

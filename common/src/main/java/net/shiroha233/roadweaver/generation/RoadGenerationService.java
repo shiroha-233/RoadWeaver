@@ -12,7 +12,7 @@ import net.shiroha233.roadweaver.config.sub.RoadGenerationConfig;
 import net.shiroha233.roadweaver.core.model.ConnectionStatus;
 import net.shiroha233.roadweaver.core.model.RoadData;
 import net.shiroha233.roadweaver.core.model.StructureConnection;
-import net.shiroha233.roadweaver.worldgen.road.PathFeatureConfig;
+import net.shiroha233.roadweaver.worldgen.PathFeatureConfig;
 import net.shiroha233.roadweaver.planning.pipeline.Road;
 import net.shiroha233.roadweaver.persistence.ConnectionListUpdater;
 import net.shiroha233.roadweaver.map.MapPatchService;
@@ -29,8 +29,11 @@ import org.slf4j.LoggerFactory;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
-import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.concurrent.Future;
+import java.util.concurrent.RejectedExecutionException;
 
 /**
  * 道路生成调度器，管理 Path 队列的 tick 驱动异步生成
@@ -77,7 +80,6 @@ public final class RoadGenerationService {
         IdleRoadGenerationService.onServerStopping();
     }
 
-    // ==================== tick 调度 ====================
 
     public static void tick(ServerLevel level) {
         if (level == null || !Level.OVERWORLD.equals(level.dimension())) return;
@@ -136,7 +138,6 @@ public final class RoadGenerationService {
         }
     }
 
-    // ==================== 生成与道路持久化 ====================
 
     public static boolean generateTask(ServerLevel level, StructureConnection conn) {
         if (level == null || conn == null || !Level.OVERWORLD.equals(level.dimension())) return false;
@@ -155,7 +156,7 @@ public final class RoadGenerationService {
                 return true;
             }
 
-            RoadGenerationConfig genCfg = RoadGenerationConfig.from(modCfg);
+            RoadGenerationConfig genCfg = modCfg.resolvedRoadGeneration();
             RoadData generated = new Road(level, conn, cfg, genCfg)
                     .generateRoad(modCfg.pathfindingCost().aStarMaxSteps());
             return generated != null;
@@ -165,7 +166,6 @@ public final class RoadGenerationService {
         }
     }
 
-    // ==================== 安全生成包装 ====================
 
     private static void safeGenerate(ServerLevel level, StructureConnection conn, long epoch) {
         try {
@@ -177,8 +177,6 @@ public final class RoadGenerationService {
             ConnectionStatus st = ok ? ConnectionStatus.COMPLETED
                     : Thread.currentThread().isInterrupted() ? ConnectionStatus.PLANNED : ConnectionStatus.FAILED;
 
-            // 状态存储已内存化、地图补丁广播内部自行回主线程发包，
-            // 完成回调无需再调度到主线程，吸附后处理亦全程后台执行
             StructureConnection updated = updateConnectionStatus(level, conn, st, ConnectionStatus.GENERATING);
             removeProcessed(level, conn);
             if (updated != null && st == ConnectionStatus.COMPLETED) {
@@ -209,7 +207,6 @@ public final class RoadGenerationService {
         }
     }
 
-    // ==================== 状态更新辅助 ====================
 
     private static StructureConnection updateConnectionStatus(ServerLevel level, StructureConnection conn,
                                                                ConnectionStatus status, ConnectionStatus... allowedFrom) {
@@ -227,7 +224,6 @@ public final class RoadGenerationService {
         PROCESSED.remove(PlannedPathKey.of(conn));
     }
 
-    // ==================== 队列刷新 ====================
 
     private static void refreshQueue(ServerLevel level) {
         WorldDataProvider provider = WorldDataProvider.getInstance();
@@ -237,7 +233,6 @@ public final class RoadGenerationService {
         ConcurrentLinkedQueue<StructureConnection> q = QUEUE;
         ConcurrentHashMap<PlannedPathKey, Boolean> proc = PROCESSED;
 
-        // 配置读取提到循环外：本方法每 tick 遍历全部连接
         boolean idleEnabled = ConfigService.get().performance().idleGenerationEnabled();
 
         for (StructureConnection c : list) {
@@ -258,7 +253,6 @@ public final class RoadGenerationService {
         }
     }
 
-    // ==================== 优先级轮询 ====================
 
     private static StructureConnection pollNearest(ConcurrentLinkedQueue<StructureConnection> q, List<ServerPlayer> players) {
         if (q.isEmpty()) return null;

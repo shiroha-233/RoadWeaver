@@ -2,13 +2,23 @@ package net.shiroha233.roadweaver.client.map;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.chat.Component;
-import net.shiroha233.roadweaver.client.map.cache.MapSnapshotCache;
+
+import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 public final class ClientMapAccessGuard {
+    private static final List<Runnable> REVOKED_LISTENERS = new CopyOnWriteArrayList<>();
     private static volatile boolean known;
     private static volatile boolean allowed = true;
 
     private ClientMapAccessGuard() {
+    }
+
+    public static void onRevoked(Runnable listener) {
+        if (listener == null) {
+            return;
+        }
+        REVOKED_LISTENERS.add(listener);
     }
 
     public static boolean isAllowedOrUnknown() {
@@ -23,16 +33,19 @@ public final class ClientMapAccessGuard {
         return false;
     }
 
-    public static void applyServerState(Minecraft client, boolean nextAllowed) {
+    public static void applyServerState(boolean nextAllowed) {
         known = true;
         allowed = nextAllowed;
         if (nextAllowed) {
             return;
         }
-        MapSnapshotCache.clearNow();
-        if (client != null && client.screen instanceof RoadMapScreen) {
+        for (Runnable listener : REVOKED_LISTENERS) {
+            listener.run();
+        }
+        Minecraft client = Minecraft.getInstance();
+        if (client != null && client.screen instanceof RevocableMapScreen screen) {
             client.setScreen(null);
-            notifyDenied(client);
+            screen.onMapAccessRevoked();
         }
     }
 

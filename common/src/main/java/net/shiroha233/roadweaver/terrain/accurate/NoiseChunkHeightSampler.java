@@ -57,7 +57,6 @@ final class NoiseChunkHeightSampler {
      * 释放缓存。用新实例替换而非 clear()，确保内部 table 数组被 GC 回收。
      */
     void clear() {
-        // 当前实现不持有跨区块状态，方法保留给统一后端生命周期。
     }
 
     AccurateHeightChunk sampleChunk(int chunkX, int chunkZ) {

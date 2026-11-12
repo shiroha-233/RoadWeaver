@@ -2,7 +2,7 @@ package net.shiroha233.roadweaver.planning.path;
 
 import net.minecraft.core.BlockPos;
 import net.shiroha233.roadweaver.config.sub.TerrainSamplingMode;
-import net.shiroha233.roadweaver.persistence.files.FileStorageIO;
+import net.shiroha233.roadweaver.util.FileStorageIO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -46,12 +46,10 @@ final class DebugRawPathStore {
     synchronized void recordSearch(PlannedPathKey key, TerrainSamplingMode mode, List<BlockPos> raw) throws IOException {
         if (raw == null || raw.size() < 2) return;
         Path file = fileFor(key);
-        // A later duplicate planning pass must not replace the already refined nodes.
         if (Files.exists(file)) {
             try {
                 if (!read(file).accurate().isEmpty()) return;
             } catch (IOException ignored) {
-                // A damaged file is replaced by the new search result.
             }
         }
         write(file, new DebugRawPath(mode,
@@ -106,7 +104,7 @@ final class DebugRawPathStore {
             List<BlockPos> part = List.copyOf(run.subList(offset, end));
             result.add(new DebugRawPath(mode, coarse ? part : List.of(), coarse ? List.of() : part));
             budget -= part.size();
-            offset = end - 1; // Maintain continuity only within the same original run.
+            offset = end - 1;
         }
         return budget;
     }

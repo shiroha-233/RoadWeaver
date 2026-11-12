@@ -4,7 +4,7 @@ import net.minecraft.core.BlockPos;
 import net.shiroha233.roadweaver.core.model.ConnectionStatus;
 import net.shiroha233.roadweaver.core.model.StructureConnection;
 import net.shiroha233.roadweaver.core.model.StructureInfo;
-import net.shiroha233.roadweaver.structure.MapStructureSource;
+import net.shiroha233.roadweaver.map.search.MapStructureSource;
 
 import java.util.ArrayList;
 import java.util.EnumSet;

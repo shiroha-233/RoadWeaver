@@ -4,18 +4,26 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.shiroha233.roadweaver.core.constants.RoadConstants;
 import net.shiroha233.roadweaver.core.model.RoadSegmentPlacement;
-import net.shiroha233.roadweaver.terrain.accurate.AccurateHeightSampler;
+import net.shiroha233.roadweaver.terrain.AccurateHeightSampler;
 import net.shiroha233.roadweaver.terrain.accurate.AccurateHeightSample;
 import net.shiroha233.roadweaver.terrain.AccuratePathHeightResolver;
 import net.shiroha233.roadweaver.terrain.TerrainSamplingCache;
 import net.shiroha233.roadweaver.pathfinding.impl.SplineHelper.CurveMode;
 import net.shiroha233.roadweaver.pathfinding.impl.SplineHelper.Vec2d;
-import net.shiroha233.roadweaver.terrain.PathTerrainField;
+import net.shiroha233.roadweaver.terrain.api.PathTerrainField;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import static net.shiroha233.roadweaver.pathfinding.impl.PathfindingHelper.isWaterLike;
-import static net.shiroha233.roadweaver.pathfinding.impl.SplineHelper.*;
+import static net.shiroha233.roadweaver.pathfinding.impl.SplineHelper.catmullRomBezierCasteljau;
+import static net.shiroha233.roadweaver.pathfinding.impl.SplineHelper.catmullRomSpline;
+import static net.shiroha233.roadweaver.pathfinding.impl.SplineHelper.distToSegmentSq;
+import static net.shiroha233.roadweaver.pathfinding.impl.SplineHelper.lerp2d;
 
 /**
  * 路径后处理器
@@ -64,7 +72,6 @@ public final class PathPostProcessor {
         List<BlockPos> simplified = simplifyPath(rawPath);
         boolean[] bridgeMask = detectBridgeMask(simplified, level, cache, terrain, bridgeMinWaterDepth, sampler);
         List<BlockPos> straightened = straightenBridgeRuns(simplified, bridgeMask);
-        // 多次迭代松弛：把原始折线的楼梯拐角摊成弧段，单遍每点限移 1 格不足以圆滑 Z 字拐角。
         List<BlockPos> controlPoints = straightened;
         for (int pass = 0; pass < RoadConstants.ROAD_RELAX_PASSES; pass++) {
             controlPoints = relaxPathSkippingBridge(controlPoints, bridgeMask);

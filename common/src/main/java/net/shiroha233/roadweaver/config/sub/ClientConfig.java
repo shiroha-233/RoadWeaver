@@ -1,6 +1,5 @@
 package net.shiroha233.roadweaver.config.sub;
 
-import net.shiroha233.roadweaver.config.SubConfig;
 
 /**
  * 客户端显示配置
@@ -12,7 +11,6 @@ public final class ClientConfig implements SubConfig {
 
     @Override
     public void sanitize() {
-        // 布尔字段无需校验
     }
 
     @Override

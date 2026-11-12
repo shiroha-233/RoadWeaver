@@ -5,9 +5,11 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.tags.BiomeTags;
 import net.minecraft.world.level.biome.Biome;
 import net.shiroha233.roadweaver.core.constants.RoadConstants;
-import net.shiroha233.roadweaver.map.tile.palette.HeightShader;
-import net.shiroha233.roadweaver.map.tile.palette.TerrainTilePalette;
+import net.shiroha233.roadweaver.terrain.palette.HeightShader;
+import net.shiroha233.roadweaver.terrain.palette.TerrainTilePalette;
 import net.shiroha233.roadweaver.terrain.TerrainSamplingCache;
+import net.shiroha233.roadweaver.terrain.api.CoarseHeightBatchRequest;
+import net.shiroha233.roadweaver.terrain.api.CoarseHeightBatchSampler;
 
 /**
  * 单个粗采样地形瓦片采样器。
@@ -125,7 +127,6 @@ public final class CoarseTerrainTileSampler {
 
                 double shade = 1.0;
                 if (x > 0 && x < sampleWidth - 1 && z > 0 && z < sampleHeight - 1) {
-                    // 展开 3x3 邻域走无分配重载，避免逐采样点构造 int[3][3]
                     int upBase = (z - 1) * sampleWidth;
                     int downBase = (z + 1) * sampleWidth;
                     shade = HeightShader.computeShade(

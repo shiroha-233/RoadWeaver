@@ -43,7 +43,6 @@ public final class RoadSupports {
         BlockState top = world.getBlockState(surface);
         if (top.isAir() || !top.getFluidState().isEmpty()) return;
 
-        // First open block under the surface, within the thin sheet the terrain fill leaves.
         int sheet = 0;
         BlockPos gapTop = null;
         for (int k = 1; k <= SHEET_SEARCH; k++) {
@@ -64,8 +63,6 @@ public final class RoadSupports {
         }
         if (gap >= MAX_DROP) return;
 
-        // A road over a cave keeps its ground: only a gap that opens to the side, where the sheet hangs over a dip or
-        // a slope, is a platform anyone can see.
         if (!openToTheSide(world, surface, gapTop)) return;
 
         if (gap <= MAX_EMBANKMENT_GAP) {

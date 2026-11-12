@@ -12,7 +12,16 @@ import net.shiroha233.roadweaver.config.structure.StructureEntry;
 import net.shiroha233.roadweaver.config.structure.StructureSelectionConfig;
 import net.shiroha233.roadweaver.config.structure.StructureTagEntry;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
 
 /**
  * 结构选择界面 - 最复杂的配置界面

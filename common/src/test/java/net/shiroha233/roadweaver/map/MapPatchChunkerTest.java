@@ -2,7 +2,7 @@
 package net.shiroha233.roadweaver.map;
 
 import net.minecraft.core.BlockPos;
-import net.shiroha233.roadweaver.map.data.MapSnapshotPatch;
+import net.shiroha233.roadweaver.core.model.MapSnapshotPatch;
 import net.shiroha233.roadweaver.core.model.StructureInfo;
 import org.junit.jupiter.api.Test;
 

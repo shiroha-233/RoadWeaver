@@ -10,29 +10,22 @@ import java.util.concurrent.atomic.AtomicInteger;
  */
 public final class MapState {
 
-    // 拖拽状态
     private boolean dragging;
     private int dragButton;
     private double lastMouseX;
     private double lastMouseY;
 
-    // 缩放防抖
     private boolean zoomDebouncePending;
     private long zoomDebounceDeadlineMs;
 
-    // 右键菜单
     private boolean contextMenuOpen;
-    private int menuX;
-    private int menuY;
     @Nullable
     private BlockPos menuTarget;
 
-    // 手动连接模式
     private boolean manualMode;
     @Nullable
     private BlockPos selectedA;
 
-    // 网络请求序列号
     private final AtomicInteger requestSeq = new AtomicInteger(0);
 
     public void startDrag(int button, double mouseX, double mouseY) {
@@ -77,8 +70,6 @@ public final class MapState {
 
     public void openContextMenu(int x, int y, BlockPos target) {
         this.contextMenuOpen = true;
-        this.menuX = x;
-        this.menuY = y;
         this.menuTarget = target;
     }
 
@@ -88,10 +79,6 @@ public final class MapState {
     }
 
     public boolean isContextMenuOpen() { return contextMenuOpen; }
-    public int getMenuX() { return menuX; }
-    public int getMenuY() { return menuY; }
-    @Nullable
-    public BlockPos getMenuTarget() { return menuTarget; }
 
     public void toggleManualMode() {
         this.manualMode = !this.manualMode;

@@ -4,9 +4,7 @@ package net.shiroha233.roadweaver.config.sub;
  * 规划阶段的地形采样策略。
  */
 public enum TerrainSamplingMode {
-    /**
-     * 旧版模式：不构建规划区域地形，生成道路时按单条连接直接寻路。
-     */
+
     LEGACY_DIRECT,
 
     /**

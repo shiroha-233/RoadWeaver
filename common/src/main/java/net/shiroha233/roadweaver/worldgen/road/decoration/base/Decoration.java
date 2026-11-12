@@ -26,8 +26,6 @@ public abstract class Decoration {
 
     public BlockPos computeSurfacePos() {
         BlockPos pos = new BlockPos(placePos.getX(), world.getHeight(Heightmap.Types.WORLD_SURFACE_WG, placePos.getX(), placePos.getZ()), placePos.getZ());
-        // The worldgen heightmap counts grass, flowers and petals as surface; step down through them (but not into
-        // water) so posts stand on the ground instead of a block above it.
         for (int d = 0; d < MAX_PLANT_DEPTH; d++) {
             BlockState below = world.getBlockState(pos.below());
             if (!below.getFluidState().isEmpty()) break;

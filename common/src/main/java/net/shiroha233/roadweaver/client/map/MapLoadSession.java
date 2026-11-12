@@ -4,12 +4,11 @@ import net.minecraft.resources.ResourceLocation;
 import net.shiroha233.roadweaver.map.data.MapSnapshot;
 
 import java.util.ArrayList;
-import java.util.EnumSet;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
-import net.shiroha233.roadweaver.map.data.MapLoadPhase;
-import net.shiroha233.roadweaver.map.data.RequestRect;
+import net.shiroha233.roadweaver.core.model.MapLoadPhase;
+import net.shiroha233.roadweaver.core.model.RequestRect;
 
 /**
  * 地图加载会话。
@@ -21,7 +20,6 @@ public final class MapLoadSession {
     private final long startedAtMs;
     private final List<ResponseRequest> requests;
     private final HashSet<ResponseMarker> receivedResponses = new HashSet<>();
-    private final EnumSet<MapLoadPhase> receivedPhases = EnumSet.noneOf(MapLoadPhase.class);
 
     private int completedResponses;
     private boolean hasData;
@@ -49,7 +47,6 @@ public final class MapLoadSession {
         if (receivedResponses.add(marker)) {
             completedResponses = Math.min(totalResponses, completedResponses + 1);
             if (phase != null) {
-                receivedPhases.add(phase);
                 lastPhase = phase;
             }
         }
@@ -64,14 +61,6 @@ public final class MapLoadSession {
 
     public boolean isComplete() {
         return completedResponses >= totalResponses;
-    }
-
-    public boolean hasPhase(MapLoadPhase phase) {
-        return phase != null && receivedPhases.contains(phase);
-    }
-
-    public int receivedPhaseCount() {
-        return receivedPhases.size();
     }
 
     public MapLoadPhase lastPhase() {

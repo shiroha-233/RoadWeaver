@@ -3,7 +3,7 @@ package net.shiroha233.roadweaver.config.structure;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import dev.architectury.platform.Platform;
-import net.shiroha233.roadweaver.persistence.files.FileStorageIO;
+import net.shiroha233.roadweaver.util.FileStorageIO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -11,7 +11,13 @@ import java.io.BufferedReader;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Locale;
+import java.util.Set;
 
 /**
  * 结构选择配置，管理用户启用/禁用的结构和标签，持久化到独立配置文件
@@ -42,7 +48,6 @@ public final class StructureSelectionConfig {
         INSTANCE.load();
     }
 
-    // ==================== 结构操作 ====================
 
     public boolean isStructureEnabled(String structureId) {
         if (structureId == null) return false;
@@ -78,7 +83,6 @@ public final class StructureSelectionConfig {
         }
     }
 
-    // ==================== 标签操作 ====================
 
     public boolean isTagEnabled(String tagId) {
         if (tagId == null) return false;
@@ -114,7 +118,6 @@ public final class StructureSelectionConfig {
         }
     }
 
-    // ==================== 批量操作 ====================
 
     public void enableDefaultVillages() { enableTag("minecraft:village"); }
 
@@ -135,7 +138,6 @@ public final class StructureSelectionConfig {
         }
     }
 
-    // ==================== 查询 ====================
 
     public Set<String> getEnabledStructures() {
         Set<String> result = new LinkedHashSet<>(enabledStructures);
@@ -152,7 +154,6 @@ public final class StructureSelectionConfig {
 
     public Set<String> getEnabledTags() { return Collections.unmodifiableSet(enabledTags); }
 
-    /** 转换为白名单格式（兼容旧系统），标签带 # 前缀 */
     public List<String> toWhitelist() {
         List<String> result = new ArrayList<>();
         for (String tagId : enabledTags) result.add("#" + tagId);
@@ -170,7 +171,6 @@ public final class StructureSelectionConfig {
 
     public boolean hasAnySelection() { return !enabledStructures.isEmpty() || !enabledTags.isEmpty(); }
 
-    // ==================== 持久化 ====================
 
     private Path getConfigFilePath() {
         return Platform.getConfigFolder().resolve("roadweaver").resolve(CONFIG_FILE);

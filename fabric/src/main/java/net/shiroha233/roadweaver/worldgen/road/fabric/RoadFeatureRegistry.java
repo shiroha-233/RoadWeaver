@@ -13,7 +13,7 @@ import net.minecraft.world.level.levelgen.feature.Feature;
 import net.minecraft.world.level.levelgen.placement.PlacedFeature;
 import net.shiroha233.roadweaver.RoadWeaver;
 import net.shiroha233.roadweaver.worldgen.road.PathFeature;
-import net.shiroha233.roadweaver.worldgen.road.PathFeatureConfig;
+import net.shiroha233.roadweaver.worldgen.PathFeatureConfig;
 
 /**
  * Fabric Feature 注册

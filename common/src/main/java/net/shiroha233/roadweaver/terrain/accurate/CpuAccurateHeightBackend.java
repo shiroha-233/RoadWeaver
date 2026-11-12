@@ -15,6 +15,7 @@ import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import net.shiroha233.roadweaver.core.metrics.AccurateSamplingStats;
 
 /**
  * 精确采样 CPU 基准实现，也是 OpenCL 的正确性回退源。

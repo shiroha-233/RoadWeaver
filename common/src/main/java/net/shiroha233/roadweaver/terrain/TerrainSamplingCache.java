@@ -8,7 +8,8 @@ import net.minecraft.world.level.biome.Biome;
 import java.util.IdentityHashMap;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
-import net.shiroha233.roadweaver.terrain.accurate.AccurateHeightSampler;
+import net.shiroha233.roadweaver.terrain.AccurateHeightSampler;
+import net.shiroha233.roadweaver.core.metrics.TerrainSamplingStats;
 
 /**
  * 地形采样缓存
@@ -141,7 +142,7 @@ public final class TerrainSamplingCache {
     }
 
     /**
-     * 释放当前任务的缓存。维度级群系缓存由 CacheManager 在维度卸载时清理。
+     * 释放当前任务的缓存。维度级群系缓存由生命周期管理器在维度卸载时清理。
      */
     public void clear() {
         nearWaterCacheByDistance = new ConcurrentHashMap<>();
@@ -149,7 +150,6 @@ public final class TerrainSamplingCache {
         heightCache = new ConcurrentHashMap<>();
         oceanFloorCache = new ConcurrentHashMap<>();
         if (fastSampler != null) fastSampler.clearCache();
-        // 精采 sampler 由维度生命周期持有，单条道路结束不能关闭共享 GPU 后端。
         accurateSampler = null;
     }
 

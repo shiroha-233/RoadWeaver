@@ -31,17 +31,14 @@ public class MixinConfigPlugin implements IMixinConfigPlugin {
 
     @Override
     public boolean shouldApplyMixin(String targetClassName, String mixinClassName) {
-        // DynamicTrees 相关的 Mixin 只在模组存在时加载
         if (mixinClassName.contains("DynamicTree")) {
             return isModLoaded("dynamictrees");
         }
         
-        // Oh-The-Trees-Youll-Grow 相关的 Mixin
         if (mixinClassName.contains("TreeFromStructureNBTFeatureMixin")) {
             return isModLoaded("ohthetreesyoullgrow");
         }
         
-        // ReTerraForged 相关的 Mixin
         if (mixinClassName.contains("RTFTemplateFeatureMixin") || 
             mixinClassName.contains("RTFBushFeatureMixin")) {
             return isModLoaded("reterraforged");
@@ -57,7 +54,6 @@ public class MixinConfigPlugin implements IMixinConfigPlugin {
      * </p>
      */
     private boolean isModLoaded(String modid) {
-        // 在 Mixin 加载阶段，只有 LoadingModList 可用
         LoadingModList loadingModList = FMLLoader.getLoadingModList();
         if (loadingModList != null) {
             return loadingModList.getModFileById(modid) != null;

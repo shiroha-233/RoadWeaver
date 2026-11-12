@@ -3,6 +3,7 @@ package net.shiroha233.roadweaver.terrain;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Objects;
+import net.shiroha233.roadweaver.core.metrics.TerrainSamplingStats;
 
 /**
  * 以 4x4 群系格为单位的容量受限 LRU。

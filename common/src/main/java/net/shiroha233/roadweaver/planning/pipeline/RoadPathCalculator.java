@@ -11,9 +11,9 @@ import net.shiroha233.roadweaver.core.model.StructureConnection;
 import net.shiroha233.roadweaver.config.sub.TerrainSamplingMode;
 import net.shiroha233.roadweaver.pathfinding.impl.PathPostProcessor;
 import net.shiroha233.roadweaver.planning.path.RawPathDebugService;
-import net.shiroha233.roadweaver.terrain.PathTerrainField;
+import net.shiroha233.roadweaver.terrain.api.PathTerrainField;
 import net.shiroha233.roadweaver.terrain.TerrainSamplingCache;
-import net.shiroha233.roadweaver.terrain.accurate.AccurateHeightSampler;
+import net.shiroha233.roadweaver.terrain.AccurateHeightSampler;
 import net.shiroha233.roadweaver.terrain.AccuratePathHeightResolver;
 
 import java.util.List;

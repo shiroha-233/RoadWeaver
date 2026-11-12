@@ -133,19 +133,14 @@ public final class StructureAvoidanceService {
                     Structure structure = e.getKey();
                     for (long chunkLong : e.getValue()) {
                         if (lookups >= MAX_CHUNK_LOOKUPS_PER_TICK) {
-                            // 保持未就绪，稍后重试
                             CHUNK_BBOX_CACHE.remove(key);
                             return;
                         }
                         lookups++;
                         ChunkPos cp = new ChunkPos(chunkLong);
                         SectionPos sp = SectionPos.of(cp, level.getMinSection());
-                        // load=true 会同步等待区块生成并拖住 tick。
-                        // 但 null 只能表示「尚未就绪」而非「此处无结构」：若继续遍历，
-                        // 空结果会被写入缓存并长期生效，道路将直接穿过村庄。
                         ChunkAccess chunk = level.getChunk(cp.x, cp.z, ChunkStatus.STRUCTURE_STARTS, false);
                         if (chunk == null) {
-                            // 保持未就绪，整体稍后重试
                             CHUNK_BBOX_CACHE.remove(key);
                             return;
                         }

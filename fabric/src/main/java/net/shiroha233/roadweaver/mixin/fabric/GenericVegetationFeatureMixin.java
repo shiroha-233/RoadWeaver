@@ -61,19 +61,16 @@ public class GenericVegetationFeatureMixin<FC extends FeatureConfiguration, F ex
         
         String featureClassName = this.feature.getClass().getName().toLowerCase();
         
-        // 排除已有专门 Mixin 的原版类（避免重复检查）
         if (roadweaver$isVanillaTreeFeature(featureClassName)) {
             this.roadweaver$treeLike = false;
             return false;
         }
         
-        // 检查 Feature 类名
         if (roadweaver$containsTreeKeyword(featureClassName)) {
             this.roadweaver$treeLike = true;
             return true;
         }
         
-        // 检查配置类名
         if (this.config != null) {
             String configName = this.config.getClass().getName().toLowerCase();
             if (roadweaver$containsTreeKeyword(configName)) {

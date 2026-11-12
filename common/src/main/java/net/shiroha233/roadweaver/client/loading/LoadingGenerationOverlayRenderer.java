@@ -8,7 +8,6 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.Level;
-import net.shiroha233.roadweaver.client.tips.LoadingTipsRenderer;
 import net.shiroha233.roadweaver.config.ConfigService;
 import net.shiroha233.roadweaver.config.ModConfig;
 import net.shiroha233.roadweaver.config.sub.TerrainSamplingMode;
@@ -88,7 +87,6 @@ public final class LoadingGenerationOverlayRenderer {
         int cardWidth = clamp(contentWidth + CARD_PADDING_X * 2,
                 Math.min(MIN_CARD_WIDTH, maxCardWidth),
                 maxCardWidth);
-        // 高度与下方绘制顺序保持一致：标题 + 进度条 + 步骤文字 (+ 调试明细)
         int cardHeight = CARD_PADDING_Y * 2
                 + lineHeight
                 + LINE_GAP + BAR_HEIGHT + LINE_GAP
@@ -310,7 +308,6 @@ public final class LoadingGenerationOverlayRenderer {
         return format(snapshot.lastBatchSamples() * 1000.0 / snapshot.lastBatchMillis());
     }
 
-    /** 一行调试明细及其显示颜色。 */
     private record DebugLine(Component text, int color) {
     }
 }

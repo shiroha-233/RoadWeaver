@@ -3,7 +3,7 @@ package net.shiroha233.roadweaver.terrain.coarse;
 import net.minecraft.core.Holder;
 import net.minecraft.world.level.biome.Biome;
 import net.shiroha233.roadweaver.core.constants.RoadConstants;
-import net.shiroha233.roadweaver.terrain.PathTerrainField;
+import net.shiroha233.roadweaver.terrain.api.PathTerrainField;
 
 import java.util.Map;
 

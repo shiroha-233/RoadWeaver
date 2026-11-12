@@ -6,10 +6,9 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.levelgen.NoiseBasedChunkGenerator;
 import net.minecraft.world.level.levelgen.NoiseSettings;
 import net.shiroha233.roadweaver.config.ConfigService;
-import net.shiroha233.roadweaver.terrain.coarse.CoarseHeightBatchRequest;
-import net.shiroha233.roadweaver.terrain.coarse.CoarseHeightBatchSampler;
-import net.shiroha233.roadweaver.terrain.coarse.CpuCoarseHeightBatchSampler;
-import net.shiroha233.roadweaver.terrain.opencl.bridge.OpenCLBridge;
+import net.shiroha233.roadweaver.terrain.api.CoarseHeightBatchRequest;
+import net.shiroha233.roadweaver.terrain.api.CoarseHeightBatchSampler;
+import net.shiroha233.roadweaver.terrain.opencl.OpenCLBridge;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -41,12 +40,13 @@ public final class OpenCLCoarseHeightBatchSampler implements CoarseHeightBatchSa
     private final int minY;
     private final int maxY;
     private final int cellHeight;
-    private CpuCoarseHeightBatchSampler fallback;
+    private final CoarseHeightBatchSampler fallback;
 
     private OpenCLCoarseHeightBatchSampler(ServerLevel level,
                                             OpenCLRuntime runtime,
                                             CachedDensityProgram cachedProgram,
-                                            NoiseSettings settings) {
+                                            NoiseSettings settings,
+                                            CoarseHeightBatchSampler fallback) {
         this.level = level;
         this.runtime = runtime;
         this.cachedProgram = cachedProgram;
@@ -54,10 +54,12 @@ public final class OpenCLCoarseHeightBatchSampler implements CoarseHeightBatchSa
         this.minY = settings.minY();
         this.maxY = settings.minY() + settings.height();
         this.cellHeight = settings.getCellHeight();
+        this.fallback = fallback;
     }
 
     public static CoarseHeightBatchSampler tryCreate(ServerLevel level,
-                                                     OpenCLDevicePreference devicePreference) {
+                                                     OpenCLDevicePreference devicePreference,
+                                                     CoarseHeightBatchSampler fallback) {
         if (level == null || !Level.OVERWORLD.equals(level.dimension())) {
             return null;
         }
@@ -81,7 +83,8 @@ public final class OpenCLCoarseHeightBatchSampler implements CoarseHeightBatchSa
                     level,
                     runtime,
                     graph.cachedProgram(),
-                    getNoiseSettings(level));
+                    getNoiseSettings(level),
+                    fallback);
             InitialGenerationProgressTracker.setBackend("OPENCL", runtime.deviceName(), null);
             if (ENABLED_LOGGED.compareAndSet(false, true)) {
                 LOGGER.info("OpenCL 粗采样已启用 preference={} nodes={} normalNoises={} splines={}",
@@ -154,18 +157,18 @@ public final class OpenCLCoarseHeightBatchSampler implements CoarseHeightBatchSa
         if (OpenCLWorldSupport.isUnsupported()) {
             InitialGenerationProgressTracker.setBackend("CPU", "CPU",
                     OpenCLWorldSupport.unsupportedReason());
-            return fallback().sampleHeights(request);
+            return fallback.sampleHeights(request);
         }
         if (program.isEmpty()) {
             InitialGenerationProgressTracker.setBackend("CPU", "CPU", "opencl_program_empty");
-            return fallback().sampleHeights(request);
+            return fallback.sampleHeights(request);
         }
         if (!OpenCLAvailability.isAvailable()) {
             if (DISABLED_FALLBACK_LOGGED.compareAndSet(false, true)) {
                 LOGGER.info("OpenCL 粗采样已禁用，当前请求直接使用 CPU: {}", OpenCLAvailability.disabledReason());
             }
             InitialGenerationProgressTracker.setBackend("CPU", "CPU", OpenCLAvailability.disabledReason());
-            return fallback().sampleHeights(request);
+            return fallback.sampleHeights(request);
         }
         long startedAt = System.currentTimeMillis();
         try {
@@ -173,12 +176,12 @@ public final class OpenCLCoarseHeightBatchSampler implements CoarseHeightBatchSa
             if (validationMode == ValidationMode.NONE && OpenCLWorldSupport.isUnsupported()) {
                 InitialGenerationProgressTracker.setBackend("CPU", "CPU",
                         OpenCLWorldSupport.unsupportedReason());
-                return fallback().sampleHeights(request);
+                return fallback.sampleHeights(request);
             }
             int[] heights = sampleHeightsOpenCL(request);
             try {
                 if (validationMode.shouldValidate()) {
-                    int[] expected = fallback().sampleHeights(request);
+                    int[] expected = fallback.sampleHeights(request);
                     if (expected == null) {
                         return null;
                     }
@@ -209,7 +212,7 @@ public final class OpenCLCoarseHeightBatchSampler implements CoarseHeightBatchSa
         } catch (Throwable t) {
             OpenCLAvailability.disable("OpenCL kernel 执行失败", t);
             InitialGenerationProgressTracker.setBackend("CPU", "CPU", OpenCLAvailability.disabledReason());
-            return fallback().sampleHeights(request);
+            return fallback.sampleHeights(request);
         }
     }
 
@@ -220,16 +223,7 @@ public final class OpenCLCoarseHeightBatchSampler implements CoarseHeightBatchSa
 
     @Override
     public void close() {
-        if (fallback != null) {
-            fallback.close();
-        }
-    }
-
-    private CpuCoarseHeightBatchSampler fallback() {
-        if (fallback == null) {
-            fallback = CpuCoarseHeightBatchSampler.create(level);
-        }
-        return fallback;
+        fallback.close();
     }
 
     private int[] sampleHeightsOpenCL(CoarseHeightBatchRequest request) {

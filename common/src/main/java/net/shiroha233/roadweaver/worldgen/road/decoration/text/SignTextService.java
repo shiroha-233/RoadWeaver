@@ -167,7 +167,6 @@ public final class SignTextService {
         if (level.getChunkSource().getChunkNow(chunkX, chunkZ) == null) return;
         boolean needRetry = false;
 
-        // 内存区与文件区共用一份预算，避免主线程方块实体写入量翻倍
         List<SignTextShardStorage.PendingSignWrite> memoryPending =
                 SignTextShardStorage.takeMemoryByChunk(level, chunkX, chunkZ, WRITE_BUDGET_PER_CHUNK);
         for (SignTextShardStorage.PendingSignWrite row : memoryPending) {
@@ -191,7 +190,6 @@ public final class SignTextService {
             return;
         }
 
-        // 返回 null 表示缓存未就绪；后台线程加载完成后会重新标记本区块
         List<SignTextFileStorage.PendingSignText> pending =
                 SignTextFileIo.poll(level, chunkX, chunkZ, remainingBudget);
         if (pending == null) {
