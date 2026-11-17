@@ -2,7 +2,7 @@ package net.shiroha233.roadweaver.worldgen.structure.fabric;
 
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.level.levelgen.structure.StructureType;
 import net.minecraft.world.level.levelgen.structure.pieces.StructurePieceType;
 import net.shiroha233.roadweaver.RoadWeaver;
@@ -30,7 +30,7 @@ public final class StructureRegistry {
         
         Registry.register(
             BuiltInRegistries.STRUCTURE_PIECE,
-            ResourceLocation.fromNamespaceAndPath(RoadWeaver.MOD_ID, "simple_template"),
+            Identifier.fromNamespaceAndPath(RoadWeaver.MOD_ID, "simple_template"),
             simpleTemplate
         );
         
@@ -41,7 +41,7 @@ public final class StructureRegistry {
         StructureType<RoadsideStructure> roadsideType = () -> RoadsideStructure.CODEC;
         Registry.register(
             BuiltInRegistries.STRUCTURE_TYPE,
-            ResourceLocation.fromNamespaceAndPath(RoadWeaver.MOD_ID, "roadside"),
+            Identifier.fromNamespaceAndPath(RoadWeaver.MOD_ID, "roadside"),
             roadsideType
         );
         ModStructureTypes.setRoadside(roadsideType);
@@ -49,7 +49,7 @@ public final class StructureRegistry {
         StructureType<RoadsideVillageStructure> roadsideVillageType = () -> RoadsideVillageStructure.CODEC;
         Registry.register(
             BuiltInRegistries.STRUCTURE_TYPE,
-            ResourceLocation.fromNamespaceAndPath(RoadWeaver.MOD_ID, "roadside_village"),
+            Identifier.fromNamespaceAndPath(RoadWeaver.MOD_ID, "roadside_village"),
             roadsideVillageType
         );
         ModStructureTypes.setRoadsideVillage(roadsideVillageType);
@@ -57,7 +57,7 @@ public final class StructureRegistry {
         StructureType<SpawnCabinStructure> spawnCabinType = () -> SpawnCabinStructure.CODEC;
         Registry.register(
             BuiltInRegistries.STRUCTURE_TYPE,
-            ResourceLocation.fromNamespaceAndPath(RoadWeaver.MOD_ID, "spawn_cabin"),
+            Identifier.fromNamespaceAndPath(RoadWeaver.MOD_ID, "spawn_cabin"),
             spawnCabinType
         );
         ModStructureTypes.setSpawnCabin(spawnCabinType);
@@ -65,7 +65,7 @@ public final class StructureRegistry {
         StructureType<BridgeTemplateStructure> bridgeTemplateType = () -> BridgeTemplateStructure.CODEC;
         Registry.register(
                 BuiltInRegistries.STRUCTURE_TYPE,
-                ResourceLocation.fromNamespaceAndPath(RoadWeaver.MOD_ID, "bridge"),
+                Identifier.fromNamespaceAndPath(RoadWeaver.MOD_ID, "bridge"),
                 bridgeTemplateType
         );
         ModStructureTypes.setBridge(bridgeTemplateType);

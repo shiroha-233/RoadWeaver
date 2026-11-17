@@ -1,13 +1,13 @@
 package net.shiroha233.roadweaver.client.config;
 
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.level.block.Block;
 import net.shiroha233.roadweaver.config.PresetService;
 
@@ -233,7 +233,7 @@ public class MaterialPresetEditorScreen extends Screen {
         refreshPresetListUI();
         
         if (presetList != null) {
-            presetList.setScrollAmount(presetList.getMaxScroll());
+            presetList.setScrollAmount(presetList.maxScrollAmount());
         }
     }
 
@@ -257,7 +257,7 @@ public class MaterialPresetEditorScreen extends Screen {
             UiPreset p = presets.get(i);
             if (!matchesFilter(p)) continue;
             if (p.type == PresetService.RoadType.NATURAL) {
-                ResourceLocation biomeId = tryGetBiomeIdFromPreset(p);
+                Identifier biomeId = tryGetBiomeIdFromPreset(p);
                 if (biomeId != null) {
                     presetList.addPreset(p.id, getBiomeZhName(biomeId), getBiomeEnName(biomeId), i == activePresetIndex);
                     continue;
@@ -267,21 +267,21 @@ public class MaterialPresetEditorScreen extends Screen {
         }
     }
 
-    private ResourceLocation tryGetBiomeIdFromPreset(UiPreset p) {
+    private Identifier tryGetBiomeIdFromPreset(UiPreset p) {
         if (p == null || p.type != PresetService.RoadType.NATURAL) return null;
         if (p.id == null) return null;
         if (!p.id.startsWith("natural_")) return null;
         String rest = p.id.substring("natural_".length());
         if (rest.isBlank()) return null;
 
-        ResourceLocation vanilla = ResourceLocation.fromNamespaceAndPath("minecraft", rest);
+        Identifier vanilla = Identifier.fromNamespaceAndPath("minecraft", rest);
 
         int firstUnderscore = rest.indexOf('_');
         if (firstUnderscore > 0 && firstUnderscore < rest.length() - 1) {
             String ns = rest.substring(0, firstUnderscore);
             String path = rest.substring(firstUnderscore + 1);
             try {
-                ResourceLocation candidate = ResourceLocation.fromNamespaceAndPath(ns, path);
+                Identifier candidate = Identifier.fromNamespaceAndPath(ns, path);
                 String key = "biome." + candidate.getNamespace() + "." + candidate.getPath();
                 Component translated = Component.translatable(key);
                 if (!Objects.equals(translated.getString(), key)) {
@@ -293,14 +293,14 @@ public class MaterialPresetEditorScreen extends Screen {
         return vanilla;
     }
 
-    private String getBiomeZhName(ResourceLocation biomeId) {
+    private String getBiomeZhName(Identifier biomeId) {
         String key = "biome." + biomeId.getNamespace() + "." + biomeId.getPath();
         Component translated = Component.translatable(key);
         String s = translated.getString();
         return Objects.equals(s, key) ? biomeId.toString() : s;
     }
 
-    private String getBiomeEnName(ResourceLocation biomeId) {
+    private String getBiomeEnName(Identifier biomeId) {
         String path = biomeId.getPath();
         String[] parts = path.split("_");
         StringBuilder sb = new StringBuilder();
@@ -388,7 +388,7 @@ public class MaterialPresetEditorScreen extends Screen {
     private void onBlockSelectedFromCandidate(Block block) {
         if (activePresetIndex < 0) return;
         UiPreset p = presets.get(activePresetIndex);
-        ResourceLocation id = BuiltInRegistries.BLOCK.getKey(block);
+        Identifier id = BuiltInRegistries.BLOCK.getKey(block);
         if (id == null) return;
         String idStr = id.toString();
 
@@ -428,39 +428,40 @@ public class MaterialPresetEditorScreen extends Screen {
     }
     
     @Override
-    public void render(GuiGraphics g, int mouseX, int mouseY, float partialTick) {
-        this.renderBackground(g, mouseX, mouseY, partialTick);
-        super.render(g, mouseX, mouseY, partialTick);
+    public void extractRenderState(GuiGraphicsExtractor g, int mouseX, int mouseY,
+                                     float partialTick) {
+        this.extractBackground(g, mouseX, mouseY, partialTick);
+        super.extractRenderState(g, mouseX, mouseY, partialTick);
 
         UiPreset p = (activePresetIndex >= 0 && activePresetIndex < presets.size()) ? presets.get(activePresetIndex) : null;
         if (p != null && p.type == PresetService.RoadType.NATURAL) {
-            ResourceLocation biomeId = tryGetBiomeIdFromPreset(p);
+            Identifier biomeId = tryGetBiomeIdFromPreset(p);
             if (biomeId != null) {
                 String zh = getBiomeZhName(biomeId);
                 String en = getBiomeEnName(biomeId);
                 int x = editorLeft;
                 int y = editorHeaderY;
 
-                g.pose().pushPose();
-                g.pose().translate(x, y, 0);
-                g.pose().scale(ZH_SCALE, ZH_SCALE, 1.0F);
-                g.drawString(font, font.plainSubstrByWidth(zh, (int) (editorWidth / ZH_SCALE)), 0, 0, 0xFFFFFF, false);
-                g.pose().popPose();
+                g.pose().pushMatrix();
+                g.pose().translate(x, y);
+                g.pose().scale(ZH_SCALE, ZH_SCALE);
+                g.text(font, font.plainSubstrByWidth(zh, (int) (editorWidth / ZH_SCALE)), 0, 0, 0xFFFFFF, false);
+                g.pose().popMatrix();
 
-                g.pose().pushPose();
-                g.pose().translate(x, y + 18, 0);
-                g.pose().scale(EN_SCALE, EN_SCALE, 1.0F);
-                g.drawString(font, font.plainSubstrByWidth(en, (int) (editorWidth / EN_SCALE)), 0, 0, 0xBBBBBB, false);
-                g.pose().popPose();
+                g.pose().pushMatrix();
+                g.pose().translate(x, y + 18);
+                g.pose().scale(EN_SCALE, EN_SCALE);
+                g.text(font, font.plainSubstrByWidth(en, (int) (editorWidth / EN_SCALE)), 0, 0, 0xBBBBBB, false);
+                g.pose().popMatrix();
             }
         }
         
-        g.drawCenteredString(font, this.title, this.width / 2, 8, 0xFFFFFF);
+        g.centeredText(font, this.title, this.width / 2, 8, 0xFFFFFF);
     }
     
     @Override
     public void onClose() {
-        minecraft.setScreen(parent);
+        minecraft.gui.setScreen(parent);
     }
     
     @Override

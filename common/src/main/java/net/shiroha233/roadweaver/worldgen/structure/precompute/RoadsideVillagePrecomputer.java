@@ -2,13 +2,13 @@ package net.shiroha233.roadweaver.worldgen.structure.precompute;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.core.Holder;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.levelgen.structure.BoundingBox;
-import net.minecraft.core.Holder;
 import net.shiroha233.roadweaver.config.ConfigService;
 import net.shiroha233.roadweaver.config.ModConfig;
 import net.shiroha233.roadweaver.config.sub.RoadsideVillageConfig;
@@ -36,7 +36,7 @@ public final class RoadsideVillagePrecomputer {
 
     private static final Logger LOGGER = LoggerFactory.getLogger("RoadWeaver/RoadsideVillagePrecomputer");
     private static final String MOD_ID = "roadweaver";
-    private static final ResourceLocation STRUCTURE_ID = ResourceLocation.fromNamespaceAndPath(MOD_ID, "roadside_village");
+    private static final Identifier STRUCTURE_ID = Identifier.fromNamespaceAndPath(MOD_ID, "roadside_village");
 
     public static int precomputeVillages(ServerLevel level,
                                          List<RoadSegmentPlacement> segments,
@@ -84,7 +84,7 @@ public final class RoadsideVillagePrecomputer {
 
             BlockPos center = segments.get(candidate.centerIndex()).middlePos();
             Holder<Biome> biome = cache.getBiome(level, center.getX(), center.getZ());
-            ResourceLocation style = styleForBiome(BiomeCategory.fromBiome(biome));
+            Identifier style = styleForBiome(BiomeCategory.fromBiome(biome));
             int minClusterSlots = minClusterSlots(villageCfg);
             int nodeCount = Math.max(randomNodeCount(villageCfg, random), minClusterSlots);
             SlotLayout layout = createSlots(level, segments, targetY, width, cache, terrain, villageCfg, candidate, nodeCount, style, random);
@@ -103,14 +103,14 @@ public final class RoadsideVillagePrecomputer {
                 (bounds.minY() + bounds.maxY()) / 2,
                 (bounds.minZ() + bounds.maxZ()) / 2
             );
-            ChunkPos originChunk = new ChunkPos(villageCenter);
-            if (!usedOriginChunks.add(originChunk.toLong())) {
+            ChunkPos originChunk = ChunkPos.containing(villageCenter);
+            if (!usedOriginChunks.add(originChunk.pack())) {
                 continue;
             }
 
-            ResourceLocation placementId = ResourceLocation.fromNamespaceAndPath(
+            Identifier placementId = Identifier.fromNamespaceAndPath(
                 MOD_ID,
-                "roadside_village/" + originChunk.x + "_" + originChunk.z + "_" + candidate.startIndex()
+                "roadside_village/" + originChunk.x() + "_" + originChunk.z() + "_" + candidate.startIndex()
             );
 
             PendingRoadsideVillage village = new PendingRoadsideVillage(
@@ -129,7 +129,7 @@ public final class RoadsideVillagePrecomputer {
                 acceptedBounds.add(bounds);
                 placedCount++;
                 LOGGER.debug("Precomputed roadside village {} style={} slots={} window=[{}, {}] score={} chunk=[{}, {}]",
-                    placementId, style, slots.size(), candidate.startIndex(), candidate.endIndex(), candidate.score(), originChunk.x, originChunk.z);
+                    placementId, style, slots.size(), candidate.startIndex(), candidate.endIndex(), candidate.score(), originChunk.x(), originChunk.z());
             }
         }
 
@@ -306,7 +306,7 @@ public final class RoadsideVillagePrecomputer {
                                           RoadsideVillageConfig cfg,
                                           WindowCandidate window,
                                           int nodeCount,
-                                          ResourceLocation style,
+                                          Identifier style,
                                           RandomSource random) {
         List<PendingRoadsideVillageSlot> result = new ArrayList<>();
         List<BoundingBox> occupied = new ArrayList<>();
@@ -358,7 +358,7 @@ public final class RoadsideVillagePrecomputer {
                                                                       int offset,
                                                                       int gapInterval,
                                                                       int maxStepHeight,
-                                                                      ResourceLocation style,
+                                                                      Identifier style,
                                                                       RandomSource random,
                                                                       List<BoundingBox> occupied) {
         List<PendingRoadsideVillageSlot> slots = new ArrayList<>();
@@ -436,7 +436,7 @@ public final class RoadsideVillagePrecomputer {
         );
     }
 
-    private static PendingRoadsideVillageSlot.SlotKind slotKind(int ordinal, int total, ResourceLocation style, RandomSource random) {
+    private static PendingRoadsideVillageSlot.SlotKind slotKind(int ordinal, int total, Identifier style, RandomSource random) {
         if (ordinal == total - 1) {
             return PendingRoadsideVillageSlot.SlotKind.VILLAGER;
         }
@@ -617,13 +617,13 @@ public final class RoadsideVillagePrecomputer {
         return false;
     }
 
-    private static ResourceLocation styleForBiome(BiomeCategory category) {
+    private static Identifier styleForBiome(BiomeCategory category) {
         return switch (category) {
-            case DESERT, BADLANDS -> ResourceLocation.fromNamespaceAndPath("minecraft", "desert");
-            case SAVANNA -> ResourceLocation.fromNamespaceAndPath("minecraft", "savanna");
-            case TAIGA -> ResourceLocation.fromNamespaceAndPath("minecraft", "taiga");
-            case SNOWY -> ResourceLocation.fromNamespaceAndPath("minecraft", "snowy");
-            default -> ResourceLocation.fromNamespaceAndPath("minecraft", "plains");
+            case DESERT, BADLANDS -> Identifier.fromNamespaceAndPath("minecraft", "desert");
+            case SAVANNA -> Identifier.fromNamespaceAndPath("minecraft", "savanna");
+            case TAIGA -> Identifier.fromNamespaceAndPath("minecraft", "taiga");
+            case SNOWY -> Identifier.fromNamespaceAndPath("minecraft", "snowy");
+            default -> Identifier.fromNamespaceAndPath("minecraft", "plains");
         };
     }
 

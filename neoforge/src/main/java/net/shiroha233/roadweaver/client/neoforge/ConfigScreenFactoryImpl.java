@@ -20,7 +20,6 @@ import net.shiroha233.roadweaver.config.sub.RoadsideVillageConfig;
 import net.shiroha233.roadweaver.config.sub.StructurePredictionConfig;
 import net.shiroha233.roadweaver.config.sub.TerrainSamplingMode;
 import net.shiroha233.roadweaver.core.constants.RoadConstants;
-import net.shiroha233.roadweaver.terrain.opencl.OpenCLDevicePreference;
 
 import java.util.Locale;
 
@@ -554,15 +553,6 @@ public class ConfigScreenFactoryImpl {
                 .setDefaultValue(def.openclAccurateSamplingEnabled())
                 .setTooltip(Component.translatable("config.roadweaver.opencl_accurate_sampling_enabled.tooltip"))
                 .setSaveConsumer(cfg::setOpenclAccurateSamplingEnabled)
-                .build());
-
-        category.addEntry(eb
-                .startEnumSelector(Component.translatable("config.roadweaver.opencl_device_preference"),
-                        OpenCLDevicePreference.class, OpenCLDevicePreference.valueOf(cfg.openclDevicePreference()))
-                .setDefaultValue(OpenCLDevicePreference.valueOf(def.openclDevicePreference()))
-                .setTooltip(Component.translatable("config.roadweaver.opencl_device_preference.tooltip"))
-                .setEnumNameProvider(v -> Component.translatable("config.roadweaver.opencl_device_preference.option." + v.name().toLowerCase(Locale.ROOT)))
-                .setSaveConsumer(v -> cfg.setOpenclDevicePreference(v.name()))
                 .build());
 
         category.addEntry(eb

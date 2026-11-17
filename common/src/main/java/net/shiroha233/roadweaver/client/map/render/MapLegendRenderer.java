@@ -1,7 +1,7 @@
 package net.shiroha233.roadweaver.client.map.render;
 
 import net.minecraft.client.gui.Font;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.network.chat.Component;
 import net.shiroha233.roadweaver.client.map.MapTheme;
 import net.shiroha233.roadweaver.map.data.MapSnapshot;
@@ -19,7 +19,7 @@ public final class MapLegendRenderer {
 
     private MapLegendRenderer() {}
 
-    public static void render(GuiGraphics graphics,
+    public static void render(GuiGraphicsExtractor graphics,
                               Font font,
                               int screenWidth,
                               MapSnapshot snapshot) {
@@ -42,10 +42,10 @@ public final class MapLegendRenderer {
             int countX = right - font.width(count);
             int labelWidth = Math.max(0, countX - labelX - LABEL_COUNT_GAP);
             Component label = fitLabel(font, entry.label(), labelWidth);
-            graphics.drawString(font, label, labelX, rowY,
+            graphics.text(font, label, labelX, rowY,
                     MapTheme.PANEL_MUTED, false);
             if (!count.isEmpty()) {
-                graphics.drawString(font, count, countX, rowY,
+                graphics.text(font, count, countX, rowY,
                         MapTheme.PANEL_TEXT, false);
             }
             renderSwatch(graphics, swatchX, rowY + 4, entry);
@@ -88,7 +88,7 @@ public final class MapLegendRenderer {
         return Component.translatable("gui.roadweaver.map.legend." + key);
     }
 
-    private static void renderSwatch(GuiGraphics graphics, int x, int y, LegendEntry entry) {
+    private static void renderSwatch(GuiGraphicsExtractor graphics, int x, int y, LegendEntry entry) {
         if (entry.structure()) {
             graphics.fill(x, y - 1, x + SWATCH_WIDTH, y + SWATCH_HEIGHT + 1, MapTheme.PANEL_MUTED);
             graphics.fill(x + 2, y, x + SWATCH_WIDTH - 2, y + SWATCH_HEIGHT, entry.color());
@@ -124,7 +124,7 @@ public final class MapLegendRenderer {
         return font.plainSubstrByWidth(text, maxWidth - suffixWidth) + suffix;
     }
 
-    private static void renderSurface(GuiGraphics graphics, int x, int y, int width, int height) {
+    private static void renderSurface(GuiGraphicsExtractor graphics, int x, int y, int width, int height) {
         MapDockRenderer.fillRounded(graphics, x + 2, y + 3, width, height, 10, MapTheme.PANEL_SHADOW);
         MapDockRenderer.fillRounded(graphics, x, y, width, height, 10, MapTheme.PANEL_BG);
         MapDockRenderer.fillRounded(graphics, x + 1, y + 1, width - 2, height - 2, 9, MapTheme.PANEL_HIGHLIGHT);

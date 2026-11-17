@@ -2,8 +2,8 @@ package net.shiroha233.roadweaver.map.tile.storage;
 
 import net.minecraft.server.level.ServerLevel;
 import net.shiroha233.roadweaver.map.tile.core.MapTileLayer;
-import net.shiroha233.roadweaver.util.FileStorageIO;
 import net.shiroha233.roadweaver.persistence.WorldgenFingerprintService;
+import net.shiroha233.roadweaver.util.FileStorageIO;
 import net.shiroha233.roadweaver.util.StripedLocks;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -28,7 +28,7 @@ public final class AccurateTerrainMapFingerprintGuard {
         try {
             ensure(level, WorldgenFingerprintService.forLevel(level).namespace());
         } catch (RuntimeException failure) {
-            LOGGER.warn("计算精确地形地图指纹失败 dimension={}", level.dimension().location(), failure);
+            LOGGER.warn("计算精确地形地图指纹失败 dimension={}", level.dimension().identifier(), failure);
         }
     }
 
@@ -49,7 +49,7 @@ public final class AccurateTerrainMapFingerprintGuard {
                         "清理过期精确地形地图失败");
                 FileStorageIO.writeStringAtomic(marker, expected);
             } catch (IOException failure) {
-                LOGGER.warn("校验精确地形地图指纹失败 dimension={}", level.dimension().location(), failure);
+                LOGGER.warn("校验精确地形地图指纹失败 dimension={}", level.dimension().identifier(), failure);
             }
         }
     }

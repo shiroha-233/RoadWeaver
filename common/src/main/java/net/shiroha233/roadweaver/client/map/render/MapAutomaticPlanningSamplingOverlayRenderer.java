@@ -1,7 +1,7 @@
 package net.shiroha233.roadweaver.client.map.render;
 
 import net.minecraft.client.gui.Font;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.network.chat.Component;
 import net.shiroha233.roadweaver.client.map.MapView;
 import net.shiroha233.roadweaver.planning.pipeline.AutomaticPlanningSamplingBounds;
@@ -16,7 +16,7 @@ public final class MapAutomaticPlanningSamplingOverlayRenderer {
 
     private MapAutomaticPlanningSamplingOverlayRenderer() {}
 
-    public static void render(GuiGraphics graphics,
+    public static void render(GuiGraphicsExtractor graphics,
                               Font font,
                               MapView view,
                               List<AutomaticPlanningSamplingBounds> bounds,

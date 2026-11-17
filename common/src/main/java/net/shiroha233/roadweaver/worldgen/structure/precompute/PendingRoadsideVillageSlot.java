@@ -2,7 +2,7 @@ package net.shiroha233.roadweaver.worldgen.structure.precompute;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 
 /**
  * 路边村庄的虚拟拼图接口
@@ -26,11 +26,11 @@ public record PendingRoadsideVillageSlot(
         VILLAGER
     }
 
-    public ResourceLocation poolId(ResourceLocation style) {
+    public Identifier poolId(Identifier style) {
         return switch (kind) {
-            case HOUSE -> ResourceLocation.fromNamespaceAndPath("minecraft", "village/" + style.getPath() + "/houses");
-            case DECOR -> ResourceLocation.fromNamespaceAndPath("minecraft", "village/" + style.getPath() + "/decor");
-            case VILLAGER -> ResourceLocation.fromNamespaceAndPath("minecraft", "village/" + style.getPath() + "/villagers");
+            case HOUSE -> Identifier.fromNamespaceAndPath("minecraft", "village/" + style.getPath() + "/houses");
+            case DECOR -> Identifier.fromNamespaceAndPath("minecraft", "village/" + style.getPath() + "/decor");
+            case VILLAGER -> Identifier.fromNamespaceAndPath("minecraft", "village/" + style.getPath() + "/villagers");
         };
     }
 }

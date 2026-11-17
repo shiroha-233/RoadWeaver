@@ -1,7 +1,7 @@
 package net.shiroha233.roadweaver.client.map.render;
 
 import net.minecraft.client.gui.Font;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.network.chat.Component;
 
 /**
@@ -10,7 +10,7 @@ import net.minecraft.network.chat.Component;
 public final class GridRenderer {
     private GridRenderer() {}
 
-    public static void render(GuiGraphics g,
+    public static void render(GuiGraphicsExtractor g,
                               Font font,
                               int mapX, int mapY, int mapW, int mapH,
                               int innerPad,
@@ -57,7 +57,7 @@ public final class GridRenderer {
         int tw = font.width(labelComp);
         int tx = right - tw - pad;
         int ty = bottom - font.lineHeight - pad;
-        g.drawString(font, labelComp, tx, ty, colorText, false);
+        g.text(font, labelComp, tx, ty, colorText, false);
     }
 
 

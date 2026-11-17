@@ -1,7 +1,7 @@
 package net.shiroha233.roadweaver.client.map.ui;
 
 import net.minecraft.client.gui.Font;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.shiroha233.roadweaver.client.map.MapTheme;
@@ -139,7 +139,7 @@ public final class MapWorkspacePanel {
         scrollOffset = Math.max(0, Math.min(maxScrollOffset, scrollOffset + amount));
     }
 
-    public void render(GuiGraphics graphics,
+    public void render(GuiGraphicsExtractor graphics,
                        Font font,
                        int screenWidth,
                        int screenHeight,
@@ -162,7 +162,7 @@ public final class MapWorkspacePanel {
         MapDockRenderer.fillRounded(graphics, x + 2, y + 2, w - 4, h - 4, 8, MapTheme.PANEL_BG);
 
         Component title = Component.translatable(tabTitleKey(tab));
-        graphics.drawString(font, title, x + PANEL_PADDING, y + 10, MapTheme.PANEL_TEXT, false);
+        graphics.text(font, title, x + PANEL_PADDING, y + 10, MapTheme.PANEL_TEXT, false);
         MapDockRenderer.fillRounded(graphics, closeButton.x(), closeButton.y(), closeButton.width(), closeButton.height(), 6,
                 closeButton.contains(lastMouseX, lastMouseY) ? MapTheme.PANEL_CLOSE_HOVER : MapTheme.PANEL_CONTROL_BG);
         net.shiroha233.roadweaver.client.map.render.MapIconRenderer.render(
@@ -348,7 +348,7 @@ public final class MapWorkspacePanel {
         return new Rect(x, PANEL_MARGIN, width, height);
     }
 
-    private void renderTabs(GuiGraphics graphics, Font font, int x, int y) {
+    private void renderTabs(GuiGraphicsExtractor graphics, Font font, int x, int y) {
         for (Map.Entry<Tab, Rect> entry : tabButtons.entrySet()) {
             Rect rect = entry.getValue();
             boolean selected = entry.getKey() == tab;
@@ -360,23 +360,23 @@ public final class MapWorkspacePanel {
         }
     }
 
-    private void renderSearch(GuiGraphics graphics,
+    private void renderSearch(GuiGraphicsExtractor graphics,
                               Font font,
                               List<MapSearchResult> results,
                               boolean loading,
                               boolean failed) {
         if (loading) {
-            graphics.drawString(font, Component.translatable("gui.roadweaver.map.panel.search.loading"),
+            graphics.text(font, Component.translatable("gui.roadweaver.map.panel.search.loading"),
                     searchViewport.x(), searchViewport.y() + 2, MapTheme.PANEL_MUTED, false);
             return;
         }
         if (failed) {
-            graphics.drawString(font, Component.translatable("gui.roadweaver.map.panel.search.failed"),
+            graphics.text(font, Component.translatable("gui.roadweaver.map.panel.search.failed"),
                     searchViewport.x(), searchViewport.y() + 2, MapTheme.COLOR_FAILED, false);
             return;
         }
         if (results == null || results.isEmpty()) {
-            graphics.drawString(font, Component.translatable("gui.roadweaver.map.panel.search.empty"),
+            graphics.text(font, Component.translatable("gui.roadweaver.map.panel.search.empty"),
                     searchViewport.x(), searchViewport.y() + 2, MapTheme.PANEL_MUTED, false);
             return;
         }
@@ -390,15 +390,15 @@ public final class MapWorkspacePanel {
             String alias = ClientMapNotes.getAlias(result.pos());
             String primary = alias != null && !alias.isBlank() ? alias : result.structureId();
             String secondary = result.structureId() + "  " + result.pos().getX() + ", " + result.pos().getZ();
-            graphics.drawString(font, font.plainSubstrByWidth(primary, row.width() - 12), row.x() + 6, row.y() + 4,
+            graphics.text(font, font.plainSubstrByWidth(primary, row.width() - 12), row.x() + 6, row.y() + 4,
                     MapTheme.PANEL_TEXT, false);
-            graphics.drawString(font, font.plainSubstrByWidth(secondary, row.width() - 12), row.x() + 6, row.y() + 16,
+            graphics.text(font, font.plainSubstrByWidth(secondary, row.width() - 12), row.x() + 6, row.y() + 16,
                     MapTheme.PANEL_MUTED, false);
         }
         graphics.disableScissor();
     }
 
-    private void renderFilter(GuiGraphics graphics, Font font, MapSnapshot snapshot, MapFilterState filterState) {
+    private void renderFilter(GuiGraphicsExtractor graphics, Font font, MapSnapshot snapshot, MapFilterState filterState) {
         graphics.enableScissor(filterViewport.x(), filterViewport.y(), filterViewport.right(), filterViewport.bottom());
         for (FilterRow row : filterRows) {
             boolean checked = switch (row.kind()) {
@@ -414,7 +414,7 @@ public final class MapWorkspacePanel {
                 case TYPE_FILTER -> Component.literal((String) row.value());
                 default -> Component.empty();
             };
-            graphics.drawString(font, font.plainSubstrByWidth(label.getString(), row.bounds().width() - 28),
+            graphics.text(font, font.plainSubstrByWidth(label.getString(), row.bounds().width() - 28),
                     row.bounds().x() + 18, row.bounds().y() + 5, MapTheme.PANEL_TEXT, false);
         }
         graphics.disableScissor();
@@ -424,21 +424,21 @@ public final class MapWorkspacePanel {
                 resetFilterButton, MapTheme.PANEL_TEXT);
     }
 
-    private void renderDetails(GuiGraphics graphics, Font font, MapSnapshot snapshot) {
+    private void renderDetails(GuiGraphicsExtractor graphics, Font font, MapSnapshot snapshot) {
         int x = bounds.x() + PANEL_PADDING;
         int y = bounds.y() + 62;
         if (selectedStructure == null) {
-            graphics.drawString(font, Component.translatable("gui.roadweaver.map.panel.details.empty"), x, y, MapTheme.PANEL_MUTED, false);
+            graphics.text(font, Component.translatable("gui.roadweaver.map.panel.details.empty"), x, y, MapTheme.PANEL_MUTED, false);
             return;
         }
         String alias = ClientMapNotes.getAlias(selectedStructure);
         String name = snapshot == null ? null : snapshot.structureName(selectedStructure);
         String primary = alias != null && !alias.isBlank() ? alias : name != null ? name : "unknown";
-        graphics.drawString(font, font.plainSubstrByWidth(primary, bounds.width() - PANEL_PADDING * 2), x, y, MapTheme.PANEL_TEXT, false);
-        graphics.drawString(font, Component.translatable("gui.roadweaver.map.coord", selectedStructure.getX(), selectedStructure.getZ()),
+        graphics.text(font, font.plainSubstrByWidth(primary, bounds.width() - PANEL_PADDING * 2), x, y, MapTheme.PANEL_TEXT, false);
+        graphics.text(font, Component.translatable("gui.roadweaver.map.coord", selectedStructure.getX(), selectedStructure.getZ()),
                 x, y + 17, MapTheme.PANEL_MUTED, false);
         if (name != null && alias != null && !alias.equals(name)) {
-            graphics.drawString(font, font.plainSubstrByWidth(name, bounds.width() - PANEL_PADDING * 2), x, y + 33, MapTheme.PANEL_MUTED, false);
+            graphics.text(font, font.plainSubstrByWidth(name, bounds.width() - PANEL_PADDING * 2), x, y + 33, MapTheme.PANEL_MUTED, false);
         }
         for (int i = 0; i < detailButtons.size(); i++) {
             Rect button = detailButtons.get(i);
@@ -452,7 +452,7 @@ public final class MapWorkspacePanel {
         }
     }
 
-    private static void drawCheckbox(GuiGraphics graphics, int x, int y, boolean checked) {
+    private static void drawCheckbox(GuiGraphicsExtractor graphics, int x, int y, boolean checked) {
         graphics.fill(x, y, x + 12, y + 12, checked ? MapTheme.PANEL_CHECKED : MapTheme.PANEL_CHECKBOX);
         if (checked) {
             graphics.fill(x + 3, y + 5, x + 5, y + 9, MapTheme.PANEL_TEXT);
@@ -471,8 +471,8 @@ public final class MapWorkspacePanel {
         return Component.literal(prefix + suffix);
     }
 
-    private static void drawCentered(GuiGraphics graphics, Font font, Component text, Rect rect, int color) {
-        graphics.drawString(font, text, rect.x() + (rect.width() - font.width(text)) / 2,
+    private static void drawCentered(GuiGraphicsExtractor graphics, Font font, Component text, Rect rect, int color) {
+        graphics.text(font, text, rect.x() + (rect.width() - font.width(text)) / 2,
                 rect.y() + (rect.height() - font.lineHeight) / 2, color, false);
     }
 

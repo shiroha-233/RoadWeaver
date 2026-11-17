@@ -1,6 +1,6 @@
 package net.shiroha233.roadweaver.config.structure;
 
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 
 import java.util.Objects;
 
@@ -8,16 +8,16 @@ import java.util.Objects;
  * 单个结构条目，用于 GUI 展示和选择
  */
 public final class StructureEntry implements Comparable<StructureEntry> {
-    private final ResourceLocation id;
+    private final Identifier id;
     private final String displayName;
     private final boolean isVanilla;
-    public StructureEntry(ResourceLocation id, String displayName, boolean isVanilla) {
+    public StructureEntry(Identifier id, String displayName, boolean isVanilla) {
         this.id = id;
         this.displayName = displayName;
         this.isVanilla = isVanilla;
     }
 
-    public ResourceLocation id() { return id; }
+    public Identifier id() { return id; }
     public String displayName() { return displayName; }
     public boolean isVanilla() { return isVanilla; }
     public String namespace() { return id.getNamespace(); }

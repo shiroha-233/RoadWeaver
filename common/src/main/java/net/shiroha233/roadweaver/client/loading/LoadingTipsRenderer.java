@@ -2,7 +2,7 @@ package net.shiroha233.roadweaver.client.loading;
 
 import dev.architectury.platform.Platform;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.network.chat.Component;
 import net.shiroha233.roadweaver.config.ConfigService;
 import net.shiroha233.roadweaver.config.ModConfig;
@@ -35,7 +35,7 @@ public final class LoadingTipsRenderer {
     private LoadingTipsRenderer() {
     }
 
-    public static void render(GuiGraphics graphics) {
+    public static void render(GuiGraphicsExtractor graphics) {
         Minecraft mc = Minecraft.getInstance();
         if (mc == null) {
             return;
@@ -76,7 +76,7 @@ public final class LoadingTipsRenderer {
         int x = sw - font.width(tip) - marginX;
         int y = sh - font.lineHeight - marginY;
 
-        graphics.drawString(font, tip, x, y, 0xFFFFFF, false);
+        graphics.text(font, tip, x, y, 0xFFFFFF, false);
     }
 
     public static void reset() {
@@ -84,7 +84,7 @@ public final class LoadingTipsRenderer {
         lastSwitchTimeMillis = 0L;
     }
 
-    private static void renderTectonicWarning(GuiGraphics graphics, Minecraft mc) {
+    private static void renderTectonicWarning(GuiGraphicsExtractor graphics, Minecraft mc) {
         if (Platform.getOptionalMod(TECTONIC_MOD_ID).isEmpty()) {
             return;
         }
@@ -98,6 +98,6 @@ public final class LoadingTipsRenderer {
         int top = TOP_WARNING_Y - TOP_WARNING_PADDING_Y;
         int bottom = TOP_WARNING_Y + font.lineHeight + TOP_WARNING_PADDING_Y;
         graphics.fill(left, top, right, bottom, TOP_WARNING_BG);
-        graphics.drawCenteredString(font, warning, centerX, TOP_WARNING_Y, TOP_WARNING_COLOR);
+        graphics.centeredText(font, warning, centerX, TOP_WARNING_Y, TOP_WARNING_COLOR);
     }
 }

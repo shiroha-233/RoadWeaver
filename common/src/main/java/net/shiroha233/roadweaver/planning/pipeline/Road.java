@@ -11,7 +11,6 @@ import net.shiroha233.roadweaver.core.model.RoadSegmentPlacement;
 import net.shiroha233.roadweaver.core.model.RoadSpan;
 import net.shiroha233.roadweaver.core.model.SpanType;
 import net.shiroha233.roadweaver.core.model.StructureConnection;
-import net.shiroha233.roadweaver.worldgen.PathFeatureConfig;
 import net.shiroha233.roadweaver.planning.pipeline.RoadPathCalculator.PathCalculationResult;
 import net.shiroha233.roadweaver.pathfinding.PathSpanExtractor;
 import net.shiroha233.roadweaver.terrain.TerrainSamplingCache;
@@ -34,20 +33,18 @@ import java.util.Optional;
 public final class Road {
     private final ServerLevel level;
     private final StructureConnection connection;
-    private final PathFeatureConfig featureConfig;
     private final RoadGenerationConfig genConfig;
 
-    public Road(ServerLevel level, StructureConnection connection, 
-                PathFeatureConfig featureConfig, RoadGenerationConfig genConfig) {
+    public Road(ServerLevel level, StructureConnection connection,
+                RoadGenerationConfig genConfig) {
         this.level = level;
         this.connection = connection;
-        this.featureConfig = featureConfig;
         this.genConfig = genConfig;
     }
     
     public RoadData generateRoad(int maxSteps) {
         RandomSource random = RandomSource.create();
-        int width = genConfig.effectiveRoadWidth(getRandomWidth(random, featureConfig));
+        int width = genConfig.effectiveRoadWidth(0);
         boolean allowA = genConfig.allowArtificial();
         boolean allowN = genConfig.allowNatural();
         if (!allowA && !allowN) return null;
@@ -115,10 +112,6 @@ public final class Road {
         }
     }
 
-    private static int getRandomWidth(RandomSource rnd, PathFeatureConfig cfg) {
-        return 0;
-    }
-    
     private static List<Integer> computeTargetY(ServerLevel level, List<RoadSegmentPlacement> segments, 
                                                    List<RoadSpan> spans, TerrainSamplingCache cache,
                                                    RoadGenerationConfig cfg) {

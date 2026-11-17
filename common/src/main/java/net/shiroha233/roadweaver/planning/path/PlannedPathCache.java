@@ -35,7 +35,7 @@ public final class PlannedPathCache {
     private static final long MAX_PATH_POINTS_PER_LEVEL = 400_000L;
     private static final int LRU_INITIAL_CAPACITY = 128;
 
-    private static final Map<ServerLevel, LinkedHashMap<PlannedPathKey, Entry>> BY_LEVEL =
+    private static final Map<ServerLevel, LinkedHashMap<PlannedPathKey, PathEntry>> BY_LEVEL =
             Collections.synchronizedMap(new IdentityHashMap<>());
     private static final Map<ServerLevel, PlannedPathStore> STORES =
             Collections.synchronizedMap(new IdentityHashMap<>());
@@ -58,12 +58,12 @@ public final class PlannedPathCache {
             if (connection == null || path == null || path.isEmpty()) continue;
             PlannedPathKey key = PlannedPathKey.of(connection);
             List<BlockPos> immutablePath = List.copyOf(path);
-            memoryPut(level, key, new Entry(fingerprint, immutablePath));
+            memoryPut(level, key, new PathEntry(fingerprint, immutablePath));
             if (store != null) {
                 try {
                     store.save(key, fingerprint, immutablePath);
                 } catch (IOException failure) {
-                    LOGGER.warn("持久化待生成路径失败 dimension={} key={}", level.dimension().location(), key, failure);
+                    LOGGER.warn("持久化待生成路径失败 dimension={} key={}", level.dimension().identifier(), key, failure);
                 }
             }
         }
@@ -79,17 +79,17 @@ public final class PlannedPathCache {
         boolean persistent = computedFingerprint != null;
         String fingerprint = persistent ? computedFingerprint : "";
 
-        Entry cached = memoryGet(level, key);
+        PathEntry cached = memoryGet(level, key);
         if (cached != null && cached.fingerprint().equals(fingerprint)) {
             return Optional.of(cached.path());
         }
         if (!persistent) return Optional.empty();
         try {
             Optional<List<BlockPos>> loaded = store(level).load(key, fingerprint);
-            loaded.ifPresent(path -> memoryPut(level, key, new Entry(fingerprint, path)));
+            loaded.ifPresent(path -> memoryPut(level, key, new PathEntry(fingerprint, path)));
             return loaded;
         } catch (IOException failure) {
-            LOGGER.warn("读取待生成路径失败 dimension={} key={}", level.dimension().location(), key, failure);
+            LOGGER.warn("读取待生成路径失败 dimension={} key={}", level.dimension().identifier(), key, failure);
             return Optional.empty();
         }
     }
@@ -101,7 +101,7 @@ public final class PlannedPathCache {
         try {
             store(level).delete(key);
         } catch (IOException failure) {
-            LOGGER.warn("删除已生成路径失败 dimension={} key={}", level.dimension().location(), key, failure);
+            LOGGER.warn("删除已生成路径失败 dimension={} key={}", level.dimension().identifier(), key, failure);
         }
     }
 
@@ -125,13 +125,13 @@ public final class PlannedPathCache {
     }
 
 
-    private static void memoryPut(ServerLevel level, PlannedPathKey key, Entry entry) {
+    private static void memoryPut(ServerLevel level, PlannedPathKey key, PathEntry entry) {
         synchronized (BY_LEVEL) {
             levelMemory(level).put(key, entry);
         }
     }
 
-    private static Entry memoryGet(ServerLevel level, PlannedPathKey key) {
+    private static PathEntry memoryGet(ServerLevel level, PlannedPathKey key) {
         synchronized (BY_LEVEL) {
             return levelMemory(level).get(key);
         }
@@ -139,13 +139,13 @@ public final class PlannedPathCache {
 
     private static void memoryRemove(ServerLevel level, PlannedPathKey key) {
         synchronized (BY_LEVEL) {
-            LinkedHashMap<PlannedPathKey, Entry> memory = BY_LEVEL.get(level);
+            LinkedHashMap<PlannedPathKey, PathEntry> memory = BY_LEVEL.get(level);
             if (memory != null) memory.remove(key);
         }
     }
 
     /** 必须在 {@link #BY_LEVEL} 监视器内调用。 */
-    private static LinkedHashMap<PlannedPathKey, Entry> levelMemory(ServerLevel level) {
+    private static LinkedHashMap<PlannedPathKey, PathEntry> levelMemory(ServerLevel level) {
         return BY_LEVEL.computeIfAbsent(level, ignored -> new PointBudgetLru());
     }
 
@@ -166,18 +166,18 @@ public final class PlannedPathCache {
                     config);
         } catch (RuntimeException failure) {
             LOGGER.warn("计算待生成路径指纹失败 dimension={}，仅使用内存路径",
-                    level.dimension().location(), failure);
+                    level.dimension().identifier(), failure);
             return null;
         }
     }
 
-    private record Entry(String fingerprint, List<BlockPos> path) {}
+    private record PathEntry(String fingerprint, List<BlockPos> path) {}
 
     /**
      * 以路径点总数为预算的 LRU，让内存占用与实际数据量成正比，
      * 而非随条目数与单条长度相乘。
      */
-    private static final class PointBudgetLru extends LinkedHashMap<PlannedPathKey, Entry> {
+    private static final class PointBudgetLru extends LinkedHashMap<PlannedPathKey, PathEntry> {
         private long points;
 
         PointBudgetLru() {
@@ -185,11 +185,11 @@ public final class PlannedPathCache {
         }
 
         @Override
-        protected boolean removeEldestEntry(Map.Entry<PlannedPathKey, Entry> eldest) {
+        protected boolean removeEldestEntry(Map.Entry<PlannedPathKey, PathEntry> eldest) {
             if (points <= MAX_PATH_POINTS_PER_LEVEL) return false;
-            Iterator<Map.Entry<PlannedPathKey, Entry>> it = entrySet().iterator();
+            Iterator<Map.Entry<PlannedPathKey, PathEntry>> it = entrySet().iterator();
             while (points > MAX_PATH_POINTS_PER_LEVEL && it.hasNext()) {
-                Map.Entry<PlannedPathKey, Entry> oldest = it.next();
+                Map.Entry<PlannedPathKey, PathEntry> oldest = it.next();
                 points -= cost(oldest.getValue());
                 it.remove();
             }
@@ -197,8 +197,8 @@ public final class PlannedPathCache {
         }
 
         @Override
-        public Entry put(PlannedPathKey key, Entry value) {
-            Entry previous = super.get(key);
+        public PathEntry put(PlannedPathKey key, PathEntry value) {
+            PathEntry previous = super.get(key);
             if (previous != null) {
                 points -= cost(previous);
             }
@@ -207,8 +207,8 @@ public final class PlannedPathCache {
         }
 
         @Override
-        public Entry remove(Object key) {
-            Entry removed = super.remove(key);
+        public PathEntry remove(Object key) {
+            PathEntry removed = super.remove(key);
             if (removed != null) {
                 points -= cost(removed);
             }
@@ -221,7 +221,7 @@ public final class PlannedPathCache {
             points = 0L;
         }
 
-        private static long cost(Entry entry) {
+        private static long cost(PathEntry entry) {
             if (entry == null || entry.path() == null) return 0L;
             return entry.path().size();
         }

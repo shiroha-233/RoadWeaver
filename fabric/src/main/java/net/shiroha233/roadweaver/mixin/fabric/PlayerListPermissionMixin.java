@@ -1,7 +1,7 @@
 package net.shiroha233.roadweaver.mixin.fabric;
 
-import com.mojang.authlib.GameProfile;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.server.players.NameAndId;
 import net.minecraft.server.players.PlayerList;
 import net.shiroha233.roadweaver.map.permission.MapAccessPlatformBridge;
 import org.spongepowered.asm.mixin.Mixin;
@@ -18,20 +18,20 @@ public abstract class PlayerListPermissionMixin {
     public abstract ServerPlayer getPlayer(UUID playerId);
 
     @Inject(method = "op", at = @At("TAIL"))
-    private void roadweaver$syncMapAccessOnOp(GameProfile profile, CallbackInfo ci) {
+    private void roadweaver$syncMapAccessOnOp(NameAndId profile, CallbackInfo ci) {
         sync(profile);
     }
 
     @Inject(method = "deop", at = @At("TAIL"))
-    private void roadweaver$syncMapAccessOnDeop(GameProfile profile, CallbackInfo ci) {
+    private void roadweaver$syncMapAccessOnDeop(NameAndId profile, CallbackInfo ci) {
         sync(profile);
     }
 
-    private void sync(GameProfile profile) {
-        if (profile == null || profile.getId() == null) {
+    private void sync(NameAndId profile) {
+        if (profile == null || profile.id() == null) {
             return;
         }
-        ServerPlayer player = getPlayer(profile.getId());
+        ServerPlayer player = getPlayer(profile.id());
         if (player != null) {
             MapAccessPlatformBridge.syncPlayer(player);
         }

@@ -138,7 +138,7 @@ public final class AccurateTerrainRegionSampler {
         }
         LOGGER.info("精确量化地形区域已完成 dimension={} samples={} step={} backend={} columnsPerSec={} "
                         + "heightMs={} kernelMs={} latticeMs={} preliminaryMs={} aquiferMs={} scanMs={} queueMs={} metadataMs={}",
-                level.dimension().location(), sampleCount, bounds.step(), sampler.backendName(),
+                level.dimension().identifier(), sampleCount, bounds.step(), sampler.backendName(),
                 Math.round(sampleCount * 1_000_000_000.0 / Math.max(1L, heightSamplingNanos)),
                 heightSamplingNanos / 1_000_000L,
                 deltaMillis(statsAfter.gpuKernelNanos(), statsBefore.gpuKernelNanos()),

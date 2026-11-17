@@ -12,11 +12,11 @@ import net.shiroha233.roadweaver.RoadWeaver;
  * NeoForge only consumes biome_modifier resources from:
  * neoforge/src/main/resources/data/roadweaver/neoforge/biome_modifier
  */
-@EventBusSubscriber(modid = RoadWeaver.MOD_ID, bus = EventBusSubscriber.Bus.MOD)
+@EventBusSubscriber(modid = RoadWeaver.MOD_ID)
 public class RoadWeaverDataGenerator {
 
     @SubscribeEvent
-    public static void gatherData(GatherDataEvent event) {
+    public static void gatherData(GatherDataEvent.Server event) {
         RoadWeaver.getLogger().info("RoadWeaver data generation - using JSON-defined features from Common module");
     }
 }

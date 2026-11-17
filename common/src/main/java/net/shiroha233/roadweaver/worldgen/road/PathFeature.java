@@ -1,14 +1,14 @@
 package net.shiroha233.roadweaver.worldgen.road;
 
-import com.mojang.serialization.Codec;
+import com.mojang.serialization.MapCodec;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.WorldGenLevel;
+import net.minecraft.world.level.chunk.ChunkGenerator;
 import net.minecraft.world.level.levelgen.feature.Feature;
-import net.minecraft.world.level.levelgen.feature.FeaturePlaceContext;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.levelgen.Heightmap;
 import net.shiroha233.roadweaver.config.ConfigService;
@@ -27,7 +27,6 @@ import net.shiroha233.roadweaver.worldgen.road.geometry.HeightProfileService;
 import net.shiroha233.roadweaver.worldgen.road.bridges.BuoyBuilder;
 import net.shiroha233.roadweaver.worldgen.road.bridges.BuoyMarkerPlanner;
 import net.shiroha233.roadweaver.worldgen.road.decoration.system.SkippedBridgeBankSignPlanner;
-import net.shiroha233.roadweaver.worldgen.PathFeatureConfig;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -35,14 +34,16 @@ import java.util.Set;
 /**
  * 道路世界生成 Feature
  */
-public class PathFeature extends Feature<PathFeatureConfig> {
-    public PathFeature(Codec<PathFeatureConfig> codec) {
-        super(codec);
+public record PathFeature() implements Feature {
+    public static final MapCodec<PathFeature> CODEC = MapCodec.unit(PathFeature::new);
+
+    @Override
+    public MapCodec<PathFeature> codec() {
+        return CODEC;
     }
 
     @Override
-    public boolean place(FeaturePlaceContext<PathFeatureConfig> ctx) {
-        WorldGenLevel world = ctx.level();
+    public boolean place(WorldGenLevel world, ChunkGenerator generator, RandomSource random, BlockPos origin) {
         Level lvl = world.getLevel();
         if (!(lvl instanceof ServerLevel server) || !Level.OVERWORLD.equals(server.dimension()))
             return false;
@@ -51,12 +52,11 @@ public class PathFeature extends Feature<PathFeatureConfig> {
         if (!cfg.roadAppearance().roadsEnabled())
             return false;
 
-        ChunkPos currentChunk = new ChunkPos(ctx.origin());
+        ChunkPos currentChunk = ChunkPos.containing(origin);
         RoadChunkPlan plan = RoadWorldgenPlanCache.get(server, currentChunk, cfg);
         if (plan.slices().isEmpty())
             return false;
 
-        RandomSource random = ctx.random();
         int averagingRadius = Math.max(0, cfg.averagingRadius());
 
         Set<BlockPos> processedMiddle = new HashSet<>();

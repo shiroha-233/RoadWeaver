@@ -1,7 +1,7 @@
 package net.shiroha233.roadweaver.client.map.query;
 
 import net.minecraft.core.BlockPos;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.shiroha233.roadweaver.client.map.cache.ClientMapNotes;
 import net.shiroha233.roadweaver.map.search.MapSearchResult;
 import net.shiroha233.roadweaver.map.search.MapStructureSearchService;
@@ -68,7 +68,7 @@ public final class MapSearchController {
         deadlineMs = System.currentTimeMillis() + DEBOUNCE_MS;
     }
 
-    public void tick(ResourceLocation dimensionId) {
+    public void tick(Identifier dimensionId) {
         long now = System.currentTimeMillis();
         if (loading && startedAtMs > 0L && now - startedAtMs > TIMEOUT_MS) {
             loading = false;
@@ -82,7 +82,7 @@ public final class MapSearchController {
         submit(dimensionId);
     }
 
-    public void submitNow(ResourceLocation dimensionId) {
+    public void submitNow(Identifier dimensionId) {
         submit(dimensionId);
     }
 
@@ -118,7 +118,7 @@ public final class MapSearchController {
         results = List.copyOf(merged.values());
     }
 
-    private void submit(ResourceLocation dimensionId) {
+    private void submit(Identifier dimensionId) {
         String currentQuery = query.trim();
         deadlineMs = 0L;
         if (currentQuery.isEmpty() || dimensionId == null) {

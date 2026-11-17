@@ -2,6 +2,7 @@ package net.shiroha233.roadweaver.map.permission;
 
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.server.permissions.Permissions;
 
 import java.util.UUID;
 
@@ -21,10 +22,10 @@ public final class MapAccessService {
         if (player == null) {
             return false;
         }
-        if (player.hasPermissions(2)) {
+        if (player.permissions().hasPermission(Permissions.COMMANDS_GAMEMASTER)) {
             return true;
         }
-        MapAccessPolicy policy = getPolicy(player.getServer());
+        MapAccessPolicy policy = getPolicy(player.level().getServer());
         if (policy.mode() == MapAccessMode.ALL_PLAYERS) {
             return true;
         }

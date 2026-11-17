@@ -1,11 +1,11 @@
 package net.shiroha233.roadweaver.terrain.coarse;
 
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 
 /**
  * 区域级粗采样边界。
  */
-public record CoarseRegionBounds(ResourceLocation dimensionId,
+public record CoarseRegionBounds(Identifier dimensionId,
                                  int minX,
                                  int minZ,
                                  int maxX,
@@ -28,7 +28,7 @@ public record CoarseRegionBounds(ResourceLocation dimensionId,
         }
     }
 
-    public static CoarseRegionBounds aligned(ResourceLocation dimensionId,
+    public static CoarseRegionBounds aligned(Identifier dimensionId,
                                              int minBlockX,
                                              int minBlockZ,
                                              int maxBlockX,

@@ -1,14 +1,14 @@
 package net.shiroha233.roadweaver.client.map.view;
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
-import net.shiroha233.roadweaver.map.data.MapSnapshot;
+import net.shiroha233.roadweaver.client.map.MapView;
 import net.shiroha233.roadweaver.client.map.cache.MapSnapshotCache;
 import net.shiroha233.roadweaver.client.map.tile.SingleplayerTerrainTileManager;
-import net.shiroha233.roadweaver.client.map.MapView;
 import net.shiroha233.roadweaver.core.model.RequestRect;
+import net.shiroha233.roadweaver.map.data.MapSnapshot;
 import net.shiroha233.roadweaver.map.tile.core.MapTileAoi;
 import net.shiroha233.roadweaver.map.tile.core.MapTileAoiLocator;
 
@@ -103,10 +103,10 @@ public final class MapViewportController {
         return ordered;
     }
 
-    public static ResourceLocation syncDimensionAndRestoreCache(Minecraft mc,
-                                                                ResourceLocation currentDimensionId,
+    public static Identifier syncDimensionAndRestoreCache(Minecraft mc,
+                                                                Identifier currentDimensionId,
                                                                 Consumer<MapSnapshot> onCachedSnapshot) {
-        ResourceLocation nextDimensionId = mc != null && mc.level != null ? mc.level.dimension().location() : null;
+        Identifier nextDimensionId = mc != null && mc.level != null ? mc.level.dimension().identifier() : null;
         if (nextDimensionId == null) {
             return currentDimensionId;
         }
@@ -139,7 +139,7 @@ public final class MapViewportController {
         int cx = mc.player != null ? (int) Math.round(mc.player.getX()) : 0;
         int cz = mc.player != null ? (int) Math.round(mc.player.getZ()) : 0;
         int radiusBlocks = MapTileAoiLocator.dynamicPlanningRadiusBlocks();
-        MapTileAoi aoi = new MapTileAoi(level.dimension().location(), cx, cz, radiusBlocks);
+        MapTileAoi aoi = new MapTileAoi(level.dimension().identifier(), cx, cz, radiusBlocks);
         terrainTiles.request(level, aoi, view, contentW, contentH);
     }
 }

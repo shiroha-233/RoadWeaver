@@ -1,10 +1,11 @@
 package net.shiroha233.roadweaver.client.ui;
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.client.input.KeyEvent;
 import net.minecraft.network.chat.Component;
 
 import java.util.function.Consumer;
@@ -53,23 +54,28 @@ public class SimpleTextInputScreen extends RoadWeaverScreen {
     }
 
     @Override
-    public void render(GuiGraphics graphics, int mouseX, int mouseY, float partialTick) {
+    public void extractRenderState(GuiGraphicsExtractor graphics, int mouseX, int mouseY,
+                                     float partialTick) {
         ScreenBackgrounds.render(graphics, this.width, this.height);
-        super.render(graphics, mouseX, mouseY, partialTick);
-        graphics.drawCenteredString(this.font, this.titleText, this.width / 2, this.height / 2 - 34, 0xFFFFFF);
+        super.extractRenderState(graphics, mouseX, mouseY, partialTick);
+        graphics.centeredText(this.font, this.titleText, this.width / 2, this.height / 2 - 34, 0xFFFFFF);
     }
 
     private void submit() {
         if (onSubmit != null) onSubmit.accept(box.getValue());
-        Minecraft.getInstance().setScreen(parent);
+        Minecraft.getInstance().gui.setScreen(parent);
     }
 
     private void cancel() {
-        Minecraft.getInstance().setScreen(parent);
+        Minecraft.getInstance().gui.setScreen(parent);
     }
 
     @Override
-    public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
+    public boolean keyPressed(KeyEvent event) {
+        int keyCode = event.key();
+        int scanCode = event.keycode();
+        int modifiers = event.modifiers();
+
         if (keyCode == 257 || keyCode == 335) {
             submit();
             return true;
@@ -78,6 +84,6 @@ public class SimpleTextInputScreen extends RoadWeaverScreen {
             cancel();
             return true;
         }
-        return super.keyPressed(keyCode, scanCode, modifiers);
+        return super.keyPressed(event);
     }
 }

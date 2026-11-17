@@ -30,10 +30,10 @@ public final class ServerMapPlanningActivityBridgeImpl {
             }
             List<AutomaticPlanningSamplingBounds> snapshot = AutomaticPlanningSamplingActivities.snapshot(level);
             for (ServerPlayer player : server.getPlayerList().getPlayers()) {
-                if (player != null && player.serverLevel() == level) {
+                if (player != null && player.level() == level) {
                     MapNetwork.broadcastAutomaticPlanningSampling(
                             player,
-                            level.dimension().location(),
+                            level.dimension().identifier(),
                             snapshot);
                 }
             }

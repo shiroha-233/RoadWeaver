@@ -1,7 +1,7 @@
 package net.shiroha233.roadweaver.client.map.screen;
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.server.level.ServerLevel;
 import net.shiroha233.roadweaver.client.map.MapTheme;
@@ -17,8 +17,8 @@ import net.shiroha233.roadweaver.client.map.render.MapSamplingNoticeOverlayRende
 import net.shiroha233.roadweaver.client.map.render.MapSamplingOverlayRenderer;
 import net.shiroha233.roadweaver.client.map.render.MapStatusRenderer;
 import net.shiroha233.roadweaver.client.map.ui.MapWorkspacePanel;
-import net.shiroha233.roadweaver.client.ui.Rect;
 import net.shiroha233.roadweaver.client.map.view.MapViewportController;
+import net.shiroha233.roadweaver.client.ui.Rect;
 import net.shiroha233.roadweaver.core.model.ConnectionStatus;
 import net.shiroha233.roadweaver.core.model.StructureConnection;
 import net.shiroha233.roadweaver.map.data.MapSnapshot;
@@ -39,7 +39,7 @@ final class MapScreenRenderer {
     private MapScreenRenderer() {
     }
 
-    static void render(RoadMapScreen screen, GuiGraphics graphics, int mouseX, int mouseY, float partialTick) {
+    static void render(RoadMapScreen screen, GuiGraphicsExtractor graphics, int mouseX, int mouseY, float partialTick) {
         int contentW = screen.mapWidth();
         int contentH = screen.mapHeight();
         screen.view().lockAspect(contentW, contentH);
@@ -176,7 +176,7 @@ final class MapScreenRenderer {
     }
 
     private static List<AutomaticPlanningSamplingBounds> activeAutomaticPlanningSamplingBounds(
-            ServerLevel level, net.minecraft.resources.ResourceLocation dimensionId) {
+            ServerLevel level, net.minecraft.resources.Identifier dimensionId) {
         if (level != null) {
             return AutomaticPlanningSamplingActivities.snapshot(level);
         }
@@ -193,7 +193,7 @@ final class MapScreenRenderer {
         return MapTheme.BASE_POINT_SIZE + thicknessOf(screen);
     }
 
-    private static void renderSearchBox(RoadMapScreen screen, GuiGraphics graphics,
+    private static void renderSearchBox(RoadMapScreen screen, GuiGraphicsExtractor graphics,
                                         int mouseX, int mouseY, float partialTick) {
         EditBox box = screen.searchBox();
         if (!screen.panel().isTab(MapWorkspacePanel.Tab.SEARCH) || box == null) {
@@ -208,6 +208,6 @@ final class MapScreenRenderer {
         box.setX(rect.x() + 6);
         box.setY(rect.y() + 1);
         box.setWidth(Math.max(20, rect.width() - 12));
-        box.render(graphics, mouseX, mouseY, partialTick);
+        box.extractRenderState(graphics, mouseX, mouseY, partialTick);
     }
 }

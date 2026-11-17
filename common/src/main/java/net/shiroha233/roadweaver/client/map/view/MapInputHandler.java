@@ -1,13 +1,16 @@
 package net.shiroha233.roadweaver.client.map.view;
 
+import com.mojang.blaze3d.platform.InputConstants;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.input.KeyEvent;
+import net.minecraft.client.input.MouseButtonEvent;
 import net.minecraft.core.BlockPos;
 import net.shiroha233.roadweaver.client.map.MapTheme;
 import net.shiroha233.roadweaver.client.map.MapState;
 import net.shiroha233.roadweaver.client.map.MapView;
 import net.shiroha233.roadweaver.map.data.MapSnapshot;
-import org.lwjgl.glfw.GLFW;
+import org.lwjgl.sdl.SDLScancode;
 
 import java.util.List;
 
@@ -67,7 +70,7 @@ public final class MapInputHandler {
             state.closeContextMenu();
         }
 
-        if (state.isManualMode() && insideMap(mouseX, mouseY) && button == 0) {
+        if (state.isManualMode() && insideMap(mouseX, mouseY) && button == InputConstants.MOUSE_BUTTON_LEFT) {
             BlockPos best = findNearestStructure(snapshot, mouseX, mouseY);
             if (best != null) {
                 if (!state.hasSelection()) {
@@ -84,12 +87,12 @@ public final class MapInputHandler {
             }
         }
 
-        if (insideMap(mouseX, mouseY) && button == 0) {
+        if (insideMap(mouseX, mouseY) && button == InputConstants.MOUSE_BUTTON_LEFT) {
             state.startDrag(button, mouseX, mouseY);
             return true;
         }
 
-        if (insideMap(mouseX, mouseY) && button == 1) {
+        if (insideMap(mouseX, mouseY) && button == InputConstants.MOUSE_BUTTON_RIGHT) {
             BlockPos best = findNearestStructure(snapshot, mouseX, mouseY);
             if (best != null) {
                 state.openContextMenu((int) mouseX, (int) mouseY, best);
@@ -100,7 +103,11 @@ public final class MapInputHandler {
         return false;
     }
 
-    public boolean mouseDragged(double mouseX, double mouseY, int button, double dragX, double dragY) {
+    public boolean mouseDragged(MouseButtonEvent event, double dragX, double dragY) {
+        double mouseX = event.x();
+        double mouseY = event.y();
+        int button = event.button();
+
         if (!state.isDragging() || button != state.getDragButton()) {
             return false;
         }
@@ -116,7 +123,11 @@ public final class MapInputHandler {
         return true;
     }
 
-    public boolean mouseReleased(double mouseX, double mouseY, int button) {
+    public boolean mouseReleased(MouseButtonEvent event) {
+        double mouseX = event.x();
+        double mouseY = event.y();
+        int button = event.button();
+
         if (!state.isDragging() || button != state.getDragButton()) {
             return false;
         }
@@ -133,7 +144,8 @@ public final class MapInputHandler {
     public boolean keyPressed(int keyCode, int scanCode, int modifiers, Minecraft mc) {
         if (mc != null) {
             for (KeyMapping mapping : mc.options.keyMappings) {
-                if ("key.roadweaver.open_map".equals(mapping.getName()) && mapping.matches(keyCode, scanCode)) {
+                if ("key.roadweaver.open_map".equals(mapping.getName())
+                        && mapping.matches(new KeyEvent(keyCode, scanCode, modifiers))) {
                     while (mapping.consumeClick()) {}
                     callbacks.onCloseScreen();
                     return true;
@@ -145,50 +157,57 @@ public final class MapInputHandler {
         int contentH = mapH - innerPad * 2;
         double panStep = 50;
 
+        // 26.3 的按键值已切换为 SDL scancode；小键盘减号没有对应的 InputConstants 常量，直接从 SDL 取值。
+        if (keyCode == InputConstants.KEY_ADD) {
+            keyCode = InputConstants.KEY_EQUALS;
+        } else if (keyCode == SDLScancode.SDL_SCANCODE_KP_MINUS) {
+            keyCode = InputConstants.KEY_MINUS;
+        }
+
         switch (keyCode) {
-            case GLFW.GLFW_KEY_W, GLFW.GLFW_KEY_UP -> {
+            case InputConstants.KEY_W, InputConstants.KEY_UP -> {
                 view.panByScreenDelta(0, panStep, contentW, contentH);
                 callbacks.onRequestView();
                 return true;
             }
-            case GLFW.GLFW_KEY_S, GLFW.GLFW_KEY_DOWN -> {
+            case InputConstants.KEY_S, InputConstants.KEY_DOWN -> {
                 view.panByScreenDelta(0, -panStep, contentW, contentH);
                 callbacks.onRequestView();
                 return true;
             }
-            case GLFW.GLFW_KEY_A, GLFW.GLFW_KEY_LEFT -> {
+            case InputConstants.KEY_A, InputConstants.KEY_LEFT -> {
                 view.panByScreenDelta(panStep, 0, contentW, contentH);
                 callbacks.onRequestView();
                 return true;
             }
-            case GLFW.GLFW_KEY_D, GLFW.GLFW_KEY_RIGHT -> {
+            case InputConstants.KEY_D, InputConstants.KEY_RIGHT -> {
                 view.panByScreenDelta(-panStep, 0, contentW, contentH);
                 callbacks.onRequestView();
                 return true;
             }
-            case GLFW.GLFW_KEY_EQUAL, GLFW.GLFW_KEY_KP_ADD -> {
+            case InputConstants.KEY_EQUALS -> {
                 double cx = (view.getMinX() + view.getMaxX()) / 2;
                 double cz = (view.getMinZ() + view.getMaxZ()) / 2;
                 view.applyZoomAround(cx, cz, 0.8, contentW, contentH, MapTheme.GRID_TARGET_PX);
                 callbacks.onRequestView();
                 return true;
             }
-            case GLFW.GLFW_KEY_MINUS, GLFW.GLFW_KEY_KP_SUBTRACT -> {
+            case InputConstants.KEY_MINUS -> {
                 double cx = (view.getMinX() + view.getMaxX()) / 2;
                 double cz = (view.getMinZ() + view.getMaxZ()) / 2;
                 view.applyZoomAround(cx, cz, 1.25, contentW, contentH, MapTheme.GRID_TARGET_PX);
                 callbacks.onRequestView();
                 return true;
             }
-            case GLFW.GLFW_KEY_HOME -> {
+            case InputConstants.KEY_HOME -> {
                 callbacks.onCenterToPlayer();
                 return true;
             }
-            case GLFW.GLFW_KEY_END -> {
+            case InputConstants.KEY_END -> {
                 callbacks.onCenterToSpawn();
                 return true;
             }
-            case GLFW.GLFW_KEY_ESCAPE -> {
+            case InputConstants.KEY_ESCAPE -> {
                 if (state.isContextMenuOpen()) {
                     state.closeContextMenu();
                     return true;

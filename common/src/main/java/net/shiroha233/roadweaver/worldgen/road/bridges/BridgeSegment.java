@@ -25,7 +25,7 @@ public class BridgeSegment {
         
         for (int i = 0; i < segments.size(); i++) {
             if (isBridge[i]) {
-                list1.get(list1.size() - 1).add(segments.get(i).middlePos().getCenter());
+                list1.get(list1.size() - 1).add(Vec3.atCenterOf(segments.get(i).middlePos()));
                 list2.get(list1.size() - 1).add(i);
             } else {
                 if (!list1.get(list1.size() - 1).isEmpty()) {

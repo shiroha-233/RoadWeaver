@@ -10,7 +10,7 @@ import java.util.Objects;
 public record RoadChunkKey(int x, int z) {
     public static RoadChunkKey from(ChunkPos pos) {
         Objects.requireNonNull(pos, "pos");
-        return new RoadChunkKey(pos.x, pos.z);
+        return new RoadChunkKey(pos.x(), pos.z());
     }
 
     public static RoadChunkKey fromBlock(int blockX, int blockZ) {

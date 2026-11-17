@@ -1,7 +1,7 @@
 package net.shiroha233.roadweaver.client.map.screen;
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.shiroha233.roadweaver.client.map.MapLoadSession;
 import net.shiroha233.roadweaver.client.map.MapState;
 import net.shiroha233.roadweaver.client.map.MapView;
@@ -30,7 +30,7 @@ final class MapScreenData {
 
     private MapSnapshot snapshot = MapSnapshot.empty();
 
-    private ResourceLocation dimensionId;
+    private Identifier dimensionId;
 
     private MapSnapshotStore store = new MapSnapshotStore();
 
@@ -52,7 +52,7 @@ final class MapScreenData {
         return snapshot;
     }
 
-    ResourceLocation dimensionId() {
+    Identifier dimensionId() {
         return dimensionId;
     }
 
@@ -68,10 +68,10 @@ final class MapScreenData {
         if (minecraft == null || minecraft.level == null) {
             return;
         }
-        bind(minecraft.level.dimension().location());
+        bind(minecraft.level.dimension().identifier());
     }
 
-    void bind(ResourceLocation nextDimensionId) {
+    void bind(Identifier nextDimensionId) {
         this.dimensionId = nextDimensionId;
         this.store = MapSnapshotCache.store(nextDimensionId);
         this.snapshot = store.snapshot();
@@ -106,15 +106,15 @@ final class MapScreenData {
             return;
         }
         RequestRect requestRect = MapViewportController.currentRequestRect(view);
-        ResourceLocation synced = MapViewportController.syncDimensionAndRestoreCache(minecraft, dimensionId,
+        Identifier synced = MapViewportController.syncDimensionAndRestoreCache(minecraft, dimensionId,
                 cached -> {
-                    store = MapSnapshotCache.store(minecraft.level.dimension().location());
+                    store = MapSnapshotCache.store(minecraft.level.dimension().identifier());
                     snapshot = store.snapshot();
                 });
         dimensionId = synced;
-        ResourceLocation levelId = minecraft.level != null ? minecraft.level.dimension().location() : dimensionId;
+        Identifier levelId = minecraft.level != null ? minecraft.level.dimension().identifier() : dimensionId;
         if (levelId == null) {
-            levelId = ResourceLocation.fromNamespaceAndPath("minecraft", "overworld");
+            levelId = Identifier.fromNamespaceAndPath("minecraft", "overworld");
         }
         if (dimensionId == null || !levelId.equals(dimensionId)) {
             bind(levelId);
@@ -162,7 +162,7 @@ final class MapScreenData {
         filteredRevision = -1;
     }
 
-    void applyPatch(ResourceLocation patchDimensionId, MapSnapshotPatch patch) {
+    void applyPatch(Identifier patchDimensionId, MapSnapshotPatch patch) {
         if (patchDimensionId == null || patch == null) {
             return;
         }
@@ -175,7 +175,7 @@ final class MapScreenData {
     }
 
     boolean acceptSnapshotPart(int requestSeq,
-                               ResourceLocation partDimensionId,
+                               Identifier partDimensionId,
                                MapLoadPhase phase,
                                int responseIndex,
                                MapSnapshot part) {

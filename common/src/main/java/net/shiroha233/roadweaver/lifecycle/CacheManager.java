@@ -2,33 +2,28 @@ package net.shiroha233.roadweaver.lifecycle;
 
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.Level;
-import net.shiroha233.roadweaver.terrain.AccurateHeightSampler;
 import net.shiroha233.roadweaver.core.metrics.AccurateSamplingStats;
 import net.shiroha233.roadweaver.core.metrics.TerrainSamplingStats;
-import net.shiroha233.roadweaver.terrain.TerrainSamplingCache;
-import net.shiroha233.roadweaver.terrain.opencl.OpenCLAccurateProgramCache;
-import net.shiroha233.roadweaver.terrain.opencl.OpenCLAvailability;
-import net.shiroha233.roadweaver.terrain.opencl.OpenCLCoarseHeightBatchSampler;
-import net.shiroha233.roadweaver.terrain.opencl.OpenCLRuntime;
-import net.shiroha233.roadweaver.terrain.opencl.OpenCLWorldSupport;
-import net.shiroha233.roadweaver.terrain.coarse.CoarseTerrainTileCache;
-import net.shiroha233.roadweaver.worldgen.road.RoadSpatialIndex;
-import net.shiroha233.roadweaver.worldgen.road.decoration.text.SignTextService;
-import net.shiroha233.roadweaver.worldgen.structure.precompute.PendingRoadsideVillageStorage;
-import net.shiroha233.roadweaver.worldgen.structure.precompute.PendingStructureStorage;
-import net.shiroha233.roadweaver.worldgen.structure.registry.RoadsideStructureRegistry;
-import net.shiroha233.roadweaver.persistence.WorldgenFingerprintService;
+import net.shiroha233.roadweaver.persistence.ConnectionListUpdater;
 import net.shiroha233.roadweaver.persistence.StructureFileStorage;
+import net.shiroha233.roadweaver.persistence.WorldgenFingerprintService;
 import net.shiroha233.roadweaver.persistence.sharded.RoadShardStorage;
 import net.shiroha233.roadweaver.planning.RoadPlanningService;
-import net.shiroha233.roadweaver.persistence.ConnectionListUpdater;
 import net.shiroha233.roadweaver.planning.path.PlannedPathCache;
 import net.shiroha233.roadweaver.planning.path.RawPathDebugService;
 import net.shiroha233.roadweaver.planning.pipeline.AutomaticPlanningSamplingActivities;
 import net.shiroha233.roadweaver.planning.pipeline.TerrainSamplingSessions;
+import net.shiroha233.roadweaver.terrain.AccurateHeightSampler;
+import net.shiroha233.roadweaver.terrain.TerrainSamplingCache;
+import net.shiroha233.roadweaver.terrain.coarse.CoarseTerrainTileCache;
 import net.shiroha233.roadweaver.util.WorldRootPaths;
-import net.shiroha233.roadweaver.worldgen.structure.registry.BridgeTemplateStructureRegistry;
+import net.shiroha233.roadweaver.worldgen.road.RoadSpatialIndex;
 import net.shiroha233.roadweaver.worldgen.road.RoadWorldgenPlanCache;
+import net.shiroha233.roadweaver.worldgen.road.decoration.text.SignTextService;
+import net.shiroha233.roadweaver.worldgen.structure.precompute.PendingRoadsideVillageStorage;
+import net.shiroha233.roadweaver.worldgen.structure.precompute.PendingStructureStorage;
+import net.shiroha233.roadweaver.worldgen.structure.registry.BridgeTemplateStructureRegistry;
+import net.shiroha233.roadweaver.worldgen.structure.registry.RoadsideStructureRegistry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -48,9 +43,6 @@ public final class CacheManager {
         WorldgenFingerprintService.clearMemo();
         TerrainSamplingStats.reset();
         AccurateSamplingStats.reset();
-        OpenCLAvailability.reset();
-        OpenCLCoarseHeightBatchSampler.clearProgramCache();
-        OpenCLWorldSupport.clear();
         TerrainSamplingSessions.clearAll();
         TerrainSamplingCache.clearAllBiomes();
         AutomaticPlanningSamplingActivities.clearAll();
@@ -99,8 +91,6 @@ public final class CacheManager {
         PlannedPathCache.clearAll();
         RawPathDebugService.clearAll();
         CoarseTerrainTileCache.clearAll();
-        OpenCLRuntime.closeAll();
-        OpenCLWorldSupport.clear();
         WorldRootPaths.clearAll();
 
         LOGGER.debug("CacheManager: 所有缓存已清理");
@@ -113,7 +103,7 @@ public final class CacheManager {
             StructureFileStorage.flush(level);
         } catch (Exception e) {
             LOGGER.warn("刷新维度 {} 结构状态失败: {}",
-                    level.dimension().location(), e.getMessage());
+                    level.dimension().identifier(), e.getMessage());
         }
 
         TerrainSamplingSessions.clear(level);
@@ -126,25 +116,20 @@ public final class CacheManager {
         RoadWorldgenPlanCache.clear(level);
         WorldRootPaths.clear(level);
         CoarseTerrainTileCache.clearAll();
-        try {
-            OpenCLAccurateProgramCache.clear(level.getChunkSource().getGeneratorState().randomState());
-        } catch (Throwable failure) {
-            LOGGER.debug("清理维度 {} OpenCL 精采样程序失败", level.dimension().location(), failure);
-        }
         if (!Level.OVERWORLD.equals(level.dimension())) return;
 
         try {
             SignTextService.flushPersistentFallback(level);
         } catch (Exception e) {
             LOGGER.warn("刷新维度 {} 路牌文本失败: {}",
-                    level.dimension().location(), e.getMessage());
+                    level.dimension().identifier(), e.getMessage());
         }
 
         try {
             RoadShardStorage.closeConnection(level);
         } catch (Exception e) {
             LOGGER.warn("关闭维度 {} 数据库连接失败: {}",
-                    level.dimension().location(), e.getMessage());
+                    level.dimension().identifier(), e.getMessage());
         }
 
         RoadSpatialIndex.clearCache(level);
@@ -154,6 +139,6 @@ public final class CacheManager {
         BridgeTemplateStructureRegistry.clearCache();
         SignTextService.onDimensionUnload(level);
 
-        LOGGER.debug("CacheManager: 维度 {} 缓存已清理", level.dimension().location());
+        LOGGER.debug("CacheManager: 维度 {} 缓存已清理", level.dimension().identifier());
     }
 }

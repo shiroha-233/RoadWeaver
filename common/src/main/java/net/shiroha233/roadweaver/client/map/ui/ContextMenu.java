@@ -1,7 +1,9 @@
 package net.shiroha233.roadweaver.client.map.ui;
 
+import com.mojang.blaze3d.platform.InputConstants;
 import net.minecraft.client.gui.Font;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
+import net.minecraft.client.input.MouseButtonEvent;
 import net.minecraft.network.chat.Component;
 import net.shiroha233.roadweaver.client.map.MapTheme;
 import net.shiroha233.roadweaver.client.ui.Rect;
@@ -51,6 +53,10 @@ public final class ContextMenu {
     
     public boolean isOpen() { return open; }
 
+    public boolean contains(double x, double y) {
+        return open && bounds != null && bounds.contains(x, y);
+    }
+
     public void clearItems() { items.clear(); }
     
     public void addItem(Component label, Runnable action) { 
@@ -81,7 +87,7 @@ public final class ContextMenu {
         this.bounds = raw.clampToScreen(screenW, screenH, 4);
     }
 
-    public void render(GuiGraphics g, Font font, int mouseX, int mouseY, int screenW, int screenH) {
+    public void render(GuiGraphicsExtractor g, Font font, int mouseX, int mouseY, int screenW, int screenH) {
         if (!open || items.isEmpty()) return;
         layout(font, screenW, screenH);
         
@@ -108,7 +114,7 @@ public final class ContextMenu {
                     g.fill(x + 2, ty, x + w - 2, ty + ITEM_HEIGHT, MapTheme.MENU_HOVER);
                 }
                 int textColor = it.enabled() ? MapTheme.MENU_TEXT : 0xFF808080;
-                g.drawString(font, it.label(), x + PADDING_X,
+                g.text(font, it.label(), x + PADDING_X,
                         ty + (ITEM_HEIGHT - font.lineHeight) / 2, textColor, false);
                 ty += ITEM_HEIGHT;
             }
@@ -133,9 +139,13 @@ public final class ContextMenu {
         }
     }
 
-    public boolean mouseClicked(double mouseX, double mouseY, int button) {
+    public boolean mouseClicked(MouseButtonEvent event, boolean doubleClick) {
+        double mouseX = event.x();
+        double mouseY = event.y();
+        int button = event.button();
+
         if (!open) return false;
-        if (button != 0) {
+        if (button != InputConstants.MOUSE_BUTTON_LEFT) {
             close();
             return true;
         }

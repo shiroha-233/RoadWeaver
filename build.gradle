@@ -1,11 +1,12 @@
-// 根项目配置 - 多模块项目
+// 根项目配置 - 多模块项目（Minecraft 26.3：官方 jar 已去混淆，构建不需要 remap）
 plugins {
-	id 'architectury-plugin' version '3.4-SNAPSHOT'
-	id 'dev.architectury.loom' version '1.7-SNAPSHOT' apply false
+	id 'architectury-plugin' version '3.5.170'
+	id 'dev.architectury.loom-no-remap' version '1.17.491' apply false
+	id 'com.gradleup.shadow' version '9.2.2' apply false
 }
 
 architectury {
-	minecraft = '1.21.1'
+	minecraft = project.minecraft_version
 }
 
 def legacyIdeOutputDirs = [
@@ -20,61 +21,89 @@ tasks.register('cleanLegacyIdeOutputs', Delete) {
 }
 
 allprojects {
-	apply plugin: 'java'
+	apply plugin: 'java-library'
 	apply plugin: 'architectury-plugin'
-	
+
 	group = 'net.shiroha233.roadweaver'
-	version = '2.3.2-1.21.1'
-	
+	version = '2.3.2-26.3'
+
+	configurations {
+		common {
+			canBeResolved = true
+			canBeConsumed = false
+		}
+		compileClasspath.extendsFrom common
+		runtimeClasspath.extendsFrom common
+	}
+
 	repositories {
+		// Loom 生成的本地 Minecraft maven；存在时优先使用，避免回源到不可达的 maven.neoforged.net。
+		maven {
+			name = 'LoomMinecraftLocal'
+			url = rootProject.file('.gradle/loom-cache/minecraftMaven')
+		}
 		maven { url = 'https://maven.architectury.dev/' }
 		maven { url = 'https://maven.fabricmc.net/' }
 		maven { url = 'https://maven.minecraftforge.net/' }
+		maven { url = 'https://maven.neoforged.net/releases/' }
 		maven { url = 'https://maven.shedaniel.me/' }
 		maven { url = 'https://maven.terraformersmc.com/' }
-        // curseforge与modrinth平台仓库
-        exclusiveContent {
-            forRepository {
-                maven {
-                    name = 'CurseMaven'
-                    url = 'https://cursemaven.com'
-                }
-            }
-            filter {
-                includeGroup 'curse.maven'
-            }
-        }
-        exclusiveContent {
-            forRepository {
-                maven {
-                    name = 'Modrinth'
-                    url = 'https://api.modrinth.com/maven'
-                }
-            }
-            filter {
-                includeGroup 'maven.modrinth'
-            }
-        }
+		// curseforge与modrinth平台仓库
+		exclusiveContent {
+			forRepository {
+				maven {
+					name = 'CurseMaven'
+					url = 'https://cursemaven.com'
+				}
+			}
+			filter {
+				includeGroup 'curse.maven'
+			}
+		}
+		exclusiveContent {
+			forRepository {
+				maven {
+					name = 'Modrinth'
+					url = 'https://api.modrinth.com/maven'
+				}
+			}
+			filter {
+				includeGroup 'maven.modrinth'
+			}
+		}
 		mavenCentral()
 	}
-	
+
 	tasks.withType(JavaCompile).configureEach {
 		options.encoding = 'UTF-8'
-		options.release = 21
+		options.release = 25
 	}
-	
+
+	// Architectury 的 transformProduction*/prepareArchitecturyTransformer 任务声明了
+	// fabric-loader:+；解析该动态版本需要访问 maven.neoforged.net，这里固定为工程版本。
+	configurations.configureEach {
+		resolutionStrategy.eachDependency { details ->
+			if (details.requested.group == 'net.fabricmc' && details.requested.name == 'fabric-loader') {
+				details.useVersion(project.loader_version)
+			}
+		}
+	}
+
 	java {
 		toolchain {
-			languageVersion = JavaLanguageVersion.of(21)
+			languageVersion = JavaLanguageVersion.of(25)
 		}
+		sourceCompatibility = JavaVersion.VERSION_25
+		targetCompatibility = JavaVersion.VERSION_25
 		withSourcesJar()
 	}
-	
+
 	// Gradle toolchain 默认只影响编译任务；runClient/Transformer 属于 JavaExec，
-	// 这里强制所有 JavaExec 使用 Java 21 launcher，保证开发运行环境一致。
+	// 这里强制所有 JavaExec 使用 Java 25 launcher，保证开发运行环境一致。
+	def runtimeJavaVersion = Integer.parseInt(rootProject.findProperty('runtime_java_version')?.toString() ?: '25')
 	tasks.withType(JavaExec).configureEach {
 		javaLauncher = javaToolchains.launcherFor {
-			languageVersion = JavaLanguageVersion.of(21)
+			languageVersion = JavaLanguageVersion.of(runtimeJavaVersion)
 		}
 		// 设置运行游戏时的玩家名称
 		systemProperty 'minecraft.username', rootProject.properties.getOrDefault('minecraft_username', 'Player')
@@ -82,7 +111,7 @@ allprojects {
 }
 
 subprojects {
-	apply plugin: 'dev.architectury.loom'
+	apply plugin: 'dev.architectury.loom-no-remap'
 
 	tasks.named('clean').configure {
 		dependsOn rootProject.tasks.named('cleanLegacyIdeOutputs')
@@ -91,25 +120,34 @@ subprojects {
 	tasks.withType(JavaExec).configureEach {
 		dependsOn rootProject.tasks.named('cleanLegacyIdeOutputs')
 	}
-	
+
 	base {
 		archivesName = "${rootProject.name}-${project.name}"
 	}
-	
+
 	loom {
 		silentMojangMappingsLicense()
 	}
-	
+
 	dependencies {
-		minecraft "com.mojang:minecraft:1.21.1"
-		mappings loom.officialMojangMappings()
+		// 26.3 起官方 jar 已去混淆，直接使用官方工件，无需 mappings 与 remapJar
+		minecraft "net.minecraft:minecraft:${rootProject.minecraft_version}"
 	}
-	
+
 	// 配置runClient任务，设置固定的玩家名称（仅 Fabric）
 	if (project.name == 'fabric') {
 		tasks.named('runClient', JavaExec).configure {
 			def username = rootProject.properties.getOrDefault('minecraft_username', 'Player')
 			args '--username', username
 		}
+	}
+}
+
+// 迁移期辅助任务：导出 common 的编译类路径，便于直接用 javac 快速迭代排查 26.3 API 变更。
+tasks.register('dumpCommonClasspath') {
+	notCompatibleWithConfigurationCache('导出路径时直接解析配置')
+	dependsOn project(':common').tasks.named('dumpClasspath')
+	doLast {
+		println "classpath written by :common:dumpClasspath"
 	}
 }

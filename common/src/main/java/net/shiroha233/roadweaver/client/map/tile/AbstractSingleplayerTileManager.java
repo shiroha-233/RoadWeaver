@@ -1,8 +1,8 @@
 package net.shiroha233.roadweaver.client.map.tile;
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerLevel;
 import net.shiroha233.roadweaver.client.map.MapView;
 import net.shiroha233.roadweaver.map.tile.core.MapTileAoi;
@@ -43,7 +43,7 @@ public abstract class AbstractSingleplayerTileManager {
         this.zoom = nextZoom;
     }
 
-    public void render(GuiGraphics g,
+    public void render(GuiGraphicsExtractor g,
                        Minecraft mc,
                        MapView view,
                        int mapX,
@@ -64,7 +64,7 @@ public abstract class AbstractSingleplayerTileManager {
             String key = path.toAbsolutePath().normalize().toString();
             viewportKeys.add(key);
 
-            ResourceLocation texture = ClientMapTileTextureCache.getOrLoad(mc, path, true);
+            Identifier texture = ClientMapTileTextureCache.getOrLoad(mc, path, true);
             if (texture == null) continue;
 
             lastRenderHadTexture = true;
@@ -95,7 +95,7 @@ public abstract class AbstractSingleplayerTileManager {
 
     protected abstract MapTileLayer layer();
 
-    private static void blitTile(GuiGraphics g, ResourceLocation texture, MapTileCoord coord,
+    private static void blitTile(GuiGraphicsExtractor g, Identifier texture, MapTileCoord coord,
                                   MapView view, int mapX, int mapY, int contentW, int contentH) {
         int worldMinX = MapTileScheme.tileMinBlockX(coord);
         int worldMinZ = MapTileScheme.tileMinBlockZ(coord);
@@ -109,10 +109,8 @@ public abstract class AbstractSingleplayerTileManager {
         int drawY = Math.min(y0, y1);
         int drawW = Math.max(1, Math.abs(x1 - x0));
         int drawH = Math.max(1, Math.abs(y1 - y0));
-        g.blit(texture, drawX, drawY, drawW, drawH,
-                0.0F, 0.0F,
-                MapTileScheme.TILE_SIZE_PX, MapTileScheme.TILE_SIZE_PX,
-                MapTileScheme.TILE_SIZE_PX, MapTileScheme.TILE_SIZE_PX);
+        // 26.3 的 blit 使用归一化 UV（u0, u1, v0, v1），不再是像素尺寸。
+        g.blit(texture, drawX, drawY, drawW, drawH, 0.0F, 1.0F, 0.0F, 1.0F);
     }
 
     private static int chooseZoom(MapView view, int contentW, int contentH) {

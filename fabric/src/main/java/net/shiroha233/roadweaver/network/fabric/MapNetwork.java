@@ -6,8 +6,9 @@ import net.fabricmc.fabric.api.networking.v1.PayloadTypeRegistry;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.server.permissions.Permissions;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.chunk.status.ChunkStatus;
 import net.minecraft.world.level.levelgen.Heightmap;
@@ -42,19 +43,19 @@ public final class MapNetwork {
     private static synchronized void registerPayloadTypes() {
         if (payloadTypesRegistered) return;
 
-        PayloadTypeRegistry.playC2S().register(MapNetworkPayloads.REQ_RECT, MapNetworkPayloads.MapRequestRectPayload.CODEC);
-        PayloadTypeRegistry.playC2S().register(MapNetworkPayloads.TP_REQ, MapNetworkPayloads.MapTeleportPayload.CODEC);
-        PayloadTypeRegistry.playC2S().register(MapNetworkPayloads.MAN_REQ, MapNetworkPayloads.MapManualConnectPayload.CODEC);
-        PayloadTypeRegistry.playC2S().register(MapNetworkPayloads.SEARCH_REQ, MapNetworkPayloads.MapSearchRequestPayload.CODEC);
-        PayloadTypeRegistry.playC2S().register(RawPathDebugPayloads.REQUEST, RawPathDebugPayloads.Request.CODEC);
+        PayloadTypeRegistry.serverboundPlay().register(MapNetworkPayloads.REQ_RECT, MapNetworkPayloads.MapRequestRectPayload.CODEC);
+        PayloadTypeRegistry.serverboundPlay().register(MapNetworkPayloads.TP_REQ, MapNetworkPayloads.MapTeleportPayload.CODEC);
+        PayloadTypeRegistry.serverboundPlay().register(MapNetworkPayloads.MAN_REQ, MapNetworkPayloads.MapManualConnectPayload.CODEC);
+        PayloadTypeRegistry.serverboundPlay().register(MapNetworkPayloads.SEARCH_REQ, MapNetworkPayloads.MapSearchRequestPayload.CODEC);
+        PayloadTypeRegistry.serverboundPlay().register(RawPathDebugPayloads.REQUEST, RawPathDebugPayloads.Request.CODEC);
 
-        PayloadTypeRegistry.playS2C().register(MapNetworkPayloads.SNAP, MapNetworkPayloads.MapSnapshotPayload.CODEC);
-        PayloadTypeRegistry.playS2C().register(MapNetworkPayloads.PATCH, MapNetworkPayloads.MapPatchPayload.CODEC);
-        PayloadTypeRegistry.playS2C().register(MapNetworkPayloads.AUTO_PLANNING_SAMPLING, MapNetworkPayloads.MapAutomaticPlanningSamplingPayload.CODEC);
-        PayloadTypeRegistry.playS2C().register(MapNetworkPayloads.TP_ACK, MapNetworkPayloads.MapTeleportAckPayload.CODEC);
-        PayloadTypeRegistry.playS2C().register(MapNetworkPayloads.ACCESS_SYNC, MapNetworkPayloads.MapAccessSyncPayload.CODEC);
-        PayloadTypeRegistry.playS2C().register(MapNetworkPayloads.SEARCH_RESP, MapNetworkPayloads.MapSearchResponsePayload.CODEC);
-        PayloadTypeRegistry.playS2C().register(RawPathDebugPayloads.RESPONSE, RawPathDebugPayloads.Response.CODEC);
+        PayloadTypeRegistry.clientboundPlay().register(MapNetworkPayloads.SNAP, MapNetworkPayloads.MapSnapshotPayload.CODEC);
+        PayloadTypeRegistry.clientboundPlay().register(MapNetworkPayloads.PATCH, MapNetworkPayloads.MapPatchPayload.CODEC);
+        PayloadTypeRegistry.clientboundPlay().register(MapNetworkPayloads.AUTO_PLANNING_SAMPLING, MapNetworkPayloads.MapAutomaticPlanningSamplingPayload.CODEC);
+        PayloadTypeRegistry.clientboundPlay().register(MapNetworkPayloads.TP_ACK, MapNetworkPayloads.MapTeleportAckPayload.CODEC);
+        PayloadTypeRegistry.clientboundPlay().register(MapNetworkPayloads.ACCESS_SYNC, MapNetworkPayloads.MapAccessSyncPayload.CODEC);
+        PayloadTypeRegistry.clientboundPlay().register(MapNetworkPayloads.SEARCH_RESP, MapNetworkPayloads.MapSearchResponsePayload.CODEC);
+        PayloadTypeRegistry.clientboundPlay().register(RawPathDebugPayloads.RESPONSE, RawPathDebugPayloads.Response.CODEC);
 
         payloadTypesRegistered = true;
     }
@@ -72,11 +73,11 @@ public final class MapNetwork {
 
             CompletableFuture
                     .supplyAsync(() -> {
-                        var level = player.serverLevel();
+                        var level = player.level();
                         MapSnapshot snapshot = buildSnapshot(level, payload.phase(), payload.minX(), payload.minZ(), payload.maxX(), payload.maxZ());
                         return new MapNetworkPayloads.MapSnapshotPayload(
                                 payload.requestSeq(),
-                                level.dimension().location(),
+                                level.dimension().identifier(),
                                 payload.phase(),
                                 payload.responseIndex(),
                                 snapshot,
@@ -95,12 +96,12 @@ public final class MapNetwork {
         ServerPlayNetworking.registerGlobalReceiver(MapNetworkPayloads.MAN_REQ, (payload, context) ->
                 context.server().execute(() -> {
                     ServerPlayer player = context.player();
-                    if (!player.hasPermissions(2)) {
-                        player.displayClientMessage(Component.translatable("gui.roadweaver.map.manual_connect.denied"), true);
+                    if (!player.permissions().hasPermission(Permissions.COMMANDS_GAMEMASTER)) {
+                        player.sendOverlayMessage(Component.translatable("gui.roadweaver.map.manual_connect.denied"));
                         return;
                     }
-                    if (!Level.OVERWORLD.equals(player.serverLevel().dimension())) return;
-                    RoadNetworkApi.ensureConnection(player.serverLevel(), payload.from(), payload.to());
+                    if (!Level.OVERWORLD.equals(player.level().dimension())) return;
+                    RoadNetworkApi.ensureConnection(player.level(), payload.from(), payload.to());
                 })
         );
 
@@ -111,8 +112,8 @@ public final class MapNetwork {
                         new MapNetworkPayloads.MapSearchResponsePayload(payload.requestSeq(), payload.dimension(), false, java.util.List.of())));
                 return;
             }
-            var level = player.serverLevel();
-            if (!level.dimension().location().equals(payload.dimension())
+            var level = player.level();
+            if (!level.dimension().identifier().equals(payload.dimension())
                     || !MapStructureSearchService.tryBeginRequest(player.getUUID())) {
                 context.server().execute(() -> ServerPlayNetworking.send(player,
                         new MapNetworkPayloads.MapSearchResponsePayload(payload.requestSeq(), payload.dimension(), false, java.util.List.of())));
@@ -147,7 +148,7 @@ public final class MapNetwork {
                     MapAutomaticPlanningSamplingCache.replace(
                             payload.dimension(),
                             payload.automaticPlanningSamplingBounds());
-                    if (context.client().screen instanceof RoadMapScreen screen) {
+                    if (context.client().gui.screen() instanceof RoadMapScreen screen) {
                         screen.acceptSnapshotPart(payload.requestSeq(), payload.dimension(), payload.phase(), payload.responseIndex(), payload.snapshot());
                     }
                 })
@@ -155,7 +156,7 @@ public final class MapNetwork {
 
         ClientPlayNetworking.registerGlobalReceiver(MapNetworkPayloads.PATCH, (payload, context) ->
                 context.client().execute(() -> {
-                    if (context.client().screen instanceof RoadMapScreen screen) {
+                    if (context.client().gui.screen() instanceof RoadMapScreen screen) {
                         screen.acceptPatch(payload.dimension(), payload.patch());
                     } else {
                         MapSnapshotCache.applyPatch(payload.dimension(), payload.patch());
@@ -167,10 +168,9 @@ public final class MapNetwork {
                 context.client().execute(() -> {
                     if (context.player() == null) return;
                     if (payload.success()) {
-                        context.player().displayClientMessage(
-                                Component.translatable("gui.roadweaver.map.teleport.success_pos", payload.x(), payload.y(), payload.z()), true);
+                        context.player().sendOverlayMessage(Component.translatable("gui.roadweaver.map.teleport.success_pos", payload.x(), payload.y(), payload.z()));
                     } else {
-                        context.player().displayClientMessage(Component.translatable("gui.roadweaver.map.teleport.denied"), true);
+                        context.player().sendOverlayMessage(Component.translatable("gui.roadweaver.map.teleport.denied"));
                     }
                 })
         );
@@ -187,7 +187,7 @@ public final class MapNetwork {
 
         ClientPlayNetworking.registerGlobalReceiver(MapNetworkPayloads.SEARCH_RESP, (payload, context) ->
                 context.client().execute(() -> {
-                    if (context.client().screen instanceof RoadMapScreen screen) {
+                    if (context.client().gui.screen() instanceof RoadMapScreen screen) {
                         screen.acceptSearchResults(payload.requestSeq(), payload.dimension(), payload.success(), payload.results());
                     }
                 })
@@ -200,20 +200,19 @@ public final class MapNetwork {
     private static void registerRawPathRequest() {
         ServerPlayNetworking.registerGlobalReceiver(RawPathDebugPayloads.REQUEST, (payload, context) -> {
             ServerPlayer player = context.player();
-            var level = player.serverLevel();
-            if (!player.hasPermissions(2)) {
-                context.server().execute(() -> player.displayClientMessage(
-                        Component.translatable("debug.roadweaver.raw_paths.denied"), true));
+            var level = player.level();
+            if (!player.permissions().hasPermission(Permissions.COMMANDS_GAMEMASTER)) {
+                context.server().execute(() -> player.sendOverlayMessage(Component.translatable("debug.roadweaver.raw_paths.denied")));
                 return;
             }
-            if (!level.dimension().location().equals(payload.dimension())) return;
+            if (!level.dimension().identifier().equals(payload.dimension())) return;
             int x = player.getBlockX(), z = player.getBlockZ();
             CompletableFuture.supplyAsync(() -> new RawPathDebugPayloads.Response(
-                            payload.sequence(), level.dimension().location(), RawPathDebugService.enabled(),
+                            payload.sequence(), level.dimension().identifier(), RawPathDebugService.enabled(),
                             RawPathDebugService.nearby(level, x, z)),
                     ThreadPoolManager.roleExecutor(ThreadPoolManager.TaskRole.MAP))
                     .thenAccept(reply -> context.server().execute(() -> {
-                        if (!player.isRemoved() && player.serverLevel() == level) ServerPlayNetworking.send(player, reply);
+                        if (!player.isRemoved() && player.level() == level) ServerPlayNetworking.send(player, reply);
                     }));
         });
     }
@@ -234,26 +233,26 @@ public final class MapNetwork {
     private static void handleTeleport(MapNetworkPayloads.MapTeleportPayload payload,
                                        ServerPlayer player,
                                        net.minecraft.server.MinecraftServer server) {
-        if (!player.isCreative() && !player.hasPermissions(2)) {
+        if (!player.isCreative() && !player.permissions().hasPermission(Permissions.COMMANDS_GAMEMASTER)) {
             ServerPlayNetworking.send(player, new MapNetworkPayloads.MapTeleportAckPayload(false, 0, 0, 0));
             return;
         }
 
-        var level = player.serverLevel();
+        var level = player.level();
         int x = payload.x();
         int z = payload.z();
         level.getChunkSource().getChunkFuture(x >> 4, z >> 4, ChunkStatus.FULL, true)
                 .thenAccept(ignored -> server.execute(() -> {
                     if (player.isRemoved() || player.hasDisconnected()) return;
                     int y = level.getHeight(Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, x, z);
-                    y = y <= level.getMinBuildHeight() ? level.getSeaLevel() + 1 : y + 1;
-                    player.teleportTo(level, x + 0.5, y, z + 0.5, player.getYRot(), player.getXRot());
+                    y = y <= level.getMinY() ? level.getSeaLevel() + 1 : y + 1;
+                    player.teleportTo(level, x + 0.5, y, z + 0.5, java.util.Set.of(), player.getYRot(), player.getXRot(), false);
                     ServerPlayNetworking.send(player, new MapNetworkPayloads.MapTeleportAckPayload(true, x, y, z));
                 }));
     }
 
     public static void requestSnapshot(int requestSeq,
-                                       ResourceLocation dimensionId,
+                                       Identifier dimensionId,
                                        MapLoadPhase phase,
                                        int responseIndex,
                                        int minX,
@@ -273,21 +272,21 @@ public final class MapNetwork {
                 new BlockPos(ax, 0, az), new BlockPos(bx, 0, bz)));
     }
 
-    public static void requestSearch(int requestSeq, ResourceLocation dimensionId, String query) {
+    public static void requestSearch(int requestSeq, Identifier dimensionId, String query) {
         ClientPlayNetworking.send(new MapNetworkPayloads.MapSearchRequestPayload(requestSeq, dimensionId, query));
     }
 
-    public static void requestRawPathDebug(int requestSeq, ResourceLocation dimensionId) {
+    public static void requestRawPathDebug(int requestSeq, Identifier dimensionId) {
         ClientPlayNetworking.send(new RawPathDebugPayloads.Request(requestSeq, dimensionId));
     }
 
-    public static void broadcastPatch(ServerPlayer player, ResourceLocation dimensionId, MapSnapshotPatch patch) {
+    public static void broadcastPatch(ServerPlayer player, Identifier dimensionId, MapSnapshotPatch patch) {
         if (player == null || dimensionId == null || patch == null || patch.isEmpty()) return;
         ServerPlayNetworking.send(player, new MapNetworkPayloads.MapPatchPayload(dimensionId, patch));
     }
 
     public static void broadcastAutomaticPlanningSampling(ServerPlayer player,
-                                                          ResourceLocation dimensionId,
+                                                          Identifier dimensionId,
                                                           List<AutomaticPlanningSamplingBounds> bounds) {
         if (player == null || dimensionId == null) return;
         ServerPlayNetworking.send(player,

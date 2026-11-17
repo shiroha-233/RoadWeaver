@@ -1,12 +1,12 @@
 package net.shiroha233.roadweaver.terrain.coarse;
 
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.shiroha233.roadweaver.core.constants.RoadConstants;
 
 /**
  * 持久化粗采样地形瓦片坐标。
  */
-public record CoarseTerrainTileKey(ResourceLocation dimensionId,
+public record CoarseTerrainTileKey(Identifier dimensionId,
                                    int tileX,
                                    int tileZ,
                                    int tileSizeChunks,
@@ -21,7 +21,7 @@ public record CoarseTerrainTileKey(ResourceLocation dimensionId,
         schemaVersion = Math.max(1, schemaVersion);
     }
 
-    public static CoarseTerrainTileKey forBlock(ResourceLocation dimensionId, int blockX, int blockZ, int step) {
+    public static CoarseTerrainTileKey forBlock(Identifier dimensionId, int blockX, int blockZ, int step) {
         int tileSizeChunks = RoadConstants.COARSE_TERRAIN_TILE_SIZE_CHUNKS;
         int tileBlocks = tileSizeChunks * RoadConstants.CHUNK_SIZE_BLOCKS;
         return new CoarseTerrainTileKey(

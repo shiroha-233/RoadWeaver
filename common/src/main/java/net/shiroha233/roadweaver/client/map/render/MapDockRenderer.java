@@ -1,7 +1,7 @@
 package net.shiroha233.roadweaver.client.map.render;
 
 import net.minecraft.client.gui.Font;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.network.chat.Component;
 import net.shiroha233.roadweaver.client.map.MapTheme;
 import net.shiroha233.roadweaver.client.ui.Rect;
@@ -69,7 +69,7 @@ public final class MapDockRenderer {
         return new DockLayout(bounds, buttons, cell);
     }
 
-    public static void render(GuiGraphics graphics,
+    public static void render(GuiGraphicsExtractor graphics,
                               Font font,
                               DockLayout layout,
                               int mouseX,
@@ -122,11 +122,11 @@ public final class MapDockRenderer {
         MapDockAction hovered = layout.hit(mouseX, mouseY);
         if (hovered != null) {
             Component tooltip = Component.translatable(hovered.tooltipKey());
-            graphics.renderTooltip(font, tooltip, mouseX, mouseY - 4);
+            graphics.setTooltipForNextFrame(font, tooltip, mouseX, mouseY - 4);
         }
     }
 
-    private static void renderProgress(GuiGraphics graphics, Rect button, int percent) {
+    private static void renderProgress(GuiGraphicsExtractor graphics, Rect button, int percent) {
         int width = Math.max(4, button.width() - 10);
         int filled = Math.max(1, Math.round(width * Math.max(0, Math.min(100, percent)) / 100.0f));
         int y = button.bottom() - 4;
@@ -134,7 +134,7 @@ public final class MapDockRenderer {
         graphics.fill(button.x() + 5, y, button.x() + 5 + filled, y + 2, MapTheme.DOCK_PROGRESS);
     }
 
-    public static void fillRounded(GuiGraphics graphics, int x, int y, int width, int height, int radius, int color) {
+    public static void fillRounded(GuiGraphicsExtractor graphics, int x, int y, int width, int height, int radius, int color) {
         int r = Math.max(1, Math.min(radius, Math.min(width, height) / 2));
         graphics.fill(x + r, y, x + width - r, y + height, color);
         graphics.fill(x, y + r, x + width, y + height - r, color);

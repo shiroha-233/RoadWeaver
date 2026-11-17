@@ -1,33 +1,51 @@
 // 文件职责：配置 common 模块的共享源码、资源与单元测试依赖。
- architectury {
-    common("fabric", "neoforge")
+architectury {
+	common("fabric", "neoforge")
 }
 
 dependencies {
-    // Architectury API（作为 mod 依赖以启用 Loom 重映射）
-    modImplementation("dev.architectury:architectury:${project.architectury_version}")
-    compileOnly("net.fabricmc:fabric-loader:${project.loader_version}")
+	// Architectury API（26.3 官方 jar 已去混淆，直接作为普通依赖参与编译）
+	implementation("dev.architectury:architectury:${project.architectury_version}")
+	compileOnly("net.fabricmc:fabric-loader:${project.loader_version}")
 
-    // LWJGL OpenCL - 编译时依赖，运行时 native 由平台模块提供
-    compileOnly("org.lwjgl:lwjgl-opencl:3.3.3")
+	// LWJGL OpenCL - 编译时依赖，运行时 native 由平台模块提供
+	compileOnly("org.lwjgl:lwjgl-opencl:3.3.3")
 
-    testImplementation("org.junit.jupiter:junit-jupiter:5.11.0")
-    testRuntimeOnly("org.junit.platform:junit-platform-launcher")
-    testRuntimeOnly("org.lwjgl:lwjgl:3.3.3")
-    testRuntimeOnly("org.lwjgl:lwjgl-opencl:3.3.3")
-    testRuntimeOnly("org.lwjgl:lwjgl:3.3.3:natives-windows")
-    testRuntimeOnly("org.lwjgl:lwjgl:3.3.3:natives-linux")
-    testRuntimeOnly("org.lwjgl:lwjgl:3.3.3:natives-macos")
+	testImplementation("org.junit.jupiter:junit-jupiter:5.11.0")
+	testRuntimeOnly("org.junit.platform:junit-platform-launcher")
+	testRuntimeOnly("org.lwjgl:lwjgl:3.3.3")
+	testRuntimeOnly("org.lwjgl:lwjgl-opencl:3.3.3")
+	testRuntimeOnly("org.lwjgl:lwjgl:3.3.3:natives-windows")
+	testRuntimeOnly("org.lwjgl:lwjgl:3.3.3:natives-linux")
+	testRuntimeOnly("org.lwjgl:lwjgl:3.3.3:natives-macos")
 }
 
 tasks.withType(Test).configureEach {
-    useJUnitPlatform()
+	useJUnitPlatform()
 }
- 
+
 sourceSets {
-    main {
-        resources {
-            exclude 'pack.mcmeta'
-        }
-    }
+	main {
+		resources {
+			exclude 'pack.mcmeta'
+		}
+		java {
+			// 26.3 重写了噪声与密度体系：NormalNoise 变成模板、PerlinNoise 变成单倍频、
+			// 多倍频改由 NoiseStack 承担、DensityFunction 变成 record 节点表。terrain.opencl
+			// 正是以反射方式读取旧内部结构并喂给 OpenCL 内核，因此暂不参与 26.3 编译，
+			// 运行期统一回退到 CPU 采样后端；GPU 侧移植另行安排。
+			exclude 'net/shiroha233/roadweaver/terrain/opencl/**'
+		}
+	}
+}
+
+// 迁移期辅助任务：把编译类路径写入文件，供直接调用 javac 快速迭代使用。
+tasks.register('dumpClasspath') {
+	notCompatibleWithConfigurationCache('导出路径时直接解析配置')
+	doLast {
+		def out = layout.buildDirectory.file('common-classpath.txt').get().asFile
+		out.parentFile.mkdirs()
+		out.text = configurations.compileClasspath.asPath
+		println "wrote ${out}"
+	}
 }

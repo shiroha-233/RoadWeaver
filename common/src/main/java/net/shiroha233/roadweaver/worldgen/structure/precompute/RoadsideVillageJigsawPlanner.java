@@ -5,8 +5,8 @@ import net.minecraft.core.Direction;
 import net.minecraft.core.Holder;
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.Registries;
+import net.minecraft.resources.Identifier;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.block.JigsawBlock;
@@ -37,7 +37,7 @@ public final class RoadsideVillageJigsawPlanner {
     public static List<PoolElementStructurePiece> createPieces(ServerLevel level,
                                                                PendingRoadsideVillage village,
                                                                StructureTemplateManager templateManager) {
-        Registry<StructureTemplatePool> pools = level.registryAccess().registryOrThrow(Registries.TEMPLATE_POOL);
+        Registry<StructureTemplatePool> pools = level.registryAccess().lookupOrThrow(Registries.TEMPLATE_POOL);
         RandomSource random = RandomSource.create(village.seed());
         List<PoolElementStructurePiece> pieces = new ArrayList<>();
         List<BoundingBox> occupied = new ArrayList<>();
@@ -57,12 +57,12 @@ public final class RoadsideVillageJigsawPlanner {
     private static Optional<PoolElementStructurePiece> createPieceForSlot(Registry<StructureTemplatePool> pools,
                                                                          StructureTemplateManager templateManager,
                                                                          PendingRoadsideVillageSlot slot,
-                                                                         ResourceLocation style,
+                                                                         Identifier style,
                                                                          RandomSource random,
                                                                          List<BoundingBox> occupied) {
-        ResourceLocation poolId = slot.poolId(style);
+        Identifier poolId = slot.poolId(style);
         ResourceKey<StructureTemplatePool> poolKey = ResourceKey.create(Registries.TEMPLATE_POOL, poolId);
-        Optional<Holder.Reference<StructureTemplatePool>> holder = pools.getHolder(poolKey);
+        Optional<Holder.Reference<StructureTemplatePool>> holder = pools.get(poolKey);
         if (holder.isEmpty() || holder.get().value().size() == 0) {
             LOGGER.debug("Roadside village pool {} is not available", poolId);
             return Optional.empty();
@@ -104,7 +104,7 @@ public final class RoadsideVillageJigsawPlanner {
         }
     }
 
-    private static List<StructureTemplate.StructureBlockInfo> safeJigsawBlocks(StructureTemplateManager templateManager,
+    private static List<StructureTemplate.JigsawBlockInfo> safeJigsawBlocks(StructureTemplateManager templateManager,
                                                                                StructurePoolElement element,
                                                                                Rotation rotation,
                                                                                RandomSource random) {
@@ -126,8 +126,8 @@ public final class RoadsideVillageJigsawPlanner {
 
         for (int i = 0; i < ROTATION_ATTEMPTS; i++) {
             Rotation rotation = rotations[i % rotations.length];
-            List<StructureTemplate.StructureBlockInfo> jigsaws = safeJigsawBlocks(templateManager, element, rotation, random);
-            for (StructureTemplate.StructureBlockInfo jigsaw : jigsaws) {
+            List<StructureTemplate.JigsawBlockInfo> jigsaws = safeJigsawBlocks(templateManager, element, rotation, random);
+            for (StructureTemplate.JigsawBlockInfo jigsaw : jigsaws) {
                 Direction front = JigsawBlock.getFrontFacing(jigsaw.state());
                 if (front != slot.outward().getOpposite()) {
                     continue;

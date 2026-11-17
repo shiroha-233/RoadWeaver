@@ -6,31 +6,32 @@ import net.minecraft.core.QuartPos;
 import net.minecraft.core.Registry;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.core.registries.Registries;
+import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.tags.TagKey;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.biome.Biome;
+import net.minecraft.world.level.biome.BiomeResolver;
 import net.minecraft.world.level.biome.BiomeSource;
 import net.minecraft.world.level.chunk.ChunkGeneratorStructureState;
 import net.minecraft.world.level.levelgen.RandomState;
+import net.minecraft.world.level.levelgen.structure.BuiltinStructureSets;
 import net.minecraft.world.level.levelgen.structure.Structure;
 import net.minecraft.world.level.levelgen.structure.StructureSet;
-import net.minecraft.world.level.levelgen.structure.BuiltinStructureSets;
 import net.minecraft.world.level.levelgen.structure.placement.ConcentricRingsStructurePlacement;
 import net.minecraft.world.level.levelgen.structure.placement.RandomSpreadStructurePlacement;
 import net.minecraft.world.level.levelgen.structure.placement.StructurePlacement;
-import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.tags.TagKey;
 import net.shiroha233.roadweaver.config.ConfigService;
 import net.shiroha233.roadweaver.core.model.StructureInfo;
 
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Optional;
 import java.util.Set;
-import java.util.Locale;
 
 /**
  * 结构位置预测服务
@@ -56,8 +57,8 @@ public final class StructurePredictor {
             boolean biomePrefilter) {
         if (!isOverworld(level)) return List.of();
         RegistryAccess registryAccess = level.registryAccess();
-        Registry<StructureSet> setRegistry = registryAccess.registryOrThrow(Registries.STRUCTURE_SET);
-        Optional<Holder.Reference<StructureSet>> optVillages = setRegistry.getHolder(BuiltinStructureSets.VILLAGES);
+        Registry<StructureSet> setRegistry = registryAccess.lookupOrThrow(Registries.STRUCTURE_SET);
+        Optional<Holder.Reference<StructureSet>> optVillages = setRegistry.get(BuiltinStructureSets.VILLAGES);
         if (optVillages.isEmpty())
             return List.of();
         StructureSet set = optVillages.get().value();
@@ -65,7 +66,7 @@ public final class StructurePredictor {
         if (!(placement instanceof RandomSpreadStructurePlacement rssp))
             return List.of();
 
-        BlockPos spawn = level.getSharedSpawnPos();
+        BlockPos spawn = level.getRespawnData().pos();
         int cx = spawn.getX() >> 4;
         int cz = spawn.getZ() >> 4;
         int minX = cx - radiusChunks;
@@ -76,6 +77,7 @@ public final class StructurePredictor {
         ChunkGeneratorStructureState state = level.getChunkSource().getGeneratorState();
         RandomState randomState = state.randomState();
         BiomeSource biomeSource = level.getChunkSource().getGenerator().getBiomeSource();
+        BiomeResolver biomeResolver = biomeSource.createUncachedResolver(randomState);
 
         Set<Holder<Biome>> allowedBiomes = null;
         if (biomePrefilter) {
@@ -102,8 +104,8 @@ public final class StructurePredictor {
                 int baseX = i * spacing;
                 int baseZ = j * spacing;
                 ChunkPos candidate = rssp.getPotentialStructureChunk(seed, baseX, baseZ);
-                int x = candidate.x;
-                int z = candidate.z;
+                int x = candidate.x();
+                int z = candidate.z();
                 if (x < minX || x > maxX || z < minZ || z > maxZ)
                     continue;
                 if (!placement.isStructureChunk(state, x, z))
@@ -114,7 +116,7 @@ public final class StructurePredictor {
                     int qx = QuartPos.fromBlock(locatePos.getX());
                     int qy = QuartPos.fromBlock(64);
                     int qz = QuartPos.fromBlock(locatePos.getZ());
-                    Holder<Biome> sample = biomeSource.getNoiseBiome(qx, qy, qz, randomState.sampler());
+                    Holder<Biome> sample = biomeResolver.getNoiseBiome(qx, qy, qz);
                     if (!allowedBiomes.contains(sample))
                         continue;
                 }
@@ -139,6 +141,7 @@ public final class StructurePredictor {
         ChunkGeneratorStructureState state = level.getChunkSource().getGeneratorState();
         RandomState randomState = state.randomState();
         BiomeSource biomeSource = level.getChunkSource().getGenerator().getBiomeSource();
+        BiomeResolver biomeResolver = biomeSource.createUncachedResolver(randomState);
 
         Filters filters = Filters.of(whitelist, blacklist);
 
@@ -155,7 +158,7 @@ public final class StructurePredictor {
                 Optional<ResourceKey<Structure>> key = structureHolder.unwrapKey();
                 if (key.isEmpty())
                     continue;
-                ResourceLocation id = key.get().location();
+                Identifier id = key.get().identifier();
                 if (filters.matches(structureHolder, id)) {
                     matchedStructures.add(structureHolder);
                 }
@@ -169,7 +172,7 @@ public final class StructurePredictor {
                     Optional<ResourceKey<Structure>> key = structureHolder.unwrapKey();
                     if (key.isEmpty())
                         continue;
-                    ResourceLocation id = key.get().location();
+                    Identifier id = key.get().identifier();
                     if (!filters.isBlacklisted(structureHolder, id)) {
                         matchedStructures.add(structureHolder);
                     }
@@ -179,7 +182,7 @@ public final class StructurePredictor {
             }
 
             String labelId = matchedStructures.stream()
-                    .map(h -> h.unwrapKey().map(ResourceKey::location).map(ResourceLocation::toString)
+                    .map(h -> h.unwrapKey().map(ResourceKey::identifier).map(Identifier::toString)
                             .orElse("structure"))
                     .findFirst().orElse("structure");
 
@@ -189,8 +192,8 @@ public final class StructurePredictor {
                     continue;
                 }
                 for (ChunkPos cp : ring) {
-                    int x = cp.x;
-                    int z = cp.z;
+                    int x = cp.x();
+                    int z = cp.z();
                     if (x < minChunkX || x > maxChunkX || z < minChunkZ || z > maxChunkZ)
                         continue;
                     if (!placement.isStructureChunk(state, x, z))
@@ -226,8 +229,8 @@ public final class StructurePredictor {
                     int baseX = i * spacing;
                     int baseZ = j * spacing;
                     ChunkPos candidate = rssp.getPotentialStructureChunk(level.getSeed(), baseX, baseZ);
-                    int x = candidate.x;
-                    int z = candidate.z;
+                    int x = candidate.x();
+                    int z = candidate.z();
                     if (x < minChunkX || x > maxChunkX || z < minChunkZ || z > maxChunkZ)
                         continue;
                     if (!placement.isStructureChunk(state, x, z))
@@ -237,7 +240,7 @@ public final class StructurePredictor {
                     int qx = QuartPos.fromBlock(locatePos.getX());
                     int qy = QuartPos.fromBlock(64);
                     int qz = QuartPos.fromBlock(locatePos.getZ());
-                    Holder<Biome> sample = biomeSource.getNoiseBiome(qx, qy, qz, randomState.sampler());
+                    Holder<Biome> sample = biomeResolver.getNoiseBiome(qx, qy, qz);
                     if (biomePrefilter && allowedBiomes != null) {
                         if (!allowedBiomes.contains(sample))
                             continue;
@@ -246,7 +249,7 @@ public final class StructurePredictor {
                     String chosenId = labelId;
                     for (Holder<Structure> h : matchedStructures) {
                         if (h.value().biomes().contains(sample)) {
-                            chosenId = h.unwrapKey().map(ResourceKey::location).map(ResourceLocation::toString)
+                            chosenId = h.unwrapKey().map(ResourceKey::identifier).map(Identifier::toString)
                                     .orElse(labelId);
                             break;
                         }
@@ -266,9 +269,9 @@ public final class StructurePredictor {
             List<String> blacklist) {
         if (!isOverworld(level)) return List.of();
         RegistryAccess access = level.registryAccess();
-        Registry<StructureSet> setRegistry = access.registryOrThrow(Registries.STRUCTURE_SET);
+        Registry<StructureSet> setRegistry = access.lookupOrThrow(Registries.STRUCTURE_SET);
 
-        BlockPos spawn = level.getSharedSpawnPos();
+        BlockPos spawn = level.getRespawnData().pos();
         int cx = spawn.getX() >> 4;
         int cz = spawn.getZ() >> 4;
         int minX = cx - radiusChunks;
@@ -279,12 +282,13 @@ public final class StructurePredictor {
         ChunkGeneratorStructureState state = level.getChunkSource().getGeneratorState();
         RandomState randomState = state.randomState();
         BiomeSource biomeSource = level.getChunkSource().getGenerator().getBiomeSource();
+        BiomeResolver biomeResolver = biomeSource.createUncachedResolver(randomState);
 
         Filters filters = Filters.of(whitelist, blacklist);
 
         List<StructureInfo> result = new ArrayList<>();
 
-        for (Holder.Reference<StructureSet> holder : setRegistry.holders().toList()) {
+        for (Holder.Reference<StructureSet> holder : setRegistry.listElements().toList()) {
             StructureSet set = holder.value();
             StructurePlacement placement = set.placement();
             if (!(placement instanceof RandomSpreadStructurePlacement rssp))
@@ -296,7 +300,7 @@ public final class StructurePredictor {
                 Optional<ResourceKey<Structure>> key = structureHolder.unwrapKey();
                 if (key.isEmpty())
                     continue;
-                ResourceLocation id = key.get().location();
+                Identifier id = key.get().identifier();
                 if (filters.matches(structureHolder, id)) {
                     matchedStructures.add(structureHolder);
                 }
@@ -310,7 +314,7 @@ public final class StructurePredictor {
                     Optional<ResourceKey<Structure>> key = structureHolder.unwrapKey();
                     if (key.isEmpty())
                         continue;
-                    ResourceLocation id = key.get().location();
+                    Identifier id = key.get().identifier();
                     if (!filters.isBlacklisted(structureHolder, id)) {
                         matchedStructures.add(structureHolder);
                     }
@@ -336,7 +340,7 @@ public final class StructurePredictor {
             int endJ = Math.floorDiv(maxZ, spacing);
 
             String labelId = matchedStructures.stream()
-                    .map(h -> h.unwrapKey().map(ResourceKey::location).map(ResourceLocation::toString)
+                    .map(h -> h.unwrapKey().map(ResourceKey::identifier).map(Identifier::toString)
                             .orElse("structure"))
                     .findFirst().orElse("structure");
 
@@ -345,8 +349,8 @@ public final class StructurePredictor {
                     int baseX = i * spacing;
                     int baseZ = j * spacing;
                     ChunkPos candidate = rssp.getPotentialStructureChunk(level.getSeed(), baseX, baseZ);
-                    int x = candidate.x;
-                    int z = candidate.z;
+                    int x = candidate.x();
+                    int z = candidate.z();
                     if (x < minX || x > maxX || z < minZ || z > maxZ)
                         continue;
                     if (!placement.isStructureChunk(state, x, z))
@@ -355,7 +359,7 @@ public final class StructurePredictor {
                     int qx = QuartPos.fromBlock(locatePos.getX());
                     int qy = QuartPos.fromBlock(64);
                     int qz = QuartPos.fromBlock(locatePos.getZ());
-                    Holder<Biome> sample = biomeSource.getNoiseBiome(qx, qy, qz, randomState.sampler());
+                    Holder<Biome> sample = biomeResolver.getNoiseBiome(qx, qy, qz);
                     if (biomePrefilter && allowedBiomes != null) {
                         if (!allowedBiomes.contains(sample))
                             continue;
@@ -363,7 +367,7 @@ public final class StructurePredictor {
                     String chosenId = labelId;
                     for (Holder<Structure> h : matchedStructures) {
                         if (h.value().biomes().contains(sample)) {
-                            chosenId = h.unwrapKey().map(ResourceKey::location).map(ResourceLocation::toString)
+                            chosenId = h.unwrapKey().map(ResourceKey::identifier).map(Identifier::toString)
                                     .orElse(labelId);
                             break;
                         }
@@ -399,24 +403,24 @@ public final class StructurePredictor {
             return !whitelist.isEmpty();
         }
 
-        boolean matches(Holder<Structure> holder, ResourceLocation id) {
+        boolean matches(Holder<Structure> holder, Identifier id) {
             boolean whiteOk = whitelist.isEmpty() || whitelist.stream().anyMatch(p -> matchesPattern(holder, id, p));
             boolean blackHit = blacklist.stream().anyMatch(p -> matchesPattern(holder, id, p));
             return whiteOk && !blackHit;
         }
 
-        boolean isBlacklisted(Holder<Structure> holder, ResourceLocation id) {
+        boolean isBlacklisted(Holder<Structure> holder, Identifier id) {
             return blacklist.stream().anyMatch(p -> matchesPattern(holder, id, p));
         }
 
-        private boolean matchesPattern(Holder<Structure> holder, ResourceLocation id, String pattern) {
+        private boolean matchesPattern(Holder<Structure> holder, Identifier id, String pattern) {
             if (pattern == null || pattern.isEmpty())
                 return false;
             String p = pattern.trim().toLowerCase(Locale.ROOT);
             String idStr = id.toString().toLowerCase(Locale.ROOT);
             if (p.startsWith("#")) {
                 String raw = p.substring(1);
-                ResourceLocation tagId = ResourceLocation.tryParse(raw);
+                Identifier tagId = Identifier.tryParse(raw);
                 if (tagId == null)
                     return false;
                 TagKey<Structure> tag = TagKey.create(Registries.STRUCTURE, tagId);

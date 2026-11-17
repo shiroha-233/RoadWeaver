@@ -1,13 +1,13 @@
 package net.shiroha233.roadweaver.map.tile.core;
 
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 
 import java.util.Objects;
 
 /**
  * 围绕动态规划窗口定义的瓦片采样 AOI。
  */
-public record MapTileAoi(ResourceLocation dimensionId, int centerBlockX, int centerBlockZ, int radiusBlocks) {
+public record MapTileAoi(Identifier dimensionId, int centerBlockX, int centerBlockZ, int radiusBlocks) {
     public MapTileAoi {
         Objects.requireNonNull(dimensionId, "dimensionId");
         if (radiusBlocks < 0) {

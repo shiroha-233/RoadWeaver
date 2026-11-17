@@ -1,7 +1,7 @@
 package net.shiroha233.roadweaver.client.config;
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.ContainerObjectSelectionList;
 
 public abstract class RoadWeaverSelectionList<E extends ContainerObjectSelectionList.Entry<E>> extends ContainerObjectSelectionList<E> {
@@ -39,12 +39,12 @@ public abstract class RoadWeaverSelectionList<E extends ContainerObjectSelection
     }
 
     @Override
-    protected int getScrollbarPosition() {
+    protected int scrollBarX() {
         return getRowLeft() + getRowWidth() + 6;
     }
 
     @Override
-    protected void renderListBackground(GuiGraphics graphics) {
+    protected void extractListBackground(GuiGraphicsExtractor graphics) {
         if (!renderBackground) {
             return;
         }
@@ -52,9 +52,9 @@ public abstract class RoadWeaverSelectionList<E extends ContainerObjectSelection
     }
 
     @Override
-    protected void renderListSeparators(GuiGraphics graphics) {
+    protected void extractListSeparators(GuiGraphicsExtractor graphics) {
         if (renderTopAndBottom) {
-            super.renderListSeparators(graphics);
+            super.extractListSeparators(graphics);
         }
     }
 }

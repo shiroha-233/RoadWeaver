@@ -6,14 +6,14 @@ import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.levelgen.NoiseBasedChunkGenerator;
 import net.minecraft.world.level.levelgen.RandomState;
 import net.shiroha233.roadweaver.config.ConfigService;
+import net.shiroha233.roadweaver.core.metrics.AccurateSamplingStats;
+import net.shiroha233.roadweaver.terrain.accurate.AcceleratedSamplingUnavailableException;
 import net.shiroha233.roadweaver.terrain.accurate.AccurateHeightBackend;
 import net.shiroha233.roadweaver.terrain.accurate.AccurateHeightChunk;
 import net.shiroha233.roadweaver.terrain.accurate.AccurateHeightGrid;
 import net.shiroha233.roadweaver.terrain.accurate.AccurateHeightGridRequest;
 import net.shiroha233.roadweaver.terrain.accurate.AccurateHeightSample;
-import net.shiroha233.roadweaver.core.metrics.AccurateSamplingStats;
 import net.shiroha233.roadweaver.terrain.accurate.AccurateSamplingProgress;
-import net.shiroha233.roadweaver.terrain.accurate.AcceleratedSamplingUnavailableException;
 import net.shiroha233.roadweaver.terrain.accurate.CpuAccurateHeightBackend;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -58,7 +58,7 @@ public final class OpenCLAccurateHeightBackend implements AccurateHeightBackend 
             LOGGER.info("OpenCL 精采样不支持当前生成设置，使用 CPU: {}", state.unsupportedReason());
             return null;
         }
-        LOGGER.info("OpenCL 精采样已启用 dimension={} device={}", level.dimension().location(), runtime.deviceName());
+        LOGGER.info("OpenCL 精采样已启用 dimension={} device={}", level.dimension().identifier(), runtime.deviceName());
         return new OpenCLAccurateHeightBackend(cpu, runtime, state);
     }
 
@@ -356,7 +356,7 @@ public final class OpenCLAccurateHeightBackend implements AccurateHeightBackend 
         for (int index = 0; index < request.sampleCount(); index++) {
             int blockX = request.blockX(index);
             int blockZ = request.blockZ(index);
-            if (selected.contains(ChunkPos.asLong(blockX >> 4, blockZ >> 4))) {
+            if (selected.contains(ChunkPos.pack(blockX >> 4, blockZ >> 4))) {
                 validationPositions.add(new BlockPos(blockX, 0, blockZ));
             }
         }
@@ -366,7 +366,7 @@ public final class OpenCLAccurateHeightBackend implements AccurateHeightBackend 
         for (int index = 0; index < request.sampleCount(); index++) {
             int blockX = request.blockX(index);
             int blockZ = request.blockZ(index);
-            if (!selected.contains(ChunkPos.asLong(blockX >> 4, blockZ >> 4))) {
+            if (!selected.contains(ChunkPos.pack(blockX >> 4, blockZ >> 4))) {
                 continue;
             }
             AccurateHeightSample actual = new AccurateHeightSample(
@@ -396,7 +396,7 @@ public final class OpenCLAccurateHeightBackend implements AccurateHeightBackend 
         LinkedHashSet<Long> chunkKeys = new LinkedHashSet<>();
         for (BlockPos position : positions) {
             if (position != null) {
-                chunkKeys.add(ChunkPos.asLong(position.getX() >> 4, position.getZ() >> 4));
+                chunkKeys.add(ChunkPos.pack(position.getX() >> 4, position.getZ() >> 4));
             }
         }
         return chunkKeys;
@@ -405,7 +405,7 @@ public final class OpenCLAccurateHeightBackend implements AccurateHeightBackend 
     private static Collection<Long> chunkKeysFor(AccurateHeightGridRequest request) {
         LinkedHashSet<Long> chunkKeys = new LinkedHashSet<>();
         for (int index = 0; index < request.sampleCount(); index++) {
-            chunkKeys.add(ChunkPos.asLong(request.blockX(index) >> 4, request.blockZ(index) >> 4));
+            chunkKeys.add(ChunkPos.pack(request.blockX(index) >> 4, request.blockZ(index) >> 4));
         }
         return chunkKeys;
     }
@@ -419,7 +419,7 @@ public final class OpenCLAccurateHeightBackend implements AccurateHeightBackend 
             if (position == null) {
                 continue;
             }
-            long chunkKey = ChunkPos.asLong(position.getX() >> 4, position.getZ() >> 4);
+            long chunkKey = ChunkPos.pack(position.getX() >> 4, position.getZ() >> 4);
             long columnKey = AccurateHeightSample.key(position.getX(), position.getZ());
             if (selected.contains(chunkKey) && seen.add(columnKey)) {
                 result.add(position);

@@ -4,7 +4,7 @@ import net.minecraft.core.Holder;
 import net.minecraft.core.Registry;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.core.registries.Registries;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.levelgen.structure.Structure;
@@ -22,7 +22,7 @@ public final class RoadsideStructureRegistry {
     private static volatile List<RoadsideStructureEntry> cache;
     
     public record RoadsideStructureEntry(
-        ResourceLocation id,
+        Identifier id,
         Holder<Structure> holder,
         RoadsideStructure structure
     ) {}
@@ -40,14 +40,14 @@ public final class RoadsideStructureRegistry {
     private static List<RoadsideStructureEntry> loadFromRegistry(RegistryAccess registryAccess) {
         List<RoadsideStructureEntry> result = new ArrayList<>();
         
-        Registry<Structure> structureRegistry = registryAccess.registryOrThrow(Registries.STRUCTURE);
+        Registry<Structure> structureRegistry = registryAccess.lookupOrThrow(Registries.STRUCTURE);
         
         for (var entry : structureRegistry.entrySet()) {
-            ResourceLocation id = entry.getKey().location();
+            Identifier id = entry.getKey().identifier();
             Structure structure = entry.getValue();
             
             if (structure instanceof RoadsideStructure roadsideStructure) {
-                Holder<Structure> holder = structureRegistry.getHolderOrThrow(entry.getKey());
+                Holder<Structure> holder = structureRegistry.getOrThrow(entry.getKey());
                 result.add(new RoadsideStructureEntry(id, holder, roadsideStructure));
             }
         }

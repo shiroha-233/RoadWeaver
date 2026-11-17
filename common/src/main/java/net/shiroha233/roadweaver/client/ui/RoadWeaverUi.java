@@ -1,7 +1,7 @@
 package net.shiroha233.roadweaver.client.ui;
 
 import net.minecraft.client.gui.Font;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.network.chat.Component;
 
 public final class RoadWeaverUi {
@@ -12,14 +12,14 @@ public final class RoadWeaverUi {
     private RoadWeaverUi() {
     }
 
-    public static void drawScreenHeader(GuiGraphics graphics, Font font, int width, Component title, Component subtitle) {
-        graphics.drawCenteredString(font, title, width / 2, 8, 0xFFFFFF);
+    public static void drawScreenHeader(GuiGraphicsExtractor graphics, Font font, int width, Component title, Component subtitle) {
+        graphics.centeredText(font, title, width / 2, 8, 0xFFFFFF);
         if (subtitle != null) {
-            graphics.drawCenteredString(font, subtitle, width / 2, 22, 0xAEB7C2);
+            graphics.centeredText(font, subtitle, width / 2, 22, 0xAEB7C2);
         }
     }
 
-    public static void drawPanel(GuiGraphics graphics, int x, int y, int width, int height) {
+    public static void drawPanel(GuiGraphicsExtractor graphics, int x, int y, int width, int height) {
         if (width <= 1 || height <= 1) {
             return;
         }

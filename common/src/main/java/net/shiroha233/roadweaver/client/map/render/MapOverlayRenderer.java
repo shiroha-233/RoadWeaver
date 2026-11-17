@@ -1,12 +1,12 @@
 package net.shiroha233.roadweaver.client.map.render;
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.core.BlockPos;
-import net.minecraft.resources.ResourceLocation;
-import net.shiroha233.roadweaver.client.map.view.MapInputHandler;
+import net.minecraft.resources.Identifier;
 import net.shiroha233.roadweaver.client.map.MapTheme;
 import net.shiroha233.roadweaver.client.map.MapView;
+import net.shiroha233.roadweaver.client.map.view.MapInputHandler;
 import net.shiroha233.roadweaver.map.data.MapSnapshot;
 
 /**
@@ -15,7 +15,7 @@ import net.shiroha233.roadweaver.map.data.MapSnapshot;
 public final class MapOverlayRenderer {
     private MapOverlayRenderer() {}
 
-    public static void renderManualModePreview(GuiGraphics g,
+    public static void renderManualModePreview(GuiGraphicsExtractor g,
                                                MapSnapshot snapshot,
                                                MapView view,
                                                MapInputHandler inputHandler,
@@ -55,7 +55,7 @@ public final class MapOverlayRenderer {
                 left, top, right, bottom);
     }
 
-    public static void renderPlayer(GuiGraphics g,
+    public static void renderPlayer(GuiGraphicsExtractor g,
                                     Minecraft mc,
                                     MapInputHandler inputHandler,
                                     MapView view,
@@ -73,7 +73,7 @@ public final class MapOverlayRenderer {
         int sy = view.toScreenY((int) Math.round(wz), 0, 0, contentH);
         if (!inputHandler.insideMap(sx, sy)) return;
 
-        ResourceLocation skinTexture = mc.player.getSkin().texture();
+        Identifier skinTexture = mc.player.getSkin().body().texturePath();
         float yaw = mc.player.getYRot();
         MapRenderers.drawPlayerAvatar(g, skinTexture, sx, sy, yaw,
                 MapTheme.PLAYER_AVATAR_SIZE,

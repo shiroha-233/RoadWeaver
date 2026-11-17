@@ -59,7 +59,7 @@ final class SignTextFileIo {
     /** 缓存未命中时返回 {@code null} 并异步加载，调用方应保持区块为待处理状态。 */
     static List<SignTextFileStorage.PendingSignText> poll(ServerLevel level, int chunkX, int chunkZ, int limit) {
         if (limit <= 0) return List.of();
-        long chunkKey = ChunkPos.asLong(chunkX, chunkZ);
+        long chunkKey = ChunkPos.pack(chunkX, chunkZ);
         synchronized (LOCK) {
             List<SignTextFileStorage.PendingSignText> cached = CACHE.get(chunkKey);
             if (cached != null) {
@@ -83,7 +83,7 @@ final class SignTextFileIo {
     static void reportDone(ServerLevel level, int chunkX, int chunkZ, List<Long> doneIds) {
         if (doneIds == null || doneIds.isEmpty()) return;
         List<Long> ids = List.copyOf(doneIds);
-        long chunkKey = ChunkPos.asLong(chunkX, chunkZ);
+        long chunkKey = ChunkPos.pack(chunkX, chunkZ);
         long epoch = EPOCH.get();
         submit(() -> {
             try {
@@ -107,7 +107,7 @@ final class SignTextFileIo {
      * <p>失败不重排队：该行已从内存队列中丢弃，没有可重试的副本，只能记日志。
      */
     static void upsert(ServerLevel level, SignTextFileStorage.PendingSignWrite write) {
-        long chunkKey = ChunkPos.asLong(write.pos().getX() >> 4, write.pos().getZ() >> 4);
+        long chunkKey = ChunkPos.pack(write.pos().getX() >> 4, write.pos().getZ() >> 4);
         long epoch = EPOCH.get();
         submit(() -> {
             try {
@@ -163,7 +163,7 @@ final class SignTextFileIo {
 
     private static void requeueIfLive(long epoch, ServerLevel level, long chunkKey) {
         if (epoch != EPOCH.get()) return;
-        SignTextService.onChunkReady(level, new ChunkPos(chunkKey));
+        SignTextService.onChunkReady(level, ChunkPos.unpack(chunkKey));
     }
 
     static void clearMemory() {

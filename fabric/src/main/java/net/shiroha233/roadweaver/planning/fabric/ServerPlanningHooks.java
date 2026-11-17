@@ -4,7 +4,7 @@ package net.shiroha233.roadweaver.planning.fabric;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerChunkEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
-import net.fabricmc.fabric.api.event.lifecycle.v1.ServerWorldEvents;
+import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLevelEvents;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.level.Level;
@@ -54,13 +54,13 @@ public final class ServerPlanningHooks {
             }
         });
 
-        ServerChunkEvents.CHUNK_LOAD.register((level, chunk) -> SignTextService.onChunkReady(level, chunk.getPos()));
+        ServerChunkEvents.CHUNK_LOAD.register((level, chunk, newChunk) -> SignTextService.onChunkReady(level, chunk.getPos()));
 
         ServerTickEvents.END_SERVER_TICK.register(server -> {
             if ((tick++ % 20) == 0) {
                 for (ServerPlayer p : server.getPlayerList().getPlayers()) {
-                    if (Level.OVERWORLD.equals(p.serverLevel().dimension())) {
-                        SignTextService.onChunkReady(p.serverLevel(), p.chunkPosition());
+                    if (Level.OVERWORLD.equals(p.level().dimension())) {
+                        SignTextService.onChunkReady(p.level(), p.chunkPosition());
                         RoadPlanningService.planAroundPlayer(p);
                         IdleRoadGenerationService.tickPlayer(p);
                     }
@@ -83,6 +83,6 @@ public final class ServerPlanningHooks {
             SignTextService.clearPending();
         });
 
-        ServerWorldEvents.UNLOAD.register((server, level) -> CacheManager.onDimensionUnload(level));
+        ServerLevelEvents.UNLOAD.register((server, level) -> CacheManager.onDimensionUnload(level));
     }
 }

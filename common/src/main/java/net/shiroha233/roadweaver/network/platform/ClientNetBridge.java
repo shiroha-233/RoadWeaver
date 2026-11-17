@@ -1,7 +1,7 @@
 package net.shiroha233.roadweaver.network.platform;
 
 import dev.architectury.injectables.annotations.ExpectPlatform;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.shiroha233.roadweaver.core.model.MapLoadPhase;
 
 /**
@@ -12,7 +12,7 @@ public final class ClientNetBridge {
 
     @ExpectPlatform
     public static void requestSnapshot(int requestSeq,
-                                       ResourceLocation dimensionId,
+                                       Identifier dimensionId,
                                        MapLoadPhase phase,
                                        int responseIndex,
                                        int minX,
@@ -33,12 +33,12 @@ public final class ClientNetBridge {
     }
 
     @ExpectPlatform
-    public static void requestSearch(int requestSeq, ResourceLocation dimensionId, String query) {
+    public static void requestSearch(int requestSeq, Identifier dimensionId, String query) {
         throw new AssertionError();
     }
 
     @ExpectPlatform
-    public static void requestRawPathDebug(int requestSeq, ResourceLocation dimensionId) {
+    public static void requestRawPathDebug(int requestSeq, Identifier dimensionId) {
         throw new AssertionError();
     }
 }

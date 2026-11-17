@@ -1,6 +1,6 @@
 package net.shiroha233.roadweaver.map.tile.core;
 
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerPlayer;
 import net.shiroha233.roadweaver.config.ConfigService;
 import net.shiroha233.roadweaver.config.ModConfig;
@@ -16,7 +16,7 @@ public final class MapTileAoiLocator {
         if (player == null) {
             throw new IllegalArgumentException("player must not be null");
         }
-        ResourceLocation dimensionId = player.serverLevel().dimension().location();
+        Identifier dimensionId = player.level().dimension().identifier();
         int radiusBlocks = dynamicPlanningRadiusBlocks();
         return new MapTileAoi(
                 dimensionId,

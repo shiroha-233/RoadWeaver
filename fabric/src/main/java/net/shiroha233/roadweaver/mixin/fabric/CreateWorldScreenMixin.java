@@ -28,13 +28,13 @@ public abstract class CreateWorldScreenMixin extends GridLayoutTab {
                 Component.translatable("gui.roadweaver.config_button"),
                 button -> {
                     Minecraft mc = Minecraft.getInstance();
-                    if (mc != null && mc.screen instanceof CreateWorldScreen screen) {
-                        mc.setScreen(ConfigScreenFactoryImpl.createConfigScreen((Screen) screen));
+                    if (mc != null && mc.gui.screen() instanceof CreateWorldScreen screen) {
+                        mc.gui.setScreen(ConfigScreenFactoryImpl.createConfigScreen((Screen) screen));
                     }
                 })
                 .width(210)
                 .build();
-        int row = net.minecraft.SharedConstants.getCurrentVersion().isStable() ? 4 : 5;
+        int row = net.minecraft.SharedConstants.getCurrentVersion().stable() ? 4 : 5;
         this.layout.addChild(configButton, row, 0, this.layout.newCellSettings().alignHorizontallyCenter());
     }
 }

@@ -43,8 +43,8 @@ public final class ClientMapAccessGuard {
             listener.run();
         }
         Minecraft client = Minecraft.getInstance();
-        if (client != null && client.screen instanceof RevocableMapScreen screen) {
-            client.setScreen(null);
+        if (client != null && client.gui.screen() instanceof RevocableMapScreen screen) {
+            client.gui.setScreen(null);
             screen.onMapAccessRevoked();
         }
     }
@@ -56,7 +56,7 @@ public final class ClientMapAccessGuard {
 
     public static void notifyDenied(Minecraft client) {
         if (client != null && client.player != null) {
-            client.player.displayClientMessage(Component.translatable("gui.roadweaver.map.open.denied"), true);
+            client.player.sendOverlayMessage(Component.translatable("gui.roadweaver.map.open.denied"));
         }
     }
 }

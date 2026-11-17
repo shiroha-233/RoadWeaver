@@ -5,9 +5,9 @@ import com.google.gson.GsonBuilder;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.shiroha233.roadweaver.core.model.ConnectionStatus;
+import net.shiroha233.roadweaver.core.model.PlannedPathKey;
 import net.shiroha233.roadweaver.core.model.StructureConnection;
 import net.shiroha233.roadweaver.core.model.StructureInfo;
-import net.shiroha233.roadweaver.core.model.PlannedPathKey;
 import net.shiroha233.roadweaver.core.model.StructureLocationData;
 import net.shiroha233.roadweaver.util.FileStorageIO;
 import net.shiroha233.roadweaver.util.FileStoragePathResolver;
@@ -366,7 +366,7 @@ public final class StructureFileStorage {
 
     public static void flush(ServerLevel level) {
         if (level == null) return;
-        Entry entry = ENTRIES.get(FileStoragePathResolver.dimensionKey(level.dimension().location()));
+        Entry entry = ENTRIES.get(FileStoragePathResolver.dimensionKey(level.dimension().identifier()));
         if (entry != null) flushEntry(entry);
     }
 
@@ -440,7 +440,7 @@ public final class StructureFileStorage {
 
 
     private static Entry entry(ServerLevel level) {
-        String key = FileStoragePathResolver.dimensionKey(level.dimension().location());
+        String key = FileStoragePathResolver.dimensionKey(level.dimension().identifier());
         Path path = FileStoragePathResolver.categoryRoot(level, CATEGORY).resolve(STATE_FILE);
         return ENTRIES.compute(key, (k, existing) -> {
             if (existing != null && existing.path.equals(path)) return existing;

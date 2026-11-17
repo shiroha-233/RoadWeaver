@@ -34,7 +34,7 @@ public final class StructureIndexService {
         if (cfg == null || !cfg.structurePredictionEnabled()) {
             return List.of();
         }
-        BlockPos spawn = level.getSharedSpawnPos();
+        BlockPos spawn = level.getRespawnData().pos();
         int radiusChunks = Math.max(1, cfg.predictRadiusChunks());
         int minBlockX = (spawn.getX() >> 4) - radiusChunks;
         int maxBlockX = (spawn.getX() >> 4) + radiusChunks;

@@ -220,7 +220,7 @@ final class OpenCLAccurateProgram implements AutoCloseable {
                                                AccurateSamplingProgress progress) {
         LinkedHashMap<Long, GridIndexList> indicesByChunk = new LinkedHashMap<>();
         for (int index = 0; index < request.sampleCount(); index++) {
-            long chunkKey = ChunkPos.asLong(request.blockX(index) >> 4, request.blockZ(index) >> 4);
+            long chunkKey = ChunkPos.pack(request.blockX(index) >> 4, request.blockZ(index) >> 4);
             indicesByChunk.computeIfAbsent(chunkKey, ignored -> new GridIndexList()).add(index);
         }
         List<Long> chunkKeys = new ArrayList<>(indicesByChunk.keySet());
@@ -760,7 +760,7 @@ final class OpenCLAccurateProgram implements AutoCloseable {
 
     private record ColumnRequest(long key, int blockX, int blockZ) {
         private long chunkKey() {
-            return ChunkPos.asLong(blockX >> 4, blockZ >> 4);
+            return ChunkPos.pack(blockX >> 4, blockZ >> 4);
         }
     }
 

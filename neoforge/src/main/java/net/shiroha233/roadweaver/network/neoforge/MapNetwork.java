@@ -4,13 +4,15 @@ package net.shiroha233.roadweaver.network.neoforge;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.server.permissions.Permissions;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.chunk.status.ChunkStatus;
 import net.minecraft.world.level.levelgen.Heightmap;
 import net.neoforged.bus.api.IEventBus;
+import net.neoforged.neoforge.client.network.ClientPacketDistributor;
 import net.neoforged.neoforge.network.PacketDistributor;
 import net.neoforged.neoforge.network.event.RegisterPayloadHandlersEvent;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
@@ -74,18 +76,18 @@ public final class MapNetwork {
 
             CompletableFuture
                     .supplyAsync(() -> {
-                        ServerLevel level = player.serverLevel();
+                        ServerLevel level = player.level();
                         MapSnapshot snapshot = buildSnapshot(level, payload.phase(), payload.minX(), payload.minZ(), payload.maxX(), payload.maxZ());
                         return new MapNetworkPayloads.MapSnapshotPayload(
                                 payload.requestSeq(),
-                                level.dimension().location(),
+                                level.dimension().identifier(),
                                 payload.phase(),
                                 payload.responseIndex(),
                                 snapshot,
                                 AutomaticPlanningSamplingActivities.snapshot(level)
                         );
                     }, ThreadPoolManager.roleExecutor(ThreadPoolManager.TaskRole.MAP))
-                    .thenAccept(reply -> player.serverLevel().getServer().execute(() -> {
+                    .thenAccept(reply -> player.level().getServer().execute(() -> {
                         if (!player.isRemoved()) PacketDistributor.sendToPlayer(player, reply);
                     }));
         });
@@ -97,7 +99,7 @@ public final class MapNetwork {
             MapAutomaticPlanningSamplingCache.replace(
                     payload.dimension(),
                     payload.automaticPlanningSamplingBounds());
-            if (minecraft.screen instanceof RoadMapScreen screen) {
+            if (minecraft.gui.screen() instanceof RoadMapScreen screen) {
                 screen.acceptSnapshotPart(payload.requestSeq(), payload.dimension(), payload.phase(), payload.responseIndex(), payload.snapshot());
             }
         });
@@ -106,7 +108,7 @@ public final class MapNetwork {
     private static void handlePatch(MapNetworkPayloads.MapPatchPayload payload, IPayloadContext context) {
         context.enqueueWork(() -> {
             Minecraft minecraft = Minecraft.getInstance();
-            if (minecraft.screen instanceof RoadMapScreen screen) {
+            if (minecraft.gui.screen() instanceof RoadMapScreen screen) {
                 screen.acceptPatch(payload.dimension(), payload.patch());
             } else {
                 MapSnapshotCache.applyPatch(payload.dimension(), payload.patch());
@@ -117,20 +119,20 @@ public final class MapNetwork {
     private static void handleTeleportRequest(MapNetworkPayloads.MapTeleportPayload payload, IPayloadContext context) {
         context.enqueueWork(() -> {
             if (!(context.player() instanceof ServerPlayer player)) return;
-            if (!player.isCreative() && !player.hasPermissions(2)) {
+            if (!player.isCreative() && !player.permissions().hasPermission(Permissions.COMMANDS_GAMEMASTER)) {
                 PacketDistributor.sendToPlayer(player, new MapNetworkPayloads.MapTeleportAckPayload(false, 0, 0, 0));
                 return;
             }
 
-            ServerLevel level = player.serverLevel();
+            ServerLevel level = player.level();
             int x = payload.x();
             int z = payload.z();
             level.getChunkSource().getChunkFuture(x >> 4, z >> 4, ChunkStatus.FULL, true)
                     .thenAccept(ignored -> level.getServer().execute(() -> {
                         if (player.isRemoved() || player.hasDisconnected()) return;
                         int y = level.getHeight(Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, x, z);
-                        y = y <= level.getMinBuildHeight() ? level.getSeaLevel() + 1 : y + 1;
-                        player.teleportTo(level, x + 0.5, y, z + 0.5, player.getYRot(), player.getXRot());
+                        y = y <= level.getMinY() ? level.getSeaLevel() + 1 : y + 1;
+                        player.teleportTo(level, x + 0.5, y, z + 0.5, java.util.Set.of(), player.getYRot(), player.getXRot(), false);
                         PacketDistributor.sendToPlayer(player, new MapNetworkPayloads.MapTeleportAckPayload(true, x, y, z));
                     }));
         });
@@ -141,10 +143,10 @@ public final class MapNetwork {
             var player = Minecraft.getInstance().player;
             if (player == null) return;
             if (payload.success()) {
-                player.displayClientMessage(
-                        Component.translatable("gui.roadweaver.map.teleport.success_pos", payload.x(), payload.y(), payload.z()), true);
+                player.sendOverlayMessage(
+                        Component.translatable("gui.roadweaver.map.teleport.success_pos", payload.x(), payload.y(), payload.z()));
             } else {
-                player.displayClientMessage(Component.translatable("gui.roadweaver.map.teleport.denied"), true);
+                player.sendOverlayMessage(Component.translatable("gui.roadweaver.map.teleport.denied"));
             }
         });
     }
@@ -169,8 +171,8 @@ public final class MapNetwork {
                         payload.requestSeq(), payload.dimension(), false, java.util.List.of()));
                 return;
             }
-            ServerLevel level = player.serverLevel();
-            if (!level.dimension().location().equals(payload.dimension())
+            ServerLevel level = player.level();
+            if (!level.dimension().identifier().equals(payload.dimension())
                     || !MapStructureSearchService.tryBeginRequest(player.getUUID())) {
                 PacketDistributor.sendToPlayer(player, new MapNetworkPayloads.MapSearchResponsePayload(
                         payload.requestSeq(), payload.dimension(), false, java.util.List.of()));
@@ -200,7 +202,7 @@ public final class MapNetwork {
     private static void handleSearchResponse(MapNetworkPayloads.MapSearchResponsePayload payload, IPayloadContext context) {
         context.enqueueWork(() -> {
             Minecraft minecraft = Minecraft.getInstance();
-            if (minecraft.screen instanceof RoadMapScreen screen) {
+            if (minecraft.gui.screen() instanceof RoadMapScreen screen) {
                 screen.acceptSearchResults(payload.requestSeq(), payload.dimension(), payload.success(), payload.results());
             }
         });
@@ -209,19 +211,19 @@ public final class MapNetwork {
     private static void handleRawPathRequest(RawPathDebugPayloads.Request payload, IPayloadContext context) {
         context.enqueueWork(() -> {
             if (!(context.player() instanceof ServerPlayer player)) return;
-            ServerLevel level = player.serverLevel();
-            if (!player.hasPermissions(2)) {
-                player.displayClientMessage(Component.translatable("debug.roadweaver.raw_paths.denied"), true);
+            ServerLevel level = player.level();
+            if (!player.permissions().hasPermission(Permissions.COMMANDS_GAMEMASTER)) {
+                player.sendOverlayMessage(Component.translatable("debug.roadweaver.raw_paths.denied"));
                 return;
             }
-            if (!level.dimension().location().equals(payload.dimension())) return;
+            if (!level.dimension().identifier().equals(payload.dimension())) return;
             int x = player.getBlockX(), z = player.getBlockZ();
             CompletableFuture.supplyAsync(() -> new RawPathDebugPayloads.Response(
-                            payload.sequence(), level.dimension().location(), RawPathDebugService.enabled(),
+                            payload.sequence(), level.dimension().identifier(), RawPathDebugService.enabled(),
                             RawPathDebugService.nearby(level, x, z)),
                     ThreadPoolManager.roleExecutor(ThreadPoolManager.TaskRole.MAP))
                     .thenAccept(reply -> level.getServer().execute(() -> {
-                        if (!player.isRemoved() && player.serverLevel() == level) PacketDistributor.sendToPlayer(player, reply);
+                        if (!player.isRemoved() && player.level() == level) PacketDistributor.sendToPlayer(player, reply);
                     }));
         });
     }
@@ -233,12 +235,12 @@ public final class MapNetwork {
     private static void handleManualConnect(MapNetworkPayloads.MapManualConnectPayload payload, IPayloadContext context) {
         context.enqueueWork(() -> {
             if (!(context.player() instanceof ServerPlayer player)) return;
-            if (!player.hasPermissions(2)) {
-                player.displayClientMessage(Component.translatable("gui.roadweaver.map.manual_connect.denied"), true);
+            if (!player.permissions().hasPermission(Permissions.COMMANDS_GAMEMASTER)) {
+                player.sendOverlayMessage(Component.translatable("gui.roadweaver.map.manual_connect.denied"));
                 return;
             }
-            if (!Level.OVERWORLD.equals(player.serverLevel().dimension())) return;
-            RoadNetworkApi.ensureConnection(player.serverLevel(), payload.from(), payload.to());
+            if (!Level.OVERWORLD.equals(player.level().dimension())) return;
+            RoadNetworkApi.ensureConnection(player.level(), payload.from(), payload.to());
         });
     }
 
@@ -256,41 +258,41 @@ public final class MapNetwork {
     }
 
     public static void requestSnapshot(int requestSeq,
-                                       ResourceLocation dimensionId,
+                                       Identifier dimensionId,
                                        MapLoadPhase phase,
                                        int responseIndex,
                                        int minX,
                                        int minZ,
                                        int maxX,
                                        int maxZ) {
-        PacketDistributor.sendToServer(new MapNetworkPayloads.MapRequestRectPayload(
+        ClientPacketDistributor.sendToServer(new MapNetworkPayloads.MapRequestRectPayload(
                 requestSeq, dimensionId, phase, responseIndex, minX, minZ, maxX, maxZ));
     }
 
     public static void requestTeleport(int x, int y, int z) {
-        PacketDistributor.sendToServer(new MapNetworkPayloads.MapTeleportPayload(x, y, z));
+        ClientPacketDistributor.sendToServer(new MapNetworkPayloads.MapTeleportPayload(x, y, z));
     }
 
     public static void requestManualConnect(int ax, int az, int bx, int bz) {
-        PacketDistributor.sendToServer(new MapNetworkPayloads.MapManualConnectPayload(
+        ClientPacketDistributor.sendToServer(new MapNetworkPayloads.MapManualConnectPayload(
                 new BlockPos(ax, 0, az), new BlockPos(bx, 0, bz)));
     }
 
-    public static void requestSearch(int requestSeq, ResourceLocation dimensionId, String query) {
-        PacketDistributor.sendToServer(new MapNetworkPayloads.MapSearchRequestPayload(requestSeq, dimensionId, query));
+    public static void requestSearch(int requestSeq, Identifier dimensionId, String query) {
+        ClientPacketDistributor.sendToServer(new MapNetworkPayloads.MapSearchRequestPayload(requestSeq, dimensionId, query));
     }
 
-    public static void requestRawPathDebug(int requestSeq, ResourceLocation dimensionId) {
-        PacketDistributor.sendToServer(new RawPathDebugPayloads.Request(requestSeq, dimensionId));
+    public static void requestRawPathDebug(int requestSeq, Identifier dimensionId) {
+        ClientPacketDistributor.sendToServer(new RawPathDebugPayloads.Request(requestSeq, dimensionId));
     }
 
-    public static void broadcastPatch(ServerPlayer player, ResourceLocation dimensionId, MapSnapshotPatch patch) {
+    public static void broadcastPatch(ServerPlayer player, Identifier dimensionId, MapSnapshotPatch patch) {
         if (player == null || dimensionId == null || patch == null || patch.isEmpty()) return;
         PacketDistributor.sendToPlayer(player, new MapNetworkPayloads.MapPatchPayload(dimensionId, patch));
     }
 
     public static void broadcastAutomaticPlanningSampling(ServerPlayer player,
-                                                          ResourceLocation dimensionId,
+                                                          Identifier dimensionId,
                                                           List<AutomaticPlanningSamplingBounds> bounds) {
         if (player == null || dimensionId == null) return;
         PacketDistributor.sendToPlayer(player,

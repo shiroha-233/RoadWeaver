@@ -1,7 +1,7 @@
 package net.shiroha233.roadweaver.client.map.render;
 
 import net.minecraft.client.gui.Font;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.network.chat.Component;
 import net.shiroha233.roadweaver.client.map.MapTheme;
 import net.shiroha233.roadweaver.client.map.MapView;
@@ -18,7 +18,7 @@ public final class MapSamplingOverlayRenderer {
 
     private MapSamplingOverlayRenderer() {}
 
-    public static void render(GuiGraphics graphics,
+    public static void render(GuiGraphicsExtractor graphics,
                               Font font,
                               MapView view,
                               MapSamplingSnapshot snapshot,
@@ -48,7 +48,7 @@ public final class MapSamplingOverlayRenderer {
                 bottom);
     }
 
-    static void renderBounds(GuiGraphics graphics,
+    static void renderBounds(GuiGraphicsExtractor graphics,
                              Font font,
                              MapView view,
                              int minBlockX,
@@ -82,7 +82,7 @@ public final class MapSamplingOverlayRenderer {
         drawLabel(graphics, font, label, x0, y0, x1, y1, left, top, right, bottom);
     }
 
-    private static void drawFrame(GuiGraphics graphics, int x0, int y0, int x1, int y1) {
+    private static void drawFrame(GuiGraphicsExtractor graphics, int x0, int y0, int x1, int y1) {
         int horizontalEnd = Math.max(x0 + 1, x1 + 1);
         int verticalEnd = Math.max(y0 + 1, y1 + 1);
         graphics.fill(x0, y0, horizontalEnd, Math.min(verticalEnd, y0 + FRAME_THICKNESS),
@@ -95,7 +95,7 @@ public final class MapSamplingOverlayRenderer {
                 MapTheme.COLOR_MAP_SAMPLING_FRAME);
     }
 
-    private static void drawLabel(GuiGraphics graphics,
+    private static void drawLabel(GuiGraphicsExtractor graphics,
                                   Font font,
                                   Component label,
                                   int x0,
@@ -114,7 +114,7 @@ public final class MapSamplingOverlayRenderer {
         int boxX = clamp(centerX - boxWidth / 2, left, Math.max(left, right - boxWidth));
         int boxY = clamp(centerY - boxHeight / 2, top, Math.max(top, bottom - boxHeight));
         graphics.fill(boxX, boxY, boxX + boxWidth, boxY + boxHeight, MapTheme.MAP_SAMPLING_LABEL_BG);
-        graphics.drawString(font, label,
+        graphics.text(font, label,
                 boxX + LABEL_PADDING_X,
                 boxY + LABEL_PADDING_Y,
                 MapTheme.COLOR_MAP_SAMPLING_TEXT,

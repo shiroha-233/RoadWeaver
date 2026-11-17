@@ -75,10 +75,10 @@ public final class ServerPlanningHooks {
         var server = event.getServer();
         if ((tick++ % 20) == 0) {
             for (ServerPlayer player : server.getPlayerList().getPlayers()) {
-                if (!Level.OVERWORLD.equals(player.serverLevel().dimension())) {
+                if (!Level.OVERWORLD.equals(player.level().dimension())) {
                     continue;
                 }
-                SignTextService.onChunkReady(player.serverLevel(), player.chunkPosition());
+                SignTextService.onChunkReady(player.level(), player.chunkPosition());
                 RoadPlanningService.planAroundPlayer(player);
                 IdleRoadGenerationService.tickPlayer(player);
             }

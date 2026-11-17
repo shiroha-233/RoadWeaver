@@ -8,7 +8,7 @@ import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.StructureManager;
 import net.minecraft.world.level.levelgen.Beardifier;
-import net.minecraft.world.level.levelgen.DensityFunction;
+import net.minecraft.world.level.levelgen.densityfunction.SamplerContext;
 import net.shiroha233.roadweaver.beardifier.RoadBeardifierAccess;
 import net.shiroha233.roadweaver.config.ConfigService;
 import net.shiroha233.roadweaver.config.ModConfig;
@@ -22,6 +22,9 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
+/**
+ * 让 Beardifier 注入道路路基密度贡献。
+ */
 @Mixin(Beardifier.class)
 public class BeardifierMixin implements RoadBeardifierAccess {
 
@@ -59,15 +62,15 @@ public class BeardifierMixin implements RoadBeardifierAccess {
         }
     }
 
-    @Inject(method = "compute", at = @At("RETURN"), cancellable = true)
-    private void roadweaver$addRoadDensity(DensityFunction.FunctionContext ctx,
-                                           CallbackInfoReturnable<Double> cir) {
+    @Inject(method = "sampleValue", at = @At("RETURN"), cancellable = true)
+    private void roadweaver$addRoadDensity(SamplerContext context, int x, int y, int z,
+                                           CallbackInfoReturnable<Float> cir) {
         RoadChunkPlan plan = roadweaver$roadChunkPlan;
         if (plan == null || plan.densityStamp().isEmpty()) return;
 
-        double road = plan.densityStamp().density(ctx.blockX(), ctx.blockY(), ctx.blockZ());
+        double road = plan.densityStamp().density(x, y, z);
         if (road != 0.0) {
-            cir.setReturnValue(cir.getReturnValue() + road);
+            cir.setReturnValue((float) (cir.getReturnValue() + road));
         }
     }
 

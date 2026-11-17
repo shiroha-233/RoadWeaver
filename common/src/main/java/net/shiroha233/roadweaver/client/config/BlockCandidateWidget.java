@@ -1,21 +1,23 @@
 package net.shiroha233.roadweaver.client.config;
 
+import com.mojang.blaze3d.platform.InputConstants;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.client.gui.components.Renderable;
 import net.minecraft.client.gui.components.events.AbstractContainerEventHandler;
 import net.minecraft.client.gui.components.events.GuiEventListener;
 import net.minecraft.client.gui.narration.NarratableEntry;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
+import net.minecraft.client.input.MouseButtonEvent;
 import net.minecraft.client.resources.sounds.SimpleSoundInstance;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.Identifier;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.flag.FeatureFlagSet;
 import net.minecraft.world.item.BlockItem;
@@ -105,8 +107,8 @@ public class BlockCandidateWidget extends AbstractContainerEventHandler implemen
     }
 
     private void addBlocksFromTab(Set<Block> out, String tabId) {
-        ResourceKey<CreativeModeTab> key = ResourceKey.create(Registries.CREATIVE_MODE_TAB, ResourceLocation.parse(tabId));
-        CreativeModeTab tab = BuiltInRegistries.CREATIVE_MODE_TAB.get(key);
+        ResourceKey<CreativeModeTab> key = ResourceKey.create(Registries.CREATIVE_MODE_TAB, Identifier.parse(tabId));
+        CreativeModeTab tab = BuiltInRegistries.CREATIVE_MODE_TAB.getValue(key);
         if (tab == null) return;
         for (ItemStack stack : tab.getDisplayItems()) {
             if (stack.getItem() instanceof BlockItem blockItem) {
@@ -125,7 +127,7 @@ public class BlockCandidateWidget extends AbstractContainerEventHandler implemen
         filteredBlocks.clear();
         String q = searchBox.getValue().trim().toLowerCase();
         for (Block b : allBlocks) {
-            ResourceLocation id = BuiltInRegistries.BLOCK.getKey(b);
+            Identifier id = BuiltInRegistries.BLOCK.getKey(b);
             if (id == null) continue;
             if (q.isEmpty() || id.toString().toLowerCase().contains(q)) {
                 filteredBlocks.add(b);
@@ -161,9 +163,9 @@ public class BlockCandidateWidget extends AbstractContainerEventHandler implemen
     }
 
     @Override
-    public void render(GuiGraphics g, int mouseX, int mouseY, float partialTick) {
+    public void extractRenderState(GuiGraphicsExtractor g, int mouseX, int mouseY, float partialTick) {
         RoadWeaverUi.drawPanel(g, x - 4, y - 4, width + 8, height + 8);
-        this.searchBox.render(g, mouseX, mouseY, partialTick);
+        this.searchBox.extractRenderState(g, mouseX, mouseY, partialTick);
 
         int startY = y + 20;
         int maxOffset = getMaxOffset();
@@ -188,7 +190,7 @@ public class BlockCandidateWidget extends AbstractContainerEventHandler implemen
             
             if (mouseX >= bx && mouseX < bx + SLOT_SIZE && mouseY >= by && mouseY < by + SLOT_SIZE) {
                 g.fill(bx, by, bx + SLOT_SIZE, by + SLOT_SIZE, 0x80FFFFFF);
-                g.renderOutline(bx, by, SLOT_SIZE, SLOT_SIZE, 0xFFC8D2DE);
+                g.outline(bx, by, SLOT_SIZE, SLOT_SIZE, 0xFFC8D2DE);
                 SafeGuiItemRenderer.renderTooltipSafe(g, Minecraft.getInstance().font, stack, mouseX, mouseY);
             }
         }
@@ -204,10 +206,13 @@ public class BlockCandidateWidget extends AbstractContainerEventHandler implemen
     }
 
     @Override
-    public boolean mouseClicked(double mouseX, double mouseY, int button) {
-        if (this.searchBox.mouseClicked(mouseX, mouseY, button)) return true;
+    public boolean mouseClicked(MouseButtonEvent event, boolean doubleClick) {
+        double mouseX = event.x();
+        double mouseY = event.y();
+        int button = event.button();
+        if (this.searchBox.mouseClicked(event, doubleClick)) return true;
 
-        if (button == 0) {
+        if (button == InputConstants.MOUSE_BUTTON_LEFT) {
             int maxOffset = getMaxOffset();
             if (maxOffset > 0) {
                 int barX = x + width - SCROLLBAR_WIDTH;
@@ -238,7 +243,7 @@ public class BlockCandidateWidget extends AbstractContainerEventHandler implemen
             int r = (int)(mouseY - startY) / SLOT_SIZE;
             int index = (scrollOffset + r) * visibleCols + c;
             if (index >= 0 && index < filteredBlocks.size()) {
-                if (button == 0) {
+                if (button == InputConstants.MOUSE_BUTTON_LEFT) {
                     Minecraft.getInstance().getSoundManager().play(SimpleSoundInstance.forUI(SoundEvents.UI_BUTTON_CLICK, 1.0F));
                     onBlockSelected.accept(filteredBlocks.get(index));
                     return true;
@@ -249,8 +254,11 @@ public class BlockCandidateWidget extends AbstractContainerEventHandler implemen
     }
 
     @Override
-    public boolean mouseDragged(double mouseX, double mouseY, int button, double dragX, double dragY) {
-        if (draggingScrollbar && button == 0) {
+    public boolean mouseDragged(MouseButtonEvent event, double dragX, double dragY) {
+        double mouseX = event.x();
+        double mouseY = event.y();
+        int button = event.button();
+        if (draggingScrollbar && button == InputConstants.MOUSE_BUTTON_LEFT) {
             int maxOffset = getMaxOffset();
             if (maxOffset <= 0) return true;
 
@@ -264,16 +272,16 @@ public class BlockCandidateWidget extends AbstractContainerEventHandler implemen
             scrollOffset = Math.max(0, Math.min(target, maxOffset));
             return true;
         }
-        return super.mouseDragged(mouseX, mouseY, button, dragX, dragY);
+        return super.mouseDragged(event, dragX, dragY);
     }
 
     @Override
-    public boolean mouseReleased(double mouseX, double mouseY, int button) {
-        if (button == 0 && draggingScrollbar) {
+    public boolean mouseReleased(MouseButtonEvent event) {
+        if (event.button() == InputConstants.MOUSE_BUTTON_LEFT && draggingScrollbar) {
             draggingScrollbar = false;
             return true;
         }
-        return super.mouseReleased(mouseX, mouseY, button);
+        return super.mouseReleased(event);
     }
 
     @Override

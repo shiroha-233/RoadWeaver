@@ -1,8 +1,8 @@
 package net.shiroha233.roadweaver.util;
 
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.server.level.ServerLevel;
 import java.nio.file.Path;
+import net.minecraft.resources.Identifier;
+import net.minecraft.server.level.ServerLevel;
 
 /**
  * 文件型持久化的统一路径解析。
@@ -17,10 +17,10 @@ public final class FileStoragePathResolver {
     }
 
     public static Path categoryRoot(ServerLevel level, String category) {
-        return root(level).resolve(category).resolve(dimensionKey(level.dimension().location()));
+        return root(level).resolve(category).resolve(dimensionKey(level.dimension().identifier()));
     }
 
-    public static String dimensionKey(ResourceLocation location) {
+    public static String dimensionKey(Identifier location) {
         if (location == null) return "unknown";
         return location.getNamespace() + "_" + location.getPath().replace('/', '_');
     }

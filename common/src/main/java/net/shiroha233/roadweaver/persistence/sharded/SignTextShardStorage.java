@@ -59,7 +59,7 @@ public final class SignTextShardStorage {
 
     public static List<PendingSignWrite> takeMemoryByChunk(ServerLevel level, int chunkX, int chunkZ, int limit) {
         if (!isOverworld(level) || limit <= 0) return List.of();
-        long chunkKey = ChunkPos.asLong(chunkX, chunkZ);
+        long chunkKey = ChunkPos.pack(chunkX, chunkZ);
         ConcurrentHashMap<Long, PendingSignWrite> chunkBucket = MEMORY_PENDING.get(chunkKey);
         if (chunkBucket == null || chunkBucket.isEmpty()) return List.of();
 
@@ -78,7 +78,7 @@ public final class SignTextShardStorage {
 
     public static void requeue(ServerLevel level, PendingSignWrite write) {
         if (!isOverworld(level) || write == null || write.pos() == null) return;
-        long chunkKey = ChunkPos.asLong(write.pos().getX() >> 4, write.pos().getZ() >> 4);
+        long chunkKey = ChunkPos.pack(write.pos().getX() >> 4, write.pos().getZ() >> 4);
         ConcurrentHashMap<Long, PendingSignWrite> chunkBucket =
                 MEMORY_PENDING.computeIfAbsent(chunkKey, k -> new ConcurrentHashMap<>());
         chunkBucket.putIfAbsent(write.pos().asLong(), write.withRetry());
@@ -86,7 +86,7 @@ public final class SignTextShardStorage {
 
     public static boolean hasMemoryPending(ServerLevel level, int chunkX, int chunkZ) {
         if (!isOverworld(level)) return false;
-        ConcurrentHashMap<Long, PendingSignWrite> chunkBucket = MEMORY_PENDING.get(ChunkPos.asLong(chunkX, chunkZ));
+        ConcurrentHashMap<Long, PendingSignWrite> chunkBucket = MEMORY_PENDING.get(ChunkPos.pack(chunkX, chunkZ));
         return chunkBucket != null && !chunkBucket.isEmpty();
     }
 
@@ -124,7 +124,7 @@ public final class SignTextShardStorage {
     }
 
     private static void putMemory(ServerLevel level, PendingSignWrite write) {
-        long chunkKey = ChunkPos.asLong(write.pos().getX() >> 4, write.pos().getZ() >> 4);
+        long chunkKey = ChunkPos.pack(write.pos().getX() >> 4, write.pos().getZ() >> 4);
         ConcurrentHashMap<Long, PendingSignWrite> chunkBucket =
                 MEMORY_PENDING.computeIfAbsent(chunkKey, k -> new ConcurrentHashMap<>());
         chunkBucket.put(write.pos().asLong(), write);

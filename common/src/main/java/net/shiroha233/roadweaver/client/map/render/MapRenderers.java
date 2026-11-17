@@ -1,10 +1,10 @@
 package net.shiroha233.roadweaver.client.map.render;
 
 import net.minecraft.client.gui.Font;
-import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.client.gui.components.PlayerFaceRenderer;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
+import net.minecraft.client.gui.components.PlayerFaceExtractor;
 import net.minecraft.core.BlockPos;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 
 import net.shiroha233.roadweaver.core.model.StructureConnection;
 
@@ -20,7 +20,7 @@ public final class MapRenderers {
 
     public interface SegmentInView { boolean test(int x1, int z1, int x2, int z2); }
 
-    public static void renderGrid(GuiGraphics g,
+    public static void renderGrid(GuiGraphicsExtractor g,
                                   Font font,
                                   int mapX, int mapY, int mapW, int mapH,
                                   int innerPad,
@@ -30,7 +30,7 @@ public final class MapRenderers {
                 viewMinX, viewMaxX, viewMinZ, viewMaxZ, colorGrid, gridTargetPx, colorText);
     }
 
-    public static void renderStructures(GuiGraphics g,
+    public static void renderStructures(GuiGraphicsExtractor g,
                                         Font font,
                                         List<BlockPos> points,
                                         Function<BlockPos, String> structureIdResolver,
@@ -50,7 +50,7 @@ public final class MapRenderers {
         }
     }
 
-    public static void renderConnections(GuiGraphics g,
+    public static void renderConnections(GuiGraphicsExtractor g,
                                          List<StructureConnection> connections,
                                          SegmentInView segmentInView,
                                          IntUnaryOperator toScreenX,
@@ -85,7 +85,7 @@ public final class MapRenderers {
         }
     }
 
-    public static void renderRoadPolylines(GuiGraphics g,
+    public static void renderRoadPolylines(GuiGraphicsExtractor g,
                                            List<List<BlockPos>> polylines,
                                            SegmentInView segmentInView,
                                            IntUnaryOperator toScreenX,
@@ -135,8 +135,8 @@ public final class MapRenderers {
         }
     }
 
-    public static void drawPlayerAvatar(GuiGraphics g,
-                                        ResourceLocation skinTexture,
+    public static void drawPlayerAvatar(GuiGraphicsExtractor g,
+                                        Identifier skinTexture,
                                         int sx,
                                         int sy,
                                         float yawDeg,
@@ -181,7 +181,7 @@ public final class MapRenderers {
         }
         g.fill(drawX - 2, drawY - 2, drawX + size + 2, drawY + size + 2, frameColor);
         g.fill(drawX - 1, drawY - 1, drawX + size + 1, drawY + size + 1, 0x66FFFFFF);
-        PlayerFaceRenderer.draw(g, skinTexture, drawX, drawY, size);
+        PlayerFaceExtractor.extractRenderState(g, skinTexture, drawX, drawY, size, true, false, -1);
     }
 
 }

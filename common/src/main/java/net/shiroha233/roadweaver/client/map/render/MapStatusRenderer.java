@@ -1,7 +1,7 @@
 package net.shiroha233.roadweaver.client.map.render;
 
 import net.minecraft.client.gui.Font;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.network.chat.Component;
 import net.shiroha233.roadweaver.core.model.MapLoadPhase;
 import net.shiroha233.roadweaver.client.map.MapLoadSession;
@@ -24,7 +24,7 @@ public final class MapStatusRenderer {
 
     private MapStatusRenderer() {}
 
-    public static void render(GuiGraphics graphics,
+    public static void render(GuiGraphicsExtractor graphics,
                               Font font,
                               int screenWidth,
                               int unobstructedRight,
@@ -116,7 +116,7 @@ public final class MapStatusRenderer {
         return Component.translatable("gui.roadweaver.map.loading.phase." + key);
     }
 
-    private static int renderCard(GuiGraphics graphics,
+    private static int renderCard(GuiGraphicsExtractor graphics,
                                   Font font,
                                   int x,
                                   int y,
@@ -134,7 +134,7 @@ public final class MapStatusRenderer {
         int textX = x + PADDING_X + ACCENT_WIDTH + ACCENT_GAP;
         int textY = y + PADDING_Y;
         for (StatusLine line : lines) {
-            graphics.drawString(font, line.text(), textX, textY, line.color(), false);
+            graphics.text(font, line.text(), textX, textY, line.color(), false);
             textY += LINE_STEP;
         }
         return height;
@@ -146,7 +146,7 @@ public final class MapStatusRenderer {
                         + mode.name().toLowerCase(Locale.ROOT));
     }
 
-    private static void renderSurface(GuiGraphics graphics, int x, int y, int width, int height) {
+    private static void renderSurface(GuiGraphicsExtractor graphics, int x, int y, int width, int height) {
         MapDockRenderer.fillRounded(graphics, x + 2, y + 3, width, height, 10, MapTheme.PANEL_SHADOW);
         MapDockRenderer.fillRounded(graphics, x, y, width, height, 10, MapTheme.PANEL_BG);
         MapDockRenderer.fillRounded(graphics, x + 1, y + 1, width - 2, height - 2, 9, MapTheme.PANEL_HIGHLIGHT);

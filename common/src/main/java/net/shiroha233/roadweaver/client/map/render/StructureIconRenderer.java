@@ -2,8 +2,8 @@ package net.shiroha233.roadweaver.client.map.render;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.gui.Font;
-import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
+import net.minecraft.resources.Identifier;
 
 import java.util.Locale;
 
@@ -11,14 +11,14 @@ import java.util.Locale;
  * 结构点图标的分类与扁平化绘制。
  */
 public final class StructureIconRenderer {
-    private static final ResourceLocation VILLAGER_TEXTURE = ResourceLocation.fromNamespaceAndPath("minecraft", "textures/entity/villager/villager.png");
+    private static final Identifier VILLAGER_TEXTURE = Identifier.fromNamespaceAndPath("minecraft", "textures/entity/villager/villager.png");
     private static final int BORDER_COLOR = 0xE0101214;
     private static final int UNKNOWN_BACKGROUND = 0xE0282C31;
     private static final int UNKNOWN_TEXT = 0xFFF4F1E8;
 
     private StructureIconRenderer() {}
 
-    public static void render(GuiGraphics graphics,
+    public static void render(GuiGraphicsExtractor graphics,
                               Font font,
                               String structureId,
                               int centerX,
@@ -41,7 +41,7 @@ public final class StructureIconRenderer {
         drawUnknown(graphics, font, centerX, drawX, drawY, iconSize);
     }
 
-    public static void renderOutline(GuiGraphics graphics,
+    public static void renderOutline(GuiGraphicsExtractor graphics,
                                      int centerX,
                                      int centerY,
                                      int size,
@@ -68,20 +68,16 @@ public final class StructureIconRenderer {
                 && structureId.toLowerCase(Locale.ROOT).contains("village");
     }
 
-    private static void drawVillagerFace(GuiGraphics graphics, int x, int y, int size) {
-        RenderSystem.enableBlend();
+    private static void drawVillagerFace(GuiGraphicsExtractor graphics, int x, int y, int size) {
         graphics.blit(VILLAGER_TEXTURE, x, y, size, size,
-                8.0F, 8.0F,
-                8, 10,
-                64, 64);
-        RenderSystem.disableBlend();
+                8.0F / 64.0F, 16.0F / 64.0F, 8.0F / 64.0F, 18.0F / 64.0F);
     }
 
-    private static void drawUnknown(GuiGraphics graphics, Font font, int centerX, int x, int y, int size) {
+    private static void drawUnknown(GuiGraphicsExtractor graphics, Font font, int centerX, int x, int y, int size) {
         graphics.fill(x, y, x + size, y + size, UNKNOWN_BACKGROUND);
         String text = "?";
         int textX = centerX - font.width(text) / 2;
         int textY = y + Math.max(0, (size - font.lineHeight) / 2);
-        graphics.drawString(font, text, textX, textY, UNKNOWN_TEXT, false);
+        graphics.text(font, text, textX, textY, UNKNOWN_TEXT, false);
     }
 }

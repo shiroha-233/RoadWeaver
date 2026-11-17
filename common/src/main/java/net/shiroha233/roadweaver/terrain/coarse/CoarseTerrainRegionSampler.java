@@ -58,7 +58,7 @@ public final class CoarseTerrainRegionSampler {
                 : progress;
         int safeStep = Math.max(RoadConstants.ASTAR_STEP_MIN, step);
         CoarseRegionBounds bounds = CoarseRegionBounds.aligned(
-                level.dimension().location(), minBlockX, minBlockZ, maxBlockX, maxBlockZ, safeStep);
+                level.dimension().identifier(), minBlockX, minBlockZ, maxBlockX, maxBlockZ, safeStep);
         List<CoarseTerrainTileKey> keys = collectTileKeys(bounds);
         if (keys.size() > RoadConstants.COARSE_REGION_MAX_TILES) {
             throw new IllegalArgumentException("coarse region tile count too large: " + keys.size());

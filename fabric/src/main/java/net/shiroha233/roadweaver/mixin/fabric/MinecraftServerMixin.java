@@ -3,7 +3,7 @@ package net.shiroha233.roadweaver.mixin.fabric;
 
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.server.level.progress.ChunkProgressListener;
+import net.minecraft.server.level.progress.LevelLoadListener;
 import net.minecraft.world.level.storage.ServerLevelData;
 import net.shiroha233.roadweaver.generation.InitialSpawnPlanning;
 import org.spongepowered.asm.mixin.Mixin;
@@ -18,18 +18,18 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 public abstract class MinecraftServerMixin {
     @Inject(method = "setInitialSpawn", at = @At("HEAD"))
     private static void roadweaver$planBeforeSpawnSearch(ServerLevel level, ServerLevelData levelData, boolean bonusChest,
-                                                       boolean debug, CallbackInfo ci) {
+                                                       boolean debug, LevelLoadListener loadListener, CallbackInfo ci) {
         InitialSpawnPlanning.beforeSpawnSearch(level, levelData);
     }
 
     @Inject(method = "setInitialSpawn", at = @At("RETURN"))
     private static void roadweaver$placeCabinAfterSpawnSearch(ServerLevel level, ServerLevelData levelData, boolean bonusChest,
-                                                            boolean debug, CallbackInfo ci) {
+                                                            boolean debug, LevelLoadListener loadListener, CallbackInfo ci) {
         InitialSpawnPlanning.afterSpawnSearch(level);
     }
 
     @Inject(method = "prepareLevels", at = @At("HEAD"))
-    private void roadweaver$preloadBeforePrepareLevels(ChunkProgressListener listener, CallbackInfo ci) {
+    private void roadweaver$preloadBeforePrepareLevels(CallbackInfo ci) {
         InitialSpawnPlanning.beforePrepareLevels((MinecraftServer)(Object)this);
     }
 }

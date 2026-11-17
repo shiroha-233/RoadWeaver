@@ -1,9 +1,9 @@
 package net.shiroha233.roadweaver.client.map.tile;
 
+import com.mojang.blaze3d.platform.NativeImage;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.texture.DynamicTexture;
-import net.minecraft.resources.ResourceLocation;
-import com.mojang.blaze3d.platform.NativeImage;
+import net.minecraft.resources.Identifier;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -15,10 +15,10 @@ import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.concurrent.CompletableFuture;
 
 /**
  * 瓦片纹理双层缓存。
@@ -45,9 +45,9 @@ public final class ClientMapTileTextureCache {
         return t;
     });
 
-    private static final ConcurrentHashMap<String, CompletableFuture<ResourceLocation>> PENDING_LOADS = new ConcurrentHashMap<>();
+    private static final ConcurrentHashMap<String, CompletableFuture<Identifier>> PENDING_LOADS = new ConcurrentHashMap<>();
 
-    public static synchronized ResourceLocation getOrLoad(Minecraft mc, Path path, boolean inViewport) {
+    public static synchronized Identifier getOrLoad(Minecraft mc, Path path, boolean inViewport) {
         if (mc == null || path == null || !Files.exists(path)) {
             return null;
         }
@@ -77,12 +77,12 @@ public final class ClientMapTileTextureCache {
             release(mc, bgEntry.location);
         }
 
-        CompletableFuture<ResourceLocation> pending = PENDING_LOADS.get(key);
+        CompletableFuture<Identifier> pending = PENDING_LOADS.get(key);
         if (pending != null) {
             if (pending.isDone()) {
                 PENDING_LOADS.remove(key);
                 try {
-                    ResourceLocation loc = pending.getNow(null);
+                    Identifier loc = pending.getNow(null);
                     if (loc != null) return loc;
                 } catch (Exception ignored) {}
             }
@@ -93,7 +93,7 @@ public final class ClientMapTileTextureCache {
         return null;
     }
 
-    public static synchronized ResourceLocation getOrLoad(Minecraft mc, Path path) {
+    public static synchronized Identifier getOrLoad(Minecraft mc, Path path) {
         return getOrLoad(mc, path, false);
     }
 
@@ -152,13 +152,13 @@ public final class ClientMapTileTextureCache {
         BACKGROUND_CACHE.clear();
     }
 
-    private static CompletableFuture<ResourceLocation> startAsyncLoad(Minecraft mc,
+    private static CompletableFuture<Identifier> startAsyncLoad(Minecraft mc,
                                                                       Path path,
                                                                       String key,
                                                                       long lastMod,
                                                                       boolean inViewport) {
-        CompletableFuture<ResourceLocation> future = new CompletableFuture<>();
-        CompletableFuture<ResourceLocation> existing = PENDING_LOADS.putIfAbsent(key, future);
+        CompletableFuture<Identifier> future = new CompletableFuture<>();
+        CompletableFuture<Identifier> existing = PENDING_LOADS.putIfAbsent(key, future);
         if (existing != null) {
             return existing;
         }
@@ -191,12 +191,13 @@ public final class ClientMapTileTextureCache {
                                               long lastMod,
                                               boolean inViewport,
                                               NativeImage image,
-                                              CompletableFuture<ResourceLocation> future) {
+                                              CompletableFuture<Identifier> future) {
         DynamicTexture texture = null;
         try {
-            texture = new DynamicTexture(image);
-            ResourceLocation location = mc.getTextureManager().register(
-                    "roadweaver_map_tile/" + Integer.toHexString(key.hashCode()), texture);
+            texture = new DynamicTexture(() -> "roadweaver_map_tile", image);
+            Identifier location = Identifier.fromNamespaceAndPath("roadweaver",
+                    "map_tile/" + Integer.toHexString(key.hashCode()));
+            mc.getTextureManager().register(location, texture);
             TextureEntry entry = new TextureEntry(location, lastMod);
 
             synchronized (ClientMapTileTextureCache.class) {
@@ -243,7 +244,7 @@ public final class ClientMapTileTextureCache {
         }
     }
 
-    private static void release(Minecraft mc, ResourceLocation location) {
+    private static void release(Minecraft mc, Identifier location) {
         if (mc == null || location == null) return;
         mc.getTextureManager().release(location);
     }
@@ -265,5 +266,5 @@ public final class ClientMapTileTextureCache {
         }
     }
 
-    private record TextureEntry(ResourceLocation location, long lastModified) {}
+    private record TextureEntry(Identifier location, long lastModified) {}
 }

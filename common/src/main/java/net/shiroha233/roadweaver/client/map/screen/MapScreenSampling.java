@@ -69,7 +69,7 @@ final class MapScreenSampling {
         notice = message;
         noticeExpiresAtMs = System.currentTimeMillis() + NOTICE_DURATION_MS;
         if (minecraft != null && minecraft.player != null) {
-            minecraft.player.displayClientMessage(message, true);
+            minecraft.player.sendOverlayMessage(message);
         }
     }
 

@@ -5,8 +5,8 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Vec3i;
 import net.minecraft.core.registries.Registries;
+import net.minecraft.resources.Identifier;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.ServerLevelAccessor;
 import net.minecraft.world.level.block.Blocks;
@@ -20,14 +20,14 @@ import java.util.List;
  * 结构战利品配置。
  */
 public record LootConfig(
-    ResourceLocation lootTable,
+    Identifier lootTable,
     Vec3i offset,
     float chance
 ) {
     
     public static final Codec<LootConfig> CODEC = RecordCodecBuilder.create(instance ->
         instance.group(
-            ResourceLocation.CODEC
+            Identifier.CODEC
                 .fieldOf("loot_table")
                 .forGetter(LootConfig::lootTable),
             Vec3i.CODEC.optionalFieldOf("offset", Vec3i.ZERO)
@@ -80,19 +80,19 @@ public record LootConfig(
     }
     
     public static final LootConfig ROADSIDE_SUPPLIES = new LootConfig(
-        ResourceLocation.fromNamespaceAndPath("roadweaver", "chests/roadside_supplies"),
+        Identifier.fromNamespaceAndPath("roadweaver", "chests/roadside_supplies"),
         new Vec3i(0, 1, 0),
         1.0f
     );
     
     public static final LootConfig CABIN_CHEST = new LootConfig(
-        ResourceLocation.fromNamespaceAndPath("roadweaver", "chests/cabin_chest"),
+        Identifier.fromNamespaceAndPath("roadweaver", "chests/cabin_chest"),
         new Vec3i(0, 1, 0),
         1.0f
     );
     
     public static final LootConfig RARE_LOOT = new LootConfig(
-        ResourceLocation.fromNamespaceAndPath("roadweaver", "chests/rare_loot"),
+        Identifier.fromNamespaceAndPath("roadweaver", "chests/rare_loot"),
         new Vec3i(0, 1, 0),
         0.2f
     );

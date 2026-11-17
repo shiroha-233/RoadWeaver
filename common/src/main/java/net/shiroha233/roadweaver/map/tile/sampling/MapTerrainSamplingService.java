@@ -4,25 +4,25 @@ import net.minecraft.server.level.ServerLevel;
 import net.shiroha233.roadweaver.config.ConfigService;
 import net.shiroha233.roadweaver.config.sub.TerrainSamplingMode;
 import net.shiroha233.roadweaver.core.constants.RoadConstants;
-import net.shiroha233.roadweaver.map.tile.storage.AccurateTerrainMapFingerprintGuard;
-import net.shiroha233.roadweaver.terrain.accurate.AccurateSamplingProgress;
-import net.shiroha233.roadweaver.terrain.TerrainSamplingCache;
-import net.shiroha233.roadweaver.terrain.accurate.AccurateRegionBounds;
-import net.shiroha233.roadweaver.map.tile.writer.AccurateTerrainPngWriter;
-import net.shiroha233.roadweaver.terrain.accurate.AccurateTerrainRegion;
-import net.shiroha233.roadweaver.terrain.AccurateTerrainRegionSampler;
-import net.shiroha233.roadweaver.terrain.coarse.CoarseRegionBounds;
-import net.shiroha233.roadweaver.map.tile.writer.CoarseTerrainPngWriter;
-import net.shiroha233.roadweaver.terrain.coarse.CoarseTerrainRegion;
-import net.shiroha233.roadweaver.terrain.coarse.CoarseTerrainRegionSampler;
 import net.shiroha233.roadweaver.core.metrics.CoarseTerrainSamplingProgress;
-import net.shiroha233.roadweaver.terrain.coarse.CoarseTerrainTileKey;
+import net.shiroha233.roadweaver.map.StructureIndexService;
+import net.shiroha233.roadweaver.map.tile.storage.AccurateTerrainMapFingerprintGuard;
+import net.shiroha233.roadweaver.map.tile.writer.AccurateTerrainPngWriter;
+import net.shiroha233.roadweaver.map.tile.writer.CoarseTerrainPngWriter;
 import net.shiroha233.roadweaver.map.tile.writer.TerrainPngWriteProgress;
 import net.shiroha233.roadweaver.planning.pipeline.TerrainSamplingSessionSnapshot;
 import net.shiroha233.roadweaver.planning.pipeline.TerrainSamplingSessions;
-import net.shiroha233.roadweaver.runtime.ThreadPoolManager;
-import net.shiroha233.roadweaver.map.StructureIndexService;
 import net.shiroha233.roadweaver.runtime.ComputeService;
+import net.shiroha233.roadweaver.runtime.ThreadPoolManager;
+import net.shiroha233.roadweaver.terrain.AccurateTerrainRegionSampler;
+import net.shiroha233.roadweaver.terrain.TerrainSamplingCache;
+import net.shiroha233.roadweaver.terrain.accurate.AccurateRegionBounds;
+import net.shiroha233.roadweaver.terrain.accurate.AccurateSamplingProgress;
+import net.shiroha233.roadweaver.terrain.accurate.AccurateTerrainRegion;
+import net.shiroha233.roadweaver.terrain.coarse.CoarseRegionBounds;
+import net.shiroha233.roadweaver.terrain.coarse.CoarseTerrainRegion;
+import net.shiroha233.roadweaver.terrain.coarse.CoarseTerrainRegionSampler;
+import net.shiroha233.roadweaver.terrain.coarse.CoarseTerrainTileKey;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -92,7 +92,7 @@ public final class MapTerrainSamplingService {
         } catch (RuntimeException submissionFailure) {
             publish(MapSamplingSnapshot.Stage.FAILED, visibleBounds, 0);
             LOGGER.warn("提交主动地图采样任务失败 dimension={} mode={}",
-                    level.dimension().location(), mode, submissionFailure);
+                    level.dimension().identifier(), mode, submissionFailure);
             return StartResult.SUBMISSION_FAILED;
         }
         return StartResult.STARTED;
@@ -116,7 +116,7 @@ public final class MapTerrainSamplingService {
                                                         int step,
                                                         TerrainSamplingMode mode) {
         CoarseRegionBounds bounds = CoarseRegionBounds.aligned(
-                level.dimension().location(),
+                level.dimension().identifier(),
                 requestedBounds.minX(), requestedBounds.minZ(),
                 requestedBounds.maxX(), requestedBounds.maxZ(),
                 step);
@@ -159,7 +159,7 @@ public final class MapTerrainSamplingService {
         } catch (RuntimeException failure) {
             publish(MapSamplingSnapshot.Stage.FAILED, visibleBounds, snapshot.get().percent());
             LOGGER.warn("主动地图采样失败 dimension={} mode={} bounds=[{},{} -> {},{}]",
-                    level.dimension().location(),
+                    level.dimension().identifier(),
                     plan.mode(),
                     visibleBounds.minX(), visibleBounds.minZ(),
                     visibleBounds.maxX(), visibleBounds.maxZ(),

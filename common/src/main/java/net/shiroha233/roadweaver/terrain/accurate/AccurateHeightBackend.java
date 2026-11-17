@@ -26,7 +26,7 @@ public interface AccurateHeightBackend extends AutoCloseable {
             }
             long positionKey = AccurateHeightSample.key(position.getX(), position.getZ());
             unique.putIfAbsent(positionKey, position);
-            chunkByPosition.putIfAbsent(positionKey, ChunkPos.asLong(position.getX() >> 4, position.getZ() >> 4));
+            chunkByPosition.putIfAbsent(positionKey, ChunkPos.pack(position.getX() >> 4, position.getZ() >> 4));
         }
         if (unique.isEmpty()) {
             return Map.of();

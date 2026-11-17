@@ -34,7 +34,7 @@ public final class RoadSpatialIndex {
             return false;
         }
 
-        ChunkPos chunkPos = new ChunkPos(pos);
+        ChunkPos chunkPos = ChunkPos.containing(pos);
         RoadChunkPlan plan = RoadWorldgenPlanCache.get(level, chunkPos, config);
         RoadDensityStamp stamp = plan.densityStamp();
         int localX = pos.getX() - chunkPos.getMinBlockX();
@@ -53,7 +53,7 @@ public final class RoadSpatialIndex {
     }
 
     public static void invalidateChunk(ServerLevel level, int chunkX, int chunkZ) {
-        RoadWorldgenPlanCache.invalidate(level, List.of(ChunkPos.asLong(chunkX, chunkZ)));
+        RoadWorldgenPlanCache.invalidate(level, List.of(ChunkPos.pack(chunkX, chunkZ)));
     }
 
     @SuppressWarnings("deprecation")

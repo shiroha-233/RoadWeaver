@@ -1,7 +1,7 @@
 package net.shiroha233.roadweaver.client.map.interaction;
 
 import net.minecraft.client.gui.Font;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.shiroha233.roadweaver.client.map.MapView;
@@ -15,7 +15,7 @@ import net.shiroha233.roadweaver.client.map.render.StructureIconRenderer;
 public final class MapInteraction {
     private MapInteraction() {}
 
-    public static void renderHoverHighlight(GuiGraphics g,
+    public static void renderHoverHighlight(GuiGraphicsExtractor g,
                                             MapSnapshot snapshot,
                                             MapView view,
                                             int mapX, int mapY, int mapW, int mapH,
@@ -46,7 +46,7 @@ public final class MapInteraction {
         }
     }
 
-    public static void renderHoverTooltip(GuiGraphics g,
+    public static void renderHoverTooltip(GuiGraphicsExtractor g,
                                           Font font,
                                           MapSnapshot snapshot,
                                           MapView view,
@@ -60,7 +60,7 @@ public final class MapInteraction {
         if (!insideMap(mx, my, mapX, mapY, mapW, mapH, innerPad)) {
             int wx = (int)Math.round(view.screenToWorldX(mx, mapX, innerPad, contentW));
             int wz = (int)Math.round(view.screenToWorldZ(my, mapY, innerPad, contentH));
-            g.renderTooltip(font, Component.translatable("gui.roadweaver.map.coord", wx, wz), (int)mx, (int)my);
+            g.setTooltipForNextFrame(font, Component.translatable("gui.roadweaver.map.coord", wx, wz), (int)mx, (int)my);
             return;
         }
         int bestDist = Integer.MAX_VALUE;
@@ -80,11 +80,11 @@ public final class MapInteraction {
             Component coords = Component.translatable("gui.roadweaver.map.coord", best.getX(), best.getZ());
             Component label = alias != null ? Component.literal(alias).append(" ").append(coords)
                     : (name != null ? Component.literal(name).append(" ").append(coords) : coords);
-            g.renderTooltip(font, label, (int)mx, (int)my);
+            g.setTooltipForNextFrame(font, label, (int)mx, (int)my);
         } else {
             int wx = (int)Math.round(view.screenToWorldX(mx, mapX, innerPad, contentW));
             int wz = (int)Math.round(view.screenToWorldZ(my, mapY, innerPad, contentH));
-            g.renderTooltip(font, Component.translatable("gui.roadweaver.map.coord", wx, wz), (int)mx, (int)my);
+            g.setTooltipForNextFrame(font, Component.translatable("gui.roadweaver.map.coord", wx, wz), (int)mx, (int)my);
         }
     }
 

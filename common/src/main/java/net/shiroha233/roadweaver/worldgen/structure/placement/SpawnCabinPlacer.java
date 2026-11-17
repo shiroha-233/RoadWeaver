@@ -5,7 +5,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Registry;
 import net.minecraft.core.Vec3i;
 import net.minecraft.core.registries.Registries;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.block.Rotation;
@@ -13,20 +13,26 @@ import net.minecraft.world.level.chunk.ChunkAccess;
 import net.minecraft.world.level.chunk.ChunkGenerator;
 import net.minecraft.world.level.chunk.status.ChunkStatus;
 import net.minecraft.world.level.levelgen.Heightmap;
+import net.minecraft.world.level.levelgen.NoiseSpawnFinder;
+import net.minecraft.world.level.levelgen.NoiseBasedChunkGenerator;
 import net.minecraft.world.level.levelgen.RandomState;
+import net.minecraft.world.level.levelgen.SpawnTargetPoint;
+import net.minecraft.world.level.levelgen.densityfunction.DensitySamplerSet;
+import net.minecraft.world.level.levelgen.densityfunction.SamplerContext;
 import net.minecraft.world.level.levelgen.structure.BoundingBox;
 import net.minecraft.world.level.levelgen.structure.Structure;
 import net.minecraft.world.level.levelgen.structure.StructurePiece;
 import net.minecraft.world.level.levelgen.structure.StructureStart;
 import net.shiroha233.roadweaver.core.model.StructureInfo;
-import net.shiroha233.roadweaver.worldgen.road.RoadPositionQuery;
-import net.shiroha233.roadweaver.persistence.WorldDataProvider;
 import net.shiroha233.roadweaver.persistence.StructureFileStorage;
+import net.shiroha233.roadweaver.persistence.WorldDataProvider;
+import net.shiroha233.roadweaver.worldgen.road.RoadPositionQuery;
 import net.shiroha233.roadweaver.worldgen.structure.types.SpawnCabinStructure;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -35,7 +41,7 @@ public final class SpawnCabinPlacer {
 
     private SpawnCabinPlacer() {}
 
-    private static final ResourceLocation STRUCTURE_ID = ResourceLocation.fromNamespaceAndPath("roadweaver", "spawn_cabin");
+    private static final Identifier STRUCTURE_ID = Identifier.fromNamespaceAndPath("roadweaver", "spawn_cabin");
 
     /** Anchor registered by ensurePlaced() and not built yet. */
     private static final AtomicReference<BlockPos> PLANNED_ANCHOR = new AtomicReference<>();
@@ -48,17 +54,34 @@ public final class SpawnCabinPlacer {
     public static BlockPos predictSpawn(ServerLevel level) {
         ChunkGenerator generator = level.getChunkSource().getGenerator();
         RandomState randomState = level.getChunkSource().randomState();
-        ChunkPos chunk = new ChunkPos(randomState.sampler().findSpawnPosition());
+        BlockPos spawn = findNoiseSpawn(generator, randomState);
+        if (spawn == null) {
+            return level.getRespawnData().pos();
+        }
+        ChunkPos chunk = ChunkPos.containing(spawn);
         int x = chunk.getMinBlockX() + 8;
         int z = chunk.getMinBlockZ() + 8;
         int y = generator.getBaseHeight(x, z, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, level, randomState);
         return new BlockPos(x, y, z);
     }
 
+    /** 26.3 起出生点由 {@link NoiseSpawnFinder} 依据噪声生成的候选点挑选。 */
+    private static BlockPos findNoiseSpawn(ChunkGenerator generator, RandomState randomState) {
+        if (!(generator instanceof NoiseBasedChunkGenerator noiseGenerator)) {
+            return null;
+        }
+        List<SpawnTargetPoint> targets = noiseGenerator.generatorSettings().value().spawnTarget();
+        if (targets.isEmpty()) {
+            return null;
+        }
+        DensitySamplerSet samplers = randomState.samplersWithContext(SamplerContext.EMPTY_UNCACHED);
+        return NoiseSpawnFinder.findSpawnPosition(targets, samplers);
+    }
+
     public static boolean ensurePlaced(ServerLevel level) {
         if (level == null) return false;
 
-        BlockPos spawn = level.getSharedSpawnPos();
+        BlockPos spawn = level.getRespawnData().pos();
 
         var provider = WorldDataProvider.getInstance();
         var locs = provider.getStructureLocations(level);
@@ -90,19 +113,19 @@ public final class SpawnCabinPlacer {
         BlockPos anchor = PLANNED_ANCHOR.getAndSet(null);
         if (level == null || anchor == null) return;
         if (!(spawnCabin(level) instanceof SpawnCabinStructure cabin)) return;
-        Vec3i size = level.getStructureManager().get(cabin.templateId())
+        Vec3i size = level.getStructureTemplateManager().get(cabin.templateId())
                 .map(t -> t.getSize()).orElse(cabin.sizeHint());
         BlockPos pos = findFreeSpot(level, anchor, size);
         if (pos == null) {
             LOGGER.warn("No free spot for the spawn cabin within {} blocks of {}, skipping it", SEARCH_RADIUS, anchor);
             return;
         }
-        StructureStart start = cabin.placeAt(level, level.structureManager(), level.getStructureManager(),
+        StructureStart start = cabin.placeAt(level, level.structureManager(), level.getStructureTemplateManager(),
                 level.getChunkSource().getGenerator(), pos, Rotation.NONE, level.getRandom());
         if (start == null) {
             LOGGER.warn("Spawn cabin could not be placed at {}", pos);
         } else {
-            LOGGER.info("Spawn cabin placed at {} (world spawn {})", pos, level.getSharedSpawnPos());
+            LOGGER.info("Spawn cabin placed at {} (world spawn {})", pos, level.getRespawnData().pos());
         }
     }
 
@@ -180,7 +203,7 @@ public final class SpawnCabinPlacer {
     }
 
     private static Structure spawnCabin(ServerLevel level) {
-        Registry<Structure> structureRegistry = level.registryAccess().registryOrThrow(Registries.STRUCTURE);
-        return structureRegistry.get(STRUCTURE_ID);
+        Registry<Structure> structureRegistry = level.registryAccess().lookupOrThrow(Registries.STRUCTURE);
+        return structureRegistry.getValue(STRUCTURE_ID);
     }
 }

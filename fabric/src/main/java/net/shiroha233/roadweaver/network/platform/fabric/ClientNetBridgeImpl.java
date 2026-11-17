@@ -1,6 +1,6 @@
 package net.shiroha233.roadweaver.network.platform.fabric;
 
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.shiroha233.roadweaver.core.model.MapLoadPhase;
 import net.shiroha233.roadweaver.network.fabric.MapNetwork;
 
@@ -11,7 +11,7 @@ public final class ClientNetBridgeImpl {
     private ClientNetBridgeImpl() {}
 
     public static void requestSnapshot(int requestSeq,
-                                       ResourceLocation dimensionId,
+                                       Identifier dimensionId,
                                        MapLoadPhase phase,
                                        int responseIndex,
                                        int minX,
@@ -29,11 +29,11 @@ public final class ClientNetBridgeImpl {
         MapNetwork.requestManualConnect(ax, az, bx, bz);
     }
 
-    public static void requestSearch(int requestSeq, ResourceLocation dimensionId, String query) {
+    public static void requestSearch(int requestSeq, Identifier dimensionId, String query) {
         MapNetwork.requestSearch(requestSeq, dimensionId, query);
     }
 
-    public static void requestRawPathDebug(int requestSeq, ResourceLocation dimensionId) {
+    public static void requestRawPathDebug(int requestSeq, Identifier dimensionId) {
         MapNetwork.requestRawPathDebug(requestSeq, dimensionId);
     }
 }

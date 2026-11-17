@@ -88,7 +88,7 @@ public final class RoadChunkStore implements AutoCloseable {
 
     public List<RoadData> queryChunk(ChunkPos chunkPos) {
         Objects.requireNonNull(chunkPos, "chunkPos");
-        return queryChunk(chunkPos.x, chunkPos.z);
+        return queryChunk(chunkPos.x(), chunkPos.z());
     }
 
     public List<RoadData> queryChunk(int chunkX, int chunkZ) {

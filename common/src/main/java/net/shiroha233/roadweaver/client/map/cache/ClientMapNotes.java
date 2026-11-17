@@ -1,8 +1,8 @@
 package net.shiroha233.roadweaver.client.map.cache;
 
-import net.minecraft.core.BlockPos;
 import net.minecraft.client.Minecraft;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.core.BlockPos;
+import net.minecraft.resources.Identifier;
 import net.shiroha233.roadweaver.map.search.MapSearchResult;
 import net.shiroha233.roadweaver.map.search.MapStructureSource;
 import org.jetbrains.annotations.Nullable;
@@ -99,7 +99,7 @@ public final class ClientMapNotes {
         if (query == null || query.isBlank() || limit <= 0) return List.of();
         String normalized = query.trim().toLowerCase(Locale.ROOT);
         ArrayList<MapSearchResult> results = new ArrayList<>();
-        ResourceLocation dimension = currentDimension();
+        Identifier dimension = currentDimension();
         for (Map.Entry<MapDataStorage.DimensionPos, String> entry : aliases.entrySet()) {
             if (dimension == null || !dimension.equals(entry.getKey().dimension())) continue;
             String alias = entry.getValue();
@@ -133,12 +133,12 @@ public final class ClientMapNotes {
     }
 
     private static MapDataStorage.DimensionPos currentKey(BlockPos pos) {
-        ResourceLocation dimension = currentDimension();
+        Identifier dimension = currentDimension();
         return dimension == null || pos == null ? null : new MapDataStorage.DimensionPos(dimension, pos);
     }
 
-    private static ResourceLocation currentDimension() {
+    private static Identifier currentDimension() {
         Minecraft minecraft = Minecraft.getInstance();
-        return minecraft == null || minecraft.level == null ? null : minecraft.level.dimension().location();
+        return minecraft == null || minecraft.level == null ? null : minecraft.level.dimension().identifier();
     }
 }

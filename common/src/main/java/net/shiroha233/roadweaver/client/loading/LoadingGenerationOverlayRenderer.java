@@ -1,8 +1,9 @@
 package net.shiroha233.roadweaver.client.loading;
 
+import com.mojang.blaze3d.platform.InputConstants;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.MinecraftServer;
@@ -47,7 +48,7 @@ public final class LoadingGenerationOverlayRenderer {
     private LoadingGenerationOverlayRenderer() {
     }
 
-    public static void render(GuiGraphics graphics) {
+    public static void render(GuiGraphicsExtractor graphics) {
         LoadingTipsRenderer.render(graphics);
 
         Minecraft mc = Minecraft.getInstance();
@@ -108,7 +109,7 @@ public final class LoadingGenerationOverlayRenderer {
         int y = top + CARD_PADDING_Y;
 
         drawFittedString(graphics, font, title, x, y, Math.max(0, innerWidth - percentWidth - 6), TEXT_PRIMARY);
-        graphics.drawString(font, percent, right - percentWidth, y, TEXT_PRIMARY, false);
+        graphics.text(font, percent, right - percentWidth, y, TEXT_PRIMARY, false);
 
         y += lineHeight + LINE_GAP;
         drawBar(graphics, x, y, innerWidth, BAR_HEIGHT, snapshot.overallPercent(), BAR_FILL);
@@ -127,13 +128,14 @@ public final class LoadingGenerationOverlayRenderer {
      * 调试开关：配置项常开，或加载界面按住 Shift 时临时展开。
      * <p>
      * {@link Screen#hasShiftDown()} 读的是全局按键状态，与当前是否激活某个 Screen 无关，
-     * 故不额外判断 {@code mc.screen}。
+     * 故不额外判断 {@code mc.gui.screen()}。
      */
     private static boolean debugRequested(ModConfig config) {
         if (config != null && config.client().loadingProgressDebugEnabled()) {
             return true;
         }
-        return Screen.hasShiftDown();
+        return InputConstants.isKeyDown(InputConstants.KEY_LSHIFT)
+                || InputConstants.isKeyDown(InputConstants.KEY_RSHIFT);
     }
 
     private static List<DebugLine> buildDebugLines(Minecraft mc,
@@ -242,7 +244,7 @@ public final class LoadingGenerationOverlayRenderer {
         return width;
     }
 
-    private static void drawBar(GuiGraphics graphics, int x, int y, int width, int height, int percent, int fillColor) {
+    private static void drawBar(GuiGraphicsExtractor graphics, int x, int y, int width, int height, int percent, int fillColor) {
         int clamped = clamp(percent, 0, 100);
         int filled = Math.max(0, Math.min(width, Math.round(width * (clamped / 100.0f))));
         graphics.fill(x, y, x + width, y + height, BAR_BG);
@@ -251,7 +253,7 @@ public final class LoadingGenerationOverlayRenderer {
         }
     }
 
-    private static void drawFittedString(GuiGraphics graphics,
+    private static void drawFittedString(GuiGraphicsExtractor graphics,
                                          Font font,
                                          Component text,
                                          int x,
@@ -260,12 +262,12 @@ public final class LoadingGenerationOverlayRenderer {
                                          int color) {
         String raw = text.getString();
         if (font.width(raw) <= maxWidth) {
-            graphics.drawString(font, raw, x, y, color, false);
+            graphics.text(font, raw, x, y, color, false);
             return;
         }
         int suffixWidth = font.width("...");
         String clipped = font.plainSubstrByWidth(raw, Math.max(0, maxWidth - suffixWidth));
-        graphics.drawString(font, clipped + "...", x, y, color, false);
+        graphics.text(font, clipped + "...", x, y, color, false);
     }
 
     private static int clamp(int value, int min, int max) {

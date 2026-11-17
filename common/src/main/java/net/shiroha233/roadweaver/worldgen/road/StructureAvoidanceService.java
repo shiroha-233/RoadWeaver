@@ -61,7 +61,7 @@ public final class StructureAvoidanceService {
 
         int cx = pos.getX() >> 4;
         int cz = pos.getZ() >> 4;
-        long key = ChunkPos.asLong(cx, cz);
+        long key = ChunkPos.pack(cx, cz);
         ChunkEntry entry = CHUNK_BBOX_CACHE.get(key);
 
         if (entry == null) {
@@ -94,7 +94,7 @@ public final class StructureAvoidanceService {
 
     public static void invalidate(ServerLevel level, int cx, int cz) {
         if (level == null) return;
-        CHUNK_BBOX_CACHE.remove(ChunkPos.asLong(cx, cz));
+        CHUNK_BBOX_CACHE.remove(ChunkPos.pack(cx, cz));
     }
 
     public static void clearAll() {
@@ -118,10 +118,6 @@ public final class StructureAvoidanceService {
                 if (!ThreadPoolManager.isEpoch(epoch)) return;
                 BlockPos probe = new BlockPos(cx << 4, SEA_LEVEL, cz << 4);
                 StructureManager sm = level.structureManager();
-                if (!sm.hasAnyStructureAt(probe)) {
-                    CHUNK_BBOX_CACHE.put(key, new ChunkEntry(Collections.emptySet(), true));
-                    return;
-                }
                 Map<Structure, LongSet> allStructures = sm.getAllStructuresAt(probe);
                 if (allStructures.isEmpty()) {
                     CHUNK_BBOX_CACHE.put(key, new ChunkEntry(Collections.emptySet(), true));
@@ -137,14 +133,13 @@ public final class StructureAvoidanceService {
                             return;
                         }
                         lookups++;
-                        ChunkPos cp = new ChunkPos(chunkLong);
-                        SectionPos sp = SectionPos.of(cp, level.getMinSection());
-                        ChunkAccess chunk = level.getChunk(cp.x, cp.z, ChunkStatus.STRUCTURE_STARTS, false);
+                        ChunkPos cp = ChunkPos.unpack(chunkLong);
+                        ChunkAccess chunk = level.getChunk(cp.x(), cp.z(), ChunkStatus.STRUCTURE_STARTS, false);
                         if (chunk == null) {
                             CHUNK_BBOX_CACHE.remove(key);
                             return;
                         }
-                        StructureStart start = sm.getStartForStructure(sp, structure, chunk);
+                        StructureStart start = sm.getStartForStructure(structure, chunk);
                         if (start == null || !start.isValid()) continue;
                         for (StructurePiece piece : start.getPieces()) {
                             BoundingBox bb = piece.getBoundingBox();

@@ -87,7 +87,7 @@ public final class IdleRoadGenerationService {
     public static void tickPlayer(ServerPlayer player) {
         if (player == null) return;
 
-        ServerLevel level = player.serverLevel();
+        ServerLevel level = player.level();
         if (!Level.OVERWORLD.equals(level.dimension())) return;
         ModConfig cfg = ConfigService.get();
         if (!cfg.roadAppearance().roadsEnabled()) return;
@@ -96,8 +96,8 @@ public final class IdleRoadGenerationService {
 
         int baseRadius = resolveBaseRadiusChunks(cfg);
         int expandStep = resolveExpandStepChunks(cfg);
-        int pcx = player.chunkPosition().x;
-        int pcz = player.chunkPosition().z;
+        int pcx = player.chunkPosition().x();
+        int pcz = player.chunkPosition().z();
 
         ConcurrentHashMap<UUID, IdleWindow> perLevel = WINDOWS;
         UUID playerId = player.getUUID();
@@ -499,7 +499,7 @@ public final class IdleRoadGenerationService {
         var server = level.getServer();
         if (server == null) return out;
         for (ServerPlayer p : server.getPlayerList().getPlayers()) {
-            if (p != null && p.serverLevel() == level) out.add(p);
+            if (p != null && p.level() == level) out.add(p);
         }
         return out;
     }

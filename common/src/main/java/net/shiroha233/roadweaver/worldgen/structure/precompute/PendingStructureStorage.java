@@ -1,7 +1,7 @@
 package net.shiroha233.roadweaver.worldgen.structure.precompute;
 
 import net.minecraft.core.BlockPos;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.Level;
@@ -40,7 +40,7 @@ public final class PendingStructureStorage {
     }
     
     public static void addPendingStructure(ServerLevel level, 
-                                           ResourceLocation structureId,
+                                           Identifier structureId,
                                            BlockPos anchor, 
                                            Rotation rotation,
                                            int sizeX, int sizeY, int sizeZ) {
@@ -59,7 +59,7 @@ public final class PendingStructureStorage {
     
     public static List<PendingRoadsideStructure> getPendingStructures(ServerLevel level, ChunkPos chunkPos) {
         if (!isOverworld(level) || chunkPos == null) return Collections.emptyList();
-        long chunkKey = ((long) chunkPos.x << 32) | (chunkPos.z & 0xFFFFFFFFL);
+        long chunkKey = ((long) chunkPos.x() << 32) | (chunkPos.z() & 0xFFFFFFFFL);
         
         if (INJECTED.contains(chunkKey)) {
             return Collections.emptyList();
@@ -71,7 +71,7 @@ public final class PendingStructureStorage {
     
     public static void markAsInjected(ServerLevel level, ChunkPos chunkPos) {
         if (!isOverworld(level) || chunkPos == null) return;
-        long chunkKey = ((long) chunkPos.x << 32) | (chunkPos.z & 0xFFFFFFFFL);
+        long chunkKey = ((long) chunkPos.x() << 32) | (chunkPos.z() & 0xFFFFFFFFL);
         
         INJECTED.add(chunkKey);
         List<PendingRoadsideStructure> removed = PENDING.remove(chunkKey);
@@ -80,7 +80,7 @@ public final class PendingStructureStorage {
     
     public static boolean hasPendingStructures(ServerLevel level, ChunkPos chunkPos) {
         if (!isOverworld(level) || chunkPos == null) return false;
-        long chunkKey = ((long) chunkPos.x << 32) | (chunkPos.z & 0xFFFFFFFFL);
+        long chunkKey = ((long) chunkPos.x() << 32) | (chunkPos.z() & 0xFFFFFFFFL);
         
         if (INJECTED.contains(chunkKey)) {
             return false;

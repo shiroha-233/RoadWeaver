@@ -3,7 +3,7 @@ package net.shiroha233.roadweaver;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.common.Mod;
-import net.neoforged.fml.loading.FMLLoader;
+import net.neoforged.fml.loading.FMLEnvironment;
 import net.neoforged.neoforge.client.event.ClientPlayerNetworkEvent;
 import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.event.RegisterCommandsEvent;
@@ -11,7 +11,6 @@ import net.neoforged.neoforge.event.entity.player.PlayerEvent;
 import net.neoforged.neoforge.event.entity.player.PermissionsChangedEvent;
 import net.shiroha233.roadweaver.command.MapAccessCommand;
 import net.shiroha233.roadweaver.config.ConfigService;
-import net.shiroha233.roadweaver.datagen.RoadWeaverDataGenerator;
 import net.shiroha233.roadweaver.network.neoforge.MapNetwork;
 import net.shiroha233.roadweaver.persistence.files.FileBackedAccurateSampleStore;
 import net.shiroha233.roadweaver.planning.neoforge.ServerPlanningHooks;
@@ -36,7 +35,6 @@ public class RoadWeaver {
         ConfigService.load();
         AccurateSampleStoreProviders.install(level -> FileBackedAccurateSampleStore.create(level));
 
-        modEventBus.addListener(RoadWeaverDataGenerator::gatherData);
         StructureRegistry.register(modEventBus);
         RoadFeatureRegistry.register(modEventBus);
         MapNetwork.register(modEventBus);
@@ -47,7 +45,7 @@ public class RoadWeaver {
 
         ServerPlanningHooks.register(modEventBus);
 
-        if (FMLLoader.getDist() == Dist.CLIENT) {
+        if (FMLEnvironment.getDist() == Dist.CLIENT) {
             NeoForge.EVENT_BUS.addListener(RoadWeaver::onClientLoggingIn);
             NeoForge.EVENT_BUS.addListener(RoadWeaver::onClientLoggingOut);
         }

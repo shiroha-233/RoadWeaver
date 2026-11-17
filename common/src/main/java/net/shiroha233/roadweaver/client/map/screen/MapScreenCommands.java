@@ -1,5 +1,6 @@
 package net.shiroha233.roadweaver.client.map.screen;
 
+import com.mojang.blaze3d.platform.InputConstants;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.core.BlockPos;
@@ -7,6 +8,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.server.permissions.Permissions;
 import net.minecraft.world.level.Level;
 import net.shiroha233.roadweaver.client.ConfigScreenFactory;
 import net.shiroha233.roadweaver.client.map.ClientMapAccessGuard;
@@ -85,22 +87,21 @@ final class MapScreenCommands {
             return;
         }
         if (minecraft.player != null && minecraft.getSingleplayerServer() == null
-                && !minecraft.player.hasPermissions(2)) {
-            minecraft.player.displayClientMessage(
-                    Component.translatable("gui.roadweaver.map.config.denied"), true);
+                && !minecraft.player.permissions().hasPermission(Permissions.COMMANDS_GAMEMASTER)) {
+            minecraft.player.sendOverlayMessage(Component.translatable("gui.roadweaver.map.config.denied"));
             return;
         }
         try {
             Screen next = ConfigScreenFactory.createConfigScreen(screen);
             if (next != null) {
-                minecraft.setScreen(next);
+                minecraft.gui.setScreen(next);
             }
         } catch (Throwable ignored) {
         }
     }
 
     void handleWorkspaceHit(MapWorkspacePanel.Hit hit, double mouseX, double mouseY, int button) {
-        if (button != 0 || hit == null) {
+        if (button != InputConstants.MOUSE_BUTTON_LEFT || hit == null) {
             return;
         }
         MapWorkspacePanel panel = screen.panel();
@@ -188,7 +189,7 @@ final class MapScreenCommands {
             return;
         }
         String currentAlias = ClientMapNotes.getAlias(target);
-        minecraft.setScreen(new SimpleTextInputScreen(
+        minecraft.gui.setScreen(new SimpleTextInputScreen(
                 DIALOG_ALIAS_TITLE,
                 currentAlias != null ? currentAlias : "",
                 alias -> ClientMapNotes.setAlias(target, alias),
@@ -201,7 +202,7 @@ final class MapScreenCommands {
         if (minecraft == null) {
             return;
         }
-        minecraft.setScreen(new NoteEditScreen(target, screen));
+        minecraft.gui.setScreen(new NoteEditScreen(target, screen));
     }
 
     void onManualConnect(BlockPos from, BlockPos to) {
@@ -240,10 +241,10 @@ final class MapScreenCommands {
         if (server != null) {
             ServerLevel level = server.getLevel(Level.OVERWORLD);
             if (level != null) {
-                return level.getSharedSpawnPos();
+                return level.getRespawnData().pos();
             }
         }
-        return minecraft.level != null ? minecraft.level.getSharedSpawnPos() : null;
+        return minecraft.level != null ? minecraft.level.getRespawnData().pos() : null;
     }
 
     boolean hasMapOpenPermission() {

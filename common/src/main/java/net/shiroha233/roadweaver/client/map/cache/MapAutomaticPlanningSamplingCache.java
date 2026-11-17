@@ -1,6 +1,6 @@
 package net.shiroha233.roadweaver.client.map.cache;
 
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.shiroha233.roadweaver.planning.pipeline.AutomaticPlanningSamplingBounds;
 
 import java.util.ArrayList;
@@ -11,12 +11,12 @@ import java.util.concurrent.ConcurrentHashMap;
  * 客户端自动规划采样范围缓存。
  */
 public final class MapAutomaticPlanningSamplingCache {
-    private static final ConcurrentHashMap<ResourceLocation, List<AutomaticPlanningSamplingBounds>> BY_DIMENSION =
+    private static final ConcurrentHashMap<Identifier, List<AutomaticPlanningSamplingBounds>> BY_DIMENSION =
             new ConcurrentHashMap<>();
 
     private MapAutomaticPlanningSamplingCache() {}
 
-    public static void replace(ResourceLocation dimension,
+    public static void replace(Identifier dimension,
                                List<AutomaticPlanningSamplingBounds> bounds) {
         if (dimension == null) {
             return;
@@ -29,7 +29,7 @@ public final class MapAutomaticPlanningSamplingCache {
         }
     }
 
-    public static List<AutomaticPlanningSamplingBounds> snapshot(ResourceLocation dimension) {
+    public static List<AutomaticPlanningSamplingBounds> snapshot(Identifier dimension) {
         if (dimension == null) {
             return List.of();
         }

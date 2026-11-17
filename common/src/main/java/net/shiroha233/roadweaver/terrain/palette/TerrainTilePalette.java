@@ -131,7 +131,7 @@ public final class TerrainTilePalette {
 
     private static String biomePath(Holder<Biome> biome) {
         if (biome == null) return "";
-        return biome.unwrapKey().map(key -> key.location().getPath()).orElse("");
+        return biome.unwrapKey().map(key -> key.identifier().getPath()).orElse("");
     }
 
     private static int mix(int from, int to, double t) {

@@ -1,11 +1,14 @@
 package net.shiroha233.roadweaver.client.map.ui;
 
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.client.input.CharacterEvent;
+import net.minecraft.client.input.KeyEvent;
+import net.minecraft.client.input.MouseButtonEvent;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.shiroha233.roadweaver.client.map.cache.ClientMapNotes;
 import net.shiroha233.roadweaver.client.ui.RoadWeaverScreen;
 import net.shiroha233.roadweaver.client.ui.ScreenBackgrounds;
@@ -17,7 +20,7 @@ import java.util.List;
  * 地图笔记编辑界面 - 采用类似原版书与笔的风格
  */
 public class NoteEditScreen extends RoadWeaverScreen {
-    private static final ResourceLocation BOOK_TEXTURE = ResourceLocation.fromNamespaceAndPath("minecraft", "textures/gui/book.png");
+    private static final Identifier BOOK_TEXTURE = Identifier.fromNamespaceAndPath("minecraft", "textures/gui/book.png");
     
     private static final int BOOK_WIDTH = 192;
     private static final int BOOK_HEIGHT = 192;
@@ -62,23 +65,26 @@ public class NoteEditScreen extends RoadWeaverScreen {
     }
 
     @Override
-    public void render(GuiGraphics g, int mouseX, int mouseY, float partialTick) {
+    public void extractRenderState(GuiGraphicsExtractor g, int mouseX, int mouseY,
+                                     float partialTick) {
         ScreenBackgrounds.render(g, this.width, this.height);
         
-        g.blit(BOOK_TEXTURE, bookX, bookY, 0, 0, BOOK_WIDTH, BOOK_HEIGHT);
+        // 书本纹理为 256x256，界面只取左上角 192x192 的区域。
+        g.blit(BOOK_TEXTURE, bookX, bookY, BOOK_WIDTH, BOOK_HEIGHT,
+                0.0F, BOOK_WIDTH / 256.0F, 0.0F, BOOK_HEIGHT / 256.0F);
         
         String alias = ClientMapNotes.getAlias(targetPos);
         String titleStr = (alias != null && !alias.isEmpty()) 
                 ? alias 
                 : String.format("(%d, %d)", targetPos.getX(), targetPos.getZ());
-        g.drawString(this.font, titleStr, bookX + TEXT_X_OFFSET, bookY + 18, 0x000000, false);
+        g.text(this.font, titleStr, bookX + TEXT_X_OFFSET, bookY + 18, 0x000000, false);
         
         int textX = bookX + TEXT_X_OFFSET;
         int textY = bookY + TEXT_Y_OFFSET;
         
         for (int i = 0; i < Math.min(lines.size(), MAX_LINES); i++) {
             String line = lines.get(i);
-            g.drawString(this.font, line, textX, textY + i * LINE_HEIGHT, 0x000000, false);
+            g.text(this.font, line, textX, textY + i * LINE_HEIGHT, 0x000000, false);
         }
         
         updateCursorBlink();
@@ -89,7 +95,7 @@ public class NoteEditScreen extends RoadWeaverScreen {
             g.fill(cursorX, cursorY, cursorX + 1, cursorY + LINE_HEIGHT, 0xFF000000);
         }
         
-        super.render(g, mouseX, mouseY, partialTick);
+        super.extractRenderState(g, mouseX, mouseY, partialTick);
     }
     
     private void updateCursorBlink() {
@@ -101,9 +107,13 @@ public class NoteEditScreen extends RoadWeaverScreen {
     }
 
     @Override
-    public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
+    public boolean keyPressed(KeyEvent event) {
+        int keyCode = event.key();
+        int scanCode = event.keycode();
+        int modifiers = event.modifiers();
+
         if (keyCode == 256) {
-            this.minecraft.setScreen(parent);
+            this.minecraft.gui.setScreen(parent);
             return true;
         }
         
@@ -189,11 +199,13 @@ public class NoteEditScreen extends RoadWeaverScreen {
             return true;
         }
         
-        return super.keyPressed(keyCode, scanCode, modifiers);
+        return super.keyPressed(event);
     }
 
     @Override
-    public boolean charTyped(char c, int modifiers) {
+    public boolean charTyped(CharacterEvent event) {
+        char c = (char) event.codepoint();
+
         if (Character.isISOControl(c)) return false;
         
         String current = lines.get(cursorLine);
@@ -206,7 +218,11 @@ public class NoteEditScreen extends RoadWeaverScreen {
     }
 
     @Override
-    public boolean mouseClicked(double mouseX, double mouseY, int button) {
+    public boolean mouseClicked(MouseButtonEvent event, boolean doubleClick) {
+        double mouseX = event.x();
+        double mouseY = event.y();
+        int button = event.button();
+
         int textX = bookX + TEXT_X_OFFSET;
         int textY = bookY + TEXT_Y_OFFSET;
         
@@ -230,7 +246,7 @@ public class NoteEditScreen extends RoadWeaverScreen {
             return true;
         }
         
-        return super.mouseClicked(mouseX, mouseY, button);
+        return super.mouseClicked(event, doubleClick);
     }
 
     private void save() {
@@ -240,7 +256,7 @@ public class NoteEditScreen extends RoadWeaverScreen {
                 ClientMapNotes.addNote(targetPos, line);
             }
         }
-        this.minecraft.setScreen(parent);
+        this.minecraft.gui.setScreen(parent);
     }
 
     @Override

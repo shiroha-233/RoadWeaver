@@ -6,40 +6,40 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.level.Level;
 import net.shiroha233.roadweaver.config.ConfigService;
 import net.shiroha233.roadweaver.config.ModConfig;
+import net.shiroha233.roadweaver.config.sub.TerrainSamplingMode;
 import net.shiroha233.roadweaver.core.constants.RoadConstants;
 import net.shiroha233.roadweaver.core.model.ConnectionStatus;
+import net.shiroha233.roadweaver.core.model.PlannedPathKey;
 import net.shiroha233.roadweaver.core.model.StructureConnection;
 import net.shiroha233.roadweaver.core.model.StructureInfo;
-import net.shiroha233.roadweaver.persistence.ConnectionListUpdater;
-import net.shiroha233.roadweaver.progress.InitialGenerationProgressTracker;
-import net.shiroha233.roadweaver.progress.InitialGenerationStage;
 import net.shiroha233.roadweaver.map.MapPatchService;
+import net.shiroha233.roadweaver.map.StructureIndexService;
+import net.shiroha233.roadweaver.map.tile.backfill.AccurateTerrainTileBackfillService;
 import net.shiroha233.roadweaver.map.tile.core.MapTileCoord;
 import net.shiroha233.roadweaver.map.tile.core.MapTileLayer;
 import net.shiroha233.roadweaver.map.tile.core.MapTileRect;
 import net.shiroha233.roadweaver.map.tile.core.MapTileScheme;
-import net.shiroha233.roadweaver.map.tile.storage.ServerMapTileStorage;
 import net.shiroha233.roadweaver.map.tile.storage.AccurateTerrainMapFingerprintGuard;
-import net.shiroha233.roadweaver.map.tile.backfill.AccurateTerrainTileBackfillService;
+import net.shiroha233.roadweaver.map.tile.storage.ServerMapTileStorage;
 import net.shiroha233.roadweaver.map.tile.writer.CoarseTerrainPngWriter;
-import net.shiroha233.roadweaver.terrain.coarse.CoarseTerrainRegion;
-import net.shiroha233.roadweaver.terrain.coarse.CoarseTerrainRegionSampler;
-import net.shiroha233.roadweaver.persistence.WorldDataProvider;
+import net.shiroha233.roadweaver.network.platform.ServerMapPlanningActivityBridge;
+import net.shiroha233.roadweaver.persistence.ConnectionListUpdater;
 import net.shiroha233.roadweaver.persistence.StructureFileStorage;
+import net.shiroha233.roadweaver.persistence.WorldDataProvider;
 import net.shiroha233.roadweaver.persistence.sharded.RoadShardStorage;
-import net.shiroha233.roadweaver.config.sub.TerrainSamplingMode;
 import net.shiroha233.roadweaver.planning.path.PlannedPathCache;
-import net.shiroha233.roadweaver.core.model.PlannedPathKey;
 import net.shiroha233.roadweaver.planning.path.RawPathDebugService;
-import net.shiroha233.roadweaver.planning.pipeline.RoadTerrainPlanningPipeline;
-import net.shiroha233.roadweaver.planning.pipeline.RoadTerrainPlanningPort;
 import net.shiroha233.roadweaver.planning.pipeline.AutomaticPlanningSamplingActivities;
 import net.shiroha233.roadweaver.planning.pipeline.AutomaticPlanningSamplingBounds;
+import net.shiroha233.roadweaver.planning.pipeline.RoadTerrainPlanningPipeline;
+import net.shiroha233.roadweaver.planning.pipeline.RoadTerrainPlanningPort;
 import net.shiroha233.roadweaver.planning.pipeline.TerrainSamplingSessions;
-import net.shiroha233.roadweaver.network.platform.ServerMapPlanningActivityBridge;
-import net.shiroha233.roadweaver.runtime.ThreadPoolManager;
-import net.shiroha233.roadweaver.map.StructureIndexService;
+import net.shiroha233.roadweaver.progress.InitialGenerationProgressTracker;
+import net.shiroha233.roadweaver.progress.InitialGenerationStage;
 import net.shiroha233.roadweaver.runtime.ComputeService;
+import net.shiroha233.roadweaver.runtime.ThreadPoolManager;
+import net.shiroha233.roadweaver.terrain.coarse.CoarseTerrainRegion;
+import net.shiroha233.roadweaver.terrain.coarse.CoarseTerrainRegionSampler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -79,7 +79,7 @@ public final class RoadPlanningService {
         InitialGenerationProgressTracker.enterStage(InitialGenerationStage.PLANNING, "discovering_structures");
         ModConfig cfg = ConfigService.get();
         int radiusChunks = Math.max(1, cfg.planning().initialPlanRadiusChunks());
-        BlockPos spawn = level.getSharedSpawnPos();
+        BlockPos spawn = level.getRespawnData().pos();
         int cx = spawn.getX() >> 4;
         int cz = spawn.getZ() >> 4;
         int minX = (cx - radiusChunks) * 16;
@@ -94,7 +94,7 @@ public final class RoadPlanningService {
 
     public static void planAroundPlayer(ServerPlayer player) {
         if (player == null) return;
-        ServerLevel level = player.serverLevel();
+        ServerLevel level = player.level();
         if (!Level.OVERWORLD.equals(level.dimension())) return;
         ModConfig cfg = ConfigService.get();
         if (!cfg.planning().dynamicPlanEnabled()) return;
@@ -102,8 +102,8 @@ public final class RoadPlanningService {
         int radiusChunks = Math.max(1, cfg.planning().dynamicPlanRadiusChunks());
         int stride = Math.max(1, cfg.planning().dynamicPlanStrideChunks());
         int tile = Math.max(RoadConstants.PLAN_TILE_MIN, Math.min(RoadConstants.PLAN_TILE_MAX, stride));
-        int pcx = player.chunkPosition().x;
-        int pcz = player.chunkPosition().z;
+        int pcx = player.chunkPosition().x();
+        int pcz = player.chunkPosition().z();
         int kx = floorDiv(pcx, tile);
         int kz = floorDiv(pcz, tile);
         long key = (((long) kx) << 32) ^ (kz & 0xffffffffL);
@@ -136,7 +136,7 @@ public final class RoadPlanningService {
                         if (backfillPlan) unmarkRoadBackfillPlanTile(level, key);
                         if (error != null && !(error instanceof CancellationException)
                                 && !(error.getCause() instanceof CancellationException)) {
-                            LOGGER.warn("动态规划 tile 失败，保留重试机会 dimension={} tile=[{},{}]", level.dimension().location(), kx, kz, error);
+                            LOGGER.warn("动态规划 tile 失败，保留重试机会 dimension={} tile=[{},{}]", level.dimension().identifier(), kx, kz, error);
                         }
                         return;
                     }
@@ -209,7 +209,7 @@ public final class RoadPlanningService {
         try {
             ServerMapPlanningActivityBridge.broadcast(level);
         } catch (RuntimeException failure) {
-            LOGGER.debug("自动规划采样范围同步失败 dimension={}", level.dimension().location(), failure);
+            LOGGER.debug("自动规划采样范围同步失败 dimension={}", level.dimension().identifier(), failure);
         }
     }
 
@@ -254,11 +254,11 @@ public final class RoadPlanningService {
                 }
                 if (completed) {
                     LOGGER.info("已补全规划区域地图瓦片 dimension={} layer={} min=({}, {}) max=({}, {})",
-                            level.dimension().location(), layer, minBlockX, minBlockZ, maxBlockX, maxBlockZ);
+                            level.dimension().identifier(), layer, minBlockX, minBlockZ, maxBlockX, maxBlockZ);
                 }
             } catch (RuntimeException e) {
                 LOGGER.warn("补全规划区域地图瓦片失败 dimension={} layer={}",
-                        level.dimension().location(), layer, e);
+                        level.dimension().identifier(), layer, e);
             } finally {
                 if (region != null) region.dispose();
                 if (!completed) {
@@ -364,7 +364,7 @@ public final class RoadPlanningService {
         if (level == null || !Level.OVERWORLD.equals(level.dimension())) return CompletableFuture.completedFuture(null);
         ModConfig cfg = ConfigService.get();
         int radiusChunks = Math.max(1, cfg.planning().initialPlanRadiusChunks());
-        BlockPos spawn = level.getSharedSpawnPos();
+        BlockPos spawn = level.getRespawnData().pos();
         int cx = spawn.getX() >> 4;
         int cz = spawn.getZ() >> 4;
         int minX = (cx - radiusChunks) * 16;

@@ -1,12 +1,14 @@
 package net.shiroha233.roadweaver.client.config;
 
+import com.mojang.blaze3d.platform.InputConstants;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
+import net.minecraft.client.input.MouseButtonEvent;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
@@ -57,9 +59,9 @@ public class MaterialGridWidget extends AbstractWidget {
     }
 
     @Override
-    public void renderWidget(GuiGraphics g, int mouseX, int mouseY, float partialTick) {
+    protected void extractWidgetRenderState(GuiGraphicsExtractor g, int mouseX, int mouseY, float partialTick) {
         RoadWeaverUi.drawPanel(g, this.getX() - 4, this.getY() - 4, this.width + 8, this.height + 8);
-        g.drawString(Minecraft.getInstance().font, this.label, this.getX(), this.getY(), isTarget ? 0xFFF4E58A : 0xFFFFFF, false);
+        g.text(Minecraft.getInstance().font, this.label, this.getX(), this.getY(), isTarget ? 0xFFF4E58A : 0xFFFFFF, false);
 
         int gridY = this.getY() + LABEL_HEIGHT;
         int index = 0;
@@ -83,7 +85,7 @@ public class MaterialGridWidget extends AbstractWidget {
                          
                          if (mouseX >= x && mouseX < x + SLOT_SIZE && mouseY >= y && mouseY < y + SLOT_SIZE) {
                               g.fill(x, y, x + SLOT_SIZE, y + SLOT_SIZE, 0x80FFFFFF);
-                              g.renderOutline(x, y, SLOT_SIZE, SLOT_SIZE, 0xFFC8D2DE);
+                              g.outline(x, y, SLOT_SIZE, SLOT_SIZE, 0xFFC8D2DE);
                               SafeGuiItemRenderer.renderTooltipSafe(g, Minecraft.getInstance().font, stack, mouseX, mouseY);
                          }
                     }
@@ -94,9 +96,12 @@ public class MaterialGridWidget extends AbstractWidget {
     }
 
     @Override
-    public boolean mouseClicked(double mouseX, double mouseY, int button) {
+    public boolean mouseClicked(MouseButtonEvent event, boolean doubleClick) {
         if (!this.visible || !this.active) return false;
-        
+
+        double mouseX = event.x();
+        double mouseY = event.y();
+        int button = event.button();
         int gridY = this.getY() + LABEL_HEIGHT;
         if (mouseX >= this.getX() && mouseX < this.getX() + width &&
             mouseY >= gridY && mouseY < gridY + rows * SLOT_SIZE) {
@@ -109,7 +114,7 @@ public class MaterialGridWidget extends AbstractWidget {
                     int x = this.getX() + col * SLOT_SIZE;
                     int y = gridY + row * SLOT_SIZE;
                     if (mouseX >= x && mouseX < x + SLOT_SIZE && mouseY >= y && mouseY < y + SLOT_SIZE) {
-                        if (button == 0 && index < materialIds.size()) {
+                        if (button == InputConstants.MOUSE_BUTTON_LEFT && index < materialIds.size()) {
                             playDownSound(Minecraft.getInstance().getSoundManager());
                             onRemove.accept(index);
                             return true;
@@ -126,8 +131,8 @@ public class MaterialGridWidget extends AbstractWidget {
 
     private Block blockFromId(String id) {
         try {
-            ResourceLocation rl = ResourceLocation.parse(id);
-            return BuiltInRegistries.BLOCK.get(rl);
+            Identifier rl = Identifier.parse(id);
+            return BuiltInRegistries.BLOCK.getValue(rl);
         } catch (Exception e) {
             return Blocks.AIR;
         }

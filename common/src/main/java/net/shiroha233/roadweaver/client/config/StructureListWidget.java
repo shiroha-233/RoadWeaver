@@ -1,14 +1,16 @@
 package net.shiroha233.roadweaver.client.config;
 
 import com.mojang.blaze3d.systems.RenderSystem;
+import com.mojang.blaze3d.platform.InputConstants;
 import dev.architectury.platform.Platform;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.ContainerObjectSelectionList;
 import net.minecraft.client.gui.components.events.GuiEventListener;
 import net.minecraft.client.gui.narration.NarratableEntry;
+import net.minecraft.client.input.MouseButtonEvent;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.shiroha233.roadweaver.config.structure.StructureEntry;
 import net.shiroha233.roadweaver.config.structure.StructureTagEntry;
 
@@ -23,7 +25,7 @@ import java.util.function.Consumer;
  * 结构列表组件，支持树形展示和模组图标。
  */
 public class StructureListWidget extends RoadWeaverSelectionList<StructureListWidget.Entry> {
-    private static final Map<String, Optional<ResourceLocation>> MOD_ICON_CACHE = new HashMap<>();
+    private static final Map<String, Optional<Identifier>> MOD_ICON_CACHE = new HashMap<>();
     private static final int ROW_HEIGHT = 24;
     private static final int CHECKBOX_SIZE = 10;
 
@@ -52,12 +54,12 @@ public class StructureListWidget extends RoadWeaverSelectionList<StructureListWi
         return structure.displayName();
     }
 
-    static ResourceLocation getModIconTexture(String modId) {
+    static Identifier getModIconTexture(String modId) {
         if (modId == null || modId.isEmpty()) return null;
-        Optional<ResourceLocation> cached = MOD_ICON_CACHE.get(modId);
+        Optional<Identifier> cached = MOD_ICON_CACHE.get(modId);
         if (cached != null) return cached.orElse(null);
 
-        ResourceLocation resolved = null;
+        Identifier resolved = null;
         try {
             var optMod = Platform.getOptionalMod(modId);
             if (optMod.isPresent()) {
@@ -65,7 +67,7 @@ public class StructureListWidget extends RoadWeaverSelectionList<StructureListWi
                 var logoOpt = mod.getLogoFile(32);
                 if (logoOpt.isPresent()) {
                     String logoPath = logoOpt.get();
-                    List<ResourceLocation> candidates = new ArrayList<>();
+                    List<Identifier> candidates = new ArrayList<>();
 
                     if (logoPath.startsWith("assets/")) {
                         String rel = logoPath.substring("assets/".length());
@@ -73,21 +75,21 @@ public class StructureListWidget extends RoadWeaverSelectionList<StructureListWi
                         if (slash >= 0) {
                             String ns = rel.substring(0, slash);
                             String path = rel.substring(slash + 1);
-                            candidates.add(ResourceLocation.fromNamespaceAndPath(ns, path));
+                            candidates.add(Identifier.fromNamespaceAndPath(ns, path));
                         }
                     } else if (logoPath.indexOf(':') >= 0) {
-                        ResourceLocation rl = ResourceLocation.tryParse(logoPath);
+                        Identifier rl = Identifier.tryParse(logoPath);
                         if (rl != null) candidates.add(rl);
                     } else {
-                        candidates.add(ResourceLocation.fromNamespaceAndPath(modId, logoPath));
+                        candidates.add(Identifier.fromNamespaceAndPath(modId, logoPath));
                         if (!logoPath.startsWith("textures/")) {
-                            candidates.add(ResourceLocation.fromNamespaceAndPath(modId, "textures/" + logoPath));
-                            candidates.add(ResourceLocation.fromNamespaceAndPath(modId, "textures/gui/" + logoPath));
+                            candidates.add(Identifier.fromNamespaceAndPath(modId, "textures/" + logoPath));
+                            candidates.add(Identifier.fromNamespaceAndPath(modId, "textures/gui/" + logoPath));
                         }
                     }
 
                     var rm = Minecraft.getInstance().getResourceManager();
-                    for (ResourceLocation rl : candidates) {
+                    for (Identifier rl : candidates) {
                         if (rl == null) continue;
                         try {
                             if (rm.getResource(rl).isPresent()) {
@@ -140,11 +142,16 @@ public class StructureListWidget extends RoadWeaverSelectionList<StructureListWi
         }
 
         @Override
-        public void render(GuiGraphics graphics, int index, int top, int left, int width, int height,
-                          int mouseX, int mouseY, boolean hovering, float partialTick) {
+        public void extractContent(GuiGraphicsExtractor graphics, int mouseX, int mouseY, boolean hovering,
+                                 float partialTick) {
+            int left = getContentX();
+            int top = getContentY();
+            int width = getContentWidth();
+            int height = getContentHeight();
+
             Minecraft mc = Minecraft.getInstance();
             String expandIcon = expanded ? "v" : ">";
-            graphics.drawString(mc.font, expandIcon, left + 2, top + 7, 0xFFFFFF, false);
+            graphics.text(mc.font, expandIcon, left + 2, top + 7, 0xFFFFFF, false);
 
             int boxX = left + 14;
             int boxY = top + 6;
@@ -157,20 +164,22 @@ public class StructureListWidget extends RoadWeaverSelectionList<StructureListWi
             }
 
             int textX = left + 30;
-            ResourceLocation icon = getModIconTexture(modId);
+            Identifier icon = getModIconTexture(modId);
             if (icon != null) {
-                RenderSystem.enableBlend();
-                graphics.blit(icon, textX, top + 4, 0, 0, 16, 16, 16, 16);
-                RenderSystem.disableBlend();
+                graphics.blit(icon, textX, top + 4, 16, 16, 0.0F, 1.0F, 0.0F, 1.0F);
                 textX += 18;
             }
 
-            graphics.drawString(mc.font, title, textX, top + 7, 0xFFFFFF, false);
+            graphics.text(mc.font, title, textX, top + 7, 0xFFFFFF, false);
         }
 
         @Override
-        public boolean mouseClicked(double mouseX, double mouseY, int button) {
-            if (button == 0) {
+        public boolean mouseClicked(MouseButtonEvent event, boolean doubleClick) {
+            double mouseX = event.x();
+            double mouseY = event.y();
+            int button = event.button();
+
+            if (button == InputConstants.MOUSE_BUTTON_LEFT) {
                 int rowLeft = (this.list.width - this.list.getRowWidth()) / 2;
                 if (mouseX >= rowLeft && mouseX <= rowLeft + 14) {
                     onExpandToggle.accept(modId);
@@ -185,7 +194,7 @@ public class StructureListWidget extends RoadWeaverSelectionList<StructureListWi
                     return true;
                 }
             }
-            return super.mouseClicked(mouseX, mouseY, button);
+            return super.mouseClicked(event, doubleClick);
         }
 
         @Override
@@ -208,9 +217,14 @@ public class StructureListWidget extends RoadWeaverSelectionList<StructureListWi
         }
 
         @Override
-        public void render(GuiGraphics graphics, int index, int top, int left, int width, int height,
-                          int mouseX, int mouseY, boolean hovering, float partialTick) {
-            graphics.drawCenteredString(Minecraft.getInstance().font, message,
+        public void extractContent(GuiGraphicsExtractor graphics, int mouseX, int mouseY, boolean hovering,
+                                 float partialTick) {
+            int left = getContentX();
+            int top = getContentY();
+            int width = getContentWidth();
+            int height = getContentHeight();
+
+            graphics.centeredText(Minecraft.getInstance().font, message,
                     left + width / 2, top + 5, 0xAAAAAA);
         }
 
@@ -234,9 +248,14 @@ public class StructureListWidget extends RoadWeaverSelectionList<StructureListWi
         }
 
         @Override
-        public void render(GuiGraphics graphics, int index, int top, int left, int width, int height,
-                          int mouseX, int mouseY, boolean hovering, float partialTick) {
-            graphics.drawString(Minecraft.getInstance().font, title, left + 5, top + 5, 0xFFFF00);
+        public void extractContent(GuiGraphicsExtractor graphics, int mouseX, int mouseY, boolean hovering,
+                                 float partialTick) {
+            int left = getContentX();
+            int top = getContentY();
+            int width = getContentWidth();
+            int height = getContentHeight();
+
+            graphics.text(Minecraft.getInstance().font, title, left + 5, top + 5, 0xFFFF00);
         }
 
         @Override
@@ -268,13 +287,18 @@ public class StructureListWidget extends RoadWeaverSelectionList<StructureListWi
         }
 
         @Override
-        public void render(GuiGraphics graphics, int index, int top, int left, int width, int height,
-                          int mouseX, int mouseY, boolean hovering, float partialTick) {
+        public void extractContent(GuiGraphicsExtractor graphics, int mouseX, int mouseY, boolean hovering,
+                                 float partialTick) {
+            int left = getContentX();
+            int top = getContentY();
+            int width = getContentWidth();
+            int height = getContentHeight();
+
             Minecraft mc = Minecraft.getInstance();
 
             int indent = 10;
             String expandIcon = expanded ? "v" : ">";
-            graphics.drawString(mc.font, expandIcon, left + indent, top + 7, 0xAAAAAA, false);
+            graphics.text(mc.font, expandIcon, left + indent, top + 7, 0xAAAAAA, false);
 
             int boxX = left + indent + 12;
             int boxY = top + 6;
@@ -284,12 +308,16 @@ public class StructureListWidget extends RoadWeaverSelectionList<StructureListWi
                 graphics.fill(boxX + 2, boxY + 2, boxX + CHECKBOX_SIZE - 2, boxY + CHECKBOX_SIZE - 2, 0xFF55FF55);
             }
 
-            graphics.drawString(mc.font, tag.displayName(), boxX + 14, top + 7, 0xDDDDDD, false);
+            graphics.text(mc.font, tag.displayName(), boxX + 14, top + 7, 0xDDDDDD, false);
         }
 
         @Override
-        public boolean mouseClicked(double mouseX, double mouseY, int button) {
-            if (button == 0) {
+        public boolean mouseClicked(MouseButtonEvent event, boolean doubleClick) {
+            double mouseX = event.x();
+            double mouseY = event.y();
+            int button = event.button();
+
+            if (button == InputConstants.MOUSE_BUTTON_LEFT) {
                 int rowLeft = (this.list.width - this.list.getRowWidth()) / 2;
                 int indent = 10;
                 if (mouseX >= rowLeft + indent && mouseX <= rowLeft + indent + 10) {
@@ -301,7 +329,7 @@ public class StructureListWidget extends RoadWeaverSelectionList<StructureListWi
                     return true;
                 }
             }
-            return super.mouseClicked(mouseX, mouseY, button);
+            return super.mouseClicked(event, doubleClick);
         }
 
         @Override
@@ -332,8 +360,13 @@ public class StructureListWidget extends RoadWeaverSelectionList<StructureListWi
         }
 
         @Override
-        public void render(GuiGraphics graphics, int index, int top, int left, int width, int height,
-                          int mouseX, int mouseY, boolean hovering, float partialTick) {
+        public void extractContent(GuiGraphicsExtractor graphics, int mouseX, int mouseY, boolean hovering,
+                                 float partialTick) {
+            int left = getContentX();
+            int top = getContentY();
+            int width = getContentWidth();
+            int height = getContentHeight();
+
             Minecraft mc = Minecraft.getInstance();
 
             int checkboxX = left + INDENT;
@@ -346,20 +379,24 @@ public class StructureListWidget extends RoadWeaverSelectionList<StructureListWi
 
             int textColor = structure.isVanilla() ? 0xAAAAAA : 0xFFAAAA;
             String name = getLocalizedStructureName(structure);
-            graphics.drawString(mc.font, "  " + name, left + INDENT + 20, top + 7, textColor);
-            graphics.drawString(mc.font, structure.id().toString(), left + INDENT + 20, top + 15, 0x666666);
+            graphics.text(mc.font, "  " + name, left + INDENT + 20, top + 7, textColor);
+            graphics.text(mc.font, structure.id().toString(), left + INDENT + 20, top + 15, 0x666666);
         }
 
         @Override
-        public boolean mouseClicked(double mouseX, double mouseY, int button) {
-            if (button == 0) {
+        public boolean mouseClicked(MouseButtonEvent event, boolean doubleClick) {
+            double mouseX = event.x();
+            double mouseY = event.y();
+            int button = event.button();
+
+            if (button == InputConstants.MOUSE_BUTTON_LEFT) {
                 int left = list.getRowLeft();
                 if (mouseX >= left && mouseX <= left + this.list.getRowWidth()) {
                     onToggle.accept(structure);
                     return true;
                 }
             }
-            return super.mouseClicked(mouseX, mouseY, button);
+            return super.mouseClicked(event, doubleClick);
         }
 
         @Override
@@ -402,14 +439,19 @@ public class StructureListWidget extends RoadWeaverSelectionList<StructureListWi
         }
 
         @Override
-        public void render(GuiGraphics graphics, int index, int top, int left, int width, int height,
-                          int mouseX, int mouseY, boolean hovering, float partialTick) {
+        public void extractContent(GuiGraphicsExtractor graphics, int mouseX, int mouseY, boolean hovering,
+                                 float partialTick) {
+            int left = getContentX();
+            int top = getContentY();
+            int width = getContentWidth();
+            int height = getContentHeight();
+
             Minecraft mc = Minecraft.getInstance();
             int indent = baseIndent + (pathNode.depth() - 1) * INDENT_PER_LEVEL;
 
             String expandIcon = expanded ? "v" : ">";
             int expandX = left + indent + 5;
-            graphics.drawString(mc.font, expandIcon, expandX, top + 7, 0xAAAAAA, false);
+            graphics.text(mc.font, expandIcon, expandX, top + 7, 0xAAAAAA, false);
 
             int boxX = left + indent + 17;
             int boxY = top + 6;
@@ -422,12 +464,16 @@ public class StructureListWidget extends RoadWeaverSelectionList<StructureListWi
             }
 
             String displayText = pathNode.name() + " (" + pathNode.getTotalStructureCount() + ")";
-            graphics.drawString(mc.font, displayText, boxX + 14, top + 7, 0xDDDDDD, false);
+            graphics.text(mc.font, displayText, boxX + 14, top + 7, 0xDDDDDD, false);
         }
 
         @Override
-        public boolean mouseClicked(double mouseX, double mouseY, int button) {
-            if (button == 0) {
+        public boolean mouseClicked(MouseButtonEvent event, boolean doubleClick) {
+            double mouseX = event.x();
+            double mouseY = event.y();
+            int button = event.button();
+
+            if (button == InputConstants.MOUSE_BUTTON_LEFT) {
                 int rowLeft = (this.list.width - this.list.getRowWidth()) / 2;
                 int indent = baseIndent + (pathNode.depth() - 1) * INDENT_PER_LEVEL;
                 if (mouseX >= rowLeft + indent && mouseX <= rowLeft + indent + 10) {
@@ -439,7 +485,7 @@ public class StructureListWidget extends RoadWeaverSelectionList<StructureListWi
                     return true;
                 }
             }
-            return super.mouseClicked(mouseX, mouseY, button);
+            return super.mouseClicked(event, doubleClick);
         }
 
         @Override
@@ -476,8 +522,13 @@ public class StructureListWidget extends RoadWeaverSelectionList<StructureListWi
         }
 
         @Override
-        public void render(GuiGraphics graphics, int index, int top, int left, int width, int height,
-                          int mouseX, int mouseY, boolean hovering, float partialTick) {
+        public void extractContent(GuiGraphicsExtractor graphics, int mouseX, int mouseY, boolean hovering,
+                                 float partialTick) {
+            int left = getContentX();
+            int top = getContentY();
+            int width = getContentWidth();
+            int height = getContentHeight();
+
             Minecraft mc = Minecraft.getInstance();
             int indent = baseIndent + depth * INDENT_PER_LEVEL;
 
@@ -491,23 +542,27 @@ public class StructureListWidget extends RoadWeaverSelectionList<StructureListWi
 
             String leafName = StructurePathNode.getLeafName(structure);
             int textColor = structure.isVanilla() ? 0xFFFFFF : 0xFFAAAA;
-            graphics.drawString(mc.font, leafName, boxX + 14, top + 7, textColor, false);
+            graphics.text(mc.font, leafName, boxX + 14, top + 7, textColor, false);
 
             if (hovering && mouseX >= boxX + 14) {
-                graphics.renderTooltip(mc.font, Component.literal(structure.id().toString()), mouseX, mouseY);
+                graphics.setTooltipForNextFrame(mc.font, Component.literal(structure.id().toString()), mouseX, mouseY);
             }
         }
 
         @Override
-        public boolean mouseClicked(double mouseX, double mouseY, int button) {
-            if (button == 0) {
+        public boolean mouseClicked(MouseButtonEvent event, boolean doubleClick) {
+            double mouseX = event.x();
+            double mouseY = event.y();
+            int button = event.button();
+
+            if (button == InputConstants.MOUSE_BUTTON_LEFT) {
                 int rowLeft = (this.list.width - this.list.getRowWidth()) / 2;
                 if (mouseX >= rowLeft && mouseX <= rowLeft + this.list.getRowWidth()) {
                     onToggle.accept(structure);
                     return true;
                 }
             }
-            return super.mouseClicked(mouseX, mouseY, button);
+            return super.mouseClicked(event, doubleClick);
         }
 
         @Override
@@ -537,8 +592,13 @@ public class StructureListWidget extends RoadWeaverSelectionList<StructureListWi
         }
 
         @Override
-        public void render(GuiGraphics graphics, int index, int top, int left, int width, int height,
-                          int mouseX, int mouseY, boolean hovering, float partialTick) {
+        public void extractContent(GuiGraphicsExtractor graphics, int mouseX, int mouseY, boolean hovering,
+                                 float partialTick) {
+            int left = getContentX();
+            int top = getContentY();
+            int width = getContentWidth();
+            int height = getContentHeight();
+
             Minecraft mc = Minecraft.getInstance();
 
             int boxX = left + 12;
@@ -551,23 +611,27 @@ public class StructureListWidget extends RoadWeaverSelectionList<StructureListWi
 
             int textColor = structure.isVanilla() ? 0xFFFFFF : 0xFFAAAA;
             String name = getLocalizedStructureName(structure);
-            graphics.drawString(mc.font, name, boxX + 14, top + 7, textColor, false);
+            graphics.text(mc.font, name, boxX + 14, top + 7, textColor, false);
 
             if (hovering && mouseX >= boxX + 14) {
-                graphics.renderTooltip(mc.font, Component.literal(structure.id().toString()), mouseX, mouseY);
+                graphics.setTooltipForNextFrame(mc.font, Component.literal(structure.id().toString()), mouseX, mouseY);
             }
         }
 
         @Override
-        public boolean mouseClicked(double mouseX, double mouseY, int button) {
-            if (button == 0) {
+        public boolean mouseClicked(MouseButtonEvent event, boolean doubleClick) {
+            double mouseX = event.x();
+            double mouseY = event.y();
+            int button = event.button();
+
+            if (button == InputConstants.MOUSE_BUTTON_LEFT) {
                 int rowLeft = (this.list.width - this.list.getRowWidth()) / 2;
                 if (mouseX >= rowLeft && mouseX <= rowLeft + this.list.getRowWidth()) {
                     onToggle.accept(structure);
                     return true;
                 }
             }
-            return super.mouseClicked(mouseX, mouseY, button);
+            return super.mouseClicked(event, doubleClick);
         }
 
         @Override

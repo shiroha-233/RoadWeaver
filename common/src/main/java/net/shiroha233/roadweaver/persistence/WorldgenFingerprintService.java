@@ -8,7 +8,7 @@ import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.NbtIo;
 import net.minecraft.nbt.NbtOps;
 import net.minecraft.nbt.Tag;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.chunk.ChunkGenerator;
 import net.minecraft.world.level.levelgen.NoiseBasedChunkGenerator;
@@ -40,7 +40,7 @@ public final class WorldgenFingerprintService {
 
     public static WorldgenFingerprint forLevel(ServerLevel level, int schemaVersion) {
         Objects.requireNonNull(level, "level");
-        String memoKey = level.dimension().location() + "|" + schemaVersion;
+        String memoKey = level.dimension().identifier() + "|" + schemaVersion;
         return MEMO.computeIfAbsent(memoKey, key -> computeForLevel(level, schemaVersion));
     }
 
@@ -54,16 +54,16 @@ public final class WorldgenFingerprintService {
                 ? noiseGenerator.generatorSettings()
                 : null;
         return create(
-                level.dimension().location(),
+                level.dimension().identifier(),
                 level.getSeed(),
                 generatorIdentity(generator),
                 level.registryAccess(),
                 settingsHolder,
-                SharedConstants.getCurrentVersion().getDataVersion().getVersion(),
+                SharedConstants.getCurrentVersion().dataVersion().version(),
                 schemaVersion);
     }
 
-    public static WorldgenFingerprint create(ResourceLocation dimension,
+    public static WorldgenFingerprint create(Identifier dimension,
                                              long seed,
                                              String generatorIdentity,
                                              HolderLookup.Provider registries,
@@ -101,7 +101,7 @@ public final class WorldgenFingerprintService {
     public static String generatorIdentity(ChunkGenerator generator) {
         Objects.requireNonNull(generator, "generator");
         String typeKey = generator.getTypeNameForDataFixer()
-                .map(key -> key.location().toString())
+                .map(Identifier::toString)
                 .orElse("unregistered");
         return typeKey + "|" + generator.getClass().getName();
     }

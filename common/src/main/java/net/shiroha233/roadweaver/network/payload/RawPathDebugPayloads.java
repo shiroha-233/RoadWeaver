@@ -5,7 +5,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.shiroha233.roadweaver.config.sub.TerrainSamplingMode;
 import net.shiroha233.roadweaver.planning.path.DebugRawPath;
 import net.shiroha233.roadweaver.planning.path.RawPathDebugService;
@@ -16,24 +16,24 @@ import java.util.List;
 /** Bounded world-space debug requests and responses; coordinates are always chosen by the server. */
 public final class RawPathDebugPayloads {
     public static final CustomPacketPayload.Type<Request> REQUEST = new CustomPacketPayload.Type<>(
-            ResourceLocation.fromNamespaceAndPath("roadweaver", "raw_path_debug_request"));
+            Identifier.fromNamespaceAndPath("roadweaver", "raw_path_debug_request"));
     public static final CustomPacketPayload.Type<Response> RESPONSE = new CustomPacketPayload.Type<>(
-            ResourceLocation.fromNamespaceAndPath("roadweaver", "raw_path_debug_response"));
+            Identifier.fromNamespaceAndPath("roadweaver", "raw_path_debug_response"));
 
     private RawPathDebugPayloads() {}
 
-    public record Request(int sequence, ResourceLocation dimension) implements CustomPacketPayload {
+    public record Request(int sequence, Identifier dimension) implements CustomPacketPayload {
         public static final StreamCodec<FriendlyByteBuf, Request> CODEC = StreamCodec.of(
                 (buf, value) -> {
                     buf.writeVarInt(value.sequence());
-                    buf.writeResourceLocation(value.dimension());
+                    buf.writeIdentifier(value.dimension());
                 },
-                buf -> new Request(buf.readVarInt(), buf.readResourceLocation()));
+                buf -> new Request(buf.readVarInt(), buf.readIdentifier()));
 
         @Override public Type<Request> type() { return REQUEST; }
     }
 
-    public record Response(int sequence, ResourceLocation dimension, boolean captureEnabled,
+    public record Response(int sequence, Identifier dimension, boolean captureEnabled,
                            List<DebugRawPath> paths) implements CustomPacketPayload {
         public Response {
             paths = List.copyOf(paths == null ? List.of() : paths);
@@ -42,7 +42,7 @@ public final class RawPathDebugPayloads {
         public static final StreamCodec<FriendlyByteBuf, Response> CODEC = StreamCodec.of(
                 (buf, value) -> {
                     buf.writeVarInt(value.sequence());
-                    buf.writeResourceLocation(value.dimension());
+                    buf.writeIdentifier(value.dimension());
                     buf.writeBoolean(value.captureEnabled());
                     buf.writeVarInt(value.paths().size());
                     for (DebugRawPath path : value.paths()) {
@@ -53,7 +53,7 @@ public final class RawPathDebugPayloads {
                 },
                 buf -> {
                     int sequence = buf.readVarInt();
-                    ResourceLocation dimension = buf.readResourceLocation();
+                    Identifier dimension = buf.readIdentifier();
                     boolean captureEnabled = buf.readBoolean();
                     int count = buf.readVarInt();
                     if (count < 0 || count > RawPathDebugService.MAX_RESPONSE_POINTS / 2) {

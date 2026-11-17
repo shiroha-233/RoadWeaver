@@ -1,39 +1,36 @@
 package net.shiroha233.roadweaver.generation;
 
 import net.minecraft.core.BlockPos;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.levelgen.feature.ConfiguredFeature;
 import net.shiroha233.roadweaver.config.ConfigService;
 import net.shiroha233.roadweaver.config.ModConfig;
 import net.shiroha233.roadweaver.config.sub.RoadGenerationConfig;
 import net.shiroha233.roadweaver.core.model.ConnectionStatus;
+import net.shiroha233.roadweaver.core.model.PlannedPathKey;
 import net.shiroha233.roadweaver.core.model.RoadData;
 import net.shiroha233.roadweaver.core.model.StructureConnection;
-import net.shiroha233.roadweaver.worldgen.PathFeatureConfig;
-import net.shiroha233.roadweaver.planning.pipeline.Road;
-import net.shiroha233.roadweaver.persistence.ConnectionListUpdater;
 import net.shiroha233.roadweaver.map.MapPatchService;
-import net.shiroha233.roadweaver.terrain.coarse.CoarseTerrainTileCache;
+import net.shiroha233.roadweaver.persistence.ConnectionListUpdater;
 import net.shiroha233.roadweaver.persistence.WorldDataProvider;
 import net.shiroha233.roadweaver.planning.RoadPlanningService;
 import net.shiroha233.roadweaver.planning.path.PlannedPathCache;
-import net.shiroha233.roadweaver.core.model.PlannedPathKey;
+import net.shiroha233.roadweaver.planning.pipeline.Road;
 import net.shiroha233.roadweaver.postprocess.RoadSnapService;
 import net.shiroha233.roadweaver.runtime.ThreadPoolManager;
+import net.shiroha233.roadweaver.terrain.coarse.CoarseTerrainTileCache;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
-import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.Future;
 import java.util.concurrent.RejectedExecutionException;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * 道路生成调度器，管理 Path 队列的 tick 驱动异步生成
@@ -53,8 +50,6 @@ public final class RoadGenerationService {
     public static long currentTick() {
         return CURRENT_TICK;
     }
-
-    private static final ResourceLocation ROAD_CF_ID = ResourceLocation.fromNamespaceAndPath("roadweaver", "road_feature");
 
     public static void onServerStarted() {
         ALL_RUNNING.clear();
@@ -144,11 +139,6 @@ public final class RoadGenerationService {
         try {
             if (Thread.currentThread().isInterrupted()) return false;
 
-            var reg = level.registryAccess()
-                    .registryOrThrow(net.minecraft.core.registries.Registries.CONFIGURED_FEATURE);
-            ConfiguredFeature<?, ?> cf = reg.get(ROAD_CF_ID);
-            PathFeatureConfig cfg = (cf != null && cf.config() instanceof PathFeatureConfig rfc) ? rfc : new PathFeatureConfig();
-
             if (Thread.currentThread().isInterrupted()) return false;
             ModConfig modCfg = ConfigService.get();
             if (!modCfg.roadAppearance().roadsEnabled()) {
@@ -157,7 +147,7 @@ public final class RoadGenerationService {
             }
 
             RoadGenerationConfig genCfg = modCfg.resolvedRoadGeneration();
-            RoadData generated = new Road(level, conn, cfg, genCfg)
+            RoadData generated = new Road(level, conn, genCfg)
                     .generateRoad(modCfg.pathfindingCost().aStarMaxSteps());
             return generated != null;
         } catch (Throwable t) {
@@ -299,7 +289,7 @@ public final class RoadGenerationService {
             var server = level.getServer();
             if (server == null) return null;
             for (ServerPlayer p : server.getPlayerList().getPlayers()) {
-                if (p != null && p.serverLevel() == level) fresh.add(p);
+                if (p != null && p.level() == level) fresh.add(p);
             }
             cache.players = fresh;
             cache.lastTick = CURRENT_TICK;

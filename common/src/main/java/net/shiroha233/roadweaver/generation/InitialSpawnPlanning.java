@@ -3,6 +3,7 @@ package net.shiroha233.roadweaver.generation;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.storage.LevelData;
 import net.minecraft.world.level.storage.ServerLevelData;
 import net.shiroha233.roadweaver.persistence.sharded.RoadShardStorage;
 import net.shiroha233.roadweaver.worldgen.structure.placement.SpawnCabinPlacer;
@@ -25,7 +26,7 @@ public final class InitialSpawnPlanning {
         if (level == null || !Level.OVERWORLD.equals(level.dimension())) return;
         RoadShardStorage.preload(level);
         if (!InitialGenManager.shouldRunInitialGeneration(level)) return;
-        levelData.setSpawn(SpawnCabinPlacer.predictSpawn(level), 0.0F);
+        levelData.setSpawn(LevelData.RespawnData.of(Level.OVERWORLD, SpawnCabinPlacer.predictSpawn(level), 0.0F, 0.0F));
         InitialGenManager.begin(level);
         InitialGenManager.blockUntilDone(level);
         initialRunDone = true;

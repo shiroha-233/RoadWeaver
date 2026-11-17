@@ -1,12 +1,15 @@
 package net.shiroha233.roadweaver.client.map.screen;
 
+import com.mojang.blaze3d.platform.InputConstants;
+import net.minecraft.client.input.CharacterEvent;
+import net.minecraft.client.input.KeyEvent;
+import net.minecraft.client.input.MouseButtonEvent;
 import net.minecraft.core.BlockPos;
 import net.shiroha233.roadweaver.client.map.render.MapDockAction;
 import net.shiroha233.roadweaver.client.map.render.MapDockRenderer;
 import net.shiroha233.roadweaver.client.map.ui.MapWorkspacePanel;
 import net.shiroha233.roadweaver.map.data.MapSnapshot;
 
-import org.lwjgl.glfw.GLFW;
 
 /**
  * 地图屏幕的输入分发：先判定停靠栏与工作区命中，再交给地图交互处理。
@@ -32,12 +35,20 @@ final class MapScreenInput {
         return screen.inputHandler().mouseScrolled(mouseX, mouseY, scrollY);
     }
 
-    boolean mouseClicked(double mouseX, double mouseY, int button) {
-        if (screen.contextMenu().isOpen() && screen.contextMenu().mouseClicked(mouseX, mouseY, button)) {
-            return true;
+    boolean mouseClicked(MouseButtonEvent event, boolean doubleClick) {
+        double mouseX = event.x();
+        double mouseY = event.y();
+        int button = event.button();
+        if (screen.contextMenu().isOpen()) {
+            if (screen.contextMenu().contains(mouseX, mouseY)
+                    && screen.contextMenu().mouseClicked(event, doubleClick)) {
+                return true;
+            }
+            // 点击菜单外部时只关闭菜单，并继续分发本次点击（例如停靠栏的关闭按钮）。
+            screen.contextMenu().close();
         }
         MapDockAction dockAction = screen.dockLayout().hit(mouseX, mouseY);
-        if (button == 0 && dockAction != null) {
+        if (button == InputConstants.MOUSE_BUTTON_LEFT && dockAction != null) {
             screen.commands().handleDockAction(dockAction);
             return true;
         }
@@ -60,33 +71,36 @@ final class MapScreenInput {
         if (target == null) {
             return screen.inputHandler().mouseClicked(mouseX, mouseY, button, visibleSnapshot);
         }
-        if (button == 1) {
+        if (button == InputConstants.MOUSE_BUTTON_RIGHT) {
             screen.commands().openContextMenuFor(target, (int) mouseX, (int) mouseY);
             return true;
         }
-        if (button == 0 && !screen.state().isManualMode()) {
+        if (button == InputConstants.MOUSE_BUTTON_LEFT && !screen.state().isManualMode()) {
             panel.openDetails(target);
             return true;
         }
         return screen.inputHandler().mouseClicked(mouseX, mouseY, button, visibleSnapshot);
     }
 
-    boolean mouseDragged(double mouseX, double mouseY, int button, double dragX, double dragY) {
-        return screen.inputHandler().mouseDragged(mouseX, mouseY, button, dragX, dragY);
+    boolean mouseDragged(MouseButtonEvent event, double dragX, double dragY) {
+        return screen.inputHandler().mouseDragged(event, dragX, dragY);
     }
 
-    boolean mouseReleased(double mouseX, double mouseY, int button) {
-        return screen.inputHandler().mouseReleased(mouseX, mouseY, button);
+    boolean mouseReleased(MouseButtonEvent event) {
+        return screen.inputHandler().mouseReleased(event);
     }
 
-    boolean keyPressed(int keyCode, int scanCode, int modifiers) {
+    boolean keyPressed(KeyEvent event) {
+        int keyCode = event.key();
+        int scanCode = event.keycode();
+        int modifiers = event.modifiers();
         MapWorkspacePanel panel = screen.panel();
         if (panel.isTab(MapWorkspacePanel.Tab.SEARCH) && screen.searchBoxFocused()) {
-            if (keyCode == GLFW.GLFW_KEY_ENTER || keyCode == GLFW.GLFW_KEY_KP_ENTER) {
+            if (keyCode == InputConstants.KEY_RETURN || keyCode == InputConstants.KEY_NUMPADENTER) {
                 screen.search().submitNow(screen.data().dimensionId());
                 return true;
             }
-            if (keyCode == GLFW.GLFW_KEY_ESCAPE) {
+            if (keyCode == InputConstants.KEY_ESCAPE) {
                 screen.focusSearchBox(false);
                 panel.close();
                 return true;
@@ -94,14 +108,14 @@ final class MapScreenInput {
             screen.forwardSearchKey(keyCode, scanCode, modifiers);
             return true;
         }
-        if (keyCode == GLFW.GLFW_KEY_ESCAPE && panel.isOpen()) {
+        if (keyCode == InputConstants.KEY_ESCAPE && panel.isOpen()) {
             panel.close();
             return true;
         }
         return screen.inputHandler().keyPressed(keyCode, scanCode, modifiers, screen.client());
     }
 
-    boolean charTyped(char codePoint, int modifiers) {
-        return screen.forwardSearchChar(codePoint, modifiers);
+    boolean charTyped(CharacterEvent event) {
+        return screen.forwardSearchChar((char) event.codepoint(), 0);
     }
 }

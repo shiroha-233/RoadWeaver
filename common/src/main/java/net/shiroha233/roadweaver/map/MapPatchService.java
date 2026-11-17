@@ -3,8 +3,8 @@ package net.shiroha233.roadweaver.map;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.Level;
-import net.shiroha233.roadweaver.core.model.MapSnapshotPatch;
 import net.shiroha233.roadweaver.core.model.ConnectionStatus;
+import net.shiroha233.roadweaver.core.model.MapSnapshotPatch;
 import net.shiroha233.roadweaver.core.model.RoadData;
 import net.shiroha233.roadweaver.core.model.RoadSegmentPlacement;
 import net.shiroha233.roadweaver.core.model.StructureConnection;
@@ -12,8 +12,8 @@ import net.shiroha233.roadweaver.core.model.StructureInfo;
 import net.shiroha233.roadweaver.network.platform.ServerMapPatchBridge;
 import net.shiroha233.roadweaver.persistence.StructureFileStorage;
 import net.shiroha233.roadweaver.persistence.sharded.RoadShardStorage;
-import net.shiroha233.roadweaver.util.PlanningUtils;
 import net.shiroha233.roadweaver.runtime.ThreadPoolManager;
+import net.shiroha233.roadweaver.util.PlanningUtils;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -67,12 +67,12 @@ public final class MapPatchService {
         if (server != null) {
             server.execute(() -> {
                 for (MapSnapshotPatch chunk : chunks) {
-                    ServerMapPatchBridge.broadcast(level, level.dimension().location(), chunk);
+                    ServerMapPatchBridge.broadcast(level, level.dimension().identifier(), chunk);
                 }
             });
         } else {
             for (MapSnapshotPatch chunk : chunks) {
-                ServerMapPatchBridge.broadcast(level, level.dimension().location(), chunk);
+                ServerMapPatchBridge.broadcast(level, level.dimension().identifier(), chunk);
             }
         }
     }

@@ -41,7 +41,7 @@ public final class SignTextFileStorage {
         for (PendingSignWrite write : writes) {
             if (write == null || write.pos() == null) continue;
             long id = write.pos().asLong();
-            long chunkKey = ChunkPos.asLong(write.pos().getX() >> 4, write.pos().getZ() >> 4);
+            long chunkKey = ChunkPos.pack(write.pos().getX() >> 4, write.pos().getZ() >> 4);
             List<PendingSignText> chunk = byChunk.computeIfAbsent(chunkKey, k -> loadChunk(level, k));
             chunk.removeIf(existing -> existing.id() == id);
             chunk.add(new PendingSignText(id, write.pos(), write.signType(), write.payload() == null ? "" : write.payload(), System.currentTimeMillis() / 1000L));
@@ -53,7 +53,7 @@ public final class SignTextFileStorage {
 
     public static synchronized List<PendingSignText> queryByChunk(ServerLevel level, int chunkX, int chunkZ, int limit) {
         if (!isOverworld(level) || limit <= 0) return List.of();
-        long chunkKey = ChunkPos.asLong(chunkX, chunkZ);
+        long chunkKey = ChunkPos.pack(chunkX, chunkZ);
         List<PendingSignText> chunk = loadChunk(level, chunkKey);
         if (chunk.size() <= limit) return new ArrayList<>(chunk);
         return new ArrayList<>(chunk.subList(0, limit));
@@ -65,7 +65,7 @@ public final class SignTextFileStorage {
         for (Long id : ids) {
             if (id == null) continue;
             BlockPos pos = BlockPos.of(id);
-            long chunkKey = ChunkPos.asLong(pos.getX() >> 4, pos.getZ() >> 4);
+            long chunkKey = ChunkPos.pack(pos.getX() >> 4, pos.getZ() >> 4);
             byChunk.computeIfAbsent(chunkKey, k -> new ArrayList<>()).add(id);
         }
         for (var entry : byChunk.entrySet()) {

@@ -1,6 +1,6 @@
 package net.shiroha233.roadweaver.client.map;
 
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.shiroha233.roadweaver.map.data.MapSnapshot;
 
 import java.util.ArrayList;
@@ -15,7 +15,7 @@ import net.shiroha233.roadweaver.core.model.RequestRect;
  */
 public final class MapLoadSession {
     private final int requestSeq;
-    private final ResourceLocation dimensionId;
+    private final Identifier dimensionId;
     private final int totalResponses;
     private final long startedAtMs;
     private final List<ResponseRequest> requests;
@@ -25,7 +25,7 @@ public final class MapLoadSession {
     private boolean hasData;
     private MapLoadPhase lastPhase;
 
-    public MapLoadSession(int requestSeq, ResourceLocation dimensionId, List<ResponseRequest> requests) {
+    public MapLoadSession(int requestSeq, Identifier dimensionId, List<ResponseRequest> requests) {
         this.requestSeq = requestSeq;
         this.dimensionId = dimensionId;
         this.requests = List.copyOf(requests != null ? requests : List.of());
@@ -33,7 +33,7 @@ public final class MapLoadSession {
         this.startedAtMs = System.currentTimeMillis();
     }
 
-    public boolean accepts(int requestSeq, ResourceLocation dimensionId) {
+    public boolean accepts(int requestSeq, Identifier dimensionId) {
         return this.requestSeq == requestSeq && Objects.equals(this.dimensionId, dimensionId);
     }
 

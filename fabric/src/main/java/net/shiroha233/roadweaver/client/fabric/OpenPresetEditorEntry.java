@@ -1,10 +1,12 @@
 package net.shiroha233.roadweaver.client.fabric;
 
+import com.mojang.blaze3d.platform.InputConstants;
 import me.shedaniel.clothconfig2.api.AbstractConfigListEntry;
 import me.shedaniel.math.Rectangle;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
+import net.minecraft.client.input.MouseButtonEvent;
 import net.minecraft.client.gui.components.events.GuiEventListener;
 import net.minecraft.client.gui.narration.NarratableEntry;
 import net.minecraft.network.chat.Component;
@@ -37,24 +39,27 @@ public class OpenPresetEditorEntry extends AbstractConfigListEntry<Void> {
     }
 
     @Override
-    public void render(GuiGraphics g, int index, int y, int x, int entryWidth, int entryHeight,
+    public void extractRenderState(GuiGraphicsExtractor g, int index, int y, int x, int entryWidth, int entryHeight,
                        int mouseX, int mouseY, boolean isHovered, float delta) {
-        super.render(g, index, y, x, entryWidth, entryHeight, mouseX, mouseY, isHovered, delta);
+        super.extractRenderState(g, index, y, x, entryWidth, entryHeight, mouseX, mouseY, isHovered, delta);
         this.lastArea = getEntryArea(x, y, entryWidth, entryHeight);
 
         Font font = Minecraft.getInstance().font;
         Component label = getDisplayedFieldName();
         int color = getPreferredTextColor();
         int textY = y + (entryHeight - font.lineHeight) / 2;
-        g.drawString(font, label, x + 4, textY, color, false);
+        g.text(font, label, x + 4, textY, color, false);
     }
 
     @Override
-    public boolean mouseClicked(double mouseX, double mouseY, int button) {
-        if (button == 0 && lastArea != null && lastArea.contains(mouseX, mouseY)) {
+    public boolean mouseClicked(MouseButtonEvent event, boolean doubleClick) {
+        double mouseX = event.x();
+        double mouseY = event.y();
+        int button = event.button();
+        if (button == InputConstants.MOUSE_BUTTON_LEFT && lastArea != null && lastArea.contains(mouseX, mouseY)) {
             Minecraft mc = Minecraft.getInstance();
             if (mc != null) {
-                mc.setScreen(new MaterialPresetEditorScreen(mc.screen));
+                mc.gui.setScreen(new MaterialPresetEditorScreen(mc.gui.screen()));
             }
             return true;
         }

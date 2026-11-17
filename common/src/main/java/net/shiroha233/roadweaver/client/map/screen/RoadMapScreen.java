@@ -2,12 +2,16 @@ package net.shiroha233.roadweaver.client.map.screen;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.client.input.CharacterEvent;
+import net.minecraft.client.input.KeyEvent;
+import net.minecraft.client.input.MouseButtonEvent;
+import net.minecraft.client.input.MouseButtonInfo;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerLevel;
 import net.shiroha233.roadweaver.client.map.MapState;
 import net.shiroha233.roadweaver.client.map.MapTheme;
@@ -123,7 +127,8 @@ public class RoadMapScreen extends Screen implements MapInputHandler.Callbacks, 
     }
 
     @Override
-    public void render(GuiGraphics graphics, int mouseX, int mouseY, float partialTick) {
+    public void extractRenderState(GuiGraphicsExtractor graphics, int mouseX, int mouseY,
+                                     float partialTick) {
         MapScreenRenderer.render(this, graphics, mouseX, mouseY, partialTick);
     }
 
@@ -136,43 +141,43 @@ public class RoadMapScreen extends Screen implements MapInputHandler.Callbacks, 
     }
 
     @Override
-    public boolean mouseClicked(double mouseX, double mouseY, int button) {
-        if (input.mouseClicked(mouseX, mouseY, button)) {
+    public boolean mouseClicked(MouseButtonEvent event, boolean doubleClick) {
+        if (input.mouseClicked(event, doubleClick)) {
             return true;
         }
-        return super.mouseClicked(mouseX, mouseY, button);
+        return super.mouseClicked(event, doubleClick);
     }
 
     @Override
-    public boolean mouseDragged(double mouseX, double mouseY, int button, double dragX, double dragY) {
-        if (input.mouseDragged(mouseX, mouseY, button, dragX, dragY)) {
+    public boolean mouseDragged(MouseButtonEvent event, double dragX, double dragY) {
+        if (input.mouseDragged(event, dragX, dragY)) {
             return true;
         }
-        return super.mouseDragged(mouseX, mouseY, button, dragX, dragY);
+        return super.mouseDragged(event, dragX, dragY);
     }
 
     @Override
-    public boolean mouseReleased(double mouseX, double mouseY, int button) {
-        if (input.mouseReleased(mouseX, mouseY, button)) {
+    public boolean mouseReleased(MouseButtonEvent event) {
+        if (input.mouseReleased(event)) {
             return true;
         }
-        return super.mouseReleased(mouseX, mouseY, button);
+        return super.mouseReleased(event);
     }
 
     @Override
-    public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
-        if (input.keyPressed(keyCode, scanCode, modifiers)) {
+    public boolean keyPressed(KeyEvent event) {
+        if (input.keyPressed(event)) {
             return true;
         }
-        return super.keyPressed(keyCode, scanCode, modifiers);
+        return super.keyPressed(event);
     }
 
     @Override
-    public boolean charTyped(char codePoint, int modifiers) {
-        if (input.charTyped(codePoint, modifiers)) {
+    public boolean charTyped(CharacterEvent event) {
+        if (input.charTyped(event)) {
             return true;
         }
-        return super.charTyped(codePoint, modifiers);
+        return super.charTyped(event);
     }
 
     @Override
@@ -219,12 +224,12 @@ public class RoadMapScreen extends Screen implements MapInputHandler.Callbacks, 
         commands.notifyDenied();
     }
 
-    public void acceptPatch(ResourceLocation dimensionId, MapSnapshotPatch patch) {
+    public void acceptPatch(Identifier dimensionId, MapSnapshotPatch patch) {
         data.applyPatch(dimensionId, patch);
     }
 
     public void acceptSearchResults(int requestSeq,
-                                    ResourceLocation dimensionId,
+                                    Identifier dimensionId,
                                     boolean success,
                                     List<MapSearchResult> serverResults) {
         if (dimensionId == null || !dimensionId.equals(data.dimensionId())) {
@@ -234,7 +239,7 @@ public class RoadMapScreen extends Screen implements MapInputHandler.Callbacks, 
     }
 
     public void acceptSnapshotPart(int requestSeq,
-                                   ResourceLocation dimensionId,
+                                   Identifier dimensionId,
                                    MapLoadPhase phase,
                                    int responseIndex,
                                    MapSnapshot snapshot) {
@@ -278,7 +283,8 @@ public class RoadMapScreen extends Screen implements MapInputHandler.Callbacks, 
 
     void clickSearchBox(double mouseX, double mouseY, int button) {
         if (searchBox != null) {
-            searchBox.mouseClicked(mouseX, mouseY, button);
+            MouseButtonEvent event = new MouseButtonEvent(mouseX, mouseY, new MouseButtonInfo(button, 0));
+            searchBox.mouseClicked(event, false);
         }
     }
 
@@ -288,12 +294,13 @@ public class RoadMapScreen extends Screen implements MapInputHandler.Callbacks, 
 
     void forwardSearchKey(int keyCode, int scanCode, int modifiers) {
         if (searchBox != null) {
-            searchBox.keyPressed(keyCode, scanCode, modifiers);
+            searchBox.keyPressed(new KeyEvent(keyCode, scanCode, modifiers));
         }
     }
 
     boolean forwardSearchChar(char codePoint, int modifiers) {
-        return searchBox != null && searchBox.isFocused() && searchBox.charTyped(codePoint, modifiers);
+        return searchBox != null && searchBox.isFocused()
+                && searchBox.charTyped(new CharacterEvent(codePoint));
     }
 
     void applyDockLayout(MapDockRenderer.DockLayout layout) {

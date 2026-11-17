@@ -1,22 +1,28 @@
+// 文件职责：配置 Fabric 平台的编译、运行与发布依赖（Minecraft 26.3 已去混淆，无 remap 步骤）。
 plugins {
-	id 'com.gradleup.shadow' version '8.3.6'
+	id 'com.gradleup.shadow'
 }
 
 architectury {
-	platformSetupLoomIde()
 	fabric()
 }
 
 configurations {
-	common
 	shadowCommon
 	shadowLwjglNatives
-	compileClasspath.extendsFrom common
-	runtimeClasspath.extendsFrom common
 	developmentFabric.extendsFrom common
 }
 
 repositories {
+	// Minecraft 官方库镜像缺少 lwjgl 3.3.3 的 linux-arm64 native，强制该组件从 Maven Central 解析。
+	exclusiveContent {
+		forRepository {
+			mavenCentral()
+		}
+		filter {
+			includeGroup 'org.lwjgl'
+		}
+	}
 	maven {
 		url = "https://api.modrinth.com/maven"
 	}
@@ -27,31 +33,29 @@ repositories {
 }
 
 dependencies {
-	implementation project(":common")
-	common(project(path: ":common", configuration: "namedElements")) { transitive = false }
+	common(project(path: ":common")) { transitive = false }
 	shadowCommon(project(path: ":common", configuration: "transformProductionFabric")) { transitive = false }
 
-	modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
-	modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
+	implementation "net.fabricmc:fabric-loader:${project.loader_version}"
+	implementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
 
-	modImplementation("dev.architectury:architectury-fabric:${project.architectury_version}") {
+	implementation("dev.architectury:architectury-fabric:${project.architectury_version}") {
 		exclude group: "net.fabricmc.fabric-api"
 	}
 	include("dev.architectury:architectury-fabric:${project.architectury_version}")
 
-	modApi("me.shedaniel.cloth:cloth-config-fabric:${project.cloth_config_version}") {
+	implementation("me.shedaniel.cloth:cloth-config-fabric:${project.cloth_config_version}") {
 		exclude group: "net.fabricmc.fabric-api"
 	}
 	include("me.shedaniel.cloth:cloth-config-fabric:${project.cloth_config_version}")
 
-	modLocalRuntime("maven.modrinth:mOgUt4GM:${project.modmenu_version}")
-	modRuntimeOnly("maven.modrinth:mOgUt4GM:${project.modmenu_version}")
+	// Mod Menu 仅用于开发环境预览（26.3 起 Loom 无 remap，普通运行时依赖即可）
+	runtimeOnly("maven.modrinth:mOgUt4GM:${project.modmenu_version}")
 
 	// Dedicated servers omit LWJGL. Bundle its Java API and core JNI; the system GPU driver still provides the OpenCL ICD.
 	compileOnly("org.lwjgl:lwjgl-opencl:3.3.3") { transitive = false }
 	include("org.lwjgl:lwjgl-opencl:3.3.3") { transitive = false }
 	include("org.lwjgl:lwjgl:3.3.3") { transitive = false }
-	modLocalRuntime("org.lwjgl:lwjgl-opencl:3.3.3") { transitive = false }
 	runtimeOnly("org.lwjgl:lwjgl-opencl:3.3.3") { transitive = false }
 	shadowLwjglNatives("org.lwjgl:lwjgl:3.3.3:natives-windows") { transitive = false }
 	shadowLwjglNatives("org.lwjgl:lwjgl:3.3.3:natives-windows-arm64") { transitive = false }
@@ -59,38 +63,35 @@ dependencies {
 	shadowLwjglNatives("org.lwjgl:lwjgl:3.3.3:natives-linux-arm64") { transitive = false }
 	shadowLwjglNatives("org.lwjgl:lwjgl:3.3.3:natives-macos") { transitive = false }
 	shadowLwjglNatives("org.lwjgl:lwjgl:3.3.3:natives-macos-arm64") { transitive = false }
-
 }
 
 processResources {
-	inputs.property "version", project.version
+	def modVersion = project.version.toString()
+	def mcVersion = rootProject.minecraft_version.toString()
+	inputs.property "version", modVersion
+	inputs.property "minecraft_version", mcVersion
 
 	filesMatching("fabric.mod.json") {
-		expand "version": project.version
+		expand "version": modVersion, "minecraft_version": mcVersion
 	}
 }
 
 shadowJar {
 	exclude "architectury.common.json"
 	configurations = [project.configurations.shadowCommon, project.configurations.shadowLwjglNatives]
-	archiveClassifier.set("dev-shadow")
+	archiveClassifier.set("")
 
 	exclude 'META-INF/versions/**'
 	mergeServiceFiles()
 	exclude 'module-info.class'
-}
 
-remapJar {
-	inputFile.set shadowJar.archiveFile
-	dependsOn shadowJar
-	archiveClassifier.set(null)
+	from("${rootProject.projectDir}/LICENSE") {
+		rename { "${it}_${base.archivesName.get()}" }
+	}
 }
 
 jar {
 	archiveClassifier.set("dev")
-	from("${rootProject.projectDir}/LICENSE") {
-		rename { "${it}_${base.archivesName.get()}" }
-	}
 }
 
 sourcesJar {
@@ -100,10 +101,8 @@ sourcesJar {
 	from commonSources.archiveFile.map { zipTree(it) }
 }
 
-components.java {
-	withVariantsFromConfiguration(project.configurations.shadowRuntimeElements) {
-		skip()
-	}
+tasks.named('build') {
+	dependsOn tasks.named('shadowJar')
 }
 
 sourceSets {
@@ -111,5 +110,15 @@ sourceSets {
 		resources {
 			exclude 'pack.mcmeta'
 		}
+	}
+}
+
+// 迁移期辅助：把 fabric 的编译类路径导出，供直接用 javac 迭代使用。
+tasks.register('dumpClasspath') {
+	notCompatibleWithConfigurationCache("Dumps the resolved compile classpath")
+	doLast {
+		def out = file("$buildDir/fabric-classpath.txt")
+		out.parentFile.mkdirs()
+		out.text = configurations.compileClasspath.asPath
 	}
 }

@@ -1,11 +1,12 @@
-/* 文件职责：在 NeoForge 植被 Feature 入口复用道路占用查询并缓存特征分类。 */
 package net.shiroha233.roadweaver.mixin.neoforge;
 
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Holder;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.WorldGenLevel;
-import net.minecraft.world.level.levelgen.feature.ConfiguredFeature;
+import net.minecraft.world.level.chunk.ChunkGenerator;
 import net.minecraft.world.level.levelgen.feature.Feature;
-import net.minecraft.world.level.levelgen.feature.configurations.FeatureConfiguration;
+import net.minecraft.world.level.levelgen.placement.PlacedFeature;
 import net.shiroha233.roadweaver.worldgen.road.RoadPositionQuery;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
@@ -14,33 +15,29 @@ import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
-import net.minecraft.util.RandomSource;
-import net.minecraft.world.level.chunk.ChunkGenerator;
 
 /**
  * 通用植物 Feature 拦截器
- * 拦截 ConfiguredFeature.place() 方法，这是所有 Feature 生成的统一入口
- * 兼容 C2ME 的多线程世界生成和对象池优化
+ * 26.3 移除了 ConfiguredFeature，改为拦截 PlacedFeature.place()——所有已放置 Feature 的统一入口
+ * 以入口坐标为判定点，兼容 C2ME 的多线程世界生成
  */
-@Mixin(ConfiguredFeature.class)
-public class GenericVegetationFeatureMixin<FC extends FeatureConfiguration, F extends Feature<FC>> {
+@Mixin(PlacedFeature.class)
+public abstract class GenericVegetationFeatureMixin {
 
-    @Shadow @Final public F feature;
-    @Shadow @Final public FC config;
+    @Shadow
+    @Final
+    private Holder<Feature> feature;
 
     @Unique
     private volatile Boolean roadweaver$treeLike;
 
-    /**
-     * 拦截 ConfiguredFeature.place() 方法
-     * 这是所有 Feature 生成的入口点，包括 C2ME 优化后的调用
-     */
-    @Inject(method = "place", at = @At("HEAD"), cancellable = true)
+    @Inject(method = "place(Lnet/minecraft/world/level/WorldGenLevel;Lnet/minecraft/world/level/chunk/ChunkGenerator;Lnet/minecraft/util/RandomSource;Lnet/minecraft/core/BlockPos;)Z",
+            at = @At("HEAD"), cancellable = true)
     private void roadweaver$blockTreesOnRoad(WorldGenLevel level,
-                                              ChunkGenerator generator,
-                                              RandomSource random,
-                                              BlockPos pos,
-                                              CallbackInfoReturnable<Boolean> cir) {
+                                             ChunkGenerator generator,
+                                             RandomSource random,
+                                             BlockPos pos,
+                                             CallbackInfoReturnable<Boolean> cir) {
         try {
             if (roadweaver$isTreeLikeFeature()) {
                 if (RoadPositionQuery.isOnRoad(level, pos)) {
@@ -50,42 +47,28 @@ public class GenericVegetationFeatureMixin<FC extends FeatureConfiguration, F ex
         } catch (Throwable ignored) {}
     }
 
-    /**
-     * 判断是否为树木类 Feature
-     */
     @Unique
     private boolean roadweaver$isTreeLikeFeature() {
         Boolean cached = this.roadweaver$treeLike;
         if (cached != null) return cached;
         if (this.feature == null) return false;
-        
-        String featureClassName = this.feature.getClass().getName().toLowerCase();
-        
+
+        String featureClassName = this.feature.value().getClass().getName().toLowerCase();
+
         if (roadweaver$isVanillaTreeFeature(featureClassName)) {
             this.roadweaver$treeLike = false;
             return false;
         }
-        
+
         if (roadweaver$containsTreeKeyword(featureClassName)) {
             this.roadweaver$treeLike = true;
             return true;
         }
-        
-        if (this.config != null) {
-            String configName = this.config.getClass().getName().toLowerCase();
-            if (roadweaver$containsTreeKeyword(configName)) {
-                this.roadweaver$treeLike = true;
-                return true;
-            }
-        }
-        
+
         this.roadweaver$treeLike = false;
         return false;
     }
 
-    /**
-     * 判断是否为已有专门 Mixin 的原版树木类
-     */
     @Unique
     private boolean roadweaver$isVanillaTreeFeature(String className) {
         return className.equals("net.minecraft.world.level.levelgen.feature.treefeature") ||

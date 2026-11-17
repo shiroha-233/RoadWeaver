@@ -40,8 +40,8 @@ public final class HeightProfileService {
             return new HeightProfile(true, null);
         }
         int[] baseYArr = new int[n];
-        int currentChunkX = currentChunk.x;
-        int currentChunkZ = currentChunk.z;
+        int currentChunkX = currentChunk.x();
+        int currentChunkZ = currentChunk.z();
         for (int ii = 0; ii < n; ii++) {
             BlockPos mid = middlePositions.get(ii);
             int heightSum = 0;

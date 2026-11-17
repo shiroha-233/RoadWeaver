@@ -21,9 +21,9 @@ public abstract class BiomeGrassColorFailSafeMixin {
     @Inject(method = "getGrassColor", at = @At("HEAD"), cancellable = true)
     private void roadweaver$failsafeGrassColor(double x, double z, CallbackInfoReturnable<Integer> cir) {
         BiomeSpecialEffects effects = this.getSpecialEffects();
-        int base = effects.getGrassColorOverride().orElseGet(this::roadweaver$invokeGetGrassColorFromTexture);
+        int base = effects.grassColorOverride().orElseGet(this::roadweaver$invokeGetGrassColorFromTexture);
         try {
-            int out = effects.getGrassColorModifier().modifyColor(x, z, base);
+            int out = effects.grassColorModifier().modifyColor(x, z, base);
             cir.setReturnValue(out);
         } catch (AbstractMethodError e) {
             cir.setReturnValue(base);

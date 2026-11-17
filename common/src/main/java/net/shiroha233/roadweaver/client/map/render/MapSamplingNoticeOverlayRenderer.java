@@ -1,7 +1,7 @@
 package net.shiroha233.roadweaver.client.map.render;
 
 import net.minecraft.client.gui.Font;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.network.chat.Component;
 import net.minecraft.util.FormattedCharSequence;
 import net.shiroha233.roadweaver.client.map.MapTheme;
@@ -20,7 +20,7 @@ public final class MapSamplingNoticeOverlayRenderer {
 
     private MapSamplingNoticeOverlayRenderer() {}
 
-    public static void render(GuiGraphics graphics,
+    public static void render(GuiGraphicsExtractor graphics,
                               Font font,
                               Component message,
                               int left,
@@ -48,7 +48,7 @@ public final class MapSamplingNoticeOverlayRenderer {
 
         renderSurface(graphics, boxX, boxY, boxWidth, boxHeight);
         for (int index = 0; index < lines.size(); index++) {
-            graphics.drawString(font,
+            graphics.text(font,
                     lines.get(index),
                     boxX + HORIZONTAL_PADDING,
                     boxY + VERTICAL_PADDING + index * font.lineHeight,
@@ -57,7 +57,7 @@ public final class MapSamplingNoticeOverlayRenderer {
         }
     }
 
-    private static void renderSurface(GuiGraphics graphics, int x, int y, int width, int height) {
+    private static void renderSurface(GuiGraphicsExtractor graphics, int x, int y, int width, int height) {
         MapDockRenderer.fillRounded(graphics, x + 2, y + 3, width, height, 8, MapTheme.PANEL_SHADOW);
         MapDockRenderer.fillRounded(graphics, x, y, width, height, 8, MapTheme.PANEL_BG);
         MapDockRenderer.fillRounded(graphics, x + 1, y + 1, width - 2, height - 2, 7, MapTheme.PANEL_HIGHLIGHT);

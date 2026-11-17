@@ -1,6 +1,5 @@
 package net.shiroha233.roadweaver.mixin;
 
-import net.neoforged.fml.loading.FMLLoader;
 import net.neoforged.fml.loading.LoadingModList;
 import org.objectweb.asm.tree.ClassNode;
 import org.spongepowered.asm.mixin.extensibility.IMixinConfigPlugin;
@@ -54,7 +53,7 @@ public class MixinConfigPlugin implements IMixinConfigPlugin {
      * </p>
      */
     private boolean isModLoaded(String modid) {
-        LoadingModList loadingModList = FMLLoader.getLoadingModList();
+        LoadingModList loadingModList = LoadingModList.get();
         if (loadingModList != null) {
             return loadingModList.getModFileById(modid) != null;
         }

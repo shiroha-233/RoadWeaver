@@ -3,7 +3,7 @@ package net.shiroha233.roadweaver.worldgen.road;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.world.level.WorldGenLevel;
 import net.minecraft.world.level.block.Block;
@@ -133,7 +133,7 @@ public final class RoadSupports {
     private static Block slabOf(Block planks) {
         String path = BuiltInRegistries.BLOCK.getKey(planks).getPath();
         if (!path.endsWith("_planks")) return null;
-        ResourceLocation id = ResourceLocation.withDefaultNamespace(path.substring(0, path.length() - "_planks".length()) + "_slab");
-        return BuiltInRegistries.BLOCK.containsKey(id) ? BuiltInRegistries.BLOCK.get(id) : null;
+        Identifier id = Identifier.withDefaultNamespace(path.substring(0, path.length() - "_planks".length()) + "_slab");
+        return BuiltInRegistries.BLOCK.containsKey(id) ? BuiltInRegistries.BLOCK.getValue(id) : null;
     }
 }

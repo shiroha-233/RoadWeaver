@@ -1,7 +1,7 @@
 package net.shiroha233.roadweaver.terrain.opencl;
 
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.util.CubicSpline;
 import net.minecraft.util.StringRepresentable;
 import net.minecraft.world.level.levelgen.DensityFunction;
@@ -145,7 +145,7 @@ public final class DensityGraphCompiler {
             return "marker";
         }
         try {
-            ResourceLocation id = BuiltInRegistries.DENSITY_FUNCTION_TYPE.getKey(function.codec().codec());
+            Identifier id = BuiltInRegistries.DENSITY_FUNCTION_TYPE.getKey(function.codec().codec());
             if (id != null) {
                 return id.getPath();
             }

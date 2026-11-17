@@ -3,18 +3,18 @@ package net.shiroha233.roadweaver.worldgen.structure.pieces;
 import com.mojang.serialization.DataResult;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Vec3i;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.NbtOps;
 import net.minecraft.nbt.Tag;
-import net.minecraft.core.registries.Registries;
+import net.minecraft.resources.Identifier;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntitySpawnReason;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.Mob;
-import net.minecraft.world.entity.MobSpawnType;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.ServerLevelAccessor;
 import net.minecraft.world.level.StructureManager;
@@ -47,7 +47,7 @@ public class SimpleTemplatePiece extends TemplateStructurePiece {
     
     private static final Logger LOGGER = LoggerFactory.getLogger("RoadWeaver/SimpleTemplatePiece");
     
-    private final ResourceLocation templateId;
+    private final Identifier templateId;
     private final List<MobSpawnRule> mobSpawns;
     private final List<LootConfig> lootConfigs;
     
@@ -56,7 +56,7 @@ public class SimpleTemplatePiece extends TemplateStructurePiece {
     private boolean mobsSpawned = false;
     
     public SimpleTemplatePiece(StructureTemplateManager manager,
-                               ResourceLocation templateId,
+                               Identifier templateId,
                                BlockPos pos,
                                Rotation rotation,
                                Mirror mirror) {
@@ -64,7 +64,7 @@ public class SimpleTemplatePiece extends TemplateStructurePiece {
     }
     
     public SimpleTemplatePiece(StructureTemplateManager manager,
-                               ResourceLocation templateId,
+                               Identifier templateId,
                                BlockPos pos,
                                Rotation rotation,
                                Mirror mirror,
@@ -87,10 +87,10 @@ public class SimpleTemplatePiece extends TemplateStructurePiece {
               tag, 
               manager, 
               id -> createPlaceSettings(
-                  Rotation.valueOf(tag.getString("Rot")),
-                  Mirror.valueOf(tag.getString("Mir"))
+                  Rotation.valueOf(tag.getStringOr("Rot", "NONE")),
+                  Mirror.valueOf(tag.getStringOr("Mir", "NONE"))
               ));
-        this.templateId = ResourceLocation.tryParse(tag.getString("Template"));
+        this.templateId = Identifier.tryParse(tag.getStringOr("Template", ""));
         this.mobSpawns = deserializeMobSpawns(tag);
         this.lootConfigs = deserializeLootConfigs(tag);
     }
@@ -232,16 +232,16 @@ public class SimpleTemplatePiece extends TemplateStructurePiece {
              double z = spawnPos.getZ() + 0.5 + (random.nextDouble() - 0.5) * spread * 2;
              
             
-             Entity entity = resolvedType.create(level.getLevel());
+             Entity entity = resolvedType.create(level.getLevel(), EntitySpawnReason.STRUCTURE);
              if (entity == null) {
                  continue;
              }
             
-            entity.moveTo(x, y, z, random.nextFloat() * 360.0f, 0.0f);
+            entity.snapTo(x, y, z, random.nextFloat() * 360.0f, 0.0f);
             
             if (entity instanceof Mob mob) {
                 mob.finalizeSpawn(level, level.getCurrentDifficultyAt(spawnPos),
-                    MobSpawnType.STRUCTURE, null);
+                    EntitySpawnReason.STRUCTURE, null);
                 mob.setPersistenceRequired();
             }
             
@@ -251,7 +251,7 @@ public class SimpleTemplatePiece extends TemplateStructurePiece {
          }
      }
     
-    public ResourceLocation getTemplateId() {
+    public Identifier getTemplateId() {
         return templateId;
     }
     
@@ -290,9 +290,9 @@ public class SimpleTemplatePiece extends TemplateStructurePiece {
         if (!tag.contains("MobSpawns")) return List.of();
         
         List<MobSpawnRule> result = new ArrayList<>();
-        ListTag listTag = tag.getList("MobSpawns", Tag.TAG_COMPOUND);
+        ListTag listTag = tag.getListOrEmpty("MobSpawns");
         for (int i = 0; i < listTag.size(); i++) {
-            CompoundTag ruleTag = listTag.getCompound(i);
+            CompoundTag ruleTag = listTag.getCompoundOrEmpty(i);
             DataResult<MobSpawnRule> parseResult = MobSpawnRule.CODEC.parse(NbtOps.INSTANCE, ruleTag);
             parseResult.result().ifPresent(result::add);
         }
@@ -303,9 +303,9 @@ public class SimpleTemplatePiece extends TemplateStructurePiece {
         if (!tag.contains("LootConfigs")) return List.of();
         
         List<LootConfig> result = new ArrayList<>();
-        ListTag listTag = tag.getList("LootConfigs", Tag.TAG_COMPOUND);
+        ListTag listTag = tag.getListOrEmpty("LootConfigs");
         for (int i = 0; i < listTag.size(); i++) {
-            CompoundTag configTag = listTag.getCompound(i);
+            CompoundTag configTag = listTag.getCompoundOrEmpty(i);
             DataResult<LootConfig> parseResult = LootConfig.CODEC.parse(NbtOps.INSTANCE, configTag);
             parseResult.result().ifPresent(result::add);
         }

@@ -47,7 +47,7 @@ public final class BridgeBuilder {
     }
 
     private static void placePierUnder(WorldGenLevel world, int x, int z, int fromY, int maxHeight, int pierWidth) {
-        int minY = world.getMinBuildHeight();
+        int minY = world.getMinY();
         int half = Math.max(0, pierWidth - 1);
         for (int dx = -half; dx <= half; dx++) {
             for (int dz = -half; dz <= half; dz++) {

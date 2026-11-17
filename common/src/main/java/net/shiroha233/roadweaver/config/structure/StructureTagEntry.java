@@ -1,6 +1,6 @@
 package net.shiroha233.roadweaver.config.structure;
 
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -13,12 +13,12 @@ import java.util.Set;
  * 结构标签条目，表示一个标签及其包含的所有结构
  */
 public final class StructureTagEntry implements Comparable<StructureTagEntry> {
-    private final ResourceLocation tagId;
+    private final Identifier tagId;
     private final String displayName;
     private final List<StructureEntry> structures;
     private final boolean isVanilla;
 
-    public StructureTagEntry(ResourceLocation tagId, String displayName, List<StructureEntry> structures) {
+    public StructureTagEntry(Identifier tagId, String displayName, List<StructureEntry> structures) {
         this.tagId = tagId;
         this.displayName = displayName;
         this.structures = new ArrayList<>(structures);
@@ -26,7 +26,7 @@ public final class StructureTagEntry implements Comparable<StructureTagEntry> {
         this.isVanilla = "minecraft".equals(tagId.getNamespace());
     }
 
-    public ResourceLocation tagId() { return tagId; }
+    public Identifier tagId() { return tagId; }
     public String displayName() { return displayName; }
     public List<StructureEntry> structures() { return Collections.unmodifiableList(structures); }
     public boolean isVanilla() { return isVanilla; }

@@ -1,9 +1,9 @@
 modLoader = "javafml"
-loaderVersion = "[4,)"
+loaderVersion = "${loader_version_range}"
 license = "MIT"
 
 [[mods]]
-    modId = "roadweaver"
+    modId = "${mod_id}"
     version = "${mod_version}"
     displayName = "${mod_name}"
     authors = "${mod_authors}"
@@ -15,13 +15,13 @@ license = "MIT"
 [[dependencies.roadweaver]]
     modId = "neoforge"
     type = "required"
-    versionRange = "[21.1,)"
+    versionRange = "${neoforge_version_range}"
     ordering = "NONE"
     side = "BOTH"
 
 [[dependencies.roadweaver]]
     modId = "minecraft"
     type = "required"
-    versionRange = "[1.21.1,1.22)"
+    versionRange = "${minecraft_version_range}"
     ordering = "NONE"
     side = "BOTH"

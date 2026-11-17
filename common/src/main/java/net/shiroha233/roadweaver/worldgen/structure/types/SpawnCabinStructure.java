@@ -5,7 +5,7 @@ import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Vec3i;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.StructureManager;
@@ -32,7 +32,7 @@ public class SpawnCabinStructure extends Structure {
     public static final MapCodec<SpawnCabinStructure> CODEC = RecordCodecBuilder.mapCodec(instance ->
         instance.group(
             settingsCodec(instance),
-            ResourceLocation.CODEC.fieldOf("template").forGetter(s -> s.templateId),
+            Identifier.CODEC.fieldOf("template").forGetter(s -> s.templateId),
             Vec3i.CODEC.optionalFieldOf("size_hint", new Vec3i(16, 10, 16)).forGetter(s -> s.sizeHint),
             Codec.BOOL.optionalFieldOf("with_terrace", true).forGetter(s -> s.withTerrace),
             Codec.INT.optionalFieldOf("terrace_inner_radius", 10).forGetter(s -> s.terraceInnerRadius),
@@ -40,14 +40,14 @@ public class SpawnCabinStructure extends Structure {
         ).apply(instance, SpawnCabinStructure::new)
     );
     
-    private final ResourceLocation templateId;
+    private final Identifier templateId;
     private final Vec3i sizeHint;
     private final boolean withTerrace;
     private final int terraceInnerRadius;
     private final int terraceOuterRadius;
     
     public SpawnCabinStructure(StructureSettings settings,
-                               ResourceLocation templateId,
+                               Identifier templateId,
                                Vec3i sizeHint,
                                boolean withTerrace,
                                int terraceInnerRadius,
@@ -70,7 +70,7 @@ public class SpawnCabinStructure extends Structure {
         return ModStructureTypes.SPAWN_CABIN;
     }
     
-    public ResourceLocation templateId() {
+    public Identifier templateId() {
         return templateId;
     }
     
@@ -108,7 +108,7 @@ public class SpawnCabinStructure extends Structure {
         );
         builder.addPiece(piece);
         
-        ChunkPos chunkPos = new ChunkPos(pos);
+        ChunkPos chunkPos = ChunkPos.containing(pos);
         PiecesContainer container = builder.build();
         StructureStart start = new StructureStart(this, chunkPos, 0, container);
         
@@ -117,7 +117,7 @@ public class SpawnCabinStructure extends Structure {
         }
         
         BoundingBox boundingBox = start.getBoundingBox();
-        BoundingBox processBox = new BoundingBox(boundingBox.minX(), level.getMinBuildHeight(), boundingBox.minZ(),
+        BoundingBox processBox = new BoundingBox(boundingBox.minX(), level.getMinY(), boundingBox.minZ(),
                 boundingBox.maxX(), boundingBox.maxY(), boundingBox.maxZ());
         start.placeInChunk(level, structureManager, generator, random, processBox, chunkPos);
         

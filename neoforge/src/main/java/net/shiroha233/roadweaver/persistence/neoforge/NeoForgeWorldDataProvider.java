@@ -4,13 +4,15 @@ import com.mojang.serialization.Codec;
 import com.mojang.serialization.DataResult;
 import com.mojang.serialization.Dynamic;
 import com.mojang.serialization.DynamicOps;
-import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtOps;
 import net.minecraft.nbt.Tag;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.datafix.DataFixTypes;
 import net.minecraft.world.level.saveddata.SavedData;
+import net.minecraft.world.level.saveddata.SavedDataType;
+import net.shiroha233.roadweaver.RoadWeaver;
 import net.shiroha233.roadweaver.core.model.StructureConnection;
 import net.shiroha233.roadweaver.core.model.StructureLocationData;
 import net.shiroha233.roadweaver.persistence.WorldDataProvider;
@@ -34,6 +36,12 @@ public class NeoForgeWorldDataProvider extends WorldDataProvider {
         private static final String KEY_PLANNED_TILE_CENTERS = "planned_tile_centers";
         private static final Codec<Map<Long, Long>> LONG_KEY_MAP_CODEC = Codec.unboundedMap(Codec.STRING, Codec.LONG)
                 .xmap(Data::parseLongKeyMap, Data::stringifyLongKeyMap);
+        public static final Codec<Data> CODEC = CompoundTag.CODEC.xmap(Data::readTag, Data::writeTag);
+        public static final SavedDataType<Data> TYPE = new SavedDataType<>(
+                Identifier.fromNamespaceAndPath(RoadWeaver.MOD_ID, DATA_NAME),
+                Data::new,
+                CODEC,
+                DataFixTypes.LEVEL);
 
         private StructureLocationData structureLocations = emptyStructureLocations();
         private List<StructureConnection> connections = new ArrayList<>();
@@ -43,7 +51,7 @@ public class NeoForgeWorldDataProvider extends WorldDataProvider {
         public Data() {
         }
 
-        public static Data load(CompoundTag tag, HolderLookup.Provider provider) {
+        private static Data readTag(CompoundTag tag) {
             Data data = new Data();
             DynamicOps<Tag> ops = NbtOps.INSTANCE;
 
@@ -70,8 +78,8 @@ public class NeoForgeWorldDataProvider extends WorldDataProvider {
             return data;
         }
 
-        @Override
-        public CompoundTag save(CompoundTag tag, HolderLookup.Provider provider) {
+        private CompoundTag writeTag() {
+            CompoundTag tag = new CompoundTag();
             StructureLocationData.CODEC.encodeStart(NbtOps.INSTANCE, structureLocations)
                     .result()
                     .ifPresent(value -> tag.put(KEY_LOCATIONS, value));
@@ -128,8 +136,7 @@ public class NeoForgeWorldDataProvider extends WorldDataProvider {
     }
 
     private Data getOrCreate(ServerLevel level) {
-        SavedData.Factory<Data> factory = new SavedData.Factory<>(Data::new, Data::load, DataFixTypes.LEVEL);
-        return level.getDataStorage().computeIfAbsent(factory, DATA_NAME);
+        return level.getDataStorage().computeIfAbsent(Data.TYPE);
     }
 
     @Override

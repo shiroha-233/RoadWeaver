@@ -1,6 +1,6 @@
 package net.shiroha233.roadweaver.client.map.render;
 
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 
 /**
  * 渲染工具类 - 提供基础图形绘制方法
@@ -8,7 +8,7 @@ import net.minecraft.client.gui.GuiGraphics;
 public final class RenderUtils {
     private RenderUtils() {}
 
-    public static void drawLine(GuiGraphics g, int x1, int y1, int x2, int y2, int color, int left, int top, int right, int bottom) {
+    public static void drawLine(GuiGraphicsExtractor g, int x1, int y1, int x2, int y2, int color, int left, int top, int right, int bottom) {
         int dx = Math.abs(x2 - x1);
         int dy = Math.abs(y2 - y1);
         int steps = Math.max(dx, dy);
@@ -31,7 +31,7 @@ public final class RenderUtils {
         }
     }
 
-    public static void drawThickLine(GuiGraphics g, int x1, int y1, int x2, int y2, int color, int thickness, int left, int top, int right, int bottom) {
+    public static void drawThickLine(GuiGraphicsExtractor g, int x1, int y1, int x2, int y2, int color, int thickness, int left, int top, int right, int bottom) {
         thickness = Math.max(1, thickness);
         if (thickness == 1) { drawLine(g, x1, y1, x2, y2, color, left, top, right, bottom); return; }
         int half = thickness / 2;
@@ -42,7 +42,7 @@ public final class RenderUtils {
         }
     }
 
-    public static void drawDashedLine(GuiGraphics g, int x1, int y1, int x2, int y2, int color, int dash, int gap, int left, int top, int right, int bottom) {
+    public static void drawDashedLine(GuiGraphicsExtractor g, int x1, int y1, int x2, int y2, int color, int dash, int gap, int left, int top, int right, int bottom) {
         dash = Math.max(1, dash);
         gap = Math.max(1, gap);
         int dx = Math.abs(x2 - x1);
@@ -71,7 +71,7 @@ public final class RenderUtils {
         }
     }
 
-    public static void drawThickDashedLine(GuiGraphics g, int x1, int y1, int x2, int y2, int color, int thickness, int dash, int gap, int left, int top, int right, int bottom) {
+    public static void drawThickDashedLine(GuiGraphicsExtractor g, int x1, int y1, int x2, int y2, int color, int thickness, int dash, int gap, int left, int top, int right, int bottom) {
         thickness = Math.max(1, thickness);
         if (thickness == 1) { drawDashedLine(g, x1, y1, x2, y2, color, dash, gap, left, top, right, bottom); return; }
         int half = thickness / 2;
@@ -82,7 +82,7 @@ public final class RenderUtils {
         }
     }
 
-    public static void fillTriangle(GuiGraphics g, int x1, int y1, int x2, int y2, int x3, int y3, int color, int left, int top, int right, int bottom) {
+    public static void fillTriangle(GuiGraphicsExtractor g, int x1, int y1, int x2, int y2, int x3, int y3, int color, int left, int top, int right, int bottom) {
         if (y2 < y1) { int tx = x1, ty = y1; x1 = x2; y1 = y2; x2 = tx; y2 = ty; }
         if (y3 < y1) { int tx = x1, ty = y1; x1 = x3; y1 = y3; x3 = tx; y3 = ty; }
         if (y3 < y2) { int tx = x2, ty = y2; x2 = x3; y2 = y3; x3 = tx; y3 = ty; }

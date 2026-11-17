@@ -1,7 +1,7 @@
 package net.shiroha233.roadweaver.client.map.load;
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerLevel;
 import net.shiroha233.roadweaver.client.map.MapLoadSession;
 import net.shiroha233.roadweaver.core.model.MapLoadPhase;
@@ -20,11 +20,11 @@ public final class MapSnapshotRequests {
     }
 
     public interface SnapshotPartReceiver {
-        void accept(int requestSeq, ResourceLocation dimensionId, MapLoadPhase phase, int responseIndex, MapSnapshot snapshot);
+        void accept(int requestSeq, Identifier dimensionId, MapLoadPhase phase, int responseIndex, MapSnapshot snapshot);
     }
 
     public static void dispatchRemote(int requestSeq,
-                                      ResourceLocation dimensionId,
+                                      Identifier dimensionId,
                                       List<MapLoadSession.ResponseRequest> requests) {
         for (int responseIndex = 0; responseIndex < requests.size(); responseIndex++) {
             MapLoadSession.ResponseRequest request = requests.get(responseIndex);
@@ -39,7 +39,7 @@ public final class MapSnapshotRequests {
                                            int requestSeq,
                                            List<MapLoadSession.ResponseRequest> requests,
                                            SnapshotPartReceiver receiver) {
-        ResourceLocation dimensionId = level.dimension().location();
+        Identifier dimensionId = level.dimension().identifier();
         for (int responseIndex = 0; responseIndex < requests.size(); responseIndex++) {
             MapLoadSession.ResponseRequest request = requests.get(responseIndex);
             RequestRect rect = request.rect();
@@ -58,7 +58,7 @@ public final class MapSnapshotRequests {
     private static void schedulePhase(Minecraft minecraft,
                                       ServerLevel level,
                                       int requestSeq,
-                                      ResourceLocation dimensionId,
+                                      Identifier dimensionId,
                                       MapLoadPhase phase,
                                       int responseIndex,
                                       RequestRect rect,
